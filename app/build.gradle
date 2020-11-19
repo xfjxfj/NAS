@@ -11,10 +11,25 @@ android {
 		versionName "1.0.0-alpha01"
 	}
 
+	signingConfigs {
+		viegre {
+			storeFile file('viegre_speaker.jks')
+			storePassword '!tOPqIzHI@513'
+			keyAlias 'viegre_speaker'
+			keyPassword '!tOPqIzHI@513'
+		}
+	}
+
 	buildTypes {
+		debug {
+			minifyEnabled false
+			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+			signingConfig signingConfigs.viegre
+		}
 		release {
 			minifyEnabled false
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+			signingConfig signingConfigs.viegre
 		}
 	}
 
