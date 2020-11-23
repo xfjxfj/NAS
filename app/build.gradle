@@ -50,4 +50,6 @@ dependencies {
 	implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 	//https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README-CN.md
 	implementation 'com.blankj:utilcodex:1.30.5'
+	//https://github.com/CymChad/BaseRecyclerViewAdapterHelper
+	implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
 }
