@@ -3,4 +3,9 @@
 	<color name="colorPrimary">#6200EE</color>
 	<color name="colorPrimaryDark">#3700B3</color>
 	<color name="colorAccent">#03DAC5</color>
+
+	<color name="settings_title">#FEFEFE</color>
+	<color name="wlan_name">#E5E5EB</color>
+	<color name="wlan_tip">#5C5F68</color>
+	<color name="wlan_dividing_line">#232325</color>
 </resources>

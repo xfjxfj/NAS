@@ -10,13 +10,13 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 import androidx.viewbinding.ViewBinding;
 
 /**
  * Created by Djangoogle on 2020/11/26 14:19 with Android Studio.
  */
-public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActivity {
+public abstract class BaseFragmentActivity<VB extends ViewBinding> extends FragmentActivity {
 
 	protected VB mViewBinding;
 	protected Activity mActivity;

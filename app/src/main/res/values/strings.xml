@@ -1,3 +1,8 @@
 <resources>
 	<string name="app_name">ViegreSpeaker</string>
+
+	<!--网络设置-->
+	<string name="network_settings">网络设置</string>
+	<string name="turn_on_wlan">开启WLAN</string>
+	<string name="low_security">安全性低</string>
 </resources>

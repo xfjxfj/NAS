@@ -39,8 +39,8 @@ android {
 		targetCompatibility JavaVersion.VERSION_1_8
 	}
 
-	viewBinding {
-		enabled true
+	buildFeatures {
+		viewBinding = true
 	}
 }
 
@@ -53,8 +53,8 @@ dependencies {
 	implementation 'com.blankj:utilcodex:1.30.5'
 	//https://github.com/CymChad/BaseRecyclerViewAdapterHelper
 	implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
-	//https://github.com/alibaba/alpha
-	implementation 'com.alibaba.android:alpha:1.0.0.1@aar'
-	//https://github.com/pwittchen/ReactiveNetwork
-	implementation 'com.github.pwittchen:reactivenetwork-rx2:3.0.8-rx2'
+//	//https://github.com/alibaba/alpha
+//	implementation 'com.alibaba.android:alpha:1.0.0.1@aar'
+//	//https://github.com/pwittchen/ReactiveNetwork
+//	implementation 'com.github.pwittchen:reactivenetwork-rx2:3.0.8-rx2'
 }

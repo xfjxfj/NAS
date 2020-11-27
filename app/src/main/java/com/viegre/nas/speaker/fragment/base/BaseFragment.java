@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ReflectUtils;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -27,17 +30,14 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
 	@Nullable
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//		Type superclass = getClass().getGenericSuperclass();
-//		Class<?> aClass = (Class<?>) ((ParameterizedType) superclass).getActualTypeArguments()[0];
-//		try {
-//			Method method = aClass.getDeclaredMethod("inflate", LayoutInflater.class, ViewGroup.class, boolean.class);
-//			mViewBinding = (VB) method.invoke(null, getLayoutInflater(), container, false);
-//		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-//			e.printStackTrace();
-//		}
-
-		mViewBinding = ReflectUtils.reflect(mViewBinding).newInstance().method("inflate", getLayoutInflater(), container, false).get();
-		return mViewBinding.getRoot();
+		Type superClass = getClass().getGenericSuperclass();
+		if (null == superClass) {
+			throw new RuntimeException("BaseFragment泛型反射失败");
+		} else {
+			Class<?> viewBindingClass = (Class<?>) ((ParameterizedType) superClass).getActualTypeArguments()[0];
+			mViewBinding = ReflectUtils.reflect(viewBindingClass).method("inflate", getLayoutInflater(), container, false).get();
+			return mViewBinding.getRoot();
+		}
 	}
 
 	@Override
