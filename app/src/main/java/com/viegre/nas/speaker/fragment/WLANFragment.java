@@ -12,6 +12,7 @@ import com.viegre.nas.speaker.adapter.WLANListAdapter;
 import com.viegre.nas.speaker.databinding.FragmentWlanBinding;
 import com.viegre.nas.speaker.fragment.base.BaseFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -133,7 +134,7 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> {
 	 * 初始化WLAN列表
 	 */
 	private void initWLANList() {
-		ThreadUtils.executeByCachedAtFixRate(mGetWifiScanResultTask, 5L, TimeUnit.SECONDS);
+		ThreadUtils.executeByCachedAtFixRate(mGetWifiScanResultTask, 20L, TimeUnit.SECONDS);
 	}
 
 	private class GetWifiScanResultTask extends ThreadUtils.SimpleTask<List<ScanResult>> {
@@ -144,8 +145,9 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> {
 
 		@Override
 		public void onSuccess(List<ScanResult> result) {
-			if (null != result) {
-				mWLANListAdapter.setList(result);
+			if (null != result && !result.isEmpty()) {
+				List<ScanResult> list = new ArrayList<>(result);
+				mWLANListAdapter.setList(list);
 			}
 		}
 	}

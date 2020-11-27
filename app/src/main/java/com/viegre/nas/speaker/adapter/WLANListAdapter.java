@@ -20,7 +20,7 @@ public class WLANListAdapter extends BaseQuickAdapter<ScanResult, BaseViewHolder
 
 	@Override
 	protected void convert(@NotNull BaseViewHolder baseViewHolder, ScanResult scanResult) {
-		baseViewHolder.setImageResource(R.id.acivItemWLANStatus, R.mipmap.wlan_item_link).setText(R.id.mvItemWLANName, scanResult.SSID);
+		baseViewHolder.setImageResource(R.id.acivItemWLANStatus, R.mipmap.wlan_item_link);
 		MarqueeView marqueeView = baseViewHolder.getView(R.id.mvItemWLANName);
 		marqueeView.startWithText(scanResult.SSID);
 	}
