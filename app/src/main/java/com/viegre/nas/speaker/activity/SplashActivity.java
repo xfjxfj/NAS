@@ -15,10 +15,15 @@ import com.viegre.nas.speaker.fragment.WLANFragment;
  */
 public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> {
 
+	private WLANFragment mWLANFragment;
+
 	@Override
 	protected void initView() {
 		//判断是否为开机启动
-		getBootStatus();
+//		getBootStatus();
+		mWLANFragment = WLANFragment.newInstance(true);
+		FragmentUtils.add(getSupportFragmentManager(), mWLANFragment, R.id.flSplashWLAN);
+		FragmentUtils.show(mWLANFragment);
 	}
 
 	@Override
@@ -34,8 +39,9 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 			//判断网络是否可用
 			NetworkUtils.isAvailableAsync(aBoolean -> {
 				if (!aBoolean) {//打开网络设置
-					FragmentUtils.add(getSupportFragmentManager(), WLANFragment.newInstance(true), R.id.flSplashWLAN, WLANFragment.class.getSimpleName());
-					FragmentUtils.show(FragmentUtils.findFragment(getSupportFragmentManager(), WLANFragment.class.getSimpleName()));
+					mWLANFragment = WLANFragment.newInstance(true);
+					FragmentUtils.add(getSupportFragmentManager(), mWLANFragment, R.id.flSplashWLAN);
+					FragmentUtils.show(mWLANFragment);
 				} else {//判断是否为出厂首次开机
 					getDeviceInitializedStatus();
 				}

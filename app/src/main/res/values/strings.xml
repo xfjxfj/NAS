@@ -5,4 +5,5 @@
 	<string name="network_settings">网络设置</string>
 	<string name="turn_on_wlan">开启WLAN</string>
 	<string name="low_security">安全性低</string>
+	<string name="nearby_network">附近的网络</string>
 </resources>

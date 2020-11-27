@@ -19,7 +19,7 @@
 
 	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/actvItemWLANName"
-		android:layout_width="wrap_content"
+		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:layout_marginStart="5dp"
 		android:includeFontPadding="false"
@@ -27,6 +27,7 @@
 		android:textColor="@color/wlan_name"
 		android:textSize="10sp"
 		app:layout_constraintBottom_toTopOf="@id/actvItemWLANTip"
+		app:layout_constraintEnd_toStartOf="@id/acivItemWLANLock"
 		app:layout_constraintStart_toEndOf="@id/acivItemWLANStatus"
 		app:layout_constraintTop_toTopOf="parent" />
 
