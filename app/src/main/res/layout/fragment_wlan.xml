@@ -54,19 +54,23 @@
 				android:layout_height="14dp"
 				android:layout_alignParentEnd="true"
 				android:layout_centerVertical="true"
-				android:layout_marginEnd="14dp" />
+				android:layout_marginEnd="14dp"
+				app:isOpened="false" />
 		</RelativeLayout>
 
 		<View
+			android:id="@+id/vWLANLine"
 			android:layout_width="match_parent"
 			android:layout_height="0.5dp"
 			android:layout_marginStart="20dp"
 			android:layout_marginEnd="12.5dp"
-			android:background="@color/wlan_dividing_line" />
+			android:background="@color/wlan_dividing_line"
+			android:visibility="gone" />
 
 		<include
 			android:id="@+id/ilWLANSelected"
-			layout="@layout/item_wlan_list" />
+			layout="@layout/item_wlan_list"
+			android:visibility="gone" />
 	</androidx.appcompat.widget.LinearLayoutCompat>
 
 	<androidx.appcompat.widget.AppCompatTextView
@@ -79,6 +83,7 @@
 		android:text="@string/nearby_network"
 		android:textColor="@color/wlan_tip"
 		android:textSize="9sp"
+		android:visibility="gone"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/llcWLANHeader" />
 
@@ -88,6 +93,7 @@
 		android:layout_height="0dp"
 		android:layout_marginTop="10dp"
 		android:background="@drawable/settings_dark_bg"
+		android:visibility="gone"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/actvWLANNearbyNetwork" />
 </androidx.constraintlayout.widget.ConstraintLayout>
