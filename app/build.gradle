@@ -57,10 +57,12 @@ dependencies {
 	implementation 'com.github.iielse:switchbutton:1.0.4'
 	//https://github.com/sunfusheng/MarqueeView
 	implementation 'com.sunfusheng:MarqueeView:1.4.0'
-	//https://github.com/wasabeef/Blurry
-	implementation 'jp.wasabeef:blurry:4.0.0'
 	//https://github.com/li-xiaojun/XPopup
 	implementation 'com.lxj:xpopup:2.2.5'
 	//https://github.com/yqritc/RecyclerView-FlexibleDivider
 	implementation 'com.yqritc:recyclerview-flexibledivider:1.4.0'
+	//https://github.com/ThanosFisherman/WifiUtils
+	implementation 'com.thanosfisherman.wifiutils:wifiutils:1.6.4'
+	//https://github.com/ThanosFisherman/Elvis
+	implementation 'com.thanosfisherman.elvis:elvis:3.0'
 }

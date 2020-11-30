@@ -9,4 +9,6 @@
 	<string name="password">密码</string>
 	<string name="confirm">确定</string>
 	<string name="cancel">取消</string>
+	<string name="please_enter_password">请输入密码</string>
+	<string name="password_must_be_greater_than_8_digits">密码必须大于8位</string>
 </resources>

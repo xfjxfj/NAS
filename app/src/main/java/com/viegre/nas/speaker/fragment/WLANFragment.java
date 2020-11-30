@@ -1,28 +1,34 @@
 package com.viegre.nas.speaker.fragment;
 
+import android.content.Context;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
 
+import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ColorUtils;
 import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
-import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.Utils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.github.iielse.switchbutton.SwitchView;
 import com.lxj.xpopup.XPopup;
+import com.thanosfisherman.wifiutils.WifiConnectorBuilder;
+import com.thanosfisherman.wifiutils.WifiUtils;
+import com.thanosfisherman.wifiutils.wifiConnect.ConnectionErrorCode;
+import com.thanosfisherman.wifiutils.wifiConnect.ConnectionSuccessListener;
 import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.adapter.WLANListAdapter;
+import com.viegre.nas.speaker.config.BusConfig;
 import com.viegre.nas.speaker.databinding.FragmentWlanBinding;
 import com.viegre.nas.speaker.fragment.base.BaseFragment;
 import com.viegre.nas.speaker.popup.WLANPasswordPopup;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,22 +37,58 @@ import androidx.recyclerview.widget.LinearLayoutManager;
  * 网络设置
  * Created by Djangoogle on 2020/11/26 11:35 with Android Studio.
  */
-public class WLANFragment extends BaseFragment<FragmentWlanBinding> {
+public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements NetworkUtils.OnNetworkStatusChangedListener, OnItemClickListener, OnItemChildClickListener {
 
 	public static final String IS_FIRST_RUN = "isFirstRun";
 
 	private WLANListAdapter mWLANListAdapter;
-	private GetWifiScanResultTask mGetWifiScanResultTask;
+	private ScanResult mScanResult;
+	private WifiConnectorBuilder.WifiUtilsBuilder mWifiUtilsBuilder;
 
 	@Override
 	protected void initView() {
+		NetworkUtils.registerNetworkStatusChangedListener(this);
+		getWiFiStatus();
 		initAdapter();
 		setWLANSwitch();
 	}
 
 	@Override
 	protected void initData() {
+		WifiUtils.forwardLog((priority, tag, message) -> LogUtils.iTag(tag, priority, message));
+	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (null != mWifiUtilsBuilder) {
+			mWifiUtilsBuilder.cancelAutoConnect();
+		}
+		if (NetworkUtils.isRegisteredNetworkStatusChangedListener(this)) {
+			NetworkUtils.unregisterNetworkStatusChangedListener(this);
+		}
+	}
+
+	@Override
+	public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
+		mScanResult = mWLANListAdapter.getItem(position);
+		new XPopup.Builder(getContext()).hasShadowBg(false)
+		                                .hasBlurBg(true)
+		                                .isDestroyOnDismiss(true)
+		                                .dismissOnBackPressed(false)
+		                                .dismissOnTouchOutside(false)
+		                                .autoOpenSoftInput(false)
+		                                .moveUpToKeyboard(false)
+		                                .hasStatusBar(false)
+		                                .asCustom(new WLANPasswordPopup(mActivity, mScanResult.SSID))
+		                                .show();
+	}
+
+	@Override
+	public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
+		if (R.id.acivItemWLANArrow == view.getId()) {
+
+		}
 	}
 
 	public static WLANFragment newInstance(boolean isFirstRun) {
@@ -58,32 +100,28 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> {
 	}
 
 	/**
+	 * 获取WiFi状态
+	 */
+	private void getWiFiStatus() {
+		if (NetworkUtils.isWifiConnected()) {
+			showSelectedWiFi();
+			mViewBinding.ilWLANSelected.acivItemWLANStatus.setImageResource(R.mipmap.wifi_connected);
+			WifiManager wifiMgr = (WifiManager) Utils.getApp().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+			WifiInfo info = wifiMgr.getConnectionInfo();
+			String SSID = null != info ? info.getSSID().replace("\"", "") : "NULL";
+			mViewBinding.ilWLANSelected.actvItemWLANName.setText(SSID);
+		} else {
+			hideSelectedWiFi();
+		}
+	}
+
+	/**
 	 * 初始化适配器
 	 */
 	private void initAdapter() {
 		mWLANListAdapter = new WLANListAdapter(R.layout.item_wlan_list);
-		mWLANListAdapter.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
-				new XPopup.Builder(getContext()).hasBlurBg(true)
-				                                .isDestroyOnDismiss(true)
-				                                .dismissOnBackPressed(false)
-				                                .dismissOnTouchOutside(false)
-				                                .autoOpenSoftInput(false)
-				                                .moveUpToKeyboard(false)
-				                                .hasStatusBar(false)
-				                                .asCustom(new WLANPasswordPopup(mActivity, mWLANListAdapter.getItem(position).SSID))
-				                                .show();
-			}
-		});
-		mWLANListAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
-			@Override
-			public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-				if (R.id.acivItemWLANArrow == view.getId()) {
-
-				}
-			}
-		});
+		mWLANListAdapter.setOnItemClickListener(this);
+		mWLANListAdapter.setOnItemChildClickListener(this);
 		mViewBinding.rvWLANList.setLayoutManager(new LinearLayoutManager(mActivity));
 		mViewBinding.rvWLANList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(R.color.wlan_dividing_line))
 		                                                                                                .size(ConvertUtils.dp2px(0.5F))
@@ -96,94 +134,103 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> {
 	 * 设置WLAN开关
 	 */
 	private void setWLANSwitch() {
-		mGetWifiScanResultTask = new GetWifiScanResultTask();
 		mViewBinding.svWLANSwitch.setOpened(NetworkUtils.getWifiEnabled());
 		mViewBinding.svWLANSwitch.setOnStateChangedListener(new SwitchView.OnStateChangedListener() {
 			@Override
 			public void toggleToOn(SwitchView view) {
-				ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
-					@Override
-					public Boolean doInBackground() {
-						NetworkUtils.setWifiEnabled(true);
-						while (true) {
-							if (NetworkUtils.getWifiEnabled()) {
-								break;
-							}
-						}
-						return true;
+				mViewBinding.svWLANSwitch.setEnabled(false);
+				WifiUtils.withContext(Utils.getApp()).enableWifi(isSuccess -> {
+					if (isSuccess) {
+						view.toggleSwitch(true);
+						onWiFiOpen();
+					} else {
+						view.toggleSwitch(false);
+						onWiFiClose();
 					}
-
-					@Override
-					public void onSuccess(Boolean result) {
-						view.toggleSwitch(result);
-						getWLANStatus();
-					}
+					mViewBinding.svWLANSwitch.setEnabled(true);
 				});
 			}
 
 			@Override
 			public void toggleToOff(SwitchView view) {
-				ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
-					@Override
-					public Boolean doInBackground() {
-						NetworkUtils.setWifiEnabled(false);
-						while (true) {
-							if (!NetworkUtils.getWifiEnabled()) {
-								break;
-							}
-						}
-						return false;
-					}
-
-					@Override
-					public void onSuccess(Boolean result) {
-						view.toggleSwitch(result);
-						getWLANStatus();
-					}
-				});
+				WifiUtils.withContext(Utils.getApp()).disableWifi();
+				view.toggleSwitch(false);
+				onWiFiClose();
 			}
 		});
-		getWLANStatus();
-	}
-
-	/**
-	 * 获取WLAN状态
-	 */
-	private void getWLANStatus() {
 		if (NetworkUtils.getWifiEnabled()) {
-			mViewBinding.actvWLANNearbyNetwork.setVisibility(View.VISIBLE);
-			mViewBinding.rvWLANList.setVisibility(View.VISIBLE);
-			initWLANList();
-		} else {
-			mWLANListAdapter.getData().clear();
-			mWLANListAdapter.notifyDataSetChanged();
-			ThreadUtils.cancel(mGetWifiScanResultTask);
-			mViewBinding.vWLANLine.setVisibility(View.GONE);
-			mViewBinding.ilWLANSelected.getRoot().setVisibility(View.GONE);
-			mViewBinding.actvWLANNearbyNetwork.setVisibility(View.GONE);
-			mViewBinding.rvWLANList.setVisibility(View.GONE);
+			onWiFiOpen();
 		}
+	}
+
+	private void onWiFiOpen() {
+		mViewBinding.actvWLANNearbyNetwork.setVisibility(View.VISIBLE);
+		mViewBinding.rvWLANList.setVisibility(View.VISIBLE);
+		scanWiFi();
+	}
+
+	private void onWiFiClose() {
+		mWLANListAdapter.getData().clear();
+		mWLANListAdapter.notifyDataSetChanged();
+		mViewBinding.vWLANLine.setVisibility(View.GONE);
+		mViewBinding.ilWLANSelected.getRoot().setVisibility(View.GONE);
+		mViewBinding.actvWLANNearbyNetwork.setVisibility(View.GONE);
+		mViewBinding.rvWLANList.setVisibility(View.GONE);
+	}
+
+	private void showSelectedWiFi() {
+		mViewBinding.vWLANLine.setVisibility(View.VISIBLE);
+		mViewBinding.ilWLANSelected.getRoot().setVisibility(View.VISIBLE);
+	}
+
+	private void hideSelectedWiFi() {
+		mViewBinding.vWLANLine.setVisibility(View.GONE);
+		mViewBinding.ilWLANSelected.getRoot().setVisibility(View.GONE);
 	}
 
 	/**
-	 * 初始化WLAN列表
+	 * 开始扫描WiFi
 	 */
-	private void initWLANList() {
-		ThreadUtils.executeByCachedAtFixRate(mGetWifiScanResultTask, 20L, TimeUnit.SECONDS);
+	private void scanWiFi() {
+		WifiUtils.withContext(Utils.getApp()).scanWifi(scanResults -> {
+			if (!scanResults.isEmpty()) {
+				mWLANListAdapter.setList(scanResults);
+			}
+		}).start();
 	}
 
-	private class GetWifiScanResultTask extends ThreadUtils.SimpleTask<List<ScanResult>> {
-		@Override
-		public List<ScanResult> doInBackground() {
-			return NetworkUtils.getWifiScanResult().getFilterResults();
-		}
-
-		@Override
-		public void onSuccess(List<ScanResult> result) {
-			if (null != result && !result.isEmpty()) {
-				List<ScanResult> list = new ArrayList<>(result);
-				mWLANListAdapter.setList(list);
+	@BusUtils.Bus(tag = BusConfig.BUS_WLAN_PASSWORD, threadMode = BusUtils.ThreadMode.MAIN)
+	public void getPassword(String password) {
+		mViewBinding.rvWLANList.setEnabled(false);
+		showSelectedWiFi();
+		mViewBinding.ilWLANSelected.acivItemWLANStatus.setVisibility(View.INVISIBLE);
+		mViewBinding.ilWLANSelected.acivItemWLANStatus.setImageResource(R.mipmap.wifi_connected);
+		mViewBinding.ilWLANSelected.actvItemWLANName.setText(mScanResult.SSID);
+		mWifiUtilsBuilder = WifiUtils.withContext(Utils.getApp());
+		mWifiUtilsBuilder.connectWith(mScanResult.SSID, mScanResult.BSSID, password).setTimeout(15 * 1000L).onConnectionResult(new ConnectionSuccessListener() {
+			@Override
+			public void success() {
+				mWifiUtilsBuilder = null;
+				mViewBinding.rvWLANList.setEnabled(true);
+				mViewBinding.ilWLANSelected.acivItemWLANStatus.setVisibility(View.VISIBLE);
 			}
-		}
+
+			@Override
+			public void failed(@NonNull ConnectionErrorCode errorCode) {
+				mWifiUtilsBuilder = null;
+				mViewBinding.rvWLANList.setEnabled(true);
+				hideSelectedWiFi();
+			}
+		}).start();
+	}
+
+	@Override
+	public void onDisconnected() {
+		getWiFiStatus();
+	}
+
+	@Override
+	public void onConnected(NetworkUtils.NetworkType networkType) {
+		getWiFiStatus();
 	}
 }
