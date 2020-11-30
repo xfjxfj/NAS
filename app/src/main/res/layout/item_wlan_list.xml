@@ -3,6 +3,7 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:layout_height="33.5dp"
+	android:descendantFocusability="blocksDescendants"
 	android:paddingStart="10dp"
 	android:paddingEnd="10dp">
 
@@ -10,41 +11,44 @@
 		android:id="@+id/acivItemWLANStatus"
 		android:layout_width="8dp"
 		android:layout_height="8dp"
+		android:clickable="false"
+		android:focusable="false"
 		android:scaleType="fitXY"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@id/mvItemWLANName"
+		app:layout_constraintEnd_toStartOf="@id/actvItemWLANName"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
 		app:srcCompat="@mipmap/wifi_connected" />
 
-	<com.sunfusheng.marqueeview.MarqueeView
-		android:id="@+id/mvItemWLANName"
-		android:layout_width="0dp"
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvItemWLANName"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginStart="5dp"
+		android:clickable="false"
+		android:focusable="false"
+		android:includeFontPadding="false"
+		android:textColor="@color/wlan_name"
+		android:textSize="10sp"
 		app:layout_constraintBottom_toTopOf="@id/actvItemWLANTip"
-		app:layout_constraintEnd_toStartOf="@id/acivItemWLANLock"
 		app:layout_constraintStart_toEndOf="@id/acivItemWLANStatus"
-		app:layout_constraintTop_toTopOf="parent"
-		app:mvAnimDuration="1000"
-		app:mvDirection="right_to_left"
-		app:mvSingleLine="true"
-		app:mvTextColor="@color/wlan_name"
-		app:mvTextSize="10sp" />
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/actvItemWLANTip"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="5dp"
+		android:clickable="false"
+		android:focusable="false"
 		android:includeFontPadding="false"
 		android:text="@string/low_security"
 		android:textColor="@color/wlan_tip"
 		android:textSize="6sp"
 		android:visibility="gone"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="@id/mvItemWLANName"
-		app:layout_constraintTop_toBottomOf="@id/mvItemWLANName" />
+		app:layout_constraintStart_toStartOf="@id/actvItemWLANName"
+		app:layout_constraintTop_toBottomOf="@id/actvItemWLANName" />
 
 	<androidx.appcompat.widget.AppCompatImageView
 		android:id="@+id/acivItemWLANArrow"
@@ -62,6 +66,8 @@
 		android:id="@+id/acivItemWLANSignal"
 		android:layout_width="11dp"
 		android:layout_height="8dp"
+		android:clickable="false"
+		android:focusable="false"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@id/acivItemWLANArrow"
 		app:layout_constraintTop_toTopOf="parent"
@@ -72,6 +78,8 @@
 		android:layout_width="6.5dp"
 		android:layout_height="8dp"
 		android:layout_marginEnd="5dp"
+		android:clickable="false"
+		android:focusable="false"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@id/acivItemWLANSignal"
 		app:layout_constraintTop_toTopOf="parent"

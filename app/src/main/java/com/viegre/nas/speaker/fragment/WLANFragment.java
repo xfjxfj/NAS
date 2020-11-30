@@ -4,18 +4,27 @@ import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.view.View;
 
+import com.blankj.utilcode.util.ColorUtils;
+import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.ThreadUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.github.iielse.switchbutton.SwitchView;
+import com.lxj.xpopup.XPopup;
 import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.adapter.WLANListAdapter;
 import com.viegre.nas.speaker.databinding.FragmentWlanBinding;
 import com.viegre.nas.speaker.fragment.base.BaseFragment;
+import com.viegre.nas.speaker.popup.WLANPasswordPopup;
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 /**
@@ -53,7 +62,33 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> {
 	 */
 	private void initAdapter() {
 		mWLANListAdapter = new WLANListAdapter(R.layout.item_wlan_list);
+		mWLANListAdapter.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
+				new XPopup.Builder(getContext()).hasBlurBg(true)
+				                                .isDestroyOnDismiss(true)
+				                                .dismissOnBackPressed(false)
+				                                .dismissOnTouchOutside(false)
+				                                .autoOpenSoftInput(false)
+				                                .moveUpToKeyboard(false)
+				                                .hasStatusBar(false)
+				                                .asCustom(new WLANPasswordPopup(mActivity, mWLANListAdapter.getItem(position).SSID))
+				                                .show();
+			}
+		});
+		mWLANListAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
+			@Override
+			public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
+				if (R.id.acivItemWLANArrow == view.getId()) {
+
+				}
+			}
+		});
 		mViewBinding.rvWLANList.setLayoutManager(new LinearLayoutManager(mActivity));
+		mViewBinding.rvWLANList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(R.color.wlan_dividing_line))
+		                                                                                                .size(ConvertUtils.dp2px(0.5F))
+		                                                                                                .margin(ConvertUtils.dp2px(20F), ConvertUtils.dp2px(12.5F))
+		                                                                                                .build());
 		mViewBinding.rvWLANList.setAdapter(mWLANListAdapter);
 	}
 
