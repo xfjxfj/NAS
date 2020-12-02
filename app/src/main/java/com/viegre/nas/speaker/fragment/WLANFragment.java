@@ -6,11 +6,13 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ColorUtils;
 import com.blankj.utilcode.util.ConvertUtils;
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.Utils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -44,19 +46,19 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 	private WLANListAdapter mWLANListAdapter;
 	private ScanResult mScanResult;
 	private WifiConnectorBuilder.WifiUtilsBuilder mWifiUtilsBuilder;
+	private Animation mWLANLoadingAnimation;
 
 	@Override
 	protected void initView() {
 		NetworkUtils.registerNetworkStatusChangedListener(this);
+		initLoadingAnim();
 		getWiFiStatus();
 		initAdapter();
 		setWLANSwitch();
 	}
 
 	@Override
-	protected void initData() {
-		WifiUtils.forwardLog((priority, tag, message) -> LogUtils.iTag(tag, priority, message));
-	}
+	protected void initData() {}
 
 	@Override
 	public void onDestroy() {
@@ -199,12 +201,21 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 		}).start();
 	}
 
+	/**
+	 * 初始化loading动画
+	 */
+	private void initLoadingAnim() {
+		mWLANLoadingAnimation = AnimationUtils.loadAnimation(mActivity, R.anim.wlan_loading_anim);
+		LinearInterpolator li = new LinearInterpolator();
+		mWLANLoadingAnimation.setInterpolator(li);
+	}
+
 	@BusUtils.Bus(tag = BusConfig.BUS_WLAN_PASSWORD, threadMode = BusUtils.ThreadMode.MAIN)
 	public void getPassword(String password) {
 		mViewBinding.rvWLANList.setEnabled(false);
 		showSelectedWiFi();
-		mViewBinding.ilWLANSelected.acivItemWLANStatus.setVisibility(View.INVISIBLE);
-		mViewBinding.ilWLANSelected.acivItemWLANStatus.setImageResource(R.mipmap.wifi_connected);
+		mViewBinding.ilWLANSelected.acivItemWLANStatus.setImageResource(R.mipmap.wifi_loading);
+		mViewBinding.ilWLANSelected.acivItemWLANStatus.startAnimation(mWLANLoadingAnimation);
 		mViewBinding.ilWLANSelected.actvItemWLANName.setText(mScanResult.SSID);
 		mWifiUtilsBuilder = WifiUtils.withContext(Utils.getApp());
 		mWifiUtilsBuilder.connectWith(mScanResult.SSID, mScanResult.BSSID, password).setTimeout(15 * 1000L).onConnectionResult(new ConnectionSuccessListener() {
@@ -212,7 +223,8 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 			public void success() {
 				mWifiUtilsBuilder = null;
 				mViewBinding.rvWLANList.setEnabled(true);
-				mViewBinding.ilWLANSelected.acivItemWLANStatus.setVisibility(View.VISIBLE);
+				mViewBinding.ilWLANSelected.acivItemWLANStatus.clearAnimation();
+				mViewBinding.ilWLANSelected.acivItemWLANStatus.setImageResource(R.mipmap.wifi_connected);
 			}
 
 			@Override
