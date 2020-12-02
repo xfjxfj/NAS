@@ -21,5 +21,14 @@ public class WLANListAdapter extends BaseQuickAdapter<ScanResult, BaseViewHolder
 	@Override
 	protected void convert(@NotNull BaseViewHolder baseViewHolder, ScanResult scanResult) {
 		baseViewHolder.setImageResource(R.id.acivItemWLANStatus, R.mipmap.wlan_item_link).setText(R.id.actvItemWLANName, scanResult.SSID);
+		if (scanResult.level >= -50) {
+			baseViewHolder.setImageResource(R.id.acivItemWLANSignal, R.mipmap.wifi_signal_4);
+		} else if (scanResult.level < -50 && scanResult.level >= -70) {
+			baseViewHolder.setImageResource(R.id.acivItemWLANSignal, R.mipmap.wifi_signal_3);
+		} else if (scanResult.level < -70 && scanResult.level >= -80) {
+			baseViewHolder.setImageResource(R.id.acivItemWLANSignal, R.mipmap.wifi_signal_2);
+		} else {
+			baseViewHolder.setImageResource(R.id.acivItemWLANSignal, R.mipmap.wifi_signal_1);
+		}
 	}
 }

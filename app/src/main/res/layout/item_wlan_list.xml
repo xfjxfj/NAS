@@ -71,7 +71,7 @@
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@id/acivItemWLANArrow"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@mipmap/wifi_signal_3" />
+		app:srcCompat="@mipmap/wifi_signal_4" />
 
 	<androidx.appcompat.widget.AppCompatImageView
 		android:id="@+id/acivItemWLANLock"
