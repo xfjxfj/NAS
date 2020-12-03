@@ -68,7 +68,12 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 		getWiFiStatus();
 		initAdapter();
 		setWLANSwitch();
-		mViewBinding.ilWLANSelected.acivItemWLANArrow.setOnClickListener(view -> BusUtils.post(BusConfig.BUS_NETWORK_DETAIL, BusConfig.BUS_SHOW_NETWORK_DETAIL));
+		mViewBinding.ilWLANSelected.acivItemWLANArrow.setOnClickListener(view -> {
+			if (mIsConnecting) {
+				return;
+			}
+			BusUtils.post(BusConfig.BUS_NETWORK_DETAIL, BusConfig.BUS_SHOW_NETWORK_DETAIL);
+		});
 		mViewBinding.acivWLANRefresh.setOnClickListener(view -> {
 			mViewBinding.acivWLANRefresh.setClickable(false);
 			scanWiFi();
@@ -91,6 +96,9 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 
 	@Override
 	public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
+		if (mIsConnecting) {
+			return;
+		}
 		mWiFiEntity = mWLANListAdapter.getItem(position);
 		if (TextUtils.isEmpty(mWiFiEntity.getPassword())) {
 			new XPopup.Builder(getContext()).hasShadowBg(false)//是否有半透明的背景，默认为true
@@ -177,7 +185,7 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 		mViewBinding.svWLANSwitch.setOnStateChangedListener(new SwitchView.OnStateChangedListener() {
 			@Override
 			public void toggleToOn(SwitchView view) {
-				mViewBinding.svWLANSwitch.setEnabled(false);
+				mViewBinding.svWLANSwitch.setClickable(false);
 				WifiUtils.withContext(Utils.getApp()).enableWifi(isSuccess -> {
 					if (isSuccess) {
 						view.toggleSwitch(true);
@@ -186,7 +194,7 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 						view.toggleSwitch(false);
 						onWiFiClose();
 					}
-					mViewBinding.svWLANSwitch.setEnabled(true);
+					mViewBinding.svWLANSwitch.setClickable(true);
 				});
 			}
 
@@ -299,8 +307,6 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 	@BusUtils.Bus(tag = BusConfig.BUS_WLAN_PASSWORD, threadMode = BusUtils.ThreadMode.MAIN)
 	public void getPassword(String password) {
 		mIsConnecting = true;
-		mViewBinding.rvWLANOtherNetworkList.setEnabled(false);
-		mViewBinding.ilWLANSelected.acivItemWLANArrow.setEnabled(false);
 		showSelectedWiFi();
 		mViewBinding.ilWLANSelected.acivItemWLANStatus.setImageResource(R.mipmap.wifi_loading);
 		mViewBinding.ilWLANSelected.acivItemWLANStatus.startAnimation(mWLANLoadingAnimation);
@@ -314,8 +320,6 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 				                 mIsConnecting = false;
 				                 mWifiUtilsBuilder = null;
 				                 saveConnectedWiFi(new WiFiEntity(mWiFiEntity.getScanResult(), password));
-				                 mViewBinding.rvWLANOtherNetworkList.setEnabled(true);
-				                 mViewBinding.ilWLANSelected.acivItemWLANArrow.setEnabled(true);
 				                 mViewBinding.ilWLANSelected.acivItemWLANStatus.clearAnimation();
 				                 mViewBinding.ilWLANSelected.acivItemWLANStatus.setImageResource(R.mipmap.wifi_connected);
 				                 mWLANListAdapter.notifyDataSetChanged();
@@ -326,8 +330,6 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 			                 public void failed(@NonNull ConnectionErrorCode errorCode) {
 				                 mIsConnecting = false;
 				                 mWifiUtilsBuilder = null;
-				                 mViewBinding.rvWLANOtherNetworkList.setEnabled(true);
-				                 mViewBinding.ilWLANSelected.acivItemWLANArrow.setEnabled(true);
 				                 hideSelectedWiFi();
 				                 mWLANListAdapter.notifyDataSetChanged();
 				                 SPUtils.getInstance().remove(SPConfig.SP_CURRENT_WIFI_SSID);
