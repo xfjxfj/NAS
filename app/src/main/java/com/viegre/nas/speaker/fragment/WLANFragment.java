@@ -63,7 +63,6 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 	@Override
 	protected void initView() {
 		NetworkUtils.registerNetworkStatusChangedListener(this);
-		initSavedWiFiList();
 		initLoadingAnim();
 		getWiFiStatus();
 		initAdapter();
@@ -124,8 +123,10 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (!mWLANListAdapter.getData().isEmpty()) {
+		initSavedWiFiList();
+		if (null != mWLANListAdapter && !mWLANListAdapter.getData().isEmpty()) {
 			updateWiFiList(mWLANListAdapter.getData());
+			mWLANListAdapter.notifyDataSetChanged();
 		}
 	}
 
