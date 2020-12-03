@@ -10,4 +10,5 @@
 	<color name="wlan_dividing_line">#232325</color>
 	<color name="wlan_password_popup_tip">#A6A6AD</color>
 	<color name="wlan_password_popup_hint">#5F626B</color>
+	<color name="ignore_this_network">#2094FA</color>
 </resources>

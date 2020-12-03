@@ -23,8 +23,8 @@ public class WLANListAdapter extends BaseQuickAdapter<WiFiEntity, BaseViewHolder
 
 	private final WifiManager mWifiManager;
 
-	public WLANListAdapter(int layoutResId) {
-		super(layoutResId);
+	public WLANListAdapter() {
+		super(R.layout.item_wlan_list);
 		mWifiManager = (WifiManager) Utils.getApp().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 		addChildClickViewIds(R.id.acivItemWLANArrow);
 	}

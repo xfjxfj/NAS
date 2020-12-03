@@ -14,4 +14,13 @@
 	<string name="saved">已保存</string>
 	<string name="connection_failed">连接失败</string>
 	<string name="wifi_connection_failed_tip">您的NAS设备网络连接失败，请重新连接</string>
+	<string name="network_detail">网络详情</string>
+	<string name="ignore_this_network">忽略此网络</string>
+	<string name="ignore_network_failed">忽略网络失败</string>
+	<string name="network_info">网络信息</string>
+	<string name="network_status">状态</string>
+	<string name="ip_address">IP地址</string>
+	<string name="subnet_mask">子网掩码</string>
+	<string name="gateway">网关</string>
+	<string name="dns">DNS</string>
 </resources>

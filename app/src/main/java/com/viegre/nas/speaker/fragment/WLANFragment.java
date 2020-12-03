@@ -68,6 +68,7 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 		getWiFiStatus();
 		initAdapter();
 		setWLANSwitch();
+		mViewBinding.ilWLANSelected.acivItemWLANArrow.setOnClickListener(view -> BusUtils.post(BusConfig.BUS_NETWORK_DETAIL, BusConfig.BUS_SHOW_NETWORK_DETAIL));
 		mViewBinding.acivWLANRefresh.setOnClickListener(view -> {
 			mViewBinding.acivWLANRefresh.setClickable(false);
 			scanWiFi();
@@ -112,6 +113,14 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 		}
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (!mWLANListAdapter.getData().isEmpty()) {
+			updateWiFiList(mWLANListAdapter.getData());
+		}
+	}
+
 	public static WLANFragment newInstance(boolean isFirstRun) {
 		WLANFragment wlanFragment = new WLANFragment();
 		Bundle bundle = new Bundle();
@@ -129,7 +138,13 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 			mViewBinding.ilWLANSelected.acivItemWLANStatus.setImageResource(R.mipmap.wifi_connected);
 			WifiManager wifiMgr = (WifiManager) Utils.getApp().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 			WifiInfo info = wifiMgr.getConnectionInfo();
-			String SSID = null != info ? info.getSSID().replace("\"", "") : info.getBSSID();
+			String SSID;
+			if (null != info) {
+				SSID = info.getSSID().replace("\"", "");
+				SPUtils.getInstance().put(SPConfig.SP_CURRENT_WIFI_SSID, SSID);
+			} else {
+				SSID = info.getBSSID();
+			}
 			mViewBinding.ilWLANSelected.actvItemWLANName.setText(SSID);
 		} else {
 			if (!mIsConnecting) {
@@ -142,7 +157,7 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 	 * 初始化适配器
 	 */
 	private void initAdapter() {
-		mWLANListAdapter = new WLANListAdapter(R.layout.item_wlan_list);
+		mWLANListAdapter = new WLANListAdapter();
 		mWLANListAdapter.setOnItemClickListener(this);
 		mWLANListAdapter.setOnItemChildClickListener(this);
 		mViewBinding.rvWLANOtherNetworkList.setLayoutManager(new LinearLayoutManager(mActivity));
@@ -214,7 +229,7 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 	 */
 	private void showSelectedWiFi() {
 		mViewBinding.vWLANLine.setVisibility(View.VISIBLE);
-		mViewBinding.ilWLANSelected.getRoot().setVisibility(View.VISIBLE);
+		mViewBinding.ilWLANSelected.clItemWLANRoot.setVisibility(View.VISIBLE);
 	}
 
 	/**
@@ -222,7 +237,7 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 	 */
 	private void hideSelectedWiFi() {
 		mViewBinding.vWLANLine.setVisibility(View.GONE);
-		mViewBinding.ilWLANSelected.getRoot().setVisibility(View.GONE);
+		mViewBinding.ilWLANSelected.clItemWLANRoot.setVisibility(View.GONE);
 	}
 
 	/**
@@ -236,7 +251,7 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 				for (ScanResult scanResult : scanResults) {
 					wifiList.add(new WiFiEntity(scanResult, ""));
 				}
-				return processWiFiList(wifiList);
+				return updateWiFiList(wifiList);
 			}
 
 			@Override
@@ -249,7 +264,13 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 		})).start();
 	}
 
-	private List<WiFiEntity> processWiFiList(List<WiFiEntity> wifiList) {
+	/**
+	 * 更新WiFi列表
+	 *
+	 * @param wifiList
+	 * @return
+	 */
+	private List<WiFiEntity> updateWiFiList(List<WiFiEntity> wifiList) {
 		List<WiFiEntity> processWiFiList = new ArrayList<>(wifiList);
 		for (WiFiEntity scanResult : processWiFiList) {
 			for (WiFiEntity wifiEntity : mSavedWiFiList) {
@@ -279,6 +300,7 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 	public void getPassword(String password) {
 		mIsConnecting = true;
 		mViewBinding.rvWLANOtherNetworkList.setEnabled(false);
+		mViewBinding.ilWLANSelected.acivItemWLANArrow.setEnabled(false);
 		showSelectedWiFi();
 		mViewBinding.ilWLANSelected.acivItemWLANStatus.setImageResource(R.mipmap.wifi_loading);
 		mViewBinding.ilWLANSelected.acivItemWLANStatus.startAnimation(mWLANLoadingAnimation);
@@ -293,9 +315,11 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 				                 mWifiUtilsBuilder = null;
 				                 saveConnectedWiFi(new WiFiEntity(mWiFiEntity.getScanResult(), password));
 				                 mViewBinding.rvWLANOtherNetworkList.setEnabled(true);
+				                 mViewBinding.ilWLANSelected.acivItemWLANArrow.setEnabled(true);
 				                 mViewBinding.ilWLANSelected.acivItemWLANStatus.clearAnimation();
 				                 mViewBinding.ilWLANSelected.acivItemWLANStatus.setImageResource(R.mipmap.wifi_connected);
 				                 mWLANListAdapter.notifyDataSetChanged();
+				                 SPUtils.getInstance().put(SPConfig.SP_CURRENT_WIFI_SSID, mWiFiEntity.getScanResult().SSID);
 			                 }
 
 			                 @Override
@@ -303,8 +327,10 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 				                 mIsConnecting = false;
 				                 mWifiUtilsBuilder = null;
 				                 mViewBinding.rvWLANOtherNetworkList.setEnabled(true);
+				                 mViewBinding.ilWLANSelected.acivItemWLANArrow.setEnabled(true);
 				                 hideSelectedWiFi();
 				                 mWLANListAdapter.notifyDataSetChanged();
+				                 SPUtils.getInstance().remove(SPConfig.SP_CURRENT_WIFI_SSID);
 				                 new XPopup.Builder(getContext()).hasShadowBg(false)//是否有半透明的背景，默认为true
 				                                                 .hasBlurBg(true)//是否有高斯模糊的背景，默认为false
 				                                                 .dismissOnBackPressed(false)//按返回键是否关闭弹窗，默认为true
@@ -370,7 +396,7 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 		}
 		SPUtils.getInstance().put(SPConfig.SP_SAVED_WIFI, JSON.toJSONString(mSavedWiFiList));
 		if (!mWLANListAdapter.getData().isEmpty()) {
-			processWiFiList(mWLANListAdapter.getData());
+			updateWiFiList(mWLANListAdapter.getData());
 		}
 	}
 }

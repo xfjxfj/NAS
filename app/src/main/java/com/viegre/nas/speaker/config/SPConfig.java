@@ -13,4 +13,7 @@ public class SPConfig {
 
 	//已保存的WiFi
 	public static final String SP_SAVED_WIFI = "sp_saved_wifi";
+
+	//当前连接WiFi的SSID
+	public static final String SP_CURRENT_WIFI_SSID = "sp_current_wifi_ssid";
 }

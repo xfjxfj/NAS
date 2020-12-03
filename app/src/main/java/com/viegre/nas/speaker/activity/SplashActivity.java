@@ -1,13 +1,16 @@
 package com.viegre.nas.speaker.activity;
 
+import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.activity.base.BaseFragmentActivity;
+import com.viegre.nas.speaker.config.BusConfig;
 import com.viegre.nas.speaker.config.SPConfig;
 import com.viegre.nas.speaker.databinding.ActivitySplashBinding;
 import com.viegre.nas.speaker.fragment.WLANFragment;
+import com.viegre.nas.speaker.fragment.base.WLANDetailFragment;
 
 /**
  * 启动页
@@ -16,12 +19,14 @@ import com.viegre.nas.speaker.fragment.WLANFragment;
 public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> {
 
 	private WLANFragment mWLANFragment;
+	private WLANDetailFragment mWLANDetailFragment;
 
 	@Override
 	protected void initView() {
 		//判断是否为开机启动
 //		getBootStatus();
 		mWLANFragment = WLANFragment.newInstance(true);
+		mWLANDetailFragment = WLANDetailFragment.newInstance();
 		FragmentUtils.add(getSupportFragmentManager(), mWLANFragment, R.id.flSplashWLAN);
 		FragmentUtils.show(mWLANFragment);
 	}
@@ -60,6 +65,23 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 
 		} else {//已初始化
 
+		}
+	}
+
+	@BusUtils.Bus(tag = BusConfig.BUS_NETWORK_DETAIL, threadMode = BusUtils.ThreadMode.MAIN)
+	public void networkDetailOperation(String operation) {
+		switch (operation) {
+			case BusConfig.BUS_SHOW_NETWORK_DETAIL:
+				FragmentUtils.add(getSupportFragmentManager(), mWLANDetailFragment, R.id.flSplashWLAN);
+				FragmentUtils.show(mWLANDetailFragment);
+				break;
+
+			case BusConfig.BUS_HIDE_NETWORK_DETAIL:
+				FragmentUtils.remove(mWLANDetailFragment);
+				break;
+
+			default:
+				break;
 		}
 	}
 }

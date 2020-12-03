@@ -1,9 +1,12 @@
 {
   "BusUtilsClass": "com.blankj.utilcode.util.BusUtils",
   "rightBus": {
-    "bus_wlan_password": [
-      "{ desc: com.viegre.nas.speaker.fragment.WLANFragment#getPassword(java.lang.String password), threadMode: MAIN }"
-    ]
+	"bus_open_network_detail": [
+	  "{ desc: com.viegre.nas.speaker.activity.SplashActivity#networkDetailOperation(java.lang.String operation), threadMode: MAIN }"
+	],
+	"bus_wlan_password": [
+	  "{ desc: com.viegre.nas.speaker.fragment.WLANFragment#getPassword(java.lang.String password), threadMode: MAIN }"
+	]
   },
   "wrongBus": {}
 }

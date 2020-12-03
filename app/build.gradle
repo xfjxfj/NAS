@@ -55,8 +55,6 @@ dependencies {
 	implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
 	//https://github.com/iielse/switchbutton
 	implementation 'com.github.iielse:switchbutton:1.0.4'
-	//https://github.com/sunfusheng/MarqueeView
-	implementation 'com.sunfusheng:MarqueeView:1.4.0'
 	//https://github.com/li-xiaojun/XPopup
 	implementation 'com.lxj:xpopup:2.2.5'
 	//https://github.com/yqritc/RecyclerView-FlexibleDivider
