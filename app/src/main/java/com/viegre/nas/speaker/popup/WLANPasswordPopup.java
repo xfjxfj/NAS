@@ -1,9 +1,14 @@
 package com.viegre.nas.speaker.popup;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 
 import com.blankj.utilcode.util.BusUtils;
+import com.blankj.utilcode.util.ResourceUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.lxj.xpopup.core.CenterPopupView;
 import com.viegre.nas.speaker.R;
@@ -35,6 +40,7 @@ public class WLANPasswordPopup extends CenterPopupView {
 		return R.layout.popup_wlan_password;
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	protected void onCreate() {
 		super.onCreate();
@@ -42,6 +48,29 @@ public class WLANPasswordPopup extends CenterPopupView {
 		((AppCompatTextView) findViewById(R.id.actvPopupWLANName)).setText(mSSID);
 		findViewById(R.id.actvPopupWLANConfirm).setOnClickListener(view -> onConfirmClick());
 		findViewById(R.id.actvPopupWLANCancel).setOnClickListener(view -> dismiss());
+		Drawable drawableShow = ResourceUtils.getDrawable(R.mipmap.wifi_password_input_show);
+		drawableShow.setBounds(0, 0, drawableShow.getMinimumWidth(), drawableShow.getMinimumHeight());
+		Drawable drawableHide = ResourceUtils.getDrawable(R.mipmap.wifi_password_input_hide);
+		drawableHide.setBounds(0, 0, drawableHide.getMinimumWidth(), drawableHide.getMinimumHeight());
+		mAcetPopupWLANInput.setCompoundDrawables(null, null, drawableHide, null);
+		mAcetPopupWLANInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		mAcetPopupWLANInput.setOnTouchListener((view, motionEvent) -> {
+			//如果不是按下事件，不再处理
+			if (motionEvent.getAction() != MotionEvent.ACTION_UP) {
+				return false;
+			}
+			Drawable drawable = mAcetPopupWLANInput.getCompoundDrawables()[2];
+			if (motionEvent.getX() > mAcetPopupWLANInput.getWidth() - mAcetPopupWLANInput.getPaddingRight() - drawable.getIntrinsicWidth()) {
+				if (drawableShow == drawable) {
+					mAcetPopupWLANInput.setCompoundDrawables(null, null, drawableHide, null);
+					mAcetPopupWLANInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+				} else {
+					mAcetPopupWLANInput.setCompoundDrawables(null, null, drawableShow, null);
+					mAcetPopupWLANInput.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+				}
+			}
+			return false;
+		});
 	}
 
 	private void onConfirmClick() {
