@@ -35,7 +35,8 @@ import com.viegre.nas.speaker.config.SPConfig;
 import com.viegre.nas.speaker.databinding.FragmentWlanBinding;
 import com.viegre.nas.speaker.entity.WiFiEntity;
 import com.viegre.nas.speaker.fragment.base.BaseFragment;
-import com.viegre.nas.speaker.popup.WLANPasswordPopup;
+import com.viegre.nas.speaker.popup.WiFiConnectionFailedPopup;
+import com.viegre.nas.speaker.popup.WiFiPasswordPopup;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.util.ArrayList;
@@ -91,15 +92,13 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 	public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
 		mWiFiEntity = mWLANListAdapter.getItem(position);
 		if (TextUtils.isEmpty(mWiFiEntity.getPassword())) {
-			new XPopup.Builder(getContext()).hasShadowBg(false)
-			                                .hasBlurBg(true)
-			                                .isDestroyOnDismiss(true)
-			                                .dismissOnBackPressed(false)
-			                                .dismissOnTouchOutside(false)
-			                                .autoOpenSoftInput(false)
-			                                .moveUpToKeyboard(false)
-			                                .hasStatusBar(false)
-			                                .asCustom(new WLANPasswordPopup(mActivity, mWiFiEntity.getScanResult().SSID))
+			new XPopup.Builder(getContext()).hasShadowBg(false)//是否有半透明的背景，默认为true
+			                                .hasBlurBg(true)//是否有高斯模糊的背景，默认为false
+			                                .dismissOnBackPressed(false)//按返回键是否关闭弹窗，默认为true
+			                                .dismissOnTouchOutside(false)//点击外部是否关闭弹窗，默认为true
+			                                .hasStatusBar(false)//是否显示状态栏，默认显示
+			                                .hasNavigationBar(false)//是否显示导航栏，默认显示
+			                                .asCustom(new WiFiPasswordPopup(mActivity, mWiFiEntity.getScanResult().SSID))//设置自定义弹窗
 			                                .show();
 		} else {
 			getPassword(mWiFiEntity.getPassword());
@@ -306,6 +305,14 @@ public class WLANFragment extends BaseFragment<FragmentWlanBinding> implements N
 				                 mViewBinding.rvWLANOtherNetworkList.setEnabled(true);
 				                 hideSelectedWiFi();
 				                 mWLANListAdapter.notifyDataSetChanged();
+				                 new XPopup.Builder(getContext()).hasShadowBg(false)//是否有半透明的背景，默认为true
+				                                                 .hasBlurBg(true)//是否有高斯模糊的背景，默认为false
+				                                                 .dismissOnBackPressed(false)//按返回键是否关闭弹窗，默认为true
+				                                                 .dismissOnTouchOutside(false)//点击外部是否关闭弹窗，默认为true
+				                                                 .hasStatusBar(false)//是否显示状态栏，默认显示
+				                                                 .hasNavigationBar(false)//是否显示导航栏，默认显示
+				                                                 .asCustom(new WiFiConnectionFailedPopup(mActivity))//设置自定义弹窗
+				                                                 .show();
 			                 }
 		                 })
 		                 .start();

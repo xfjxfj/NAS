@@ -21,16 +21,16 @@ import androidx.appcompat.widget.AppCompatTextView;
 /**
  * Created by Djangoogle on 2020/11/30 10:06 with Android Studio.
  */
-public class WLANPasswordPopup extends CenterPopupView {
+public class WiFiPasswordPopup extends CenterPopupView {
 
 	private String mSSID;
 	private AppCompatEditText mAcetPopupWLANInput;
 
-	public WLANPasswordPopup(@NonNull Context context) {
+	public WiFiPasswordPopup(@NonNull Context context) {
 		super(context);
 	}
 
-	public WLANPasswordPopup(@NonNull Context context, String SSID) {
+	public WiFiPasswordPopup(@NonNull Context context, String SSID) {
 		super(context);
 		mSSID = SSID;
 	}
@@ -81,7 +81,7 @@ public class WLANPasswordPopup extends CenterPopupView {
 		}
 
 		if (password.length() < 8) {
-			ToastUtils.showShort(R.string.please_enter_password);
+			ToastUtils.showShort(R.string.password_must_be_greater_than_8_digits);
 			return;
 		}
 
