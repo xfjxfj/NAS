@@ -30,7 +30,6 @@
 		android:layout_marginTop="31dp"
 		android:background="@drawable/settings_dark_bg"
 		android:orientation="vertical"
-		app:layout_constraintBottom_toTopOf="@id/actvWLANNearbyNetwork"
 		app:layout_constraintTop_toBottomOf="@id/actvWLANTitle">
 
 		<RelativeLayout
@@ -74,26 +73,37 @@
 	</androidx.appcompat.widget.LinearLayoutCompat>
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvWLANNearbyNetwork"
+		android:id="@+id/actvWLANOtherNetwork"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginStart="10.5dp"
 		android:layout_marginTop="26dp"
 		android:includeFontPadding="false"
-		android:text="@string/nearby_network"
+		android:text="@string/other_network"
 		android:textColor="@color/wlan_tip"
 		android:textSize="9sp"
 		android:visibility="gone"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/llcWLANHeader" />
 
+	<androidx.appcompat.widget.AppCompatImageView
+		android:id="@+id/acivWLANRefresh"
+		android:layout_width="22dp"
+		android:layout_height="22dp"
+		android:padding="5dp"
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="@id/actvWLANOtherNetwork"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toTopOf="@id/actvWLANOtherNetwork"
+		app:srcCompat="@mipmap/wlan_refresh" />
+
 	<androidx.recyclerview.widget.RecyclerView
-		android:id="@+id/rvWLANList"
+		android:id="@+id/rvWLANOtherNetworkList"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
 		android:layout_marginTop="10dp"
 		android:background="@drawable/settings_dark_bg"
 		android:visibility="gone"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/actvWLANNearbyNetwork" />
+		app:layout_constraintTop_toBottomOf="@id/actvWLANOtherNetwork" />
 </androidx.constraintlayout.widget.ConstraintLayout>

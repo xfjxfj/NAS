@@ -4,11 +4,12 @@
 	<!--网络设置-->
 	<string name="network_settings">网络设置</string>
 	<string name="turn_on_wlan">开启WLAN</string>
-	<string name="low_security">安全性低</string>
-	<string name="nearby_network">附近的网络</string>
+	<string name="my_network">我的网络</string>
+	<string name="other_network">其他网络</string>
 	<string name="password">密码</string>
 	<string name="confirm">确定</string>
 	<string name="cancel">取消</string>
 	<string name="please_enter_password">请输入密码</string>
 	<string name="password_must_be_greater_than_8_digits">密码必须大于8位</string>
+	<string name="saved">已保存</string>
 </resources>
