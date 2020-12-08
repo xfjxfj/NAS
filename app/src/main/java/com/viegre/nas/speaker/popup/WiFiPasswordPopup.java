@@ -13,18 +13,17 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.lxj.xpopup.core.CenterPopupView;
 import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.config.BusConfig;
+import com.viegre.nas.speaker.databinding.PopupWlanPasswordBinding;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatEditText;
-import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * Created by Djangoogle on 2020/11/30 10:06 with Android Studio.
  */
 public class WiFiPasswordPopup extends CenterPopupView {
 
+	private PopupWlanPasswordBinding mPopupWlanPasswordBinding;
 	private String mSSID;
-	private AppCompatEditText mAcetPopupWLANInput;
 
 	public WiFiPasswordPopup(@NonNull Context context) {
 		super(context);
@@ -44,29 +43,29 @@ public class WiFiPasswordPopup extends CenterPopupView {
 	@Override
 	protected void onCreate() {
 		super.onCreate();
-		mAcetPopupWLANInput = findViewById(R.id.acetPopupWLANInput);
-		((AppCompatTextView) findViewById(R.id.actvPopupWLANName)).setText(mSSID);
-		findViewById(R.id.actvPopupWLANConfirm).setOnClickListener(view -> onConfirmClick());
-		findViewById(R.id.actvPopupWLANCancel).setOnClickListener(view -> dismiss());
+		mPopupWlanPasswordBinding = PopupWlanPasswordBinding.bind(getPopupImplView());
+		mPopupWlanPasswordBinding.actvPopupWLANName.setText(mSSID);
+		mPopupWlanPasswordBinding.actvPopupWLANConfirm.setOnClickListener(view -> onConfirmClick());
+		mPopupWlanPasswordBinding.actvPopupWLANCancel.setOnClickListener(view -> dismiss());
 		Drawable drawableShow = ResourceUtils.getDrawable(R.mipmap.wifi_password_input_show);
 		drawableShow.setBounds(0, 0, drawableShow.getMinimumWidth(), drawableShow.getMinimumHeight());
 		Drawable drawableHide = ResourceUtils.getDrawable(R.mipmap.wifi_password_input_hide);
 		drawableHide.setBounds(0, 0, drawableHide.getMinimumWidth(), drawableHide.getMinimumHeight());
-		mAcetPopupWLANInput.setCompoundDrawables(null, null, drawableHide, null);
-		mAcetPopupWLANInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-		mAcetPopupWLANInput.setOnTouchListener((view, motionEvent) -> {
+		mPopupWlanPasswordBinding.acetPopupWLANInput.setCompoundDrawables(null, null, drawableHide, null);
+		mPopupWlanPasswordBinding.acetPopupWLANInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		mPopupWlanPasswordBinding.acetPopupWLANInput.setOnTouchListener((view, motionEvent) -> {
 			//如果不是按下事件，不再处理
 			if (motionEvent.getAction() != MotionEvent.ACTION_UP) {
 				return false;
 			}
-			Drawable drawable = mAcetPopupWLANInput.getCompoundDrawables()[2];
-			if (motionEvent.getX() > mAcetPopupWLANInput.getWidth() - mAcetPopupWLANInput.getPaddingRight() - drawable.getIntrinsicWidth()) {
+			Drawable drawable = mPopupWlanPasswordBinding.acetPopupWLANInput.getCompoundDrawables()[2];
+			if (motionEvent.getX() > mPopupWlanPasswordBinding.acetPopupWLANInput.getWidth() - mPopupWlanPasswordBinding.acetPopupWLANInput.getPaddingRight() - drawable.getIntrinsicWidth()) {
 				if (drawableShow == drawable) {
-					mAcetPopupWLANInput.setCompoundDrawables(null, null, drawableHide, null);
-					mAcetPopupWLANInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+					mPopupWlanPasswordBinding.acetPopupWLANInput.setCompoundDrawables(null, null, drawableHide, null);
+					mPopupWlanPasswordBinding.acetPopupWLANInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 				} else {
-					mAcetPopupWLANInput.setCompoundDrawables(null, null, drawableShow, null);
-					mAcetPopupWLANInput.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+					mPopupWlanPasswordBinding.acetPopupWLANInput.setCompoundDrawables(null, null, drawableShow, null);
+					mPopupWlanPasswordBinding.acetPopupWLANInput.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
 				}
 			}
 			return false;
@@ -74,7 +73,7 @@ public class WiFiPasswordPopup extends CenterPopupView {
 	}
 
 	private void onConfirmClick() {
-		String password = String.valueOf(mAcetPopupWLANInput.getText());
+		String password = String.valueOf(mPopupWlanPasswordBinding.acetPopupWLANInput.getText());
 		if (TextUtils.isEmpty(password)) {
 			ToastUtils.showShort(R.string.please_enter_password);
 			return;

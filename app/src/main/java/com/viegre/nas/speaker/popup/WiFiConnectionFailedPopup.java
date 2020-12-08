@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.lxj.xpopup.core.CenterPopupView;
 import com.viegre.nas.speaker.R;
+import com.viegre.nas.speaker.databinding.PopupWlanConnectionFailedBinding;
 
 import androidx.annotation.NonNull;
 
@@ -24,6 +25,7 @@ public class WiFiConnectionFailedPopup extends CenterPopupView {
 	@Override
 	protected void onCreate() {
 		super.onCreate();
-		findViewById(R.id.actvPopupWLANConnectionFailedConfirm).setOnClickListener(view -> dismiss());
+		PopupWlanConnectionFailedBinding popupWlanConnectionFailedBinding = PopupWlanConnectionFailedBinding.bind(getPopupImplView());
+		popupWlanConnectionFailedBinding.actvPopupWLANConnectionFailedConfirm.setOnClickListener(view -> dismiss());
 	}
 }
