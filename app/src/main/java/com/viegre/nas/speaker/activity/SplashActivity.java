@@ -1,5 +1,6 @@
 package com.viegre.nas.speaker.activity;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.NetworkUtils;
@@ -27,8 +28,9 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 //		getBootStatus();
 		mWLANFragment = WLANFragment.newInstance(true);
 		mWLANDetailFragment = WLANDetailFragment.newInstance();
-		FragmentUtils.add(getSupportFragmentManager(), mWLANFragment, R.id.flSplashWLAN);
-		FragmentUtils.show(mWLANFragment);
+//		FragmentUtils.add(getSupportFragmentManager(), mWLANFragment, R.id.flSplashWLAN);
+//		FragmentUtils.show(mWLANFragment);
+		ActivityUtils.startActivity(MainActivity.class);
 	}
 
 	@Override

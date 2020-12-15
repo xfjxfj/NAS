@@ -7,4 +7,8 @@
 		<item name="android:windowFullscreen">true</item>
 	</style>
 
+	<style name="main_icon">
+		<item name="android:layout_width">124px</item>
+		<item name="android:layout_height">124px</item>
+	</style>
 </resources>

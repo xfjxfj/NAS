@@ -56,7 +56,7 @@ dependencies {
 	//https://github.com/iielse/switchbutton
 	implementation 'com.github.iielse:switchbutton:1.0.4'
 	//https://github.com/li-xiaojun/XPopup
-	implementation 'com.lxj:xpopup:2.2.5'
+	implementation 'com.lxj:xpopup:2.2.8'
 	//https://github.com/yqritc/RecyclerView-FlexibleDivider
 	implementation 'com.yqritc:recyclerview-flexibledivider:1.4.0'
 	//https://github.com/ThanosFisherman/WifiUtils
@@ -65,4 +65,11 @@ dependencies {
 	implementation 'com.thanosfisherman.elvis:elvis:3.0'
 	//https://github.com/alibaba/fastjson
 	implementation 'com.alibaba:fastjson:1.1.72.android'
+	//https://github.com/hdodenhof/CircleImageView
+	implementation 'de.hdodenhof:circleimageview:3.1.0'
+	//https://github.com/youth5201314/banner
+	implementation 'com.youth.banner:banner:2.1.0'
+	//https://github.com/bumptech/glide
+	implementation 'com.github.bumptech.glide:glide:4.11.0'
+	annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 }

@@ -23,4 +23,8 @@
 	<string name="subnet_mask">子网掩码</string>
 	<string name="gateway">网关</string>
 	<string name="dns">DNS</string>
+
+	<!--首页-->
+	<string name="click_to_login">未登录请点击登录</string>
+	<string name="usb_drive_not_connected">未连接存储设备</string>
 </resources>
