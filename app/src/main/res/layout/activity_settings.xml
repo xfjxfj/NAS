@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@android:color/black">
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvSettingsTitle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="40px"
+		android:layout_marginTop="57px"
+		android:includeFontPadding="false"
+		android:text="@string/settings"
+		android:textColor="@color/settings_title"
+		android:textSize="48px"
+		android:textStyle="bold"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<View
+		android:id="@+id/vSettingsLine"
+		android:layout_width="1px"
+		android:layout_height="match_parent"
+		android:layout_marginStart="350px"
+		android:background="@color/wlan_dividing_line"
+		app:layout_constraintStart_toStartOf="parent" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvSettingsCurrentlyLoginAccount"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="40px"
+		android:layout_marginTop="42px"
+		android:includeFontPadding="false"
+		android:text="@string/settings_currently_login_account"
+		android:textColor="@color/wlan_tip"
+		android:textSize="20px"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/actvSettingsTitle" />
+
+	<androidx.appcompat.widget.AppCompatImageView
+		android:id="@+id/acivSettingsAvatar"
+		android:layout_width="72px"
+		android:layout_height="72px"
+		android:layout_marginStart="40px"
+		android:layout_marginTop="28px"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/actvSettingsCurrentlyLoginAccount"
+		app:srcCompat="@mipmap/settings_unlogin" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvSettingsUsername"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="20px"
+		android:ellipsize="end"
+		android:includeFontPadding="false"
+		android:singleLine="true"
+		android:text="Djangoogle"
+		android:textColor="@color/settings_title"
+		android:textSize="24px"
+		app:layout_constraintBottom_toBottomOf="@id/acivSettingsAvatar"
+		app:layout_constraintEnd_toStartOf="@id/acivSettingsLogout"
+		app:layout_constraintStart_toEndOf="@id/acivSettingsAvatar"
+		app:layout_constraintTop_toTopOf="@id/acivSettingsAvatar" />
+
+	<androidx.appcompat.widget.AppCompatImageView
+		android:id="@+id/acivSettingsLogout"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginEnd="30px"
+		android:padding="10px"
+		app:layout_constraintBottom_toBottomOf="@id/acivSettingsAvatar"
+		app:layout_constraintEnd_toStartOf="@id/vSettingsLine"
+		app:layout_constraintTop_toTopOf="@id/acivSettingsAvatar"
+		app:srcCompat="@mipmap/settings_logout" />
+
+	<androidx.recyclerview.widget.RecyclerView
+		android:id="@+id/rvSettingsModule"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="30px"
+		app:layout_constraintEnd_toStartOf="@id/vSettingsLine"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/acivSettingsAvatar" />
+
+	<FrameLayout
+		android:id="@+id/flSettingsFragment"
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toEndOf="@id/vSettingsLine" />
+</androidx.constraintlayout.widget.ConstraintLayout>

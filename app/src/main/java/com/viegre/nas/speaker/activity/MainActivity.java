@@ -29,7 +29,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	protected void initData() {}
 
 	private void initIcon() {
-		Glide.with(this).load(R.mipmap.user_icon_unlogin).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(mViewBinding.acivMainUserIcon);
+		Glide.with(this).load(R.mipmap.main_unlogin).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(mViewBinding.acivMainUserIcon);
 		Glide.with(this).load(R.mipmap.main_icon_image).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconImage);
 		Glide.with(this).load(R.mipmap.main_icon_voice).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconVoice);
 		Glide.with(this).load(R.mipmap.main_icon_video).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconVideo);

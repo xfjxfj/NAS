@@ -19,7 +19,7 @@
 			android:id="@+id/acivMainUserIcon"
 			android:layout_width="48px"
 			android:layout_height="48px"
-			android:src="@mipmap/user_icon_unlogin" />
+			android:src="@mipmap/main_unlogin" />
 
 		<androidx.appcompat.widget.AppCompatTextView
 			android:id="@+id/actvMainUserInfo"

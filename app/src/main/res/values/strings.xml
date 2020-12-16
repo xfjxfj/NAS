@@ -1,6 +1,24 @@
 <resources>
 	<string name="app_name">ViegreSpeaker</string>
 
+	<!--首页-->
+	<string name="click_to_login">未登录请点击登录</string>
+	<string name="usb_drive_not_connected">未连接存储设备</string>
+
+	<!--设置-->
+	<string name="settings">设置</string>
+	<string name="settings_currently_login_account">当前登录账户</string>
+	<string name="settings_my_device">我的设备</string>
+	<string name="settings_network">网络设置</string>
+	<string name="settings_auto_answer">自动接听设置</string>
+	<string name="settings_screen">屏幕</string>
+	<string name="settings_intelligent_voice">智能语音设置</string>
+	<string name="settings_time">时间</string>
+	<string name="settings_sound">声音</string>
+	<string name="settings_protocol">协议</string>
+	<string name="settings_instructions">操作说明</string>
+	<string name="settings_about_viegre">关于巍格</string>
+
 	<!--网络设置-->
 	<string name="network_settings">网络设置</string>
 	<string name="turn_on_wlan">开启WLAN</string>
@@ -24,7 +42,4 @@
 	<string name="gateway">网关</string>
 	<string name="dns">DNS</string>
 
-	<!--首页-->
-	<string name="click_to_login">未登录请点击登录</string>
-	<string name="usb_drive_not_connected">未连接存储设备</string>
 </resources>
