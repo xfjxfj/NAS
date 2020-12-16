@@ -3,18 +3,17 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/clItemWLANRoot"
 	android:layout_width="match_parent"
-	android:layout_height="33.5dp"
-	android:paddingStart="15dp"
-	android:paddingEnd="15dp">
+	android:layout_height="67px"
+	android:paddingStart="30px"
+	android:paddingEnd="30px">
 
 	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/actvItemWLANDetailKey"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginStart="5dp"
 		android:includeFontPadding="false"
 		android:textColor="@color/wlan_name"
-		android:textSize="10sp"
+		android:textSize="20px"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
@@ -25,7 +24,7 @@
 		android:layout_height="wrap_content"
 		android:includeFontPadding="false"
 		android:textColor="@color/wlan_tip"
-		android:textSize="10sp"
+		android:textSize="20px"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />

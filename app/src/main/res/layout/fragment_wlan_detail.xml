@@ -3,18 +3,20 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:background="@android:color/black">
+	android:background="@android:color/black"
+	android:paddingStart="30px"
+	android:paddingEnd="30px">
 
 	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/actvWLANDetailTitle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="39.5dp"
+		android:layout_marginTop="79px"
 		android:includeFontPadding="false"
 		android:maxLength="10"
 		android:text="@string/network_detail"
 		android:textColor="@color/settings_title"
-		android:textSize="12sp"
+		android:textSize="24px"
 		android:textStyle="bold"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toEndOf="@id/actvWLANDetailSSID"
@@ -28,7 +30,7 @@
 		android:includeFontPadding="false"
 		android:singleLine="true"
 		android:textColor="@color/settings_title"
-		android:textSize="12sp"
+		android:textSize="24px"
 		android:textStyle="bold"
 		app:layout_constraintBottom_toBottomOf="@id/actvWLANDetailTitle"
 		app:layout_constraintEnd_toStartOf="@id/actvWLANDetailTitle"
@@ -40,46 +42,39 @@
 		android:id="@+id/llcWLANDetailBack"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginStart="24dp"
+		android:gravity="center_vertical"
 		android:orientation="horizontal"
-		android:paddingTop="5dp"
-		android:paddingBottom="5dp"
 		app:layout_constraintBottom_toBottomOf="@id/actvWLANDetailTitle"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="@id/actvWLANDetailTitle">
 
 		<androidx.appcompat.widget.AppCompatImageView
-			android:layout_width="5dp"
-			android:layout_height="9dp"
-			android:scaleType="fitXY"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
 			app:srcCompat="@mipmap/network_detail_back" />
 
 		<androidx.appcompat.widget.AppCompatTextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginStart="4.5dp"
+			android:layout_marginStart="9px"
 			android:includeFontPadding="false"
 			android:text="@string/network_settings"
 			android:textColor="@android:color/white"
-			android:textSize="8sp" />
+			android:textSize="16px" />
 	</androidx.appcompat.widget.LinearLayoutCompat>
 
 	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/actvWLANDetailIgnore"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="15dp"
-		android:layout_marginTop="31dp"
-		android:layout_marginEnd="15dp"
+		android:layout_height="67px"
+		android:layout_marginTop="62px"
 		android:background="@drawable/settings_dark_bg"
+		android:gravity="center_vertical"
 		android:includeFontPadding="false"
-		android:paddingStart="15.5dp"
-		android:paddingTop="12dp"
-		android:paddingEnd="15.5dp"
-		android:paddingBottom="12dp"
+		android:paddingStart="30px"
 		android:text="@string/ignore_this_network"
 		android:textColor="@color/ignore_this_network"
-		android:textSize="10sp"
+		android:textSize="20px"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/actvWLANDetailTitle" />
@@ -88,12 +83,12 @@
 		android:id="@+id/actvWLANDetailNetworkInfo"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginStart="25.5dp"
-		android:layout_marginTop="26dp"
+		android:layout_marginStart="20px"
+		android:layout_marginTop="52px"
 		android:includeFontPadding="false"
 		android:text="@string/network_info"
 		android:textColor="@color/wlan_tip"
-		android:textSize="9sp"
+		android:textSize="18px"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/actvWLANDetailIgnore" />
 
@@ -101,9 +96,7 @@
 		android:id="@+id/rvWLANDetail"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginStart="15dp"
-		android:layout_marginTop="10dp"
-		android:layout_marginEnd="15dp"
+		android:layout_marginTop="20px"
 		android:background="@drawable/settings_dark_bg"
 		app:layout_constraintTop_toBottomOf="@id/actvWLANDetailNetworkInfo" />
 </androidx.constraintlayout.widget.ConstraintLayout>

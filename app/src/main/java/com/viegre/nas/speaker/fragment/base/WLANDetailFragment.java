@@ -7,7 +7,6 @@ import android.net.wifi.WifiManager;
 import com.alibaba.fastjson.JSON;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ColorUtils;
-import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -85,9 +84,8 @@ public class WLANDetailFragment extends BaseFragment<FragmentWlanDetailBinding> 
 			public void onSuccess(List<String[]> result) {
 				mViewBinding.rvWLANDetail.setLayoutManager(new LinearLayoutManager(mActivity));
 				mViewBinding.rvWLANDetail.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(R.color.wlan_dividing_line))
-				                                                                                                  .size(ConvertUtils.dp2px(0.5F))
-				                                                                                                  .margin(ConvertUtils.dp2px(12.5F),
-				                                                                                                          ConvertUtils.dp2px(12.5F))
+				                                                                                                  .size(1)
+				                                                                                                  .margin(25, 25)
 				                                                                                                  .build());
 				mViewBinding.rvWLANDetail.setAdapter(new WLANDetailListAdapter(result));
 			}

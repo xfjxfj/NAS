@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 
-import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.Utils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
@@ -39,7 +38,7 @@ public class WLANListAdapter extends BaseQuickAdapter<WiFiEntity, BaseViewHolder
 			param.width = 0;
 		} else {
 			param.width = ConstraintLayout.LayoutParams.MATCH_PARENT;
-			param.height = ConvertUtils.dp2px(33.5F);
+			param.height = 67;
 			baseViewHolder.setGone(R.id.clItemWLANRoot, false);
 		}
 		baseViewHolder.setImageResource(R.id.acivItemWLANStatus, R.mipmap.wlan_item_link)

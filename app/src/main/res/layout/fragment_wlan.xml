@@ -4,10 +4,10 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:background="@android:color/black"
-	android:paddingStart="15dp"
-	android:paddingTop="39.5dp"
-	android:paddingEnd="15dp"
-	android:paddingBottom="20dp">
+	android:paddingStart="30px"
+	android:paddingTop="79px"
+	android:paddingEnd="30px"
+	android:paddingBottom="23px">
 
 	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/actvWLANTitle"
@@ -16,7 +16,7 @@
 		android:includeFontPadding="false"
 		android:text="@string/network_settings"
 		android:textColor="@color/settings_title"
-		android:textSize="12sp"
+		android:textSize="24px"
 		android:textStyle="bold"
 		app:layout_constraintBottom_toTopOf="@id/llcWLANHeader"
 		app:layout_constraintEnd_toEndOf="parent"
@@ -27,7 +27,7 @@
 		android:id="@+id/llcWLANHeader"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="31dp"
+		android:layout_marginTop="62px"
 		android:background="@drawable/settings_dark_bg"
 		android:orientation="vertical"
 		app:layout_constraintTop_toBottomOf="@id/actvWLANTitle">
@@ -35,34 +35,34 @@
 		<RelativeLayout
 			android:id="@+id/rlWLANSwitch"
 			android:layout_width="match_parent"
-			android:layout_height="33.5dp">
+			android:layout_height="67px">
 
 			<androidx.appcompat.widget.AppCompatTextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_centerVertical="true"
-				android:layout_marginStart="23dp"
+				android:layout_marginStart="46px"
 				android:includeFontPadding="false"
 				android:text="@string/turn_on_wlan"
 				android:textColor="@color/wlan_name"
-				android:textSize="10sp" />
+				android:textSize="20px" />
 
 			<com.github.iielse.switchbutton.SwitchView
 				android:id="@+id/svWLANSwitch"
-				android:layout_width="24dp"
-				android:layout_height="14dp"
+				android:layout_width="48px"
+				android:layout_height="28px"
 				android:layout_alignParentEnd="true"
 				android:layout_centerVertical="true"
-				android:layout_marginEnd="14dp"
+				android:layout_marginEnd="28px"
 				app:isOpened="false" />
 		</RelativeLayout>
 
 		<View
 			android:id="@+id/vWLANLine"
 			android:layout_width="match_parent"
-			android:layout_height="0.5dp"
-			android:layout_marginStart="20dp"
-			android:layout_marginEnd="12.5dp"
+			android:layout_height="1px"
+			android:layout_marginStart="40px"
+			android:layout_marginEnd="23px"
 			android:background="@color/wlan_dividing_line"
 			android:visibility="gone" />
 
@@ -76,21 +76,21 @@
 		android:id="@+id/actvWLANOtherNetwork"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginStart="10.5dp"
-		android:layout_marginTop="26dp"
+		android:layout_marginStart="20px"
+		android:layout_marginTop="52px"
 		android:includeFontPadding="false"
 		android:text="@string/other_network"
 		android:textColor="@color/wlan_tip"
-		android:textSize="9sp"
+		android:textSize="18px"
 		android:visibility="gone"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/llcWLANHeader" />
 
 	<androidx.appcompat.widget.AppCompatImageView
 		android:id="@+id/acivWLANRefresh"
-		android:layout_width="22dp"
-		android:layout_height="22dp"
-		android:padding="5dp"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="10px"
 		android:visibility="gone"
 		app:layout_constraintBottom_toBottomOf="@id/actvWLANOtherNetwork"
 		app:layout_constraintEnd_toEndOf="parent"
@@ -101,7 +101,7 @@
 		android:id="@+id/rvWLANOtherNetworkList"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_marginTop="10dp"
+		android:layout_marginTop="20px"
 		android:background="@drawable/settings_dark_bg"
 		android:visibility="gone"
 		app:layout_constraintBottom_toBottomOf="parent"
