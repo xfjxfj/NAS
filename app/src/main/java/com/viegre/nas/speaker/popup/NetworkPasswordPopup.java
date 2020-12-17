@@ -44,29 +44,29 @@ public class NetworkPasswordPopup extends CenterPopupView {
 	protected void onCreate() {
 		super.onCreate();
 		mPopupNetworkPasswordBinding = PopupNetworkPasswordBinding.bind(getPopupImplView());
-		mPopupNetworkPasswordBinding.actvPopupNetworkName.setText(mSSID);
-		mPopupNetworkPasswordBinding.actvPopupNetworkConfirm.setOnClickListener(view -> onConfirmClick());
-		mPopupNetworkPasswordBinding.actvPopupNetworkCancel.setOnClickListener(view -> dismiss());
+		mPopupNetworkPasswordBinding.actvPopupNetworkPasswordName.setText(mSSID);
+		mPopupNetworkPasswordBinding.actvPopupNetworkPasswordConfirm.setOnClickListener(view -> onConfirmClick());
+		mPopupNetworkPasswordBinding.actvPopupNetworkPasswordCancel.setOnClickListener(view -> dismiss());
 		Drawable drawableShow = ResourceUtils.getDrawable(R.mipmap.network_wifi_password_input_show);
 		drawableShow.setBounds(0, 0, drawableShow.getMinimumWidth(), drawableShow.getMinimumHeight());
 		Drawable drawableHide = ResourceUtils.getDrawable(R.mipmap.network_wifi_password_input_hide);
 		drawableHide.setBounds(0, 0, drawableHide.getMinimumWidth(), drawableHide.getMinimumHeight());
-		mPopupNetworkPasswordBinding.acetPopupNetworkInput.setCompoundDrawables(null, null, drawableHide, null);
-		mPopupNetworkPasswordBinding.acetPopupNetworkInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-		mPopupNetworkPasswordBinding.acetPopupNetworkInput.setOnTouchListener((view, motionEvent) -> {
+		mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setCompoundDrawables(null, null, drawableHide, null);
+		mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setOnTouchListener((view, motionEvent) -> {
 			//如果不是按下事件，不再处理
 			if (motionEvent.getAction() != MotionEvent.ACTION_UP) {
 				return false;
 			}
-			Drawable drawable = mPopupNetworkPasswordBinding.acetPopupNetworkInput.getCompoundDrawables()[2];
-			if (motionEvent.getX() > mPopupNetworkPasswordBinding.acetPopupNetworkInput.getWidth() - mPopupNetworkPasswordBinding.acetPopupNetworkInput.getPaddingRight() - drawable
+			Drawable drawable = mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.getCompoundDrawables()[2];
+			if (motionEvent.getX() > mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.getWidth() - mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.getPaddingRight() - drawable
 					.getIntrinsicWidth()) {
 				if (drawableShow == drawable) {
-					mPopupNetworkPasswordBinding.acetPopupNetworkInput.setCompoundDrawables(null, null, drawableHide, null);
-					mPopupNetworkPasswordBinding.acetPopupNetworkInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+					mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setCompoundDrawables(null, null, drawableHide, null);
+					mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 				} else {
-					mPopupNetworkPasswordBinding.acetPopupNetworkInput.setCompoundDrawables(null, null, drawableShow, null);
-					mPopupNetworkPasswordBinding.acetPopupNetworkInput.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+					mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setCompoundDrawables(null, null, drawableShow, null);
+					mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
 				}
 			}
 			return false;
@@ -74,7 +74,7 @@ public class NetworkPasswordPopup extends CenterPopupView {
 	}
 
 	private void onConfirmClick() {
-		String password = String.valueOf(mPopupNetworkPasswordBinding.acetPopupNetworkInput.getText());
+		String password = String.valueOf(mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.getText());
 		if (TextUtils.isEmpty(password)) {
 			ToastUtils.showShort(R.string.network_please_enter_password);
 			return;
