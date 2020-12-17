@@ -36,7 +36,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="1px"
 		android:layout_marginStart="75px"
-		android:background="@color/wlan_dividing_line"
+		android:background="@color/dividing_line"
 		android:visibility="gone"
 		app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -44,7 +44,7 @@
 		android:id="@+id/vItemSettingsModuleLine"
 		android:layout_width="match_parent"
 		android:layout_height="1px"
-		android:background="@color/wlan_dividing_line"
+		android:background="@color/dividing_line"
 		android:visibility="gone"
 		app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.appcompat.widget.LinearLayoutCompat>

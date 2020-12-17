@@ -8,7 +8,7 @@
 	android:paddingEnd="30px">
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvWLANDetailTitle"
+		android:id="@+id/actvNetworkDetailTitle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="79px"
@@ -19,11 +19,11 @@
 		android:textSize="24px"
 		android:textStyle="bold"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toEndOf="@id/actvWLANDetailSSID"
+		app:layout_constraintStart_toEndOf="@id/actvNetworkDetailSSID"
 		app:layout_constraintTop_toTopOf="parent" />
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvWLANDetailSSID"
+		android:id="@+id/actvNetworkDetailSSID"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:ellipsize="end"
@@ -32,21 +32,21 @@
 		android:textColor="@color/settings_title"
 		android:textSize="24px"
 		android:textStyle="bold"
-		app:layout_constraintBottom_toBottomOf="@id/actvWLANDetailTitle"
-		app:layout_constraintEnd_toStartOf="@id/actvWLANDetailTitle"
+		app:layout_constraintBottom_toBottomOf="@id/actvNetworkDetailTitle"
+		app:layout_constraintEnd_toStartOf="@id/actvNetworkDetailTitle"
 		app:layout_constraintHorizontal_chainStyle="packed"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="@id/actvWLANDetailTitle" />
+		app:layout_constraintTop_toTopOf="@id/actvNetworkDetailTitle" />
 
 	<androidx.appcompat.widget.LinearLayoutCompat
-		android:id="@+id/llcWLANDetailBack"
+		android:id="@+id/llcNetworkDetailBack"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:gravity="center_vertical"
 		android:orientation="horizontal"
-		app:layout_constraintBottom_toBottomOf="@id/actvWLANDetailTitle"
+		app:layout_constraintBottom_toBottomOf="@id/actvNetworkDetailTitle"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="@id/actvWLANDetailTitle">
+		app:layout_constraintTop_toTopOf="@id/actvNetworkDetailTitle">
 
 		<androidx.appcompat.widget.AppCompatImageView
 			android:layout_width="wrap_content"
@@ -64,7 +64,7 @@
 	</androidx.appcompat.widget.LinearLayoutCompat>
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvWLANDetailIgnore"
+		android:id="@+id/actvNetworkDetailIgnore"
 		android:layout_width="match_parent"
 		android:layout_height="67px"
 		android:layout_marginTop="62px"
@@ -72,32 +72,32 @@
 		android:gravity="center_vertical"
 		android:includeFontPadding="false"
 		android:paddingStart="30px"
-		android:text="@string/ignore_this_network"
+		android:text="@string/network_ignore_this_network"
 		android:textColor="@color/ignore_this_network"
 		android:textSize="20px"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/actvWLANDetailTitle" />
+		app:layout_constraintTop_toBottomOf="@id/actvNetworkDetailTitle" />
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvWLANDetailNetworkInfo"
+		android:id="@+id/actvNetworkDetailNetworkInfo"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginStart="20px"
 		android:layout_marginTop="52px"
 		android:includeFontPadding="false"
 		android:text="@string/network_info"
-		android:textColor="@color/wlan_tip"
+		android:textColor="@color/tip"
 		android:textSize="18px"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/actvWLANDetailIgnore" />
+		app:layout_constraintTop_toBottomOf="@id/actvNetworkDetailIgnore" />
 
 	<androidx.recyclerview.widget.RecyclerView
-		android:id="@+id/rvWLANDetail"
+		android:id="@+id/rvNetworkDetail"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="20px"
 		android:background="@drawable/settings_dark_bg"
 		android:overScrollMode="never"
-		app:layout_constraintTop_toBottomOf="@id/actvWLANDetailNetworkInfo" />
+		app:layout_constraintTop_toBottomOf="@id/actvNetworkDetailNetworkInfo" />
 </androidx.constraintlayout.widget.ConstraintLayout>

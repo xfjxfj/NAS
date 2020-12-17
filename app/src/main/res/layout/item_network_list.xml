@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:id="@+id/clItemWLANRoot"
+	android:id="@+id/clItemNetworkRoot"
 	android:layout_width="match_parent"
 	android:layout_height="67px"
 	android:descendantFocusability="blocksDescendants"
@@ -9,50 +9,50 @@
 	android:paddingEnd="20px">
 
 	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivItemWLANStatus"
+		android:id="@+id/acivItemNetworkStatus"
 		android:layout_width="16px"
 		android:layout_height="16px"
 		android:clickable="false"
 		android:focusable="false"
 		android:scaleType="fitXY"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@id/actvItemWLANName"
+		app:layout_constraintEnd_toStartOf="@id/actvItemNetworkName"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@mipmap/wifi_connected" />
+		app:srcCompat="@mipmap/network_wifi_connected" />
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvItemWLANName"
+		android:id="@+id/actvItemNetworkName"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginStart="11px"
 		android:clickable="false"
 		android:focusable="false"
 		android:includeFontPadding="false"
-		android:textColor="@color/wlan_name"
+		android:textColor="@color/network_name"
 		android:textSize="20px"
-		app:layout_constraintBottom_toTopOf="@id/actvItemWLANTip"
-		app:layout_constraintStart_toEndOf="@id/acivItemWLANStatus"
+		app:layout_constraintBottom_toTopOf="@id/actvItemNetworkTip"
+		app:layout_constraintStart_toEndOf="@id/acivItemNetworkStatus"
 		app:layout_constraintTop_toTopOf="parent" />
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvItemWLANTip"
+		android:id="@+id/actvItemNetworkTip"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="2px"
 		android:clickable="false"
 		android:focusable="false"
 		android:includeFontPadding="false"
-		android:text="@string/saved"
-		android:textColor="@color/wlan_tip"
+		android:text="@string/network_saved"
+		android:textColor="@color/tip"
 		android:textSize="12px"
 		android:visibility="gone"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="@id/actvItemWLANName"
-		app:layout_constraintTop_toBottomOf="@id/actvItemWLANName" />
+		app:layout_constraintStart_toStartOf="@id/actvItemNetworkName"
+		app:layout_constraintTop_toBottomOf="@id/actvItemNetworkName" />
 
 	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivItemWLANArrow"
+		android:id="@+id/acivItemNetworkArrow"
 		android:layout_width="30px"
 		android:layout_height="36px"
 		android:padding="10px"
@@ -60,29 +60,29 @@
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@mipmap/wlan_item_arrow" />
+		app:srcCompat="@mipmap/network_item_arrow" />
 
 	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivItemWLANSignal"
+		android:id="@+id/acivItemNetworkSignal"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginEnd="6px"
 		android:clickable="false"
 		android:focusable="false"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@id/acivItemWLANArrow"
+		app:layout_constraintEnd_toStartOf="@id/acivItemNetworkArrow"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@mipmap/wifi_signal_4" />
+		app:srcCompat="@mipmap/network_wifi_signal_4" />
 
 	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivItemWLANLock"
+		android:id="@+id/acivItemNetworkLock"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginEnd="16px"
 		android:clickable="false"
 		android:focusable="false"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@id/acivItemWLANSignal"
+		app:layout_constraintEnd_toStartOf="@id/acivItemNetworkSignal"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@mipmap/wifi_locked" />
+		app:srcCompat="@mipmap/network_wifi_locked" />
 </androidx.constraintlayout.widget.ConstraintLayout>

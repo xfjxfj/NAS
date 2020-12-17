@@ -27,8 +27,8 @@
 			android:layout_height="wrap_content"
 			android:layout_marginStart="16px"
 			android:includeFontPadding="false"
-			android:text="@string/click_to_login"
-			android:textColor="@color/wlan_tip"
+			android:text="@string/main_click_to_login"
+			android:textColor="@color/tip"
 			android:textSize="18px" />
 	</androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -72,8 +72,8 @@
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8px"
 			android:includeFontPadding="false"
-			android:text="@string/click_to_login"
-			android:textColor="@color/wlan_tip"
+			android:text="@string/main_click_to_login"
+			android:textColor="@color/tip"
 			android:textSize="18px" />
 	</androidx.appcompat.widget.LinearLayoutCompat>
 

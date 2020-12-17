@@ -11,4 +11,14 @@
 		<item name="android:layout_width">124px</item>
 		<item name="android:layout_height">124px</item>
 	</style>
+
+	<style name="settings_fragment_title">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_marginTop">79px</item>
+		<item name="android:includeFontPadding">false</item>
+		<item name="android:textColor">@color/settings_title</item>
+		<item name="android:textSize">24px</item>
+		<item name="android:textStyle">bold</item>
+	</style>
 </resources>

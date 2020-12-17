@@ -1,9 +1,13 @@
 <resources>
 	<string name="app_name">ViegreSpeaker</string>
 
+	<!--通用-->
+	<string name="confirm">确定</string>
+	<string name="cancel">取消</string>
+
 	<!--首页-->
-	<string name="click_to_login">未登录请点击登录</string>
-	<string name="usb_drive_not_connected">未连接存储设备</string>
+	<string name="main_click_to_login">未登录请点击登录</string>
+	<string name="main_usb_drive_not_connected">未连接存储设备</string>
 
 	<!--设置-->
 	<string name="settings">设置</string>
@@ -19,27 +23,29 @@
 	<string name="settings_instructions">操作说明</string>
 	<string name="settings_about_viegre">关于巍格</string>
 
+	<!--我的设备-->
+	<string name="my_device_currently_connected_device">当前连接设备</string>
+	<string name="my_device_currently_used">当前使用：%1$ / %2$</string>
+
 	<!--网络设置-->
 	<string name="network_settings">网络设置</string>
-	<string name="turn_on_wlan">开启WLAN</string>
-	<string name="my_network">我的网络</string>
-	<string name="other_network">其他网络</string>
-	<string name="password">密码</string>
-	<string name="confirm">确定</string>
-	<string name="cancel">取消</string>
-	<string name="please_enter_password">请输入密码</string>
-	<string name="password_must_be_greater_than_8_digits">密码必须大于8位</string>
-	<string name="saved">已保存</string>
-	<string name="connection_failed">连接失败</string>
-	<string name="wifi_connection_failed_tip">您的NAS设备网络连接失败，请重新连接</string>
+	<string name="network_turn_on_wlan">开启WLAN</string>
+	<string name="network_my_network">我的网络</string>
+	<string name="network_other_network">其他网络</string>
+	<string name="network_password">密码</string>
+	<string name="network_please_enter_password">请输入密码</string>
+	<string name="network_password_must_be_greater_than_8_digits">密码必须大于8位</string>
+	<string name="network_saved">已保存</string>
+	<string name="network_connection_failed">连接失败</string>
+	<string name="network_connection_failed_tip">您的NAS设备网络连接失败，请重新连接</string>
 	<string name="network_detail">网络详情</string>
-	<string name="ignore_this_network">忽略此网络</string>
-	<string name="ignore_network_failed">忽略网络失败</string>
+	<string name="network_ignore_this_network">忽略此网络</string>
+	<string name="network_ignore_network_failed">忽略网络失败</string>
 	<string name="network_info">网络信息</string>
 	<string name="network_status">状态</string>
-	<string name="ip_address">IP地址</string>
-	<string name="subnet_mask">子网掩码</string>
-	<string name="gateway">网关</string>
-	<string name="dns">DNS</string>
+	<string name="network_ip_address">IP地址</string>
+	<string name="network_subnet_mask">子网掩码</string>
+	<string name="network_gateway">网关</string>
+	<string name="network_dns">DNS</string>
 
 </resources>

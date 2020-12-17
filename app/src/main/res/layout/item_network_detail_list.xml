@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:id="@+id/clItemWLANRoot"
 	android:layout_width="match_parent"
 	android:layout_height="67px"
 	android:paddingStart="30px"
 	android:paddingEnd="30px">
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvItemWLANDetailKey"
+		android:id="@+id/actvItemNetworkDetailKey"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:includeFontPadding="false"
-		android:textColor="@color/wlan_name"
+		android:textColor="@color/network_name"
 		android:textSize="20px"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvItemWLANDetailValue"
+		android:id="@+id/actvItemNetworkDetailValue"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:includeFontPadding="false"
-		android:textColor="@color/wlan_tip"
+		android:textColor="@color/tip"
 		android:textSize="20px"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"

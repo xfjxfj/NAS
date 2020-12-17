@@ -1,4 +1,4 @@
-package com.viegre.nas.speaker.fragment.base;
+package com.viegre.nas.speaker.fragment;
 
 import android.content.Context;
 import android.net.DhcpInfo;
@@ -17,11 +17,12 @@ import com.thanosfisherman.wifiutils.WifiUtils;
 import com.thanosfisherman.wifiutils.wifiRemove.RemoveErrorCode;
 import com.thanosfisherman.wifiutils.wifiRemove.RemoveSuccessListener;
 import com.viegre.nas.speaker.R;
-import com.viegre.nas.speaker.adapter.WLANDetailListAdapter;
+import com.viegre.nas.speaker.adapter.NetworkDetailListAdapter;
 import com.viegre.nas.speaker.config.BusConfig;
 import com.viegre.nas.speaker.config.SPConfig;
-import com.viegre.nas.speaker.databinding.FragmentWlanDetailBinding;
+import com.viegre.nas.speaker.databinding.FragmentNetworkDetailBinding;
 import com.viegre.nas.speaker.entity.WiFiEntity;
+import com.viegre.nas.speaker.fragment.base.BaseFragment;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.util.ArrayList;
@@ -35,14 +36,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
  * 网络详情
  * Created by Djangoogle on 2020/12/03 15:49 with Android Studio.
  */
-public class WLANDetailFragment extends BaseFragment<FragmentWlanDetailBinding> {
+public class NetworkDetailFragment extends BaseFragment<FragmentNetworkDetailBinding> {
 
 	@Override
 	protected void initView() {
-		mViewBinding.llcWLANDetailBack.setOnClickListener(view -> BusUtils.post(BusConfig.BUS_NETWORK_DETAIL, BusConfig.BUS_HIDE_NETWORK_DETAIL));
+		mViewBinding.llcNetworkDetailBack.setOnClickListener(view -> BusUtils.post(BusConfig.BUS_NETWORK_DETAIL, BusConfig.BUS_HIDE_NETWORK_DETAIL));
 		String SSID = SPUtils.getInstance().getString(SPConfig.SP_CURRENT_WIFI_SSID, "");
-		mViewBinding.actvWLANDetailSSID.setText(SSID);
-		mViewBinding.actvWLANDetailIgnore.setOnClickListener(view -> WifiUtils.withContext(mActivity).remove(SSID, new RemoveSuccessListener() {
+		mViewBinding.actvNetworkDetailSSID.setText(SSID);
+		mViewBinding.actvNetworkDetailIgnore.setOnClickListener(view -> WifiUtils.withContext(mActivity).remove(SSID, new RemoveSuccessListener() {
 			@Override
 			public void success() {
 				removeWiFiFromSPBySSID(SSID);
@@ -51,7 +52,7 @@ public class WLANDetailFragment extends BaseFragment<FragmentWlanDetailBinding> 
 
 			@Override
 			public void failed(@NonNull RemoveErrorCode errorCode) {
-				ToastUtils.showShort(R.string.ignore_network_failed);
+				ToastUtils.showShort(R.string.network_ignore_network_failed);
 			}
 		}));
 	}
@@ -61,8 +62,8 @@ public class WLANDetailFragment extends BaseFragment<FragmentWlanDetailBinding> 
 		initList();
 	}
 
-	public static WLANDetailFragment newInstance() {
-		return new WLANDetailFragment();
+	public static NetworkDetailFragment newInstance() {
+		return new NetworkDetailFragment();
 	}
 
 	private void initList() {
@@ -71,23 +72,23 @@ public class WLANDetailFragment extends BaseFragment<FragmentWlanDetailBinding> 
 			public List<String[]> doInBackground() {
 				List<String[]> networkInfoList = new ArrayList<>();
 				networkInfoList.add(new String[]{StringUtils.getString(R.string.network_status), "已连接"});
-				networkInfoList.add(new String[]{StringUtils.getString(R.string.ip_address), NetworkUtils.getIpAddressByWifi()});
-				networkInfoList.add(new String[]{StringUtils.getString(R.string.subnet_mask), NetworkUtils.getNetMaskByWifi()});
-				networkInfoList.add(new String[]{StringUtils.getString(R.string.gateway), NetworkUtils.getGatewayByWifi()});
+				networkInfoList.add(new String[]{StringUtils.getString(R.string.network_ip_address), NetworkUtils.getIpAddressByWifi()});
+				networkInfoList.add(new String[]{StringUtils.getString(R.string.network_subnet_mask), NetworkUtils.getNetMaskByWifi()});
+				networkInfoList.add(new String[]{StringUtils.getString(R.string.network_gateway), NetworkUtils.getGatewayByWifi()});
 				WifiManager wifiManager = (WifiManager) Utils.getApp().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 				DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
-				networkInfoList.add(new String[]{StringUtils.getString(R.string.dns), dhcpInfo2String(dhcpInfo.dns1)});
+				networkInfoList.add(new String[]{StringUtils.getString(R.string.network_dns), dhcpInfo2String(dhcpInfo.dns1)});
 				return networkInfoList;
 			}
 
 			@Override
 			public void onSuccess(List<String[]> result) {
-				mViewBinding.rvWLANDetail.setLayoutManager(new LinearLayoutManager(mActivity));
-				mViewBinding.rvWLANDetail.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(R.color.wlan_dividing_line))
-				                                                                                                  .size(1)
-				                                                                                                  .margin(25)
-				                                                                                                  .build());
-				mViewBinding.rvWLANDetail.setAdapter(new WLANDetailListAdapter(result));
+				mViewBinding.rvNetworkDetail.setLayoutManager(new LinearLayoutManager(mActivity));
+				mViewBinding.rvNetworkDetail.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(R.color.dividing_line))
+				                                                                                                     .size(1)
+				                                                                                                     .margin(25)
+				                                                                                                     .build());
+				mViewBinding.rvNetworkDetail.setAdapter(new NetworkDetailListAdapter(result));
 			}
 		});
 	}

@@ -12,14 +12,14 @@ import java.util.List;
 /**
  * Created by Djangoogle on 2020/11/27 10:43 with Android Studio.
  */
-public class WLANDetailListAdapter extends BaseQuickAdapter<String[], BaseViewHolder> {
+public class NetworkDetailListAdapter extends BaseQuickAdapter<String[], BaseViewHolder> {
 
-	public WLANDetailListAdapter(@Nullable List<String[]> data) {
-		super(R.layout.item_wlan_detail_list, data);
+	public NetworkDetailListAdapter(@Nullable List<String[]> data) {
+		super(R.layout.item_network_detail_list, data);
 	}
 
 	@Override
 	protected void convert(@NotNull BaseViewHolder baseViewHolder, String[] info) {
-		baseViewHolder.setText(R.id.actvItemWLANDetailKey, info[0]).setText(R.id.actvItemWLANDetailValue, info[1]);
+		baseViewHolder.setText(R.id.actvItemNetworkDetailKey, info[0]).setText(R.id.actvItemNetworkDetailValue, info[1]);
 	}
 }

@@ -6,6 +6,7 @@ import com.viegre.nas.speaker.activity.base.BaseFragmentActivity;
 import com.viegre.nas.speaker.adapter.SettingsModuleAdapter;
 import com.viegre.nas.speaker.databinding.ActivitySettingsBinding;
 import com.viegre.nas.speaker.entity.SettingsModuleEntity;
+import com.viegre.nas.speaker.fragment.MyDeviceFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,8 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
  * Created by Djangoogle on 2020/12/16 15:33 with Android Studio.
  */
 public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBinding> {
+
+	private MyDeviceFragment mMyDeviceFragment;
 
 	@Override
 	protected void initView() {
@@ -58,5 +61,9 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 		if (null != simpleItemAnimator) {
 			simpleItemAnimator.setSupportsChangeAnimations(false);
 		}
+	}
+
+	private void initFragment() {
+		mMyDeviceFragment = MyDeviceFragment.newInstance(false);
 	}
 }

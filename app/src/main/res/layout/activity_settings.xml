@@ -24,7 +24,7 @@
 		android:layout_width="1px"
 		android:layout_height="match_parent"
 		android:layout_marginStart="350px"
-		android:background="@color/wlan_dividing_line"
+		android:background="@color/dividing_line"
 		app:layout_constraintStart_toStartOf="parent" />
 
 	<androidx.appcompat.widget.AppCompatTextView
@@ -35,7 +35,7 @@
 		android:layout_marginTop="42px"
 		android:includeFontPadding="false"
 		android:text="@string/settings_currently_login_account"
-		android:textColor="@color/wlan_tip"
+		android:textColor="@color/tip"
 		android:textSize="20px"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/actvSettingsTitle" />
@@ -95,7 +95,7 @@
 	<View
 		android:layout_width="0dp"
 		android:layout_height="1px"
-		android:background="@color/wlan_dividing_line"
+		android:background="@color/dividing_line"
 		app:layout_constraintEnd_toStartOf="@id/vSettingsLine"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="@id/rvSettingsModule" />
