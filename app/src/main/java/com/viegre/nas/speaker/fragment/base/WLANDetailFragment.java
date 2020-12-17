@@ -85,7 +85,7 @@ public class WLANDetailFragment extends BaseFragment<FragmentWlanDetailBinding> 
 				mViewBinding.rvWLANDetail.setLayoutManager(new LinearLayoutManager(mActivity));
 				mViewBinding.rvWLANDetail.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(R.color.wlan_dividing_line))
 				                                                                                                  .size(1)
-				                                                                                                  .margin(25, 25)
+				                                                                                                  .margin(25)
 				                                                                                                  .build());
 				mViewBinding.rvWLANDetail.setAdapter(new WLANDetailListAdapter(result));
 			}

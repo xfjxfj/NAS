@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<integer-array name="settings_module_icon">
+		<item>@mipmap/settings_my_device</item>
+		<item>@mipmap/settings_network</item>
+		<item>@mipmap/settings_auto_answer</item>
+		<item>@mipmap/settings_screen</item>
+		<item>@mipmap/settings_intelligent_voice</item>
+		<item>@mipmap/settings_time</item>
+		<item>@mipmap/settings_sound</item>
+		<item>@mipmap/settings_protocol</item>
+		<item>@mipmap/settings_instructions</item>
+		<item>@mipmap/settings_about_viegre</item>
+	</integer-array>
+
+	<string-array name="settings_module_name">
+		<item>@string/settings_my_device</item>
+		<item>@string/settings_network</item>
+		<item>@string/settings_auto_answer</item>
+		<item>@string/settings_screen</item>
+		<item>@string/settings_intelligent_voice</item>
+		<item>@string/settings_time</item>
+		<item>@string/settings_sound</item>
+		<item>@string/settings_protocol</item>
+		<item>@string/settings_instructions</item>
+		<item>@string/settings_about_viegre</item>
+	</string-array>
+</resources>

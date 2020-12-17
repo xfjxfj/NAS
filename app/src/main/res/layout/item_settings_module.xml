@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/llcItemSettingsModuleRoot"
+	android:layout_width="match_parent"
+	android:layout_height="67px"
+	android:background="@color/item_settings_module_unselected_bg"
+	android:orientation="vertical">
+
+	<androidx.appcompat.widget.LinearLayoutCompat
+		android:layout_width="match_parent"
+		android:layout_height="66px"
+		android:layout_marginStart="40px"
+		android:gravity="center_vertical"
+		android:orientation="horizontal">
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/acivItemSettingsModuleIcon"
+			android:layout_width="36px"
+			android:layout_height="36px"
+			android:scaleType="fitXY"
+			app:srcCompat="@mipmap/settings_my_device" />
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/actvItemSettingsModuleName"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="24px"
+			android:includeFontPadding="false"
+			android:textColor="@color/settings_title"
+			android:textSize="20px" />
+	</androidx.appcompat.widget.LinearLayoutCompat>
+
+	<View
+		android:id="@+id/vItemSettingsModuleHalfLine"
+		android:layout_width="match_parent"
+		android:layout_height="1px"
+		android:layout_marginStart="75px"
+		android:background="@color/wlan_dividing_line"
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="parent" />
+
+	<View
+		android:id="@+id/vItemSettingsModuleLine"
+		android:layout_width="match_parent"
+		android:layout_height="1px"
+		android:background="@color/wlan_dividing_line"
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.appcompat.widget.LinearLayoutCompat>
