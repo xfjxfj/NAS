@@ -13,19 +13,29 @@
 	<string name="settings">设置</string>
 	<string name="settings_currently_login_account">当前登录账户</string>
 	<string name="settings_my_device">我的设备</string>
+	<string name="settings_my_device_tag">settings_my_device</string>
 	<string name="settings_network">网络设置</string>
+	<string name="settings_network_tag">settings_network</string>
 	<string name="settings_auto_answer">自动接听设置</string>
+	<string name="settings_auto_answer_tag">settings_auto_answer</string>
 	<string name="settings_screen">屏幕</string>
+	<string name="settings_screen_tag">settings_screen</string>
 	<string name="settings_intelligent_voice">智能语音设置</string>
+	<string name="settings_intelligent_voice_tag">settings_intelligent_voice</string>
 	<string name="settings_time">时间</string>
+	<string name="settings_time_tag">settings_time</string>
 	<string name="settings_sound">声音</string>
+	<string name="settings_sound_tag">settings_sound</string>
 	<string name="settings_protocol">协议</string>
+	<string name="settings_protocol_tag">settings_protocol</string>
 	<string name="settings_instructions">操作说明</string>
+	<string name="settings_instructions_tag">settings_instructions</string>
 	<string name="settings_about_viegre">关于巍格</string>
+	<string name="settings_about_viegre_tag">settings_about_viegre</string>
 
 	<!--我的设备-->
 	<string name="my_device_currently_connected_device">当前连接设备</string>
-	<string name="my_device_currently_used">当前使用：%1$ / %2$</string>
+	<string name="my_device_currently_used">当前使用：%1$s / %2$s</string>
 
 	<!--网络设置-->
 	<string name="network_settings">网络设置</string>

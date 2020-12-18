@@ -10,8 +10,8 @@ import com.viegre.nas.speaker.activity.base.BaseFragmentActivity;
 import com.viegre.nas.speaker.config.BusConfig;
 import com.viegre.nas.speaker.config.SPConfig;
 import com.viegre.nas.speaker.databinding.ActivitySplashBinding;
-import com.viegre.nas.speaker.fragment.NetworkDetailFragment;
-import com.viegre.nas.speaker.fragment.NetworkFragment;
+import com.viegre.nas.speaker.fragment.settings.NetworkDetailFragment;
+import com.viegre.nas.speaker.fragment.settings.NetworkFragment;
 
 /**
  * 启动页

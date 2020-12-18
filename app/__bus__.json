@@ -5,7 +5,7 @@
 	  "{ desc: com.viegre.nas.speaker.activity.SplashActivity#networkDetailOperation(java.lang.String operation), threadMode: MAIN }"
 	],
 	"bus_network_password": [
-	  "{ desc: com.viegre.nas.speaker.fragment.NetworkFragment#getPassword(java.lang.String password), threadMode: MAIN }"
+	  "{ desc: com.viegre.nas.speaker.fragment.settings.NetworkFragment#getPassword(java.lang.String password), threadMode: MAIN }"
 	]
   },
   "wrongBus": {}

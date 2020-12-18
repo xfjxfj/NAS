@@ -1,4 +1,4 @@
-package com.viegre.nas.speaker.fragment;
+package com.viegre.nas.speaker.fragment.settings;
 
 import android.content.Context;
 import android.net.DhcpInfo;
