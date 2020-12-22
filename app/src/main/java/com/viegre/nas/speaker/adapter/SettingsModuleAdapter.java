@@ -37,18 +37,18 @@ public class SettingsModuleAdapter extends BaseQuickAdapter<SettingsModuleEntity
 		AppCompatTextView actvItemSettingsModuleName = baseViewHolder.getView(R.id.actvItemSettingsModuleName);
 		actvItemSettingsModuleName.setText(settingsModuleEntity.getName());
 		actvItemSettingsModuleName.getPaint().setFakeBoldText(settingsModuleEntity.isSelected());
-		baseViewHolder.getView(R.id.llcItemSettingsModuleRoot).setOnClickListener(view -> {
-			if (!getData().get(baseViewHolder.getAdapterPosition()).isSelected()) {
-				getData().get(baseViewHolder.getAdapterPosition()).setSelected(true);
-				notifyItemChanged(baseViewHolder.getAdapterPosition());
-			}
-			for (int i = 0; i < getData().size(); i++) {
-				if (i != baseViewHolder.getAdapterPosition() && getData().get(i).isSelected()) {
-					getData().get(i).setSelected(false);
-					notifyItemChanged(i);
-					break;
-				}
-			}
-		});
+//		baseViewHolder.getView(R.id.llcItemSettingsModuleRoot).setOnClickListener(view -> {
+//			if (!getData().get(baseViewHolder.getAdapterPosition()).isSelected()) {
+//				getData().get(baseViewHolder.getAdapterPosition()).setSelected(true);
+//				notifyItemChanged(baseViewHolder.getAdapterPosition());
+//			}
+//			for (int i = 0; i < getData().size(); i++) {
+//				if (i != baseViewHolder.getAdapterPosition() && getData().get(i).isSelected()) {
+//					getData().get(i).setSelected(false);
+//					notifyItemChanged(i);
+//					break;
+//				}
+//			}
+//		});
 	}
 }

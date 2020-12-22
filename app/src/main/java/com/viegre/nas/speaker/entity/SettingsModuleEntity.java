@@ -9,13 +9,11 @@ public class SettingsModuleEntity extends BaseEntity {
 
 	private int resId;
 	private String name;
-	private String tag;
 	private boolean selected = false;
 
-	public SettingsModuleEntity(int resId, String name, String tag) {
+	public SettingsModuleEntity(int resId, String name) {
 		this.resId = resId;
 		this.name = name;
-		this.tag = tag;
 	}
 
 	public int getResId() {
@@ -32,14 +30,6 @@ public class SettingsModuleEntity extends BaseEntity {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getTag() {
-		return tag;
-	}
-
-	public void setTag(String tag) {
-		this.tag = tag;
 	}
 
 	public boolean isSelected() {

@@ -381,7 +381,8 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 			boolean hasWiFi = false;
 			for (int i = 0; i < mSavedWiFiList.size(); i++) {
 				if (mSavedWiFiList.get(i).getScanResult().SSID.equals(wifiEntity.getScanResult().SSID) && mSavedWiFiList.get(i)
-				                                                                                                        .getScanResult().BSSID.equals(wifiEntity.getScanResult().BSSID)) {
+				                                                                                                        .getScanResult().BSSID.equals(
+								wifiEntity.getScanResult().BSSID)) {
 					if (!mSavedWiFiList.get(i).getPassword().equals(wifiEntity.getPassword())) {
 						index = i;
 					}

@@ -1,11 +1,11 @@
 package com.viegre.nas.speaker.activity;
 
 import com.blankj.utilcode.util.FragmentUtils;
-import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.activity.base.BaseFragmentActivity;
 import com.viegre.nas.speaker.adapter.SettingsModuleAdapter;
+import com.viegre.nas.speaker.config.NasConfig;
 import com.viegre.nas.speaker.databinding.ActivitySettingsBinding;
 import com.viegre.nas.speaker.entity.SettingsModuleEntity;
 import com.viegre.nas.speaker.fragment.settings.AboutViegreFragment;
@@ -22,6 +22,7 @@ import com.viegre.nas.speaker.fragment.settings.TimeFragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
@@ -41,6 +42,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	private ProtocolFragment mProtocolFragment;
 	private InstructionsFragment mInstructionsFragment;
 	private AboutViegreFragment mAboutViegreFragment;
+	private final List<Fragment> mFragmentList = new ArrayList<>();
 
 	@Override
 	protected void initView() {
@@ -58,10 +60,9 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 			public List<SettingsModuleEntity> doInBackground() {
 				int[] moduleIconArr = getResources().getIntArray(R.array.settings_module_icon);
 				String[] moduleNameArr = getResources().getStringArray(R.array.settings_module_name);
-				String[] moduleTagArr = getResources().getStringArray(R.array.settings_module_tag);
 				List<SettingsModuleEntity> list = new ArrayList<>();
 				for (int i = 0; i < moduleIconArr.length; i++) {
-					list.add(new SettingsModuleEntity(moduleIconArr[i], moduleNameArr[i], moduleTagArr[i]));
+					list.add(new SettingsModuleEntity(moduleIconArr[i], moduleNameArr[i]));
 				}
 				return list;
 			}
@@ -76,8 +77,20 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 
 	private void initModuleList(List<SettingsModuleEntity> moduleList) {
 		SettingsModuleAdapter settingsModuleAdapter = new SettingsModuleAdapter(moduleList);
-		settingsModuleAdapter.setOnItemClickListener((adapter, view, position) -> FragmentUtils.show(FragmentUtils.findFragment(getSupportFragmentManager(),
-		                                                                                                                        moduleList.get(position).getTag())));
+		settingsModuleAdapter.setOnItemClickListener((adapter, view, position) -> {
+			FragmentUtils.replace(getSupportFragmentManager(), mFragmentList.get(position), R.id.flSettingsFragment);
+			if (!settingsModuleAdapter.getData().get(position).isSelected()) {
+				settingsModuleAdapter.getData().get(position).setSelected(true);
+				settingsModuleAdapter.notifyItemChanged(position);
+			}
+			for (int i = 0; i < settingsModuleAdapter.getData().size(); i++) {
+				if (i != position && settingsModuleAdapter.getData().get(i).isSelected()) {
+					settingsModuleAdapter.getData().get(i).setSelected(false);
+					settingsModuleAdapter.notifyItemChanged(i);
+					break;
+				}
+			}
+		});
 		mViewBinding.rvSettingsModule.setLayoutManager(new LinearLayoutManager(mActivity));
 		mViewBinding.rvSettingsModule.setAdapter(settingsModuleAdapter);
 		SimpleItemAnimator simpleItemAnimator = (SimpleItemAnimator) mViewBinding.rvSettingsModule.getItemAnimator();
@@ -97,20 +110,16 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 		mProtocolFragment = ProtocolFragment.newInstance();
 		mInstructionsFragment = InstructionsFragment.newInstance();
 		mAboutViegreFragment = AboutViegreFragment.newInstance();
-		FragmentUtils.add(getSupportFragmentManager(), mMyDeviceFragment, R.id.flSettingsFragment, StringUtils.getString(R.string.settings_my_device_tag));
-		FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSettingsFragment, StringUtils.getString(R.string.settings_network_tag), true);
-		FragmentUtils.add(getSupportFragmentManager(), mAutoAnswerFragment, R.id.flSettingsFragment, StringUtils.getString(R.string.settings_auto_answer_tag), true);
-		FragmentUtils.add(getSupportFragmentManager(), mScreenFragment, R.id.flSettingsFragment, StringUtils.getString(R.string.settings_screen_tag), true);
-		FragmentUtils.add(getSupportFragmentManager(),
-		                  mIntelligentVoiceFragment,
-		                  R.id.flSettingsFragment,
-		                  StringUtils.getString(R.string.settings_intelligent_voice_tag),
-		                  true);
-		FragmentUtils.add(getSupportFragmentManager(), mTimeFragment, R.id.flSettingsFragment, StringUtils.getString(R.string.settings_time_tag), true);
-		FragmentUtils.add(getSupportFragmentManager(), mSoundFragment, R.id.flSettingsFragment, StringUtils.getString(R.string.settings_sound_tag), true);
-		FragmentUtils.add(getSupportFragmentManager(), mProtocolFragment, R.id.flSettingsFragment, StringUtils.getString(R.string.settings_protocol_tag), true);
-		FragmentUtils.add(getSupportFragmentManager(), mInstructionsFragment, R.id.flSettingsFragment, StringUtils.getString(R.string.settings_instructions_tag), true);
-		FragmentUtils.add(getSupportFragmentManager(), mAboutViegreFragment, R.id.flSettingsFragment, StringUtils.getString(R.string.settings_about_viegre_tag), true);
-		FragmentUtils.show(mMyDeviceFragment);
+		mFragmentList.add(mMyDeviceFragment);
+		mFragmentList.add(mNetworkFragment);
+		mFragmentList.add(mAutoAnswerFragment);
+		mFragmentList.add(mScreenFragment);
+		mFragmentList.add(mIntelligentVoiceFragment);
+		mFragmentList.add(mTimeFragment);
+		mFragmentList.add(mSoundFragment);
+		mFragmentList.add(mProtocolFragment);
+		mFragmentList.add(mInstructionsFragment);
+		mFragmentList.add(mAboutViegreFragment);
+		FragmentUtils.add(getSupportFragmentManager(), mFragmentList, R.id.flSettingsFragment, NasConfig.SETTINGS_MY_DEVICE_INDEX);
 	}
 }

@@ -26,17 +26,4 @@
 		<item>@string/settings_instructions</item>
 		<item>@string/settings_about_viegre</item>
 	</string-array>
-
-	<string-array name="settings_module_tag">
-		<item>@string/settings_my_device_tag</item>
-		<item>@string/settings_network_tag</item>
-		<item>@string/settings_auto_answer_tag</item>
-		<item>@string/settings_screen_tag</item>
-		<item>@string/settings_intelligent_voice_tag</item>
-		<item>@string/settings_time_tag</item>
-		<item>@string/settings_sound_tag</item>
-		<item>@string/settings_protocol_tag</item>
-		<item>@string/settings_instructions_tag</item>
-		<item>@string/settings_about_viegre_tag</item>
-	</string-array>
 </resources>

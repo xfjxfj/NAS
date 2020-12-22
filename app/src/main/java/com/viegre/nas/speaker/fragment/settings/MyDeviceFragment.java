@@ -44,7 +44,9 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 		double totalSizeD = ConvertUtils.byte2MemorySize(totalSizeL, MemoryConstants.MB);
 		double availableSizeD = ConvertUtils.byte2MemorySize(availableSizeL, MemoryConstants.MB);
 		double usedSize = totalSizeD - availableSizeD;
-		mViewBinding.actvMyDeviceCurrentlyUsed.setText(String.format(getResources().getString(R.string.my_device_currently_used), usedSizeS, totalSizeStr));
+		mViewBinding.actvMyDeviceCurrentlyUsed.setText(String.format(getResources().getString(R.string.my_device_currently_used),
+		                                                             usedSizeS,
+		                                                             totalSizeStr));
 		mViewBinding.mpbMyDeviceProgress.setMax((int) totalSizeD);
 		mViewBinding.mpbMyDeviceProgress.setProgress((int) usedSize);
 	}

@@ -59,8 +59,8 @@ public class NetworkPasswordPopup extends CenterPopupView {
 				return false;
 			}
 			Drawable drawable = mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.getCompoundDrawables()[2];
-			if (motionEvent.getX() > mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.getWidth() - mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.getPaddingRight() - drawable
-					.getIntrinsicWidth()) {
+			if (motionEvent.getX() > mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.getWidth() - mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput
+					.getPaddingRight() - drawable.getIntrinsicWidth()) {
 				if (drawableShow == drawable) {
 					mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setCompoundDrawables(null, null, drawableHide, null);
 					mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
