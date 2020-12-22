@@ -9,6 +9,8 @@ import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.databinding.FragmentMyDeviceBinding;
 import com.viegre.nas.speaker.fragment.base.BaseFragment;
 
+import androidx.core.content.ContextCompat;
+
 /**
  * 我的设备
  * Created by Djangoogle on 2020/12/17 11:21 with Android Studio.
@@ -47,6 +49,7 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 		mViewBinding.actvMyDeviceCurrentlyUsed.setText(String.format(getResources().getString(R.string.my_device_currently_used),
 		                                                             usedSizeS,
 		                                                             totalSizeStr));
+		mViewBinding.mpbMyDeviceProgress.setProgressDrawable(ContextCompat.getDrawable(mContext, R.drawable.my_device_progress_bar));
 		mViewBinding.mpbMyDeviceProgress.setMax((int) totalSizeD);
 		mViewBinding.mpbMyDeviceProgress.setProgress((int) usedSize);
 	}
