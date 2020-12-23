@@ -24,7 +24,7 @@
 		android:layout_width="1px"
 		android:layout_height="match_parent"
 		android:layout_marginStart="350px"
-		android:background="@color/dividing_line"
+		android:background="@color/divider_line"
 		app:layout_constraintStart_toStartOf="parent" />
 
 	<androidx.appcompat.widget.AppCompatTextView
@@ -78,27 +78,40 @@
 		app:layout_constraintTop_toTopOf="@id/acivSettingsAvatar"
 		app:srcCompat="@mipmap/settings_logout" />
 
-	<androidx.recyclerview.widget.RecyclerView
-		android:id="@+id/rvSettingsModule"
+	<q.rorbin.verticaltablayout.VerticalTabLayout
+		android:id="@+id/vtlSettingsMenu"
 		android:layout_width="0dp"
 		android:layout_height="0dp"
 		android:layout_marginTop="30px"
-		android:background="@color/item_settings_module_unselected_bg"
+		android:background="@color/settings_menu_unselected_bg"
 		android:clipToPadding="false"
+		android:orientation="vertical"
 		android:overScrollMode="never"
-		android:paddingBottom="40px"
+		android:scrollbars="none"
+		app:indicator_color="@color/settings_menu_selected_bg"
+		app:indicator_gravity="fill"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@id/vSettingsLine"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/acivSettingsAvatar" />
+		app:layout_constraintTop_toBottomOf="@id/acivSettingsAvatar"
+		app:tab_height="67px"
+		app:tab_mode="scrollable" />
 
 	<View
 		android:layout_width="0dp"
 		android:layout_height="1px"
-		android:background="@color/dividing_line"
+		android:background="@color/divider_line"
 		app:layout_constraintEnd_toStartOf="@id/vSettingsLine"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="@id/rvSettingsModule" />
+		app:layout_constraintTop_toTopOf="@id/vtlSettingsMenu" />
+
+	<View
+		android:layout_width="0dp"
+		android:layout_height="1px"
+		android:background="@color/divider_line"
+		app:layout_constraintBottom_toBottomOf="@id/vtlSettingsMenu"
+		app:layout_constraintEnd_toStartOf="@id/vSettingsLine"
+		app:layout_constraintStart_toStartOf="parent" />
 
 	<FrameLayout
 		android:id="@+id/flSettingsFragment"

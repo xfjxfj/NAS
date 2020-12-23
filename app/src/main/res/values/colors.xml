@@ -2,17 +2,17 @@
 <resources>
 	<color name="colorPrimary">#000000</color>
 	<color name="colorPrimaryDark">#2B2B2B</color>
-	<color name="colorAccent">#FFFFFF</color>
+	<color name="vertical_tablayout_indicator">#FFFFFF</color>
 
 	<color name="settings_title">#FEFEFE</color>
 	<color name="network_name">#E5E5EB</color>
 	<color name="tip">#5C5F68</color>
-	<color name="dividing_line">#232325</color>
+	<color name="divider_line">#232325</color>
 	<color name="network_password_popup_tip">#A6A6AD</color>
 	<color name="network_password_popup_hint">#5F626B</color>
 	<color name="ignore_this_network">#2094FA</color>
 	<color name="unread_point">#F81435</color>
-	<color name="item_settings_module_unselected_bg">#151517</color>
-	<color name="item_settings_module_selected_bg">#3561F6</color>
+	<color name="settings_menu_unselected_bg">#151517</color>
+	<color name="settings_menu_selected_bg">#3561F6</color>
 	<color name="my_device_progress_bar_bg">#29292E</color>
 </resources>

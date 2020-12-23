@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<integer-array name="settings_module_icon">
+	<integer-array name="settings_menu_icon">
 		<item>@mipmap/settings_my_device</item>
 		<item>@mipmap/settings_network</item>
 		<item>@mipmap/settings_auto_answer</item>
@@ -14,7 +14,7 @@
 		<item>@mipmap/settings_about_viegre</item>
 	</integer-array>
 
-	<string-array name="settings_module_name">
+	<string-array name="settings_menu_name">
 		<item>@string/settings_my_device</item>
 		<item>@string/settings_network</item>
 		<item>@string/settings_auto_answer</item>

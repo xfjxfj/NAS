@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:id="@+id/llcItemSettingsModuleRoot"
+	android:id="@+id/llcItemSettingsMenuRoot"
 	android:layout_width="match_parent"
 	android:layout_height="67px"
-	android:background="@color/item_settings_module_unselected_bg"
+	android:background="@color/settings_menu_unselected_bg"
 	android:orientation="vertical">
 
 	<androidx.appcompat.widget.LinearLayoutCompat
@@ -15,14 +15,14 @@
 		android:orientation="horizontal">
 
 		<androidx.appcompat.widget.AppCompatImageView
-			android:id="@+id/acivItemSettingsModuleIcon"
+			android:id="@+id/acivItemSettingsMenuIcon"
 			android:layout_width="36px"
 			android:layout_height="36px"
 			android:scaleType="fitXY"
 			app:srcCompat="@mipmap/settings_my_device" />
 
 		<androidx.appcompat.widget.AppCompatTextView
-			android:id="@+id/actvItemSettingsModuleName"
+			android:id="@+id/actvItemSettingsMenuName"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="24px"
@@ -32,19 +32,19 @@
 	</androidx.appcompat.widget.LinearLayoutCompat>
 
 	<View
-		android:id="@+id/vItemSettingsModuleHalfLine"
+		android:id="@+id/vItemSettingsMenuHalfLine"
 		android:layout_width="match_parent"
 		android:layout_height="1px"
 		android:layout_marginStart="75px"
-		android:background="@color/dividing_line"
+		android:background="@color/divider_line"
 		android:visibility="gone"
 		app:layout_constraintBottom_toBottomOf="parent" />
 
 	<View
-		android:id="@+id/vItemSettingsModuleLine"
+		android:id="@+id/vItemSettingsMenuLine"
 		android:layout_width="match_parent"
 		android:layout_height="1px"
-		android:background="@color/dividing_line"
+		android:background="@color/divider_line"
 		android:visibility="gone"
 		app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.appcompat.widget.LinearLayoutCompat>

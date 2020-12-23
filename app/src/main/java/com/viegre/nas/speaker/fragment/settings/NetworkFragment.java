@@ -170,7 +170,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 		mNetworkListAdapter.setOnItemClickListener(this);
 		mNetworkListAdapter.setOnItemChildClickListener(this);
 		mViewBinding.rvNetworkOtherNetworkList.setLayoutManager(new LinearLayoutManager(mActivity));
-		mViewBinding.rvNetworkOtherNetworkList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(R.color.dividing_line))
+		mViewBinding.rvNetworkOtherNetworkList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(R.color.divider_line))
 		                                                                                                               .size(1)
 		                                                                                                               .margin(40, 25)
 		                                                                                                               .build());

@@ -84,7 +84,7 @@ public class NetworkDetailFragment extends BaseFragment<FragmentNetworkDetailBin
 			@Override
 			public void onSuccess(List<String[]> result) {
 				mViewBinding.rvNetworkDetail.setLayoutManager(new LinearLayoutManager(mActivity));
-				mViewBinding.rvNetworkDetail.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(R.color.dividing_line))
+				mViewBinding.rvNetworkDetail.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(R.color.divider_line))
 				                                                                                                     .size(1)
 				                                                                                                     .margin(25)
 				                                                                                                     .build());
