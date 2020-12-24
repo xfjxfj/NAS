@@ -30,16 +30,46 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	protected void initData() {}
 
 	private void initIcon() {
-		Glide.with(this).load(R.mipmap.main_unlogin).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(mViewBinding.acivMainUserIcon);
-		Glide.with(this).load(R.mipmap.main_icon_image).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconImage);
-		Glide.with(this).load(R.mipmap.main_icon_voice).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconVoice);
-		Glide.with(this).load(R.mipmap.main_icon_video).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconVideo);
-		Glide.with(this).load(R.mipmap.test_icon_3).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon3);
-		Glide.with(this).load(R.mipmap.test_icon_4).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon4);
-		Glide.with(this).load(R.mipmap.test_icon_5).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon5);
-		Glide.with(this).load(R.mipmap.test_icon_6).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon6);
-		Glide.with(this).load(R.mipmap.test_icon_7).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon7);
-		Glide.with(this).load(R.mipmap.test_icon_8).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon8);
+		Glide.with(this)
+		     .load(R.mipmap.main_unlogin)
+		     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+		     .into(mViewBinding.acivMainUserIcon);
+		Glide.with(this)
+		     .load(R.mipmap.main_icon_image)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIconImage);
+		Glide.with(this)
+		     .load(R.mipmap.main_icon_voice)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIconVoice);
+		Glide.with(this)
+		     .load(R.mipmap.main_icon_video)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIconVideo);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_3)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon3);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_4)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon4);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_5)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon5);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_6)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon6);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_7)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon7);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_8)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon8);
 		mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(SettingsActivity.class));
 	}
 
