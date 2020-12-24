@@ -53,7 +53,8 @@ public class QTabView extends TabView {
 		if (mTitle == null) {
 			mTitle = new TextView(mContext);
 			LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-			params.gravity = Gravity.CENTER;
+			params.gravity = Gravity.START | Gravity.CENTER_VERTICAL;
+			params.leftMargin = 40;
 			mTitle.setLayoutParams(params);
 			this.addView(mTitle);
 		}
@@ -119,7 +120,7 @@ public class QTabView extends TabView {
 		mTitle.setTextColor(isChecked() ? mTabTitle.getColorSelected() : mTabTitle.getColorNormal());
 		mTitle.setTextSize(mTabTitle.getTitleTextSize());
 		mTitle.setText(mTabTitle.getContent());
-		mTitle.setGravity(Gravity.CENTER);
+		mTitle.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
 		mTitle.setEllipsize(TextUtils.TruncateAt.END);
 		refreshDrawablePadding();
 	}
