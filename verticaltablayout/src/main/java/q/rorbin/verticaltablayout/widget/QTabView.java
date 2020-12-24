@@ -1,18 +1,19 @@
 package q.rorbin.verticaltablayout.widget;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Px;
 import androidx.core.content.ContextCompat;
 import q.rorbin.badgeview.Badge;
+import q.rorbin.badgeview.DisplayUtil;
+import q.rorbin.verticaltablayout.R;
 
 /**
  * @author chqiu
@@ -27,7 +28,7 @@ public class QTabView extends TabView {
 	private TabTitle mTabTitle;
 	private TabBadge mTabBadge;
 	private boolean mChecked;
-	private final Drawable mDefaultBackground;
+//	private final Drawable mDefaultBackground;
 
 	public QTabView(Context context) {
 		super(context);
@@ -36,28 +37,35 @@ public class QTabView extends TabView {
 		mTabTitle = new TabTitle.Builder().build();
 		mTabBadge = new TabBadge.Builder().build();
 		initView();
-		int[] attrs;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
-		} else {
-			attrs = new int[]{android.R.attr.selectableItemBackground};
-		}
-		TypedArray a = mContext.getTheme().obtainStyledAttributes(attrs);
-		mDefaultBackground = a.getDrawable(0);
-		a.recycle();
+//		int[] attrs;
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//			attrs = new int[]{android.R.attr.selectableItemBackgroundBorderless};
+//		} else {
+//			attrs = new int[]{android.R.attr.selectableItemBackground};
+//		}
+//		TypedArray a = mContext.getTheme().obtainStyledAttributes(attrs);
+//		mDefaultBackground = a.getDrawable(0);
+//		a.recycle();
 		setDefaultBackground();
 	}
 
 	private void initView() {
-		setMinimumHeight(q.rorbin.badgeview.DisplayUtil.dp2px(mContext, 25));
+		setMinimumHeight(DisplayUtil.dp2px(mContext, 25));
 		if (mTitle == null) {
 			mTitle = new TextView(mContext);
 			LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
 			params.gravity = Gravity.START | Gravity.CENTER_VERTICAL;
 			params.leftMargin = 40;
 			mTitle.setLayoutParams(params);
-			this.addView(mTitle);
+			addView(mTitle);
 		}
+		View divider = new View(mContext);
+		LayoutParams lineLayoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, 1);
+		lineLayoutParams.gravity = Gravity.BOTTOM;
+		lineLayoutParams.leftMargin = 75;
+		divider.setLayoutParams(lineLayoutParams);
+		divider.setBackgroundResource(R.color.divider);
+		addView(divider);
 		initTitleView();
 		initIconView();
 		initBadge();
@@ -249,9 +257,10 @@ public class QTabView extends TabView {
 	}
 
 	private void setDefaultBackground() {
-		if (getBackground() != mDefaultBackground) {
-			setBackground(mDefaultBackground);
-		}
+		setBackgroundResource(R.color.unselected_bg);
+//		if (getBackground() != mDefaultBackground) {
+//			setBackground(mDefaultBackground);
+//		}
 	}
 
 	@Override
@@ -260,6 +269,8 @@ public class QTabView extends TabView {
 		setSelected(checked);
 		refreshDrawableState();
 		mTitle.setTextColor(checked ? mTabTitle.getColorSelected() : mTabTitle.getColorNormal());
+		mTitle.getPaint().setFakeBoldText(checked);
+		setBackgroundResource(checked ? R.color.selected_bg : R.color.unselected_bg);
 		initIconView();
 	}
 

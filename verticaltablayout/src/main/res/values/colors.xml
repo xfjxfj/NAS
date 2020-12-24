@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<color name="vertical_tablayout_indicator">#FF4081</color>
+	<color name="divider">#232325</color>
+	<color name="unselected_bg">#151517</color>
+	<color name="selected_bg">#3561F6</color>
 </resources>
