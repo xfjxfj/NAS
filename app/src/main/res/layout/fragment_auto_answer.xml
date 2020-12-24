@@ -6,10 +6,22 @@
 	android:background="@android:color/black">
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvMyDeviceTitle"
+		android:id="@+id/actvAutoAnswerTitle"
 		style="@style/settings_fragment_title"
 		android:text="@string/settings_auto_answer"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:layout_constraintTop_toBottomOf="@id/actvAutoAnswerTitle">
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			app:srcCompat="@mipmap/test_settings_auto_answer" />
+	</ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

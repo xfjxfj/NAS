@@ -6,10 +6,19 @@
 	android:background="@android:color/black">
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvMyDeviceTitle"
+		android:id="@+id/actvIntelligentVoiceTitle"
 		style="@style/settings_fragment_title"
 		android:text="@string/settings_intelligent_voice"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
+
+	<androidx.appcompat.widget.AppCompatImageView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/actvIntelligentVoiceTitle"
+		app:srcCompat="@mipmap/test_settings_intelligent_voice" />
 </androidx.constraintlayout.widget.ConstraintLayout>

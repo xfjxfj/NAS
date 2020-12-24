@@ -1,5 +1,7 @@
 package com.viegre.nas.speaker.activity;
 
+import androidx.fragment.app.Fragment;
+
 import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.activity.base.BaseFragmentActivity;
 import com.viegre.nas.speaker.adapter.SettingsMenuAdapter;
@@ -17,8 +19,6 @@ import com.viegre.nas.speaker.fragment.settings.TimeFragment;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.fragment.app.Fragment;
 
 /**
  * 设置页
@@ -42,6 +42,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	protected void initView() {
 		initFragment();
 		initMenuList();
+		mViewBinding.acivSettingsHome.setOnClickListener(view -> finish());
 	}
 
 	@Override
@@ -53,7 +54,10 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 //		linearLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
 //		linearLayout.setDividerDrawable(ContextCompat.getDrawable(this, R.drawable.settings_menu_divider)); //设置分割线的样式
 //		linearLayout.setDividerPadding(66); //设置分割线间隔
-		mViewBinding.vtlSettingsMenu.setupWithFragment(getSupportFragmentManager(), R.id.flSettingsFragment, mFragmentList, new SettingsMenuAdapter(this));
+		mViewBinding.vtlSettingsMenu.setupWithFragment(getSupportFragmentManager(),
+		                                               R.id.flSettingsFragment,
+		                                               mFragmentList,
+		                                               new SettingsMenuAdapter(this));
 	}
 
 	private void initFragment() {

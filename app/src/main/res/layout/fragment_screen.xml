@@ -6,10 +6,22 @@
 	android:background="@android:color/black">
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvMyDeviceTitle"
+		android:id="@+id/actvScreenTitle"
 		style="@style/settings_fragment_title"
 		android:text="@string/settings_screen"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:layout_constraintTop_toBottomOf="@id/actvScreenTitle">
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			app:srcCompat="@mipmap/test_settings_screen" />
+	</ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
