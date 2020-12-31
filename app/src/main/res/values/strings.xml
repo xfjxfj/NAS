@@ -5,6 +5,17 @@
 	<string name="confirm">确定</string>
 	<string name="cancel">取消</string>
 
+	<!--登录-->
+	<string name="login_scan">扫码登录</string>
+	<string name="login_account">账号密码登录</string>
+	<string name="login_phone_code">手机验证码登录</string>
+	<string name="login_tip">打开巍格智能NAS App - 首页右上角“扫一扫” - 扫码登录</string>
+	<string name="login_enter_phone">请输入手机号码</string>
+	<string name="login_enter_password">请输入密码</string>
+	<string name="login_enter_code">请输入验证码</string>
+	<string name="login_get_code">获取验证码</string>
+	<string name="login">登录</string>
+
 	<!--首页-->
 	<string name="main_click_to_login">未登录请点击登录</string>
 	<string name="main_usb_drive_not_connected">未连接存储设备</string>

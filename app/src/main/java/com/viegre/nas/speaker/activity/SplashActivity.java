@@ -30,7 +30,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		mNetworkDetailFragment = NetworkDetailFragment.newInstance();
 //		FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
 //		FragmentUtils.show(mNetworkFragment);
-		ActivityUtils.startActivity(MainActivity.class);
+		ActivityUtils.startActivity(LoginActivity.class);
 	}
 
 	@Override

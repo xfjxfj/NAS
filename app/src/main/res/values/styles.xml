@@ -21,4 +21,42 @@
 		<item name="android:textSize">24px</item>
 		<item name="android:textStyle">bold</item>
 	</style>
+
+	<style name="login_tab_text">
+		<item name="android:layout_width">255px</item>
+		<item name="android:layout_height">80px</item>
+		<item name="android:gravity">center</item>
+		<item name="android:includeFontPadding">false</item>
+		<item name="android:textColor">@color/network_password_popup_hint</item>
+		<item name="android:textSize">30px</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<style name="login_input_edit_text">
+		<item name="android:layout_width">508px</item>
+		<item name="android:layout_height">88px</item>
+		<item name="android:gravity">center_vertical</item>
+		<item name="android:includeFontPadding">false</item>
+		<item name="android:textColor">@android:color/white</item>
+		<item name="android:textSize">32px</item>
+		<item name="android:paddingStart">47px</item>
+		<item name="android:paddingEnd">47px</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:textColorHint">@color/network_password_popup_hint</item>
+		<item name="android:background">@drawable/login_input_bg</item>
+	</style>
+
+	<style name="login_btn">
+		<item name="android:layout_width">140px</item>
+		<item name="android:layout_height">140px</item>
+		<item name="android:layout_marginEnd">60px</item>
+		<item name="android:layout_marginBottom">72px</item>
+		<item name="android:background">@drawable/login_btn</item>
+		<item name="android:gravity">center</item>
+		<item name="android:includeFontPadding">false</item>
+		<item name="android:text">@string/login</item>
+		<item name="android:textColor">@color/settings_title</item>
+		<item name="android:textSize">36px</item>
+		<item name="android:textStyle">bold</item>
+	</style>
 </resources>
