@@ -42,15 +42,23 @@ android {
 	buildFeatures {
 		viewBinding = true
 	}
+
+	applicationVariants.all { variant ->
+		variant.outputs.all { output ->
+			def outputFile = output.outputFile
+			if (null != outputFile && outputFile.name.endsWith('.apk')) {
+				output.outputFileName = "ViegreSpeaker_${variant.versionName}.apk"
+			}
+		}
+	}
 }
 
 dependencies {
 	implementation fileTree(dir: "libs", include: ["*.jar"])
 	//https://github.com/qstumn/VerticalTabLayout
 	implementation project(':verticaltablayout')
-//	implementation 'q.rorbin:VerticalTabLayout:1.2.5'
 	//https://maven.google.com/web/index.html
-	implementation 'com.google.android.material:material:1.3.0-alpha04'
+	implementation 'com.google.android.material:material:1.3.0-beta01'
 	implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 	implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 	//https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README-CN.md
