@@ -16,7 +16,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 
 	@Override
 	protected void initView() {
-		initTab();
+		mViewBinding.acivLoginAccountCode.setTag(false);
+		initListener();
 	}
 
 	@Override
@@ -29,17 +30,17 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		ThreadUtils.cancel(ThreadUtils.getSinglePool());
 	}
 
-	private void initTab() {
-		mViewBinding.acivLoginAccountCode.setTag(false);
+	private void initListener() {
 		mViewBinding.actvLoginTabScan.setOnClickListener(this);
 		mViewBinding.actvLoginTabAccount.setOnClickListener(this);
 		mViewBinding.actvLoginTabPhoneCode.setOnClickListener(this);
 		mViewBinding.acivLoginAccountCode.setOnClickListener(this);
+		mViewBinding.acivLoginExit.setOnClickListener(this);
 	}
 
 	@Override
 	public void onClick(View view) {
-		if (R.id.actvLoginTabScan == view.getId()) {
+		if (R.id.actvLoginTabScan == view.getId()) {//点击扫码登录标签
 			mViewBinding.actvLoginTabScan.setTextColor(Color.WHITE);
 			mViewBinding.actvLoginTabScan.setBackgroundResource(R.drawable.login_tab_bg);
 			mViewBinding.clLoginScan.setVisibility(View.VISIBLE);
@@ -49,7 +50,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 			mViewBinding.actvLoginTabPhoneCode.setTextColor(ColorUtils.getColor(R.color.network_password_popup_hint));
 			mViewBinding.actvLoginTabPhoneCode.setBackgroundResource(0);
 			mViewBinding.clLoginPhoneCode.setVisibility(View.GONE);
-		} else if (R.id.actvLoginTabAccount == view.getId()) {
+		} else if (R.id.actvLoginTabAccount == view.getId()) {//点击账号密码登录标签
 			//如果没有加载验证码则请求获取
 			if (!(Boolean) mViewBinding.acivLoginAccountCode.getTag()) {
 				getCodeImage();
@@ -63,7 +64,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 			mViewBinding.actvLoginTabPhoneCode.setTextColor(ColorUtils.getColor(R.color.network_password_popup_hint));
 			mViewBinding.actvLoginTabPhoneCode.setBackgroundResource(0);
 			mViewBinding.clLoginPhoneCode.setVisibility(View.GONE);
-		} else if (R.id.actvLoginTabPhoneCode == view.getId()) {
+		} else if (R.id.actvLoginTabPhoneCode == view.getId()) {//点击手机验证码登录标签
 			mViewBinding.actvLoginTabScan.setTextColor(ColorUtils.getColor(R.color.network_password_popup_hint));
 			mViewBinding.actvLoginTabScan.setBackgroundResource(0);
 			mViewBinding.clLoginScan.setVisibility(View.GONE);
@@ -73,9 +74,9 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 			mViewBinding.actvLoginTabPhoneCode.setTextColor(Color.WHITE);
 			mViewBinding.actvLoginTabPhoneCode.setBackgroundResource(R.drawable.login_tab_bg);
 			mViewBinding.clLoginPhoneCode.setVisibility(View.VISIBLE);
-		} else if (R.id.acivLoginAccountCode == view.getId()) {
+		} else if (R.id.acivLoginAccountCode == view.getId()) {//点击验证码
 			getCodeImage();
-		} else if (R.id.acivLoginExit == view.getId()) {
+		} else if (R.id.acivLoginExit == view.getId()) {//点击退出
 			finish();
 		}
 	}
