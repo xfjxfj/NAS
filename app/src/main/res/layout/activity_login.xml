@@ -134,24 +134,36 @@
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@id/acetLoginAccountPhone" />
 
-		<androidx.appcompat.widget.AppCompatEditText
-			android:id="@+id/acetLoginAccountCode"
-			style="@style/login_input_edit_text"
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="508px"
+			android:layout_height="88px"
 			android:layout_marginTop="16px"
-			android:hint="@string/login_enter_code"
+			android:background="@drawable/login_input_bg"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/acetLoginAccountPassword" />
+			app:layout_constraintTop_toBottomOf="@id/acetLoginAccountPassword">
 
-		<androidx.appcompat.widget.AppCompatImageView
-			android:id="@+id/acivLoginAccountCode"
-			android:layout_width="101px"
-			android:layout_height="42px"
-			android:layout_marginEnd="40px"
-			android:scaleType="fitXY"
-			app:layout_constraintBottom_toBottomOf="@id/acetLoginAccountCode"
-			app:layout_constraintEnd_toEndOf="@id/acetLoginAccountCode"
-			app:layout_constraintTop_toTopOf="@id/acetLoginAccountCode" />
+			<androidx.appcompat.widget.AppCompatEditText
+				android:id="@+id/acetLoginAccountCode"
+				style="@style/login_input_edit_text"
+				android:layout_width="300px"
+				android:background="@null"
+				android:hint="@string/login_enter_code"
+				android:maxLength="4"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/acivLoginAccountCode"
+				android:layout_width="101px"
+				android:layout_height="42px"
+				android:layout_marginEnd="40px"
+				android:scaleType="fitXY"
+				app:layout_constraintBottom_toBottomOf="@id/acetLoginAccountCode"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toTopOf="@id/acetLoginAccountCode" />
+		</androidx.constraintlayout.widget.ConstraintLayout>
 
 		<androidx.appcompat.widget.AppCompatTextView
 			android:id="@+id/actvLoginAccountBtn"

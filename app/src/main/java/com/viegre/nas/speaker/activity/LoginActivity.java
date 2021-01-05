@@ -4,9 +4,13 @@ import android.graphics.Color;
 import android.view.View;
 
 import com.blankj.utilcode.util.ColorUtils;
+import com.blankj.utilcode.util.ThreadUtils;
+import com.bumptech.glide.Glide;
 import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.activity.base.BaseActivity;
+import com.viegre.nas.speaker.config.UrlConfig;
 import com.viegre.nas.speaker.databinding.ActivityLoginBinding;
+import com.viegre.nas.speaker.util.ImageStreamUtils;
 
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements View.OnClickListener {
 
@@ -16,14 +20,21 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 	}
 
 	@Override
-	protected void initData() {
+	protected void initData() {}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		//取消获取图片验证码任务
+		ThreadUtils.cancel(ThreadUtils.getSinglePool());
 	}
 
 	private void initTab() {
+		mViewBinding.acivLoginAccountCode.setTag(false);
 		mViewBinding.actvLoginTabScan.setOnClickListener(this);
 		mViewBinding.actvLoginTabAccount.setOnClickListener(this);
 		mViewBinding.actvLoginTabPhoneCode.setOnClickListener(this);
+		mViewBinding.acivLoginAccountCode.setOnClickListener(this);
 	}
 
 	@Override
@@ -39,6 +50,10 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 			mViewBinding.actvLoginTabPhoneCode.setBackgroundResource(0);
 			mViewBinding.clLoginPhoneCode.setVisibility(View.GONE);
 		} else if (R.id.actvLoginTabAccount == view.getId()) {
+			//如果没有加载验证码则请求获取
+			if (!(Boolean) mViewBinding.acivLoginAccountCode.getTag()) {
+				getCodeImage();
+			}
 			mViewBinding.actvLoginTabScan.setTextColor(ColorUtils.getColor(R.color.network_password_popup_hint));
 			mViewBinding.actvLoginTabScan.setBackgroundResource(0);
 			mViewBinding.clLoginScan.setVisibility(View.GONE);
@@ -58,8 +73,44 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 			mViewBinding.actvLoginTabPhoneCode.setTextColor(Color.WHITE);
 			mViewBinding.actvLoginTabPhoneCode.setBackgroundResource(R.drawable.login_tab_bg);
 			mViewBinding.clLoginPhoneCode.setVisibility(View.VISIBLE);
+		} else if (R.id.acivLoginAccountCode == view.getId()) {
+			getCodeImage();
 		} else if (R.id.acivLoginExit == view.getId()) {
 			finish();
 		}
+	}
+
+	/**
+	 * 获取图片验证码
+	 */
+	private void getCodeImage() {
+		mViewBinding.acivLoginAccountCode.setClickable(false);
+		ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<byte[]>() {
+			@Override
+			public byte[] doInBackground() throws Throwable {
+				return ImageStreamUtils.getImageFromStream(UrlConfig.SERVER_URL + UrlConfig.USER + UrlConfig.GET_IMAGE_CODE);
+			}
+
+			@Override
+			public void onSuccess(byte[] result) {
+				if (null == result) {
+					mViewBinding.acivLoginAccountCode.setImageResource(0);
+					mViewBinding.acivLoginAccountCode.setTag(false);
+				} else {
+					Glide.with(mActivity).load(result).into(mViewBinding.acivLoginAccountCode);
+					mViewBinding.acivLoginAccountCode.setTag(true);
+				}
+				mViewBinding.acivLoginAccountCode.setClickable(true);
+			}
+
+			@Override
+			public void onFail(Throwable t) {
+				super.onFail(t);
+				t.printStackTrace();
+				mViewBinding.acivLoginAccountCode.setImageResource(0);
+				mViewBinding.acivLoginAccountCode.setTag(false);
+				mViewBinding.acivLoginAccountCode.setClickable(true);
+			}
+		});
 	}
 }

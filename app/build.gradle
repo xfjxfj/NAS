@@ -84,4 +84,7 @@ dependencies {
 	annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 	//https://github.com/zhanghai/MaterialProgressBar
 	implementation 'me.zhanghai.android.materialprogressbar:library:1.6.1'
+	//https://github.com/yanzhenjie/Kalle
+	//https://yanzhenjie.com/Kaalle
+	implementation 'com.yanzhenjie:kalle:0.1.7'
 }

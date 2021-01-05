@@ -28,9 +28,10 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 //		getBootStatus();
 		mNetworkFragment = NetworkFragment.newInstance(true);
 		mNetworkDetailFragment = NetworkDetailFragment.newInstance();
-//		FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
-//		FragmentUtils.show(mNetworkFragment);
-		ActivityUtils.startActivity(LoginActivity.class);
+		//判断是否登录
+		if (!SPUtils.getInstance().getBoolean(SPConfig.SP_IS_LOGIN, false)) {
+			ActivityUtils.startActivity(LoginActivity.class);
+		}
 	}
 
 	@Override

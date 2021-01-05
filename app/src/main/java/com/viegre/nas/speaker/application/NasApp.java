@@ -5,6 +5,13 @@ import android.app.Application;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
 import com.viegre.nas.speaker.BuildConfig;
+import com.viegre.nas.speaker.kalle.converter.JsonConverter;
+import com.yanzhenjie.kalle.Kalle;
+import com.yanzhenjie.kalle.KalleConfig;
+import com.yanzhenjie.kalle.simple.cache.CacheStore;
+import com.yanzhenjie.kalle.simple.cache.DiskCacheStore;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Djangoogle on 2020/09/10 10:21 with Android Studio.
@@ -15,6 +22,7 @@ public class NasApp extends Application {
 	public void onCreate() {
 		super.onCreate();
 		initUtils();
+		initKalle();
 	}
 
 	/**
@@ -27,5 +35,18 @@ public class NasApp extends Application {
 		LogUtils.getConfig().setGlobalTag(NasApp.class.getSimpleName());
 		LogUtils.getConfig().setLogHeadSwitch(true);
 		LogUtils.getConfig().setBorderSwitch(false);
+	}
+
+	/**
+	 * 初始化Kalle
+	 */
+	private void initKalle() {
+		CacheStore cacheStore = DiskCacheStore.newBuilder("/sdcard").password("t0PqIzHI@COM").build();
+		KalleConfig kalleConfig = KalleConfig.newBuilder()
+		                                     .connectionTimeout(15, TimeUnit.SECONDS)
+		                                     .readTimeout(15, TimeUnit.SECONDS)
+		                                     .converter(new JsonConverter())
+		                                     .build();
+		Kalle.setConfig(kalleConfig);
 	}
 }

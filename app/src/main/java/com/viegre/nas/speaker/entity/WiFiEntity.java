@@ -2,12 +2,12 @@ package com.viegre.nas.speaker.entity;
 
 import android.net.wifi.ScanResult;
 
-import com.viegre.nas.speaker.entity.base.BaseEntity;
+import java.io.Serializable;
 
 /**
  * Created by Djangoogle on 2020/12/02 10:23 with Android Studio.
  */
-public class WiFiEntity extends BaseEntity {
+public class WiFiEntity implements Serializable {
 
 	private ScanResult scanResult;
 	private String password;
