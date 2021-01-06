@@ -12,4 +12,6 @@ public class UrlConfig {
 	public static final String USER = "user/";
 	//获取图片验证码
 	public static final String GET_IMAGE_CODE = "getImageCode";
+	//账号密码登录
+	public static final String LOGIN = "login";
 }

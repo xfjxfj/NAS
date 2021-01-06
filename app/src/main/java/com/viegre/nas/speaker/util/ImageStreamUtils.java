@@ -1,5 +1,8 @@
 package com.viegre.nas.speaker.util;
 
+import com.blankj.utilcode.util.SPUtils;
+import com.viegre.nas.speaker.config.SPConfig;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -23,6 +26,9 @@ public class ImageStreamUtils {
 		HttpURLConnection httpURLconnection = (HttpURLConnection) url.openConnection();
 		httpURLconnection.setRequestMethod("POST");
 		httpURLconnection.setReadTimeout(10 * 1000);
+		//示例: "Set-Cookie, [JSESSIONID=E4240F41433CED789A71E7A40ABBA235; Path=/; HttpOnly]"
+		String sessionId = httpURLconnection.getHeaderField("Set-Cookie").split(";")[0].replaceAll(" ", "");
+		SPUtils.getInstance().put(SPConfig.SP_LOGIN_CODE_SESSION_ID, sessionId);
 		InputStream in;
 		if (200 == httpURLconnection.getResponseCode()) {
 			in = httpURLconnection.getInputStream();

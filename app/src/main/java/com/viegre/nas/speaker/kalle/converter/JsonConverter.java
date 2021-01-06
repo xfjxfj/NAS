@@ -58,7 +58,7 @@ public class JsonConverter implements Converter {
 			}
 		} else if (code >= 400 && code < 500) {//客户端请求不符合服务端要求。
 			failedData = (F) "发生未知异常";
-		} else if (code >= 500) { // 服务端发生异常。
+		} else if (code >= 500) {//服务端发生异常。
 			failedData = (F) "服务器开小差啦";
 		}
 

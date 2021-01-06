@@ -19,4 +19,10 @@ public class SPConfig {
 
 	//当前连接WiFi的SSID
 	public static final String SP_CURRENT_WIFI_SSID = "sp_current_wifi_ssid";
+
+	//登录验证码sessionId
+	public static final String SP_LOGIN_CODE_SESSION_ID = "sp_login_code_session_id";
+
+	//TOKEN
+	public static final String SP_TOKEN = "sp_token";
 }

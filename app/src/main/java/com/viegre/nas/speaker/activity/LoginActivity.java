@@ -1,22 +1,36 @@
 package com.viegre.nas.speaker.activity;
 
 import android.graphics.Color;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ColorUtils;
+import com.blankj.utilcode.util.RegexUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.activity.base.BaseActivity;
+import com.viegre.nas.speaker.config.SPConfig;
 import com.viegre.nas.speaker.config.UrlConfig;
 import com.viegre.nas.speaker.databinding.ActivityLoginBinding;
+import com.viegre.nas.speaker.entity.LoginEntity;
 import com.viegre.nas.speaker.util.ImageStreamUtils;
+import com.yanzhenjie.kalle.Kalle;
+import com.yanzhenjie.kalle.simple.SimpleCallback;
+import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements View.OnClickListener {
 
 	@Override
 	protected void initView() {
 		mViewBinding.acivLoginAccountCode.setTag(false);
+		mViewBinding.acetLoginAccountPhone.setText("18715008554");
+		mViewBinding.acetLoginAccountPassword.setText("abcd1234");
 		initListener();
 	}
 
@@ -28,6 +42,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		super.onDestroy();
 		//取消获取图片验证码任务
 		ThreadUtils.cancel(ThreadUtils.getSinglePool());
+		//清除验证码sessionId缓存
+		SPUtils.getInstance().remove(SPConfig.SP_LOGIN_CODE_SESSION_ID);
 	}
 
 	private void initListener() {
@@ -35,6 +51,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		mViewBinding.actvLoginTabAccount.setOnClickListener(this);
 		mViewBinding.actvLoginTabPhoneCode.setOnClickListener(this);
 		mViewBinding.acivLoginAccountCode.setOnClickListener(this);
+		mViewBinding.actvLoginAccountBtn.setOnClickListener(this);
 		mViewBinding.acivLoginExit.setOnClickListener(this);
 	}
 
@@ -76,6 +93,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 			mViewBinding.clLoginPhoneCode.setVisibility(View.VISIBLE);
 		} else if (R.id.acivLoginAccountCode == view.getId()) {//点击验证码
 			getCodeImage();
+		} else if (R.id.actvLoginAccountBtn == view.getId()) {//账号密码登录
+			loginbyAccount();
 		} else if (R.id.acivLoginExit == view.getId()) {//点击退出
 			finish();
 		}
@@ -113,5 +132,91 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 				mViewBinding.acivLoginAccountCode.setClickable(true);
 			}
 		});
+	}
+
+	/**
+	 * 账号密码登录
+	 */
+	private void loginbyAccount() {
+		mViewBinding.actvLoginAccountBtn.setClickable(false);
+		String phone = String.valueOf(mViewBinding.acetLoginAccountPhone.getText()), password = String.valueOf(mViewBinding.acetLoginAccountPassword.getText()), code = String
+				.valueOf(mViewBinding.acetLoginAccountCode.getText());
+		if (TextUtils.isEmpty(phone)) {
+			showErrorToast(R.string.login_please_input_phone_number);
+			mViewBinding.actvLoginAccountBtn.setClickable(true);
+			return;
+		}
+		if (!RegexUtils.isMobileExact(phone)) {
+			showErrorToast(R.string.login_phone_error);
+			mViewBinding.actvLoginAccountBtn.setClickable(true);
+			return;
+		}
+		if (password.length() < 8 || !RegexUtils.isMatch(".*(?:[a-zA-z]+.*\\d+)|(?:\\d+.*[a-zA-z]+).*", password)) {
+			showErrorToast(R.string.login_please_input_password);
+			mViewBinding.actvLoginAccountBtn.setClickable(true);
+			return;
+		}
+		if (TextUtils.isEmpty(code)) {
+			showErrorToast(R.string.login_please_input_code);
+			mViewBinding.actvLoginAccountBtn.setClickable(true);
+			return;
+		}
+		if (code.length() < 4) {
+			showErrorToast(R.string.login_code_error);
+			mViewBinding.actvLoginAccountBtn.setClickable(true);
+			return;
+		}
+		Kalle.post(UrlConfig.SERVER_URL + UrlConfig.USER + UrlConfig.LOGIN)
+		     .addHeader("Cookie", SPUtils.getInstance().getString(SPConfig.SP_LOGIN_CODE_SESSION_ID))
+		     .param("code", code)
+		     .param("password", password)
+		     .param("phoneNumber", phone)
+//		     .param("sn", DeviceUtils.getUniqueDeviceId())
+             .param("sn", "1111111111111")
+             .perform(new SimpleCallback<LoginEntity>() {
+	             @Override
+	             public void onResponse(SimpleResponse<LoginEntity, String> response) {
+		             if (!response.isSucceed()) {
+			             showErrorToast(response.failed());
+		             } else {
+			             String token = response.succeed().getToken();
+			             SPUtils.getInstance().put(SPConfig.SP_TOKEN, token);
+			             Kalle.getConfig().getHeaders().set("token", token);
+			             Kalle.setConfig(Kalle.getConfig());
+			             ActivityUtils.startActivity(MainActivity.class);
+			             finish();
+		             }
+	             }
+
+	             @Override
+	             public void onEnd() {
+		             super.onEnd();
+		             SPUtils.getInstance().remove(SPConfig.SP_LOGIN_CODE_SESSION_ID);
+		             mViewBinding.actvLoginAccountBtn.setClickable(true);
+	             }
+             });
+	}
+
+	/**
+	 * 弹出失败Toast
+	 *
+	 * @param msg
+	 */
+	private void showErrorToast(String msg) {
+		ToastUtils.make()
+		          .setGravity(Gravity.CENTER, 0, 0)
+		          .setBgResource(R.drawable.login_error_toast_bg)
+		          .setTextColor(Color.WHITE)
+		          .setTextSize(30)
+		          .show(msg);
+	}
+
+	/**
+	 * 弹出失败Toast
+	 *
+	 * @param id
+	 */
+	private void showErrorToast(int id) {
+		showErrorToast(StringUtils.getString(id));
 	}
 }

@@ -17,4 +17,5 @@
 	<color name="my_device_progress_bar_bg">#29292E</color>
 	<color name="login_qr_code">#2E3641</color>
 	<color name="login_get_code">#1DD9FA</color>
+	<color name="login_error_toast_bg">#F5E63939</color>
 </resources>
