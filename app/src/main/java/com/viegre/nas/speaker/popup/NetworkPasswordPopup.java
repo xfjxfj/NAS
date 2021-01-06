@@ -4,11 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.view.MotionEvent;
 
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ResourceUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.lxj.xpopup.core.CenterPopupView;
 import com.viegre.nas.speaker.R;
@@ -75,7 +75,7 @@ public class NetworkPasswordPopup extends CenterPopupView {
 
 	private void onConfirmClick() {
 		String password = String.valueOf(mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.getText());
-		if (TextUtils.isEmpty(password)) {
+		if (StringUtils.isEmpty(password)) {
 			ToastUtils.showShort(R.string.network_please_enter_password);
 			return;
 		}

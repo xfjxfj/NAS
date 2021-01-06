@@ -8,9 +8,6 @@ public class SPConfig {
 	//是否开机启动
 	public static final String SP_IS_BOOT = "sp_is_boot";
 
-	//是否登录
-	public static final String SP_IS_LOGIN = "sp_is_login";
-
 	//是否为出厂首次开机
 	public static final String SP_IS_DEVICE_INITIALIZED = "sp_is_device_initialized";
 
@@ -25,4 +22,7 @@ public class SPConfig {
 
 	//TOKEN
 	public static final String SP_TOKEN = "sp_token";
+
+	//手机号
+	public static final String SP_PHONE_NUMBER = "sp_phone_number";
 }

@@ -5,7 +5,6 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -16,6 +15,7 @@ import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ColorUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -99,7 +99,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 			return;
 		}
 		mWiFiEntity = mNetworkListAdapter.getItem(position);
-		if (TextUtils.isEmpty(mWiFiEntity.getPassword())) {
+		if (StringUtils.isEmpty(mWiFiEntity.getPassword())) {
 			new XPopup.Builder(getContext()).hasShadowBg(false)//是否有半透明的背景，默认为true
 			                                .hasBlurBg(true)//是否有高斯模糊的背景，默认为false
 			                                .dismissOnBackPressed(false)//按返回键是否关闭弹窗，默认为true

@@ -2,8 +2,8 @@ package com.viegre.nas.speaker.adapter;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
-import android.text.TextUtils;
 
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.Utils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
@@ -43,8 +43,8 @@ public class NetworkListAdapter extends BaseQuickAdapter<WiFiEntity, BaseViewHol
 		}
 		baseViewHolder.setImageResource(R.id.acivItemNetworkStatus, R.mipmap.network_item_link)
 		              .setText(R.id.actvItemNetworkName,
-		                       TextUtils.isEmpty(wiFiEntity.getScanResult().SSID) ? wiFiEntity.getScanResult().BSSID : wiFiEntity.getScanResult().SSID)
-		              .setGone(R.id.actvItemNetworkTip, TextUtils.isEmpty(wiFiEntity.getPassword()));
+		                       StringUtils.isEmpty(wiFiEntity.getScanResult().SSID) ? wiFiEntity.getScanResult().BSSID : wiFiEntity.getScanResult().SSID)
+		              .setGone(R.id.actvItemNetworkTip, StringUtils.isEmpty(wiFiEntity.getPassword()));
 		if (wiFiEntity.getScanResult().level >= -50) {
 			baseViewHolder.setImageResource(R.id.acivItemNetworkSignal, R.mipmap.network_wifi_signal_4);
 		} else if (wiFiEntity.getScanResult().level < -50 && wiFiEntity.getScanResult().level >= -70) {

@@ -1,7 +1,6 @@
 package com.viegre.nas.speaker.activity;
 
 import android.graphics.Color;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 
@@ -121,6 +120,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 					mViewBinding.acivLoginAccountCode.setTag(true);
 				}
 				mViewBinding.acivLoginAccountCode.setClickable(true);
+				mViewBinding.acetLoginAccountCode.setText("");
 			}
 
 			@Override
@@ -130,6 +130,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 				mViewBinding.acivLoginAccountCode.setImageResource(0);
 				mViewBinding.acivLoginAccountCode.setTag(false);
 				mViewBinding.acivLoginAccountCode.setClickable(true);
+				mViewBinding.acetLoginAccountCode.setText("");
 			}
 		});
 	}
@@ -141,7 +142,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		mViewBinding.actvLoginAccountBtn.setClickable(false);
 		String phone = String.valueOf(mViewBinding.acetLoginAccountPhone.getText()), password = String.valueOf(mViewBinding.acetLoginAccountPassword.getText()), code = String
 				.valueOf(mViewBinding.acetLoginAccountCode.getText());
-		if (TextUtils.isEmpty(phone)) {
+		if (StringUtils.isEmpty(phone)) {
 			showErrorToast(R.string.login_please_input_phone_number);
 			mViewBinding.actvLoginAccountBtn.setClickable(true);
 			return;
@@ -156,7 +157,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 			mViewBinding.actvLoginAccountBtn.setClickable(true);
 			return;
 		}
-		if (TextUtils.isEmpty(code)) {
+		if (StringUtils.isEmpty(code)) {
 			showErrorToast(R.string.login_please_input_code);
 			mViewBinding.actvLoginAccountBtn.setClickable(true);
 			return;
@@ -181,6 +182,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		             } else {
 			             String token = response.succeed().getToken();
 			             SPUtils.getInstance().put(SPConfig.SP_TOKEN, token);
+			             SPUtils.getInstance().put(SPConfig.SP_PHONE_NUMBER, phone);
 			             Kalle.getConfig().getHeaders().set("token", token);
 			             Kalle.setConfig(Kalle.getConfig());
 			             ActivityUtils.startActivity(MainActivity.class);

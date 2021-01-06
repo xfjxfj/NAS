@@ -30,7 +30,7 @@ public class JsonConverter implements Converter {
 				httpEntity.setMsg("服务器数据格式异常");
 			}
 
-			if (httpEntity.getCode() == 1) {//服务端业务成功。
+			if (0 == httpEntity.getCode()) {//服务端业务成功。
 				try {
 					if (succeed == Integer.class) {
 						Integer succeedInt = Integer.parseInt(httpEntity.getData());

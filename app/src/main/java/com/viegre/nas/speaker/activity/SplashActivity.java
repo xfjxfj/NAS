@@ -5,6 +5,7 @@ import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.activity.base.BaseFragmentActivity;
 import com.viegre.nas.speaker.config.BusConfig;
@@ -29,7 +30,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		mNetworkFragment = NetworkFragment.newInstance(true);
 		mNetworkDetailFragment = NetworkDetailFragment.newInstance();
 		//判断是否登录
-		if (!SPUtils.getInstance().getBoolean(SPConfig.SP_IS_LOGIN, false)) {
+		if (StringUtils.isEmpty(SPUtils.getInstance().getString(SPConfig.SP_TOKEN, ""))) {
 			ActivityUtils.startActivity(LoginActivity.class);
 		}
 	}
