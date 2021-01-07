@@ -9,7 +9,7 @@ android {
 		applicationId "com.viegre.nas.speaker"
 		minSdkVersion 21
 		versionCode 1
-		versionName "1.0.0-alpha01"
+		versionName "0.0.1"
 	}
 
 	signingConfigs {
