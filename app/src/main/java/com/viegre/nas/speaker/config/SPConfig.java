@@ -1,7 +1,7 @@
 package com.viegre.nas.speaker.config;
 
 /**
- * Created by Djangoogle on 2020/11/26 16:26 with Android Studio.
+ * Created by レインマン on 2020/11/26 16:26 with Android Studio.
  */
 public class SPConfig {
 

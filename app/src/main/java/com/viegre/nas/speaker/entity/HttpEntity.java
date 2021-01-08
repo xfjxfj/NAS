@@ -3,7 +3,7 @@ package com.viegre.nas.speaker.entity;
 import java.io.Serializable;
 
 /**
- * Created by Djangoogle on 2021/01/04 17:14 with Android Studio.
+ * Created by レインマン on 2021/01/04 17:14 with Android Studio.
  */
 public class HttpEntity<T> implements Serializable {
 

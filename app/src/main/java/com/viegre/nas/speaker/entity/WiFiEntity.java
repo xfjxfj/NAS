@@ -5,7 +5,7 @@ import android.net.wifi.ScanResult;
 import java.io.Serializable;
 
 /**
- * Created by Djangoogle on 2020/12/02 10:23 with Android Studio.
+ * Created by レインマン on 2020/12/02 10:23 with Android Studio.
  */
 public class WiFiEntity implements Serializable {
 

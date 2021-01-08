@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Created by Djangoogle on 2020/11/27 10:43 with Android Studio.
+ * Created by レインマン on 2020/11/27 10:43 with Android Studio.
  */
 public class NetworkDetailListAdapter extends BaseQuickAdapter<String[], BaseViewHolder> {
 

@@ -7,19 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.viewbinding.ViewBinding;
+
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ReflectUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.viewbinding.ViewBinding;
-
 /**
- * Created by Djangoogle on 2020/11/26 14:22 with Android Studio.
+ * Created by レインマン on 2020/11/26 14:22 with Android Studio.
  */
 public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
 

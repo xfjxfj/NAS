@@ -14,7 +14,7 @@ import com.yanzhenjie.kalle.simple.cache.DiskCacheStore;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Djangoogle on 2020/09/10 10:21 with Android Studio.
+ * Created by レインマン on 2020/09/10 10:21 with Android Studio.
  */
 public class NasApp extends Application {
 

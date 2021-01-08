@@ -10,7 +10,7 @@ import com.yanzhenjie.kalle.simple.SimpleResponse;
 import java.lang.reflect.Type;
 
 /**
- * Created by Djangoogle on 2021/01/04 17:38 with Android Studio.
+ * Created by レインマン on 2021/01/04 17:38 with Android Studio.
  */
 public class JsonConverter implements Converter {
 	@Override

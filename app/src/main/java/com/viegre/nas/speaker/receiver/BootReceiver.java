@@ -8,7 +8,7 @@ import com.blankj.utilcode.util.SPUtils;
 import com.viegre.nas.speaker.config.SPConfig;
 
 /**
- * Created by Djangoogle on 2020/11/26 16:54 with Android Studio.
+ * Created by レインマン on 2020/11/26 16:54 with Android Studio.
  */
 public class BootReceiver extends BroadcastReceiver {
 	@Override

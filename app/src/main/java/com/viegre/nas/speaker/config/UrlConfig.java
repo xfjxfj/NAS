@@ -1,7 +1,7 @@
 package com.viegre.nas.speaker.config;
 
 /**
- * Created by Djangoogle on 2021/01/04 17:44 with Android Studio.
+ * Created by レインマン on 2021/01/04 17:44 with Android Studio.
  */
 public class UrlConfig {
 
@@ -16,4 +16,6 @@ public class UrlConfig {
 	public static final String LOGIN = "login";
 	//登出接口
 	public static final String LOGOUT = "logout";
+	//刷新Token，限制有效时间
+	public static final String REFRESH_TOKEN = "refreshToken";
 }

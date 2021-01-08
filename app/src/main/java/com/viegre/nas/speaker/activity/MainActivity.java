@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Djangoogle on 2020/12/15 09:29 with Android Studio.
+ * Created by レインマン on 2020/12/15 09:29 with Android Studio.
  */
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
 

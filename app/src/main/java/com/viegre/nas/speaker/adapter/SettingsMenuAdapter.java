@@ -4,14 +4,15 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.view.Gravity;
 
+import androidx.core.content.ContextCompat;
+
 import com.viegre.nas.speaker.R;
 
-import androidx.core.content.ContextCompat;
 import q.rorbin.verticaltablayout.adapter.TabAdapter;
 import q.rorbin.verticaltablayout.widget.ITabView;
 
 /**
- * Created by Djangoogle on 2020/12/22 15:21 with Android Studio.
+ * Created by レインマン on 2020/12/22 15:21 with Android Studio.
  */
 public class SettingsMenuAdapter implements TabAdapter {
 

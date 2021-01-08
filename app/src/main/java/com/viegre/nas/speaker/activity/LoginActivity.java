@@ -3,7 +3,6 @@ package com.viegre.nas.speaker.activity;
 import android.graphics.Color;
 import android.view.View;
 
-import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ColorUtils;
 import com.blankj.utilcode.util.PhoneUtils;
 import com.blankj.utilcode.util.RegexUtils;
@@ -17,7 +16,7 @@ import com.viegre.nas.speaker.config.SPConfig;
 import com.viegre.nas.speaker.config.UrlConfig;
 import com.viegre.nas.speaker.databinding.ActivityLoginBinding;
 import com.viegre.nas.speaker.entity.LoginEntity;
-import com.viegre.nas.speaker.impl.PopupClickListener;
+import com.viegre.nas.speaker.manager.PopupManager;
 import com.viegre.nas.speaker.popup.LoginTimePopup;
 import com.viegre.nas.speaker.util.CommonUtils;
 import com.viegre.nas.speaker.util.ImageStreamUtils;
@@ -25,6 +24,9 @@ import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.simple.SimpleCallback;
 import com.yanzhenjie.kalle.simple.SimpleResponse;
 
+/**
+ * Created by レインマン on 2021/01/06 10:39 with Android Studio.
+ */
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements View.OnClickListener {
 
 	@Override
@@ -142,7 +144,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 	 */
 	private void loginbyAccount() {
 		mViewBinding.actvLoginAccountBtn.setClickable(false);
-		String phone = String.valueOf(mViewBinding.acetLoginAccountPhone.getText()), password = String.valueOf(mViewBinding.acetLoginAccountPassword.getText()), code = String
+		String phone = String.valueOf(mViewBinding.acetLoginAccountPhone.getText()), password = String.valueOf(mViewBinding.acetLoginAccountPassword
+				                                                                                                       .getText()), code = String
 				.valueOf(mViewBinding.acetLoginAccountCode.getText());
 		if (StringUtils.isEmpty(phone)) {
 			CommonUtils.showErrorToast(R.string.login_please_input_phone_number);
@@ -203,12 +206,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 	 * 设置登录有效时间
 	 */
 	private void setLoginTime() {
-		CommonUtils.showCustomXPopup(this, new LoginTimePopup(this, new PopupClickListener() {
-			@Override
-			public void onConfirm() {
-				ActivityUtils.startActivity(MainActivity.class);
-				finish();
-			}
-		}));
+		PopupManager.INSTANCE.showCustomXPopup(this, new LoginTimePopup(this));
 	}
 }

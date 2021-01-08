@@ -2,14 +2,14 @@ package com.viegre.nas.speaker.popup;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.lxj.xpopup.core.CenterPopupView;
 import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.databinding.PopupNetworkConnectionFailedBinding;
 
-import androidx.annotation.NonNull;
-
 /**
- * Created by Djangoogle on 2020/11/30 10:06 with Android Studio.
+ * Created by レインマン on 2020/11/30 10:06 with Android Studio.
  */
 public class NetworkConnectionFailedPopup extends CenterPopupView {
 

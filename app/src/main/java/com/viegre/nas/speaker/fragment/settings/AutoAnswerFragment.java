@@ -4,7 +4,7 @@ import com.viegre.nas.speaker.databinding.FragmentAutoAnswerBinding;
 import com.viegre.nas.speaker.fragment.base.BaseFragment;
 
 /**
- * Created by Djangoogle on 2020/12/17 17:36 with Android Studio.
+ * Created by レインマン on 2020/12/17 17:36 with Android Studio.
  */
 public class AutoAnswerFragment extends BaseFragment<FragmentAutoAnswerBinding> {
 

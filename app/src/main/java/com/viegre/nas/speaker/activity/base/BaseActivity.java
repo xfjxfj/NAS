@@ -3,18 +3,18 @@ package com.viegre.nas.speaker.activity.base;
 import android.app.Activity;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewbinding.ViewBinding;
+
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ReflectUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewbinding.ViewBinding;
-
 /**
- * Created by Djangoogle on 2020/11/26 14:19 with Android Studio.
+ * Created by レインマン on 2020/11/26 14:19 with Android Studio.
  */
 public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActivity {
 

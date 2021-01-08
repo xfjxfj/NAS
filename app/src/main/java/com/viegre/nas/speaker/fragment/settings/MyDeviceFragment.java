@@ -13,7 +13,7 @@ import com.viegre.nas.speaker.fragment.base.BaseFragment;
 
 /**
  * 我的设备
- * Created by Djangoogle on 2020/12/17 11:21 with Android Studio.
+ * Created by レインマン on 2020/12/17 11:21 with Android Studio.
  */
 public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 

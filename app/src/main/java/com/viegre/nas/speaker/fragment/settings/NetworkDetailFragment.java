@@ -4,6 +4,9 @@ import android.content.Context;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.alibaba.fastjson.JSON;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ColorUtils;
@@ -29,12 +32,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 /**
  * 网络详情
- * Created by Djangoogle on 2020/12/03 15:49 with Android Studio.
+ * Created by レインマン on 2020/12/03 15:49 with Android Studio.
  */
 public class NetworkDetailFragment extends BaseFragment<FragmentNetworkDetailBinding> {
 

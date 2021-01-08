@@ -10,7 +10,7 @@ import java.net.URL;
 
 /**
  * 从流获取图片
- * Created by Djangoogle on 2021/01/05 09:25 with Android Studio.
+ * Created by レインマン on 2021/01/05 09:25 with Android Studio.
  */
 public class ImageStreamUtils {
 

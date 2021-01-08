@@ -4,7 +4,7 @@ import com.viegre.nas.speaker.databinding.FragmentIntelligentVoiceBinding;
 import com.viegre.nas.speaker.fragment.base.BaseFragment;
 
 /**
- * Created by Djangoogle on 2020/12/17 17:37 with Android Studio.
+ * Created by レインマン on 2020/12/17 17:37 with Android Studio.
  */
 public class IntelligentVoiceFragment extends BaseFragment<FragmentIntelligentVoiceBinding> {
 

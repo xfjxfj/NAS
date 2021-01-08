@@ -24,7 +24,7 @@ import com.viegre.nas.speaker.fragment.settings.NetworkFragment;
 
 /**
  * 启动页
- * Created by Djangoogle on 2020/11/19 10:26 with Android Studio.
+ * Created by レインマン on 2020/11/19 10:26 with Android Studio.
  */
 public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> {
 

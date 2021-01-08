@@ -23,7 +23,9 @@
 		android:id="@+id/rgPopupLoginTime"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_marginStart="50px"
 		android:layout_marginTop="40px"
+		android:layout_marginEnd="50px"
 		android:orientation="horizontal"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
@@ -56,8 +58,90 @@
 			android:id="@+id/acrbPopupLoginTimeCustom"
 			style="@style/login_time_radio_button"
 			android:layout_marginStart="12px"
-			android:text="@string/login_login_time_custom" />
+			android:checked="true"
+			android:text="@string/login_login_time_custom"
+			android:textStyle="bold" />
 	</RadioGroup>
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPopupLoginTimeCustomTitle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="50px"
+		android:layout_marginTop="50px"
+		android:includeFontPadding="false"
+		android:text="@string/login_login_time_custom_time"
+		android:textColor="@color/login_time_radio_button"
+		android:textSize="24px"
+		android:textStyle="bold"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/rgPopupLoginTime" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPopupLoginTimeCustomHour"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="50px"
+		android:layout_marginEnd="50px"
+		android:includeFontPadding="false"
+		android:text="@string/login_login_time_hour"
+		android:textColor="@color/login_time_radio_button"
+		android:textSize="24px"
+		android:textStyle="bold"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/rgPopupLoginTime" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPopupLoginTimeCustomHourNumber"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginEnd="10px"
+		android:includeFontPadding="false"
+		android:text="8"
+		android:textColor="@color/login_get_code"
+		android:textSize="40px"
+		app:layout_constraintBaseline_toBaselineOf="@id/actvPopupLoginTimeCustomHour"
+		app:layout_constraintEnd_toStartOf="@id/actvPopupLoginTimeCustomHour" />
+
+	<androidx.appcompat.widget.AppCompatSeekBar
+		android:id="@+id/acsbPopupLoginTimeCustom"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="35px"
+		android:layout_marginTop="3px"
+		android:layout_marginEnd="35px"
+		android:max="22"
+		android:maxHeight="3px"
+		android:progress="6"
+		android:progressDrawable="@drawable/login_time_seek_bar_bg"
+		android:thumb="@drawable/login_time_seek_bar_thumb"
+		android:thumbOffset="0dp"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/actvPopupLoginTimeCustomTitle" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPopupLoginTimeCustom2HoursPrompt"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="3px"
+		android:includeFontPadding="false"
+		android:text="@string/login_login_time_2_hours"
+		android:textColor="@color/login_time_radio_button"
+		android:textSize="20px"
+		app:layout_constraintStart_toStartOf="@id/actvPopupLoginTimeCustomTitle"
+		app:layout_constraintTop_toBottomOf="@id/acsbPopupLoginTimeCustom" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="3px"
+		android:includeFontPadding="false"
+		android:text="@string/login_login_time_24_hours"
+		android:textColor="@color/login_time_radio_button"
+		android:textSize="20px"
+		app:layout_constraintEnd_toEndOf="@id/actvPopupLoginTimeCustomHour"
+		app:layout_constraintTop_toBottomOf="@id/acsbPopupLoginTimeCustom" />
 
 	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/actvPopupLoginTimeConfirm"
@@ -75,7 +159,7 @@
 		android:textStyle="bold"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/actvPopupPromptContent" />
+		app:layout_constraintTop_toBottomOf="@id/actvPopupLoginTimeCustom2HoursPrompt" />
 
 	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/actvPopupLoginTimeCancel"

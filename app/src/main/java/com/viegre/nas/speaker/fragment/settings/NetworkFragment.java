@@ -10,6 +10,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.alibaba.fastjson.JSON;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ColorUtils;
@@ -33,20 +36,17 @@ import com.viegre.nas.speaker.config.SPConfig;
 import com.viegre.nas.speaker.databinding.FragmentNetworkBinding;
 import com.viegre.nas.speaker.entity.WiFiEntity;
 import com.viegre.nas.speaker.fragment.base.BaseFragment;
+import com.viegre.nas.speaker.manager.PopupManager;
 import com.viegre.nas.speaker.popup.NetworkConnectionFailedPopup;
 import com.viegre.nas.speaker.popup.NetworkPasswordPopup;
-import com.viegre.nas.speaker.util.CommonUtils;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 /**
  * 网络设置
- * Created by Djangoogle on 2020/11/26 11:35 with Android Studio.
+ * Created by レインマン on 2020/11/26 11:35 with Android Studio.
  */
 public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implements NetworkUtils.OnNetworkStatusChangedListener, OnItemClickListener, OnItemChildClickListener {
 
@@ -100,7 +100,8 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 		}
 		mWiFiEntity = mNetworkListAdapter.getItem(position);
 		if (StringUtils.isEmpty(mWiFiEntity.getPassword())) {
-			CommonUtils.showCustomXPopup(mContext, new NetworkPasswordPopup(mContext, mWiFiEntity.getScanResult().SSID));
+			PopupManager.INSTANCE.showCustomXPopup(mContext,
+			                                       new NetworkPasswordPopup(mContext, mWiFiEntity.getScanResult().SSID));
 		} else {
 			getPassword(mWiFiEntity.getPassword());
 		}
@@ -326,7 +327,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 				                 hideSelectedWiFi();
 				                 mNetworkListAdapter.notifyDataSetChanged();
 				                 SPUtils.getInstance().remove(SPConfig.SP_CURRENT_WIFI_SSID);
-				                 CommonUtils.showCustomXPopup(mContext, new NetworkConnectionFailedPopup(mContext));
+				                 PopupManager.INSTANCE.showCustomXPopup(mContext, new NetworkConnectionFailedPopup(mContext));
 			                 }
 		                 })
 		                 .start();

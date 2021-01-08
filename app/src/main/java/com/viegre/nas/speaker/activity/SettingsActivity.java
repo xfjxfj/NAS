@@ -2,6 +2,8 @@ package com.viegre.nas.speaker.activity;
 
 import android.view.View;
 
+import androidx.fragment.app.Fragment;
+
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.PhoneUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -23,6 +25,7 @@ import com.viegre.nas.speaker.fragment.settings.ScreenFragment;
 import com.viegre.nas.speaker.fragment.settings.SoundFragment;
 import com.viegre.nas.speaker.fragment.settings.TimeFragment;
 import com.viegre.nas.speaker.impl.PopupClickListener;
+import com.viegre.nas.speaker.manager.PopupManager;
 import com.viegre.nas.speaker.popup.PromptPopup;
 import com.viegre.nas.speaker.util.CommonUtils;
 import com.yanzhenjie.kalle.Kalle;
@@ -32,11 +35,9 @@ import com.yanzhenjie.kalle.simple.SimpleResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.fragment.app.Fragment;
-
 /**
  * 设置页
- * Created by Djangoogle on 2020/12/16 15:33 with Android Studio.
+ * Created by レインマン on 2020/12/16 15:33 with Android Studio.
  */
 public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBinding> {
 
@@ -57,16 +58,16 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 		initFragment();
 		initMenuList();
 		mViewBinding.acivSettingsHome.setOnClickListener(view -> finish());
-		mViewBinding.acivSettingsLogout.setOnClickListener(view -> CommonUtils.showCustomXPopup(this,
-		                                                                                        new PromptPopup(this,
-		                                                                                                        R.string.settings_logout_confirmation,
-		                                                                                                        R.string.settings_logout_confirmation_content,
-		                                                                                                        new PopupClickListener() {
-			                                                                                                        @Override
-			                                                                                                        public void onConfirm() {
-				                                                                                                        logout();
-			                                                                                                        }
-		                                                                                                        })));
+		mViewBinding.acivSettingsLogout.setOnClickListener(view -> PopupManager.INSTANCE.showCustomXPopup(this,
+		                                                                                                  new PromptPopup(this,
+		                                                                                                                  R.string.settings_logout_confirmation,
+		                                                                                                                  R.string.settings_logout_confirmation_content,
+		                                                                                                                  new PopupClickListener() {
+			                                                                                                                  @Override
+			                                                                                                                  public void onConfirm() {
+				                                                                                                                  logout();
+			                                                                                                                  }
+		                                                                                                                  })));
 	}
 
 	@Override
