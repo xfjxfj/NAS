@@ -22,7 +22,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.github.iielse.switchbutton.SwitchView;
-import com.lxj.xpopup.XPopup;
 import com.thanosfisherman.wifiutils.WifiConnectorBuilder;
 import com.thanosfisherman.wifiutils.WifiUtils;
 import com.thanosfisherman.wifiutils.wifiConnect.ConnectionErrorCode;
@@ -36,6 +35,7 @@ import com.viegre.nas.speaker.entity.WiFiEntity;
 import com.viegre.nas.speaker.fragment.base.BaseFragment;
 import com.viegre.nas.speaker.popup.NetworkConnectionFailedPopup;
 import com.viegre.nas.speaker.popup.NetworkPasswordPopup;
+import com.viegre.nas.speaker.util.CommonUtils;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.util.ArrayList;
@@ -100,14 +100,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 		}
 		mWiFiEntity = mNetworkListAdapter.getItem(position);
 		if (StringUtils.isEmpty(mWiFiEntity.getPassword())) {
-			new XPopup.Builder(getContext()).hasShadowBg(false)//是否有半透明的背景，默认为true
-			                                .hasBlurBg(true)//是否有高斯模糊的背景，默认为false
-			                                .dismissOnBackPressed(false)//按返回键是否关闭弹窗，默认为true
-			                                .dismissOnTouchOutside(false)//点击外部是否关闭弹窗，默认为true
-			                                .hasStatusBar(false)//是否显示状态栏，默认显示
-			                                .hasNavigationBar(false)//是否显示导航栏，默认显示
-			                                .asCustom(new NetworkPasswordPopup(mActivity, mWiFiEntity.getScanResult().SSID))//设置自定义弹窗
-			                                .show();
+			CommonUtils.showCustomXPopup(mContext, new NetworkPasswordPopup(mContext, mWiFiEntity.getScanResult().SSID));
 		} else {
 			getPassword(mWiFiEntity.getPassword());
 		}
@@ -333,14 +326,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 				                 hideSelectedWiFi();
 				                 mNetworkListAdapter.notifyDataSetChanged();
 				                 SPUtils.getInstance().remove(SPConfig.SP_CURRENT_WIFI_SSID);
-				                 new XPopup.Builder(getContext()).hasShadowBg(false)//是否有半透明的背景，默认为true
-				                                                 .hasBlurBg(true)//是否有高斯模糊的背景，默认为false
-				                                                 .dismissOnBackPressed(false)//按返回键是否关闭弹窗，默认为true
-				                                                 .dismissOnTouchOutside(false)//点击外部是否关闭弹窗，默认为true
-				                                                 .hasStatusBar(false)//是否显示状态栏，默认显示
-				                                                 .hasNavigationBar(false)//是否显示导航栏，默认显示
-				                                                 .asCustom(new NetworkConnectionFailedPopup(mActivity))//设置自定义弹窗
-				                                                 .show();
+				                 CommonUtils.showCustomXPopup(mContext, new NetworkConnectionFailedPopup(mContext));
 			                 }
 		                 })
 		                 .start();

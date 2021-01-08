@@ -2,6 +2,7 @@ package com.viegre.nas.speaker.activity;
 
 import android.view.View;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.PhoneUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -21,6 +22,8 @@ import com.viegre.nas.speaker.fragment.settings.ProtocolFragment;
 import com.viegre.nas.speaker.fragment.settings.ScreenFragment;
 import com.viegre.nas.speaker.fragment.settings.SoundFragment;
 import com.viegre.nas.speaker.fragment.settings.TimeFragment;
+import com.viegre.nas.speaker.impl.PromptPopupClickListener;
+import com.viegre.nas.speaker.popup.PromptPopup;
 import com.viegre.nas.speaker.util.CommonUtils;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.simple.SimpleCallback;
@@ -54,12 +57,16 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 		initFragment();
 		initMenuList();
 		mViewBinding.acivSettingsHome.setOnClickListener(view -> finish());
-		mViewBinding.acivSettingsLogout.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				logout();
-			}
-		});
+		mViewBinding.acivSettingsLogout.setOnClickListener(view -> CommonUtils.showCustomXPopup(this,
+		                                                                                        new PromptPopup(this,
+		                                                                                                        R.string.settings_logout_confirmation,
+		                                                                                                        R.string.settings_logout_confirmation_content,
+		                                                                                                        new PromptPopupClickListener() {
+			                                                                                                        @Override
+			                                                                                                        public void onConfirm() {
+				                                                                                                        logout();
+			                                                                                                        }
+		                                                                                                        })));
 	}
 
 	@Override
@@ -79,10 +86,12 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 			mViewBinding.acivSettingsLogout.setVisibility(View.GONE);
 			mViewBinding.acivSettingsAvatar.setImageResource(R.mipmap.settings_unlogin);
 			mViewBinding.actvSettingsUsername.setText(R.string.settings_view_after_login);
+			mViewBinding.clSettingsLoginArea.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
 		} else {
 			mViewBinding.acivSettingsLogout.setVisibility(View.VISIBLE);
 			mViewBinding.acivSettingsAvatar.setImageResource(R.mipmap.settings_unlogin);
 			mViewBinding.actvSettingsUsername.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.SP_PHONE_NUMBER)));
+			mViewBinding.clSettingsLoginArea.setOnClickListener(null);
 		}
 	}
 
@@ -92,7 +101,9 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 //		linearLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
 //		linearLayout.setDividerDrawable(ContextCompat.getDrawable(this, R.drawable.settings_menu_divider)); //设置分割线的样式
 //		linearLayout.setDividerPadding(66); //设置分割线间隔
-		mViewBinding.vtlSettingsMenu.setupWithFragment(getSupportFragmentManager(), R.id.flSettingsFragment, mFragmentList,
+		mViewBinding.vtlSettingsMenu.setupWithFragment(getSupportFragmentManager(),
+		                                               R.id.flSettingsFragment,
+		                                               mFragmentList,
 		                                               new SettingsMenuAdapter(this));
 	}
 

@@ -8,7 +8,7 @@
 	<color name="network_name">#E5E5EB</color>
 	<color name="tip">#5C5F68</color>
 	<color name="divider_line">#232325</color>
-	<color name="network_password_popup_tip">#A6A6AD</color>
+	<color name="popup_content">#A6A6AD</color>
 	<color name="network_password_popup_hint">#5F626B</color>
 	<color name="ignore_this_network">#2094FA</color>
 	<color name="unread_point">#F81435</color>
