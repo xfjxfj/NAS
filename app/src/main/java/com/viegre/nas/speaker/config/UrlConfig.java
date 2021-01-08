@@ -14,4 +14,6 @@ public class UrlConfig {
 	public static final String GET_IMAGE_CODE = "getImageCode";
 	//账号密码登录
 	public static final String LOGIN = "login";
+	//登出接口
+	public static final String LOGOUT = "logout";
 }

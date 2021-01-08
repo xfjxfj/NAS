@@ -58,7 +58,7 @@
 		android:ellipsize="end"
 		android:includeFontPadding="false"
 		android:singleLine="true"
-		android:text="Djangoogle"
+		android:text="@string/settings_view_after_login"
 		android:textColor="@color/settings_title"
 		android:textSize="24px"
 		android:textStyle="bold"

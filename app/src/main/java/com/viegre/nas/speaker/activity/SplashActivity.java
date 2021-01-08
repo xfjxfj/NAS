@@ -37,9 +37,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	}
 
 	@Override
-	protected void initData() {
-
-	}
+	protected void initData() {}
 
 	@Override
 	protected void onResume() {

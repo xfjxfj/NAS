@@ -11,6 +11,7 @@ import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.activity.base.BaseActivity;
 import com.viegre.nas.speaker.config.SPConfig;
 import com.viegre.nas.speaker.databinding.ActivityMainBinding;
+import com.viegre.nas.speaker.util.CommonUtils;
 import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
@@ -46,7 +47,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 			mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
 			mViewBinding.actvMainUserInfo.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
 		} else {
-			mViewBinding.actvMainUserInfo.setText(getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.SP_PHONE_NUMBER)));
+			mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.SP_PHONE_NUMBER)));
 			mViewBinding.actvMainUserInfo.setOnClickListener(null);
 		}
 	}
@@ -89,17 +90,5 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 				Glide.with(holder.itemView).load(data).into(holder.imageView);
 			}
 		}).setBannerRound2(16F).setIndicator(new CircleIndicator(this));
-	}
-
-	/**
-	 * 标记手机号中间4位为*
-	 *
-	 * @param phoneNumber
-	 * @return
-	 */
-	private String getMarkedPhoneNumber(String phoneNumber) {
-		String start = phoneNumber.substring(0, 3);
-		String end = phoneNumber.substring(phoneNumber.length() - 4);
-		return start + "****" + end;
 	}
 }

@@ -29,6 +29,7 @@
 
 	<!--设置-->
 	<string name="settings">设置</string>
+	<string name="settings_view_after_login">登录后查看</string>
 	<string name="settings_currently_login_account">当前登录账户</string>
 	<string name="settings_my_device">我的设备</string>
 	<string name="settings_network">网络设置</string>
