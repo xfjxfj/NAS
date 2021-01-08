@@ -18,4 +18,5 @@
 	<color name="login_qr_code">#2E3641</color>
 	<color name="login_get_code">#1DD9FA</color>
 	<color name="login_error_toast_bg">#F5E63939</color>
+	<color name="login_time_radio_button">#767A86</color>
 </resources>

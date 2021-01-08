@@ -59,4 +59,14 @@
 		<item name="android:textSize">36px</item>
 		<item name="android:textStyle">bold</item>
 	</style>
+
+	<style name="login_time_radio_button">
+		<item name="android:layout_width">128px</item>
+		<item name="android:layout_height">56px</item>
+		<item name="android:gravity">center</item>
+		<item name="android:includeFontPadding">false</item>
+		<item name="android:textColor">@drawable/popup_login_time_radio_button_text_bg</item>
+		<item name="android:textSize">24px</item>
+		<item name="android:background">@drawable/popup_login_time_radio_button_bg</item>
+	</style>
 </resources>

@@ -22,7 +22,7 @@ import com.viegre.nas.speaker.fragment.settings.ProtocolFragment;
 import com.viegre.nas.speaker.fragment.settings.ScreenFragment;
 import com.viegre.nas.speaker.fragment.settings.SoundFragment;
 import com.viegre.nas.speaker.fragment.settings.TimeFragment;
-import com.viegre.nas.speaker.impl.PromptPopupClickListener;
+import com.viegre.nas.speaker.impl.PopupClickListener;
 import com.viegre.nas.speaker.popup.PromptPopup;
 import com.viegre.nas.speaker.util.CommonUtils;
 import com.yanzhenjie.kalle.Kalle;
@@ -61,7 +61,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 		                                                                                        new PromptPopup(this,
 		                                                                                                        R.string.settings_logout_confirmation,
 		                                                                                                        R.string.settings_logout_confirmation_content,
-		                                                                                                        new PromptPopupClickListener() {
+		                                                                                                        new PopupClickListener() {
 			                                                                                                        @Override
 			                                                                                                        public void onConfirm() {
 				                                                                                                        logout();

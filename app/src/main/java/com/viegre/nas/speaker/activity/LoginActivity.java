@@ -17,6 +17,8 @@ import com.viegre.nas.speaker.config.SPConfig;
 import com.viegre.nas.speaker.config.UrlConfig;
 import com.viegre.nas.speaker.databinding.ActivityLoginBinding;
 import com.viegre.nas.speaker.entity.LoginEntity;
+import com.viegre.nas.speaker.impl.PopupClickListener;
+import com.viegre.nas.speaker.popup.LoginTimePopup;
 import com.viegre.nas.speaker.util.CommonUtils;
 import com.viegre.nas.speaker.util.ImageStreamUtils;
 import com.yanzhenjie.kalle.Kalle;
@@ -184,8 +186,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 					     SPUtils.getInstance().put(SPConfig.SP_PHONE_NUMBER, phone);
 					     Kalle.getConfig().getHeaders().set("token", token);
 					     Kalle.setConfig(Kalle.getConfig());
-					     ActivityUtils.startActivity(MainActivity.class);
-					     finish();
+					     setLoginTime();
 				     }
 			     }
 
@@ -196,5 +197,18 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 				     mViewBinding.actvLoginAccountBtn.setClickable(true);
 			     }
 		     });
+	}
+
+	/**
+	 * 设置登录有效时间
+	 */
+	private void setLoginTime() {
+		CommonUtils.showCustomXPopup(this, new LoginTimePopup(this, new PopupClickListener() {
+			@Override
+			public void onConfirm() {
+				ActivityUtils.startActivity(MainActivity.class);
+				finish();
+			}
+		}));
 	}
 }
