@@ -27,7 +27,7 @@
 		<item>@string/settings_about_viegre</item>
 	</string-array>
 
-	<string-array name="moderate_rain_name">
+	<string-array name="main_weather_name">
 		<item>@string/weather_sunny</item>
 		<item>@string/weather_night</item>
 		<item>@string/weather_sunny_to_cloudy</item>
@@ -59,7 +59,7 @@
 		<item>@string/weather_unknown</item>
 	</string-array>
 
-	<integer-array name="moderate_rain_icon">
+	<integer-array name="main_weather_icon">
 		<item>@mipmap/weather_sunny</item>
 		<item>@mipmap/weather_night</item>
 		<item>@mipmap/weather_sunny_to_cloudy</item>

@@ -46,7 +46,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		//取消获取图片验证码任务
 		ThreadUtils.cancel(ThreadUtils.getSinglePool());
 		//清除验证码sessionId缓存
-		SPUtils.getInstance().remove(SPConfig.SP_LOGIN_CODE_SESSION_ID);
+		SPUtils.getInstance().remove(SPConfig.LOGIN_CODE_SESSION_ID);
 	}
 
 	private void initListener() {
@@ -171,8 +171,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 			mViewBinding.actvLoginAccountBtn.setClickable(true);
 			return;
 		}
-		Kalle.post(UrlConfig.UserConfig.LOGIN)
-		     .addHeader("Cookie", SPUtils.getInstance().getString(SPConfig.SP_LOGIN_CODE_SESSION_ID))
+		Kalle.post(UrlConfig.UserConfig.LOGIN).addHeader("Cookie", SPUtils.getInstance().getString(SPConfig.LOGIN_CODE_SESSION_ID))
 		     .param("code", code)
 		     .param("password", password)
 		     .param("phoneNumber", phone)
@@ -184,8 +183,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 					     CommonUtils.showErrorToast(response.failed());
 				     } else {
 					     String token = response.succeed().getToken();
-					     SPUtils.getInstance().put(SPConfig.SP_TOKEN, token);
-					     SPUtils.getInstance().put(SPConfig.SP_PHONE_NUMBER, phone);
+					     SPUtils.getInstance().put(SPConfig.TOKEN, token);
+					     SPUtils.getInstance().put(SPConfig.PHONE_NUMBER, phone);
 					     Kalle.getConfig().getHeaders().set("token", token);
 					     Kalle.setConfig(Kalle.getConfig());
 					     setLoginTime();
@@ -195,7 +194,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 			     @Override
 			     public void onEnd() {
 				     super.onEnd();
-				     SPUtils.getInstance().remove(SPConfig.SP_LOGIN_CODE_SESSION_ID);
+				     SPUtils.getInstance().remove(SPConfig.LOGIN_CODE_SESSION_ID);
 				     mViewBinding.actvLoginAccountBtn.setClickable(true);
 			     }
 		     });

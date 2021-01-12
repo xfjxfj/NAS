@@ -64,7 +64,7 @@ dependencies {
 	//https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README-CN.md
 	implementation 'com.blankj:utilcodex:1.30.5'
 	//https://github.com/CymChad/BaseRecyclerViewAdapterHelper
-	implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
+	implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6'
 	//https://github.com/iielse/switchbutton
 	implementation 'com.github.iielse:switchbutton:1.0.4'
 	//https://github.com/li-xiaojun/XPopup

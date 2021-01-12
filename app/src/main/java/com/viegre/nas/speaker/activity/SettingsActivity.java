@@ -83,7 +83,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	 * 检查登录状态
 	 */
 	private void checkLoginStatus() {
-		if (StringUtils.isEmpty(SPUtils.getInstance().getString(SPConfig.SP_TOKEN, ""))) {
+		if (StringUtils.isEmpty(SPUtils.getInstance().getString(SPConfig.TOKEN, ""))) {
 			mViewBinding.acivSettingsLogout.setVisibility(View.GONE);
 			mViewBinding.acivSettingsAvatar.setImageResource(R.mipmap.settings_unlogin);
 			mViewBinding.actvSettingsUsername.setText(R.string.settings_view_after_login);
@@ -91,7 +91,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 		} else {
 			mViewBinding.acivSettingsLogout.setVisibility(View.VISIBLE);
 			mViewBinding.acivSettingsAvatar.setImageResource(R.mipmap.settings_unlogin);
-			mViewBinding.actvSettingsUsername.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.SP_PHONE_NUMBER)));
+			mViewBinding.actvSettingsUsername.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE_NUMBER)));
 			mViewBinding.clSettingsLoginArea.setOnClickListener(null);
 		}
 	}
@@ -135,8 +135,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	 * 登出接口
 	 */
 	private void logout() {
-		Kalle.post(UrlConfig.UserConfig.LOGOUT)
-		     .param("phoneNumber", SPUtils.getInstance().getString(SPConfig.SP_PHONE_NUMBER))
+		Kalle.post(UrlConfig.UserConfig.LOGOUT).param("phoneNumber", SPUtils.getInstance().getString(SPConfig.PHONE_NUMBER))
 		     .param("sn", PhoneUtils.getSerial())
 		     .perform(new SimpleCallback<String>() {
 			     @Override
@@ -144,8 +143,8 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 				     if (!response.isSucceed()) {
 					     CommonUtils.showErrorToast(response.failed());
 				     } else {
-					     SPUtils.getInstance().remove(SPConfig.SP_TOKEN);
-					     SPUtils.getInstance().remove(SPConfig.SP_PHONE_NUMBER);
+					     SPUtils.getInstance().remove(SPConfig.TOKEN);
+					     SPUtils.getInstance().remove(SPConfig.PHONE_NUMBER);
 					     checkLoginStatus();
 				     }
 			     }

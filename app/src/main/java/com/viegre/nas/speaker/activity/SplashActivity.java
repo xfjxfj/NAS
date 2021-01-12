@@ -49,7 +49,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 判断是否为开机启动
 	 */
 	private void getBootStatus() {
-		if (SPUtils.getInstance().getBoolean(SPConfig.SP_IS_BOOT, false)) {//开机启动
+		if (SPUtils.getInstance().getBoolean(SPConfig.IS_BOOT, false)) {//开机启动
 			//判断网络是否可用
 			NetworkUtils.isAvailableAsync(aBoolean -> {
 				if (!aBoolean) {//打开网络设置
@@ -70,7 +70,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 判断是否为出厂首次开机
 	 */
 	private void getDeviceInitializedStatus() {
-		if (!SPUtils.getInstance().getBoolean(SPConfig.SP_IS_DEVICE_INITIALIZED, false)) {//未初始化
+		if (!SPUtils.getInstance().getBoolean(SPConfig.IS_DEVICE_INITIALIZED, false)) {//未初始化
 
 		} else {//已初始化
 
@@ -151,20 +151,20 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		mNetworkFragment = NetworkFragment.newInstance(true);
 		mNetworkDetailFragment = NetworkDetailFragment.newInstance();
 		//判断是否登录
-		if (StringUtils.isEmpty(SPUtils.getInstance().getString(SPConfig.SP_TOKEN, ""))) {
+		if (StringUtils.isEmpty(SPUtils.getInstance().getString(SPConfig.TOKEN, ""))) {
 			ActivityUtils.startActivity(LoginActivity.class);
 		}
 	}
 
-	@BusUtils.Bus(tag = BusConfig.BUS_NETWORK_DETAIL, threadMode = BusUtils.ThreadMode.MAIN)
+	@BusUtils.Bus(tag = BusConfig.NETWORK_DETAIL, threadMode = BusUtils.ThreadMode.MAIN)
 	public void networkDetailOperation(String operation) {
 		switch (operation) {
-			case BusConfig.BUS_SHOW_NETWORK_DETAIL:
+			case BusConfig.SHOW_NETWORK_DETAIL:
 				FragmentUtils.add(getSupportFragmentManager(), mNetworkDetailFragment, R.id.flSplash);
 				FragmentUtils.show(mNetworkDetailFragment);
 				break;
 
-			case BusConfig.BUS_HIDE_NETWORK_DETAIL:
+			case BusConfig.HIDE_NETWORK_DETAIL:
 				FragmentUtils.remove(mNetworkDetailFragment);
 				break;
 

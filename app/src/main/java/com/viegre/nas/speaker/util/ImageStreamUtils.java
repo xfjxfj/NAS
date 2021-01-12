@@ -28,7 +28,7 @@ public class ImageStreamUtils {
 		httpURLconnection.setReadTimeout(10 * 1000);
 		//示例: "Set-Cookie, [JSESSIONID=E4240F41433CED789A71E7A40ABBA235; Path=/; HttpOnly]"
 		String sessionId = httpURLconnection.getHeaderField("Set-Cookie").split(";")[0].replaceAll(" ", "");
-		SPUtils.getInstance().put(SPConfig.SP_LOGIN_CODE_SESSION_ID, sessionId);
+		SPUtils.getInstance().put(SPConfig.LOGIN_CODE_SESSION_ID, sessionId);
 		InputStream in;
 		if (200 == httpURLconnection.getResponseCode()) {
 			in = httpURLconnection.getInputStream();

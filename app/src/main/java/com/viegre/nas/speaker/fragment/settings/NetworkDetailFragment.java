@@ -4,9 +4,6 @@ import android.content.Context;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.alibaba.fastjson.JSON;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ColorUtils;
@@ -32,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 /**
  * 网络详情
  * Created by レインマン on 2020/12/03 15:49 with Android Studio.
@@ -40,14 +40,14 @@ public class NetworkDetailFragment extends BaseFragment<FragmentNetworkDetailBin
 
 	@Override
 	protected void initView() {
-		mViewBinding.llcNetworkDetailBack.setOnClickListener(view -> BusUtils.post(BusConfig.BUS_NETWORK_DETAIL, BusConfig.BUS_HIDE_NETWORK_DETAIL));
-		String SSID = SPUtils.getInstance().getString(SPConfig.SP_CURRENT_WIFI_SSID, "");
+		mViewBinding.llcNetworkDetailBack.setOnClickListener(view -> BusUtils.post(BusConfig.NETWORK_DETAIL, BusConfig.HIDE_NETWORK_DETAIL));
+		String SSID = SPUtils.getInstance().getString(SPConfig.CURRENT_WIFI_SSID, "");
 		mViewBinding.actvNetworkDetailSSID.setText(SSID);
 		mViewBinding.actvNetworkDetailIgnore.setOnClickListener(view -> WifiUtils.withContext(mActivity).remove(SSID, new RemoveSuccessListener() {
 			@Override
 			public void success() {
 				removeWiFiFromSPBySSID(SSID);
-				BusUtils.post(BusConfig.BUS_NETWORK_DETAIL, BusConfig.BUS_HIDE_NETWORK_DETAIL);
+				BusUtils.post(BusConfig.NETWORK_DETAIL, BusConfig.HIDE_NETWORK_DETAIL);
 			}
 
 			@Override
@@ -109,7 +109,7 @@ public class NetworkDetailFragment extends BaseFragment<FragmentNetworkDetailBin
 	 * @param SSID
 	 */
 	private void removeWiFiFromSPBySSID(String SSID) {
-		List<WiFiEntity> wifiList = JSON.parseArray(SPUtils.getInstance().getString(SPConfig.SP_SAVED_WIFI, ""), WiFiEntity.class);
+		List<WiFiEntity> wifiList = JSON.parseArray(SPUtils.getInstance().getString(SPConfig.SAVED_WIFI, ""), WiFiEntity.class);
 		if (null != wifiList && !wifiList.isEmpty()) {
 			Iterator<WiFiEntity> iterator = wifiList.iterator();
 			while (iterator.hasNext()) {
@@ -118,7 +118,7 @@ public class NetworkDetailFragment extends BaseFragment<FragmentNetworkDetailBin
 					break;
 				}
 			}
-			SPUtils.getInstance().put(SPConfig.SP_SAVED_WIFI, JSON.toJSONString(wifiList));
+			SPUtils.getInstance().put(SPConfig.SAVED_WIFI, JSON.toJSONString(wifiList));
 		}
 	}
 }

@@ -28,12 +28,12 @@ public enum AMapLocationManager {
 			mAMapLocationClient = new AMapLocationClient(applicationContext);
 			mAMapLocationClient.setLocationListener(aMapLocation -> {
 				if (null == aMapLocation) {
-					BusUtils.post(BusConfig.BUS_WEATHER, null);
+					BusUtils.post(BusConfig.WEATHER, null);
 				} else {
 					if (0 != aMapLocation.getErrorCode()) {
 						//定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
 						LogUtils.e("location Error, ErrCode:" + aMapLocation.getErrorCode() + ", errInfo:" + aMapLocation.getErrorInfo());
-						BusUtils.post(BusConfig.BUS_WEATHER, null);
+						BusUtils.post(BusConfig.WEATHER, null);
 					} else {
 						LogUtils.iTag("AmapTest", aMapLocation.getLatitude(), aMapLocation.getLongitude());
 						Kalle.post(UrlConfig.DeviceConfig.GET_WEATHER)
@@ -44,9 +44,9 @@ public enum AMapLocationManager {
 							     @Override
 							     public void onResponse(SimpleResponse<WeatherRootEntity, String> response) {
 								     if (!response.isSucceed()) {
-									     BusUtils.post(BusConfig.BUS_WEATHER, null);
+									     BusUtils.post(BusConfig.WEATHER, null);
 								     } else {
-									     BusUtils.post(BusConfig.BUS_WEATHER, response.succeed().getWeather().get(0));
+									     BusUtils.post(BusConfig.WEATHER, response.succeed().getWeather().get(0));
 								     }
 							     }
 						     });

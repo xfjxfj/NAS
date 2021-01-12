@@ -189,14 +189,14 @@
 			android:id="@+id/acivMainWeather"
 			android:layout_width="43px"
 			android:layout_height="43px"
-			app:srcCompat="@mipmap/test_icon_weather" />
+			app:srcCompat="@mipmap/weather_unknown" />
 
 		<androidx.appcompat.widget.AppCompatTextView
 			android:id="@+id/actvMainTemperature"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:includeFontPadding="false"
-			android:text="5°"
+			android:text="@string/weather_unknown_temperature"
 			android:textColor="@android:color/white"
 			android:textSize="26px" />
 	</androidx.appcompat.widget.LinearLayoutCompat>

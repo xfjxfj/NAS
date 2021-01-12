@@ -8,13 +8,13 @@ public class BusConfig {
 	/**
 	 * 网络设置
 	 */
-	public static final String BUS_NETWORK_PASSWORD = "bus_network_password";
-	public static final String BUS_NETWORK_DETAIL = "bus_open_network_detail";
-	public static final String BUS_SHOW_NETWORK_DETAIL = "bus_show_network_detail";
-	public static final String BUS_HIDE_NETWORK_DETAIL = "bus_hide_network_detail";
+	public static final String NETWORK_PASSWORD = "network_password";
+	public static final String NETWORK_DETAIL = "open_network_detail";
+	public static final String SHOW_NETWORK_DETAIL = "show_network_detail";
+	public static final String HIDE_NETWORK_DETAIL = "hide_network_detail";
 
 	/**
 	 * 天气
 	 */
-	public static final String BUS_WEATHER = "bus_weather";
+	public static final String WEATHER = "weather";
 }

@@ -6,25 +6,25 @@ package com.viegre.nas.speaker.config;
 public class UrlConfig {
 
 	//服务器地址
-	public static final String SERVER_URL = "http://39.108.98.92:8708/";
+	public static final String SERVER = "http://39.108.98.92:8708/";
 
 	public static class UserConfig {
 		//用户相关接口
 		public static final String USER = "user/";
 		//获取图片验证码
-		public static final String GET_IMAGE_CODE = SERVER_URL + USER + "getImageCode";
+		public static final String GET_IMAGE_CODE = SERVER + USER + "getImageCode";
 		//账号密码登录
-		public static final String LOGIN = SERVER_URL + USER + "login";
+		public static final String LOGIN = SERVER + USER + "login";
 		//登出接口
-		public static final String LOGOUT = SERVER_URL + USER + "logout";
+		public static final String LOGOUT = SERVER + USER + "logout";
 		//刷新Token，限制有效时间
-		public static final String REFRESH_TOKEN = SERVER_URL + USER + "refreshToken";
+		public static final String REFRESH_TOKEN = SERVER + USER + "refreshToken";
 	}
 
 	public static class DeviceConfig {
 		//设备相关接口
 		public static final String DEVICE = "device/";
 		//获取天气
-		public static final String GET_WEATHER = SERVER_URL + DEVICE + "getWeather";
+		public static final String GET_WEATHER = SERVER + DEVICE + "getWeather";
 	}
 }

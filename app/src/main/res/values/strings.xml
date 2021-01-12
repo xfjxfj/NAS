@@ -65,6 +65,8 @@
 	<string name="weather_sandstorm">沙尘暴|强沙尘暴</string>
 	<string name="weather_tornado">龙卷风</string>
 	<string name="weather_unknown">未知</string>
+	<string name="weather_unknown_temperature">\?°</string>
+	<string name="weather_temperature">°</string>
 
 	<!--设置-->
 	<string name="settings">设置</string>

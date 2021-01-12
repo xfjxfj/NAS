@@ -10,9 +10,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.alibaba.fastjson.JSON;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ColorUtils;
@@ -44,6 +41,9 @@ import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 /**
  * 网络设置
  * Created by レインマン on 2020/11/26 11:35 with Android Studio.
@@ -71,7 +71,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 			if (mIsConnecting) {
 				return;
 			}
-			BusUtils.post(BusConfig.BUS_NETWORK_DETAIL, BusConfig.BUS_SHOW_NETWORK_DETAIL);
+			BusUtils.post(BusConfig.NETWORK_DETAIL, BusConfig.SHOW_NETWORK_DETAIL);
 		});
 		mViewBinding.acivNetworkRefresh.setOnClickListener(view -> {
 			mViewBinding.acivNetworkRefresh.setClickable(false);
@@ -144,7 +144,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 			String SSID;
 			if (null != info) {
 				SSID = info.getSSID().replace("\"", "");
-				SPUtils.getInstance().put(SPConfig.SP_CURRENT_WIFI_SSID, SSID);
+				SPUtils.getInstance().put(SPConfig.CURRENT_WIFI_SSID, SSID);
 			} else {
 				SSID = info.getBSSID();
 			}
@@ -298,7 +298,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 	 *
 	 * @param password
 	 */
-	@BusUtils.Bus(tag = BusConfig.BUS_NETWORK_PASSWORD, threadMode = BusUtils.ThreadMode.MAIN)
+	@BusUtils.Bus(tag = BusConfig.NETWORK_PASSWORD, threadMode = BusUtils.ThreadMode.MAIN)
 	public void getPassword(String password) {
 		mIsConnecting = true;
 		showSelectedWiFi();
@@ -317,7 +317,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 				                 mViewBinding.ilNetworkSelected.acivItemNetworkStatus.clearAnimation();
 				                 mViewBinding.ilNetworkSelected.acivItemNetworkStatus.setImageResource(R.mipmap.network_wifi_connected);
 				                 mNetworkListAdapter.notifyDataSetChanged();
-				                 SPUtils.getInstance().put(SPConfig.SP_CURRENT_WIFI_SSID, mWiFiEntity.getScanResult().SSID);
+				                 SPUtils.getInstance().put(SPConfig.CURRENT_WIFI_SSID, mWiFiEntity.getScanResult().SSID);
 			                 }
 
 			                 @Override
@@ -326,7 +326,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 				                 mWifiUtilsBuilder = null;
 				                 hideSelectedWiFi();
 				                 mNetworkListAdapter.notifyDataSetChanged();
-				                 SPUtils.getInstance().remove(SPConfig.SP_CURRENT_WIFI_SSID);
+				                 SPUtils.getInstance().remove(SPConfig.CURRENT_WIFI_SSID);
 				                 PopupManager.INSTANCE.showCustomXPopup(mContext, new NetworkConnectionFailedPopup(mContext));
 			                 }
 		                 })
@@ -349,7 +349,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 	 */
 	private void initSavedWiFiList() {
 		mSavedWiFiList.clear();
-		List<WiFiEntity> wifiList = JSON.parseArray(SPUtils.getInstance().getString(SPConfig.SP_SAVED_WIFI, ""), WiFiEntity.class);
+		List<WiFiEntity> wifiList = JSON.parseArray(SPUtils.getInstance().getString(SPConfig.SAVED_WIFI, ""), WiFiEntity.class);
 		if (null != wifiList && !wifiList.isEmpty()) {
 			mSavedWiFiList.addAll(wifiList);
 		}
@@ -384,7 +384,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 				}
 			}
 		}
-		SPUtils.getInstance().put(SPConfig.SP_SAVED_WIFI, JSON.toJSONString(mSavedWiFiList));
+		SPUtils.getInstance().put(SPConfig.SAVED_WIFI, JSON.toJSONString(mSavedWiFiList));
 		if (!mNetworkListAdapter.getData().isEmpty()) {
 			updateWiFiList(mNetworkListAdapter.getData());
 		}

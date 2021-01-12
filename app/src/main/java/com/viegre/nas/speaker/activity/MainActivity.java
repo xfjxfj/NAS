@@ -1,16 +1,22 @@
 package com.viegre.nas.speaker.activity;
 
+import android.content.res.TypedArray;
+
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.activity.base.BaseActivity;
+import com.viegre.nas.speaker.config.BusConfig;
 import com.viegre.nas.speaker.config.SPConfig;
 import com.viegre.nas.speaker.databinding.ActivityMainBinding;
+import com.viegre.nas.speaker.entity.WeatherEntity;
 import com.viegre.nas.speaker.manager.AMapLocationManager;
 import com.viegre.nas.speaker.util.CommonUtils;
 import com.youth.banner.adapter.BannerImageAdapter;
@@ -18,12 +24,16 @@ import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by レインマン on 2020/12/15 09:29 with Android Studio.
  */
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
+
+	private final Map<String, Integer> mWeatherMap = new HashMap<>();
 
 	@Override
 	protected void initView() {
@@ -32,7 +42,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	}
 
 	@Override
-	protected void initData() {}
+	protected void initData() {
+		initWeather();
+	}
 
 	@Override
 	protected void onResume() {
@@ -45,11 +57,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	 * 初始化用户区域
 	 */
 	private void initUser() {
-		if (StringUtils.isEmpty(SPUtils.getInstance().getString(SPConfig.SP_TOKEN, ""))) {
+		if (StringUtils.isEmpty(SPUtils.getInstance().getString(SPConfig.TOKEN, ""))) {
 			mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
 			mViewBinding.actvMainUserInfo.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
 		} else {
-			mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.SP_PHONE_NUMBER)));
+			mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE_NUMBER)));
 			mViewBinding.actvMainUserInfo.setOnClickListener(null);
 		}
 	}
@@ -92,5 +104,48 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 				Glide.with(holder.itemView).load(data).into(holder.imageView);
 			}
 		}).setBannerRound2(16F).setIndicator(new CircleIndicator(this));
+	}
+
+	/**
+	 * 初始化天气
+	 */
+	private void initWeather() {
+		mViewBinding.llcMainWeather.setOnClickListener(view -> AMapLocationManager.INSTANCE.getLocation());
+		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<HashMap<String, Integer>>() {
+			@Override
+			public HashMap<String, Integer> doInBackground() {
+				String[] weatherNameArr = getResources().getStringArray(R.array.main_weather_name);
+				TypedArray typedArray = getResources().obtainTypedArray(R.array.main_weather_icon);
+				HashMap<String, Integer> weatherMap = new HashMap<>();
+				for (int i = 0; i < weatherNameArr.length; i++) {
+					weatherMap.put(weatherNameArr[i], typedArray.getResourceId(i, 0));
+				}
+				typedArray.recycle();
+				return weatherMap;
+			}
+
+			@Override
+			public void onSuccess(HashMap<String, Integer> result) {
+				mWeatherMap.putAll(result);
+				AMapLocationManager.INSTANCE.getLocation();
+			}
+		});
+	}
+
+	@BusUtils.Bus(tag = BusConfig.WEATHER, threadMode = BusUtils.ThreadMode.MAIN)
+	public void getWeather(WeatherEntity weatherEntity) {
+		if (null == weatherEntity || mWeatherMap.isEmpty()) {
+			mViewBinding.acivMainWeather.setImageResource(R.mipmap.weather_unknown);
+			mViewBinding.actvMainTemperature.setText(R.string.weather_unknown_temperature);
+		} else {
+			for (Map.Entry<String, Integer> entry : mWeatherMap.entrySet()) {
+				String name = entry.getKey();
+				if (name.contains(weatherEntity.getWeather())) {
+					mViewBinding.acivMainWeather.setImageResource(entry.getValue());
+					mViewBinding.actvMainTemperature.setText(weatherEntity.getCurtemperature() + StringUtils.getString(R.string.weather_temperature));
+					break;
+				}
+			}
+		}
 	}
 }

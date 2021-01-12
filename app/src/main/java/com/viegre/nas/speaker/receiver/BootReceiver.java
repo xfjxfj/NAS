@@ -15,7 +15,7 @@ public class BootReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		//判断是否为开机启动
 		if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-			SPUtils.getInstance().put(SPConfig.SP_IS_BOOT, true);
+			SPUtils.getInstance().put(SPConfig.IS_BOOT, true);
 		}
 	}
 }

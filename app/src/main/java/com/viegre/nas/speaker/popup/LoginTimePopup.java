@@ -50,13 +50,12 @@ public class LoginTimePopup extends CenterPopupView {
 				                                                                                dismiss();
 				                                                                                if (!response.isSucceed()) {
 					                                                                                CommonUtils.showErrorToast(response.failed());
-					                                                                                SPUtils.getInstance().remove(SPConfig.SP_TOKEN);
+					                                                                                SPUtils.getInstance().remove(SPConfig.TOKEN);
 					                                                                                SPUtils.getInstance()
-					                                                                                       .remove(SPConfig.SP_PHONE_NUMBER);
+					                                                                                       .remove(SPConfig.PHONE_NUMBER);
 				                                                                                } else {
 					                                                                                String token = response.succeed().getToken();
-					                                                                                SPUtils.getInstance()
-					                                                                                       .put(SPConfig.SP_TOKEN, token);
+					                                                                                SPUtils.getInstance().put(SPConfig.TOKEN, token);
 					                                                                                Kalle.getConfig()
 					                                                                                     .getHeaders()
 					                                                                                     .set("token", token);

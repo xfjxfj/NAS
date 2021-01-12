@@ -6,8 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.text.InputType;
 import android.view.MotionEvent;
 
-import androidx.annotation.NonNull;
-
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ResourceUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -16,6 +14,8 @@ import com.lxj.xpopup.core.CenterPopupView;
 import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.config.BusConfig;
 import com.viegre.nas.speaker.databinding.PopupNetworkPasswordBinding;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by レインマン on 2020/11/30 10:06 with Android Studio.
@@ -85,6 +85,6 @@ public class NetworkPasswordPopup extends CenterPopupView {
 			return;
 		}
 
-		dismissWith(() -> BusUtils.post(BusConfig.BUS_NETWORK_PASSWORD, password));
+		dismissWith(() -> BusUtils.post(BusConfig.NETWORK_PASSWORD, password));
 	}
 }
