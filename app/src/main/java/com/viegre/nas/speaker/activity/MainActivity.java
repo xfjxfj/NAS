@@ -11,6 +11,7 @@ import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.activity.base.BaseActivity;
 import com.viegre.nas.speaker.config.SPConfig;
 import com.viegre.nas.speaker.databinding.ActivityMainBinding;
+import com.viegre.nas.speaker.manager.AMapLocationManager;
 import com.viegre.nas.speaker.util.CommonUtils;
 import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
@@ -37,6 +38,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	protected void onResume() {
 		super.onResume();
 		initUser();
+		AMapLocationManager.INSTANCE.getLocation();
 	}
 
 	/**

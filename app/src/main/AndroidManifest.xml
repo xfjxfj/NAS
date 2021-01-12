@@ -12,6 +12,7 @@
 	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
 	<uses-permission android:name="android.permission.CAMERA" />
 	<uses-permission android:name="android.permission.RECORD_AUDIO" />
 	<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
@@ -24,6 +25,10 @@
 		android:roundIcon="@mipmap/ic_launcher_round"
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme">
+
+		<meta-data
+			android:name="com.amap.api.v2.apikey"
+			android:value="d84c3fef984d48ca6d0c2a214af75dc9" />
 
 		<activity
 			android:name=".activity.SplashActivity"
@@ -45,6 +50,8 @@
 		<activity
 			android:name=".activity.SettingsActivity"
 			android:screenOrientation="landscape" />
+
+		<service android:name="com.amap.api.location.APSService" />
 	</application>
 
 </manifest>

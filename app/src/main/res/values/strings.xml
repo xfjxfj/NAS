@@ -35,6 +35,37 @@
 	<string name="main_click_to_login">未登录请点击登录</string>
 	<string name="main_usb_drive_not_connected">未连接存储设备</string>
 
+	<!--天气-->
+	<string name="weather_sunny">晴</string>
+	<string name="weather_night">夜</string>
+	<string name="weather_sunny_to_cloudy">晴转多云</string>
+	<string name="weather_cloudy">阴</string>
+	<string name="weather_partly_cloudy">多云</string>
+	<string name="weather_thundershower">雷阵雨</string>
+	<string name="weather_light_rain">小雨|细雨|毛毛雨</string>
+	<string name="weather_moderate_rain">中雨</string>
+	<string name="weather_heavy_rain">大雨</string>
+	<string name="weather_rainstorm">暴雨|大暴雨|特大暴雨</string>
+	<string name="weather_light_snow">小雪|阵雪</string>
+	<string name="weather_moderate_snow">中雪</string>
+	<string name="weather_heavy_snow">大雪</string>
+	<string name="weather_blizzard">暴雪</string>
+	<string name="weather_sleet">雨夹雪|阵雨夹雪</string>
+	<string name="weather_hail">冰雹</string>
+	<string name="weather_freezing_rain">冻雨</string>
+	<string name="weather_fog">雾|轻雾</string>
+	<string name="weather_heavy_fog">大雾|强浓雾|浓雾|特强浓雾</string>
+	<string name="weather_frost">霜</string>
+	<string name="weather_smog">雾霾|中度霾|重度霾|严重霾</string>
+	<string name="weather_breeze">有风|微风|平静|和风</string>
+	<string name="weather_gale">强风|劲风|疾风|大风|烈风</string>
+	<string name="weather_storm">风暴|狂风暴|飓风|热带风暴</string>
+	<string name="weather_typhoon">台风</string>
+	<string name="weather_floating_dust">浮尘|扬沙</string>
+	<string name="weather_sandstorm">沙尘暴|强沙尘暴</string>
+	<string name="weather_tornado">龙卷风</string>
+	<string name="weather_unknown">未知</string>
+
 	<!--设置-->
 	<string name="settings">设置</string>
 	<string name="settings_view_after_login">登录后查看</string>

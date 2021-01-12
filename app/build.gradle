@@ -88,4 +88,6 @@ dependencies {
 	//https://github.com/yanzhenjie/Kalle
 	//https://yanzhenjie.com/Kaalle
 	implementation 'com.yanzhenjie:kalle:0.1.7'
+	//https://lbs.amap.com/api/android-location-sdk/guide/create-project/android-studio-create-project
+	implementation 'com.amap.api:location:5.2.0'
 }

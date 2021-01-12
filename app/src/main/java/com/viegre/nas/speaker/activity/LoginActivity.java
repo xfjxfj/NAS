@@ -111,7 +111,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<byte[]>() {
 			@Override
 			public byte[] doInBackground() throws Throwable {
-				return ImageStreamUtils.getImageFromStream(UrlConfig.SERVER_URL + UrlConfig.USER + UrlConfig.GET_IMAGE_CODE);
+				return ImageStreamUtils.getImageFromStream(UrlConfig.UserConfig.GET_IMAGE_CODE);
 			}
 
 			@Override
@@ -144,8 +144,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 	 */
 	private void loginbyAccount() {
 		mViewBinding.actvLoginAccountBtn.setClickable(false);
-		String phone = String.valueOf(mViewBinding.acetLoginAccountPhone.getText()), password = String.valueOf(mViewBinding.acetLoginAccountPassword
-				                                                                                                       .getText()), code = String
+		String phone = String.valueOf(mViewBinding.acetLoginAccountPhone.getText()), password = String.valueOf(mViewBinding.acetLoginAccountPassword.getText()), code = String
 				.valueOf(mViewBinding.acetLoginAccountCode.getText());
 		if (StringUtils.isEmpty(phone)) {
 			CommonUtils.showErrorToast(R.string.login_please_input_phone_number);
@@ -172,7 +171,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 			mViewBinding.actvLoginAccountBtn.setClickable(true);
 			return;
 		}
-		Kalle.post(UrlConfig.SERVER_URL + UrlConfig.USER + UrlConfig.LOGIN)
+		Kalle.post(UrlConfig.UserConfig.LOGIN)
 		     .addHeader("Cookie", SPUtils.getInstance().getString(SPConfig.SP_LOGIN_CODE_SESSION_ID))
 		     .param("code", code)
 		     .param("password", password)

@@ -26,4 +26,68 @@
 		<item>@string/settings_instructions</item>
 		<item>@string/settings_about_viegre</item>
 	</string-array>
+
+	<string-array name="moderate_rain_name">
+		<item>@string/weather_sunny</item>
+		<item>@string/weather_night</item>
+		<item>@string/weather_sunny_to_cloudy</item>
+		<item>@string/weather_cloudy</item>
+		<item>@string/weather_partly_cloudy</item>
+		<item>@string/weather_thundershower</item>
+		<item>@string/weather_light_rain</item>
+		<item>@string/weather_moderate_rain</item>
+		<item>@string/weather_heavy_rain</item>
+		<item>@string/weather_rainstorm</item>
+		<item>@string/weather_light_snow</item>
+		<item>@string/weather_moderate_snow</item>
+		<item>@string/weather_heavy_snow</item>
+		<item>@string/weather_blizzard</item>
+		<item>@string/weather_sleet</item>
+		<item>@string/weather_hail</item>
+		<item>@string/weather_freezing_rain</item>
+		<item>@string/weather_fog</item>
+		<item>@string/weather_heavy_fog</item>
+		<item>@string/weather_frost</item>
+		<item>@string/weather_smog</item>
+		<item>@string/weather_breeze</item>
+		<item>@string/weather_gale</item>
+		<item>@string/weather_storm</item>
+		<item>@string/weather_typhoon</item>
+		<item>@string/weather_floating_dust</item>
+		<item>@string/weather_sandstorm</item>
+		<item>@string/weather_tornado</item>
+		<item>@string/weather_unknown</item>
+	</string-array>
+
+	<integer-array name="moderate_rain_icon">
+		<item>@mipmap/weather_sunny</item>
+		<item>@mipmap/weather_night</item>
+		<item>@mipmap/weather_sunny_to_cloudy</item>
+		<item>@mipmap/weather_cloudy</item>
+		<item>@mipmap/weather_partly_cloudy</item>
+		<item>@mipmap/weather_thundershower</item>
+		<item>@mipmap/weather_light_rain</item>
+		<item>@mipmap/weather_moderate_rain</item>
+		<item>@mipmap/weather_heavy_rain</item>
+		<item>@mipmap/weather_rainstorm</item>
+		<item>@mipmap/weather_light_snow</item>
+		<item>@mipmap/weather_moderate_snow</item>
+		<item>@mipmap/weather_heavy_snow</item>
+		<item>@mipmap/weather_blizzard</item>
+		<item>@mipmap/weather_sleet</item>
+		<item>@mipmap/weather_hail</item>
+		<item>@mipmap/weather_freezing_rain</item>
+		<item>@mipmap/weather_fog</item>
+		<item>@mipmap/weather_heavy_fog</item>
+		<item>@mipmap/weather_frost</item>
+		<item>@mipmap/weather_smog</item>
+		<item>@mipmap/weather_breeze</item>
+		<item>@mipmap/weather_gale</item>
+		<item>@mipmap/weather_storm</item>
+		<item>@mipmap/weather_typhoon</item>
+		<item>@mipmap/weather_floating_dust</item>
+		<item>@mipmap/weather_sandstorm</item>
+		<item>@mipmap/weather_tornado</item>
+		<item>@mipmap/weather_unknown</item>
+	</integer-array>
 </resources>

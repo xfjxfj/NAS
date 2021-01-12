@@ -2,8 +2,6 @@ package com.viegre.nas.speaker.activity;
 
 import android.view.View;
 
-import androidx.fragment.app.Fragment;
-
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.PhoneUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -34,6 +32,8 @@ import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.fragment.app.Fragment;
 
 /**
  * 设置页
@@ -135,7 +135,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	 * 登出接口
 	 */
 	private void logout() {
-		Kalle.post(UrlConfig.SERVER_URL + UrlConfig.USER + UrlConfig.LOGOUT)
+		Kalle.post(UrlConfig.UserConfig.LOGOUT)
 		     .param("phoneNumber", SPUtils.getInstance().getString(SPConfig.SP_PHONE_NUMBER))
 		     .param("sn", PhoneUtils.getSerial())
 		     .perform(new SimpleCallback<String>() {

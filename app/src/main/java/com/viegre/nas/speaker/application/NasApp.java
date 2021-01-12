@@ -6,6 +6,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
 import com.viegre.nas.speaker.BuildConfig;
 import com.viegre.nas.speaker.kalle.converter.JsonConverter;
+import com.viegre.nas.speaker.manager.AMapLocationManager;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.KalleConfig;
 import com.yanzhenjie.kalle.simple.cache.CacheStore;
@@ -23,6 +24,7 @@ public class NasApp extends Application {
 		super.onCreate();
 		initUtils();
 		initKalle();
+		initAMap();
 	}
 
 	/**
@@ -48,5 +50,12 @@ public class NasApp extends Application {
 		                                     .converter(new JsonConverter())
 		                                     .build();
 		Kalle.setConfig(kalleConfig);
+	}
+
+	/**
+	 * 初始化高德地图
+	 */
+	private void initAMap() {
+		AMapLocationManager.INSTANCE.initialize(this);
 	}
 }

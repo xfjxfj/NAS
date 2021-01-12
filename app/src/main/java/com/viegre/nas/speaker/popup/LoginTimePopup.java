@@ -3,9 +3,6 @@ package com.viegre.nas.speaker.popup;
 import android.content.Context;
 import android.widget.SeekBar;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatRadioButton;
-
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.lxj.xpopup.core.CenterPopupView;
@@ -20,6 +17,9 @@ import com.viegre.nas.speaker.util.CommonUtils;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.simple.SimpleCallback;
 import com.yanzhenjie.kalle.simple.SimpleResponse;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatRadioButton;
 
 /**
  * Created by レインマン on 2021/01/08 16:03 with Android Studio.
@@ -42,33 +42,27 @@ public class LoginTimePopup extends CenterPopupView {
 		super.onCreate();
 		PopupLoginTimeBinding popupLoginTimeBinding = PopupLoginTimeBinding.bind(getPopupImplView());
 		popupLoginTimeBinding.actvPopupLoginTimeCancel.setVisibility(GONE);
-		popupLoginTimeBinding.actvPopupLoginTimeConfirm.setOnClickListener(view -> Kalle.post(UrlConfig.SERVER_URL + UrlConfig.USER + UrlConfig.REFRESH_TOKEN)
+		popupLoginTimeBinding.actvPopupLoginTimeConfirm.setOnClickListener(view -> Kalle.post(UrlConfig.UserConfig.REFRESH_TOKEN)
 		                                                                                .param("hour", mHour)
 		                                                                                .perform(new SimpleCallback<LoginEntity>() {
 			                                                                                @Override
 			                                                                                public void onResponse(SimpleResponse<LoginEntity, String> response) {
 				                                                                                dismiss();
 				                                                                                if (!response.isSucceed()) {
-					                                                                                CommonUtils.showErrorToast(
-							                                                                                response.failed());
-					                                                                                SPUtils.getInstance()
-					                                                                                       .remove(SPConfig.SP_TOKEN);
+					                                                                                CommonUtils.showErrorToast(response.failed());
+					                                                                                SPUtils.getInstance().remove(SPConfig.SP_TOKEN);
 					                                                                                SPUtils.getInstance()
 					                                                                                       .remove(SPConfig.SP_PHONE_NUMBER);
 				                                                                                } else {
-					                                                                                String token = response.succeed()
-					                                                                                                       .getToken();
+					                                                                                String token = response.succeed().getToken();
 					                                                                                SPUtils.getInstance()
-					                                                                                       .put(SPConfig.SP_TOKEN,
-					                                                                                            token);
+					                                                                                       .put(SPConfig.SP_TOKEN, token);
 					                                                                                Kalle.getConfig()
 					                                                                                     .getHeaders()
 					                                                                                     .set("token", token);
 					                                                                                Kalle.setConfig(Kalle.getConfig());
-					                                                                                ActivityUtils.startActivity(
-							                                                                                MainActivity.class);
-					                                                                                ActivityUtils.finishActivity(
-							                                                                                LoginActivity.class);
+					                                                                                ActivityUtils.startActivity(MainActivity.class);
+					                                                                                ActivityUtils.finishActivity(LoginActivity.class);
 				                                                                                }
 			                                                                                }
 		                                                                                }));
@@ -109,7 +103,6 @@ public class LoginTimePopup extends CenterPopupView {
 	}
 
 	private void setRadioButtonBold(AppCompatRadioButton appCompatRadioButton) {
-		appCompatRadioButton.setOnCheckedChangeListener((compoundButton, b) -> appCompatRadioButton.getPaint()
-		                                                                                           .setFakeBoldText(b));
+		appCompatRadioButton.setOnCheckedChangeListener((compoundButton, b) -> appCompatRadioButton.getPaint().setFakeBoldText(b));
 	}
 }
