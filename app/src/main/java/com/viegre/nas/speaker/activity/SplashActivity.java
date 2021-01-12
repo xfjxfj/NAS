@@ -1,12 +1,12 @@
 package com.viegre.nas.speaker.activity;
 
-import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
 
+import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FragmentUtils;
@@ -42,7 +42,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		ignoreBatteryOptimization();
+		requestDrawOverlays();
 	}
 
 	/**
@@ -82,21 +82,15 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 */
 	private void requestPermission() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			PermissionUtils.permission(Manifest.permission.CAMERA,
-			                           Manifest.permission.ACCESS_FINE_LOCATION,
-			                           Manifest.permission.ACCESS_COARSE_LOCATION,
-			                           Manifest.permission.RECORD_AUDIO,
-			                           Manifest.permission.READ_PHONE_STATE,
-			                           Manifest.permission.READ_EXTERNAL_STORAGE,
-			                           Manifest.permission.WRITE_EXTERNAL_STORAGE).callback(new PermissionUtils.SimpleCallback() {
-				@Override
-				public void onGranted() {
-					requestDrawOverlays();
-				}
-
-				@Override
-				public void onDenied() {
+			PermissionUtils.permissionGroup(PermissionConstants.CAMERA,
+			                                PermissionConstants.LOCATION,
+			                                PermissionConstants.MICROPHONE,
+			                                PermissionConstants.PHONE,
+			                                PermissionConstants.STORAGE).callback((isAllGranted, granted, deniedForever, denied) -> {
+				if (!isAllGranted) {
 					requestPermission();
+				} else {
+					initViews();
 				}
 			}).request();
 		} else {
@@ -108,22 +102,18 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 申请悬浮窗权限
 	 */
 	private void requestDrawOverlays() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			if (PermissionUtils.isGrantedDrawOverlays()) {
-				initViews();
-			} else {
-				PermissionUtils.requestDrawOverlays(new PermissionUtils.SimpleCallback() {
-					@Override
-					public void onGranted() {
-						initViews();
-					}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !PermissionUtils.isGrantedDrawOverlays()) {
+			PermissionUtils.requestDrawOverlays(new PermissionUtils.SimpleCallback() {
+				@Override
+				public void onGranted() {
+					ignoreBatteryOptimization();
+				}
 
-					@Override
-					public void onDenied() {
-						requestDrawOverlays();
-					}
-				});
-			}
+				@Override
+				public void onDenied() {
+					requestDrawOverlays();
+				}
+			});
 		}
 	}
 
@@ -132,15 +122,9 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 */
 	private void ignoreBatteryOptimization() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			try {
-				PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-				if (!powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
-					Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-					intent.setData(Uri.parse("package:" + getPackageName()));
-					startActivity(intent);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
+			if (!powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
+				startActivity(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).setData(Uri.parse("package:" + getPackageName())));
 			}
 		}
 	}

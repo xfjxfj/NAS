@@ -3,9 +3,6 @@ package com.viegre.nas.speaker.adapter;
 import android.content.Context;
 import android.net.wifi.WifiManager;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.Utils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -14,6 +11,9 @@ import com.viegre.nas.speaker.R;
 import com.viegre.nas.speaker.entity.WiFiEntity;
 
 import org.jetbrains.annotations.NotNull;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by レインマン on 2020/11/27 10:43 with Android Studio.

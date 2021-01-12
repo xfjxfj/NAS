@@ -7,12 +7,18 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PhoneUtils;
+import com.blankj.utilcode.util.TimeUtils;
 import com.viegre.nas.speaker.config.BusConfig;
 import com.viegre.nas.speaker.config.UrlConfig;
+import com.viegre.nas.speaker.entity.WeatherEntity;
 import com.viegre.nas.speaker.entity.WeatherRootEntity;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.simple.SimpleCallback;
 import com.yanzhenjie.kalle.simple.SimpleResponse;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Djangoogle on 2021/01/12 10:20 with Android Studio.
@@ -35,7 +41,6 @@ public enum AMapLocationManager {
 						LogUtils.e("location Error, ErrCode:" + aMapLocation.getErrorCode() + ", errInfo:" + aMapLocation.getErrorInfo());
 						BusUtils.post(BusConfig.WEATHER, null);
 					} else {
-						LogUtils.iTag("AmapTest", aMapLocation.getLatitude(), aMapLocation.getLongitude());
 						Kalle.post(UrlConfig.DeviceConfig.GET_WEATHER)
 						     .param("lat", aMapLocation.getLatitude())
 						     .param("lng", aMapLocation.getLongitude())
@@ -43,11 +48,18 @@ public enum AMapLocationManager {
 						     .perform(new SimpleCallback<WeatherRootEntity>() {
 							     @Override
 							     public void onResponse(SimpleResponse<WeatherRootEntity, String> response) {
-								     if (!response.isSucceed()) {
-									     BusUtils.post(BusConfig.WEATHER, null);
-								     } else {
-									     BusUtils.post(BusConfig.WEATHER, response.succeed().getWeather().get(0));
+								     if (response.isSucceed()) {
+									     List<WeatherEntity> weatherList = response.succeed().getWeather();
+									     if (!weatherList.isEmpty()) {
+										     for (WeatherEntity weather : weatherList) {
+											     if (TimeUtils.isToday(weather.getDate(), new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()))) {
+												     BusUtils.post(BusConfig.WEATHER, weather);
+												     return;
+											     }
+										     }
+									     }
 								     }
+								     BusUtils.post(BusConfig.WEATHER, null);
 							     }
 						     });
 					}
