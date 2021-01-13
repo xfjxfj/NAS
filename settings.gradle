@@ -1,1 +1,1 @@
-include ':app',':verticaltablayout'
+include ':app', ':verticaltablayout'

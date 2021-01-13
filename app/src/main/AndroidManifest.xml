@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.viegre.nas.speaker">
+	package="com.viegre.nas.pad">
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -16,9 +16,10 @@
 	<uses-permission android:name="android.permission.CAMERA" />
 	<uses-permission android:name="android.permission.RECORD_AUDIO" />
 	<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
 	<application
-		android:name=".application.NasApp"
+		android:name="com.viegre.nas.pad.application.NasApp"
 		android:allowBackup="true"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
@@ -31,24 +32,28 @@
 			android:value="d84c3fef984d48ca6d0c2a214af75dc9" />
 
 		<activity
-			android:name=".activity.SplashActivity"
-			android:screenOrientation="landscape">
+			android:name="com.viegre.nas.pad.activity.SplashActivity"
+			android:screenOrientation="landscape"
+			android:theme="@style/SplashTheme">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
+
+				<category android:name="android.intent.category.HOME" />
+				<category android:name="android.intent.category.DEFAULT" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 
 		<activity
-			android:name=".activity.LoginActivity"
+			android:name="com.viegre.nas.pad.activity.LoginActivity"
 			android:screenOrientation="landscape" />
 
 		<activity
-			android:name=".activity.MainActivity"
+			android:name="com.viegre.nas.pad.activity.MainActivity"
 			android:screenOrientation="landscape" />
 
 		<activity
-			android:name=".activity.SettingsActivity"
+			android:name="com.viegre.nas.pad.activity.SettingsActivity"
 			android:screenOrientation="landscape" />
 
 		<service android:name="com.amap.api.location.APSService" />

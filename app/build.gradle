@@ -6,7 +6,7 @@ android {
 	buildToolsVersion "30.0.3"
 
 	defaultConfig {
-		applicationId "com.viegre.nas.speaker"
+		applicationId "com.viegre.nas.pad"
 		minSdkVersion 21
 		versionCode 1
 		versionName "0.0.1"
@@ -86,8 +86,13 @@ dependencies {
 	//https://github.com/zhanghai/MaterialProgressBar
 	implementation 'me.zhanghai.android.materialprogressbar:library:1.6.1'
 	//https://github.com/yanzhenjie/Kalle
-	//https://yanzhenjie.com/Kaalle
+	//https://yanzhenjie.com/Kalle
 	implementation 'com.yanzhenjie:kalle:0.1.7'
 	//https://lbs.amap.com/api/android-location-sdk/guide/create-project/android-studio-create-project
 	implementation 'com.amap.api:location:5.2.0'
+	//https://github.com/CarGuo/GSYVideoPlayer
+	implementation 'com.shuyu:gsyVideoPlayer-java:8.0.0'
+	implementation 'com.shuyu:gsyVideoPlayer-armv7a:8.0.0'
+	//https://github.com/guolindev/LitePal
+	implementation 'org.litepal.guolindev:core:3.2.2'
 }
