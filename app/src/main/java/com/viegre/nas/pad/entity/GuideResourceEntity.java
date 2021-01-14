@@ -9,22 +9,22 @@ import java.io.Serializable;
  */
 public class GuideResourceEntity extends LitePalSupport implements Serializable {
 
-	private String filename;
+	private String fileName;
 	private String url;
 	private boolean isImage;
 
-	public GuideResourceEntity(String filename, String url, boolean isImage) {
-		this.filename = filename;
+	public GuideResourceEntity(String fileName, String url, boolean isImage) {
+		this.fileName = fileName;
 		this.url = url;
 		this.isImage = isImage;
 	}
 
-	public String getFilename() {
-		return filename;
+	public String getFileName() {
+		return fileName;
 	}
 
-	public void setFilename(String filename) {
-		this.filename = filename;
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 	public String getUrl() {

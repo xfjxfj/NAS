@@ -1,10 +1,10 @@
 package com.viegre.nas.pad.activity;
 
 import android.content.res.TypedArray;
+import android.view.View;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
-import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.bumptech.glide.Glide;
@@ -14,14 +14,16 @@ import com.bumptech.glide.request.RequestOptions;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.base.BaseActivity;
 import com.viegre.nas.pad.config.BusConfig;
-import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.ActivityMainBinding;
+import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.manager.AMapLocationManager;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
+
+import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,13 +59,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	 * 初始化用户区域
 	 */
 	private void initUser() {
-		if (StringUtils.isEmpty(SPUtils.getInstance().getString(SPConfig.TOKEN, ""))) {
-			mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
-			mViewBinding.actvMainUserInfo.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
-		} else {
-			mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE_NUMBER)));
-			mViewBinding.actvMainUserInfo.setOnClickListener(null);
-		}
+		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<LoginInfoEntity>() {
+			@Override
+			public LoginInfoEntity doInBackground() {
+				return LitePal.findFirst(LoginInfoEntity.class);
+			}
+
+			@Override
+			public void onSuccess(LoginInfoEntity result) {
+				if (null == result) {
+					mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
+					mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
+				} else {
+					mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(result.getPhoneNumber()));
+					mViewBinding.llcMainUser.setOnClickListener(null);
+				}
+				mViewBinding.llcMainUser.setVisibility(View.VISIBLE);
+			}
+		});
 	}
 
 	private void initIcon() {

@@ -25,8 +25,9 @@ public class JsonConverter implements Converter {
 			try {
 				httpEntity = JSON.parseObject(serverJson, HttpEntity.class);
 			} catch (Exception e) {
+				e.printStackTrace();
 				httpEntity = new HttpEntity();
-				httpEntity.setCode(0);
+				httpEntity.setCode(1);
 				httpEntity.setMsg("服务器数据格式异常");
 			}
 
@@ -50,6 +51,7 @@ public class JsonConverter implements Converter {
 						succeedData = JSON.parseObject(httpEntity.getData(), succeed);
 					}
 				} catch (Exception e) {
+					e.printStackTrace();
 					failedData = (F) "服务器数据格式异常";
 				}
 			} else {

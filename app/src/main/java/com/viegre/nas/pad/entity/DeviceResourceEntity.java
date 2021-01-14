@@ -9,22 +9,22 @@ import java.io.Serializable;
  */
 public class DeviceResourceEntity extends LitePalSupport implements Serializable {
 
-	private String id;
+	private int id;
 	private String name;
 	private String type;
 	private String content;
-	private String isDefault;
+	private int isDefault;
 	private String platform;
 	private String channel;
 	private String beginTime;
 	private String endTime;
 	private String createTime;
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -52,11 +52,11 @@ public class DeviceResourceEntity extends LitePalSupport implements Serializable
 		this.content = content;
 	}
 
-	public String getIsDefault() {
+	public int getIsDefault() {
 		return isDefault;
 	}
 
-	public void setIsDefault(String isDefault) {
+	public void setIsDefault(int isDefault) {
 		this.isDefault = isDefault;
 	}
 

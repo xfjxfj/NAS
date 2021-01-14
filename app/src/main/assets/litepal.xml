@@ -8,5 +8,6 @@
 	<list>
 		<mapping class="com.viegre.nas.pad.entity.DeviceResourceEntity" />
 		<mapping class="com.viegre.nas.pad.entity.GuideResourceEntity" />
+		<mapping class="com.viegre.nas.pad.entity.LoginInfoEntity" />
 	</list>
 </litepal>

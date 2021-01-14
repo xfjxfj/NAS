@@ -4,19 +4,21 @@ import android.content.Context;
 import android.widget.SeekBar;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.lxj.xpopup.core.CenterPopupView;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.LoginActivity;
 import com.viegre.nas.pad.activity.MainActivity;
-import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.PopupLoginTimeBinding;
 import com.viegre.nas.pad.entity.LoginEntity;
+import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.simple.SimpleCallback;
 import com.yanzhenjie.kalle.simple.SimpleResponse;
+
+import org.litepal.LitePal;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatRadioButton;
@@ -50,18 +52,29 @@ public class LoginTimePopup extends CenterPopupView {
 				                                                                                dismiss();
 				                                                                                if (!response.isSucceed()) {
 					                                                                                CommonUtils.showErrorToast(response.failed());
-					                                                                                SPUtils.getInstance().remove(SPConfig.TOKEN);
-					                                                                                SPUtils.getInstance()
-					                                                                                       .remove(SPConfig.PHONE_NUMBER);
+					                                                                                LitePal.deleteAll(LoginInfoEntity.class);
 				                                                                                } else {
 					                                                                                String token = response.succeed().getToken();
-					                                                                                SPUtils.getInstance().put(SPConfig.TOKEN, token);
-					                                                                                Kalle.getConfig()
-					                                                                                     .getHeaders()
-					                                                                                     .set("token", token);
-					                                                                                Kalle.setConfig(Kalle.getConfig());
-					                                                                                ActivityUtils.startActivity(MainActivity.class);
-					                                                                                ActivityUtils.finishActivity(LoginActivity.class);
+					                                                                                ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
+						                                                                                @Override
+						                                                                                public Void doInBackground() {
+							                                                                                LoginInfoEntity loginInfoEntity = LitePal.findFirst(
+									                                                                                LoginInfoEntity.class);
+							                                                                                loginInfoEntity.setToken(token);
+							                                                                                loginInfoEntity.saveOrUpdate();
+							                                                                                return null;
+						                                                                                }
+
+						                                                                                @Override
+						                                                                                public void onSuccess(Void result) {
+							                                                                                Kalle.getConfig()
+							                                                                                     .getHeaders()
+							                                                                                     .set("token", token);
+							                                                                                Kalle.setConfig(Kalle.getConfig());
+							                                                                                ActivityUtils.startActivity(MainActivity.class);
+							                                                                                ActivityUtils.finishActivity(LoginActivity.class);
+						                                                                                }
+					                                                                                });
 				                                                                                }
 			                                                                                }
 		                                                                                }));

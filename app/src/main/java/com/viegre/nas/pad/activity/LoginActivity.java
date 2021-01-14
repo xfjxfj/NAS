@@ -16,6 +16,7 @@ import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivityLoginBinding;
 import com.viegre.nas.pad.entity.LoginEntity;
+import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.manager.PopupManager;
 import com.viegre.nas.pad.popup.LoginTimePopup;
 import com.viegre.nas.pad.util.CommonUtils;
@@ -23,6 +24,8 @@ import com.viegre.nas.pad.util.ImageStreamUtils;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.simple.SimpleCallback;
 import com.yanzhenjie.kalle.simple.SimpleResponse;
+
+import org.litepal.LitePal;
 
 /**
  * Created by レインマン on 2021/01/06 10:39 with Android Studio.
@@ -184,11 +187,22 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 					     CommonUtils.showErrorToast(response.failed());
 				     } else {
 					     String token = response.succeed().getToken();
-					     SPUtils.getInstance().put(SPConfig.TOKEN, token);
-					     SPUtils.getInstance().put(SPConfig.PHONE_NUMBER, phone);
-					     Kalle.getConfig().getHeaders().set("token", token);
-					     Kalle.setConfig(Kalle.getConfig());
-					     setLoginTime();
+					     LoginInfoEntity loginInfoEntity = new LoginInfoEntity(token, phone);
+					     ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
+						     @Override
+						     public Void doInBackground() {
+							     LitePal.deleteAll(LoginInfoEntity.class);
+							     loginInfoEntity.save();
+							     return null;
+						     }
+
+						     @Override
+						     public void onSuccess(Void result) {
+							     Kalle.getConfig().getHeaders().set("token", token);
+							     Kalle.setConfig(Kalle.getConfig());
+							     setLoginTime();
+						     }
+					     });
 				     }
 			     }
 

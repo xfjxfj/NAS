@@ -18,7 +18,6 @@ import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.PhoneUtils;
-import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.bumptech.glide.Glide;
@@ -26,12 +25,12 @@ import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.base.BaseFragmentActivity;
 import com.viegre.nas.pad.config.BusConfig;
-import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivitySplashBinding;
 import com.viegre.nas.pad.entity.DeviceResourceEntity;
 import com.viegre.nas.pad.entity.DeviceResourceRootEntity;
 import com.viegre.nas.pad.entity.GuideResourceEntity;
+import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.fragment.settings.NetworkDetailFragment;
 import com.viegre.nas.pad.fragment.settings.NetworkFragment;
 import com.viegre.nas.pad.util.CommonUtils;
@@ -52,9 +51,11 @@ import java.util.List;
 public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> {
 
 	private static final long DEFAULT_GUIDE_TIME = 5 * 1000L;
+	private static final String GUIDE_RESOURCE = PathUtils.getExternalAppFilesPath() + File.separator + "guideResource" + File.separator;
 
 	private NetworkFragment mNetworkFragment;
 	private NetworkDetailFragment mNetworkDetailFragment;
+	private CountDownTimer mGuideSkipCountDownTimer;
 
 	@Override
 	protected void initView() {
@@ -89,7 +90,9 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 */
 	private void requestPermission() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			PermissionUtils.permissionGroup(PermissionConstants.CAMERA, PermissionConstants.LOCATION, PermissionConstants.MICROPHONE,
+			PermissionUtils.permissionGroup(PermissionConstants.CAMERA,
+			                                PermissionConstants.LOCATION,
+			                                PermissionConstants.MICROPHONE,
 			                                PermissionConstants.PHONE,
 			                                PermissionConstants.STORAGE).callback((isAllGranted, granted, deniedForever, denied) -> {
 				if (!isAllGranted) {
@@ -138,28 +141,40 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 判断设备是否绑定用户
 	 */
 	private void getDeviceBoundstatus() {
-		if (!SPUtils.getInstance().getBoolean(SPConfig.IS_DEVICE_BOUND, false)) {//未绑定
-			//判断网络是否可用
-			NetworkUtils.isAvailableAsync(aBoolean -> {
-				if (!aBoolean) {//配置网络
-					mNetworkFragment = NetworkFragment.newInstance(true);
-					mNetworkDetailFragment = NetworkDetailFragment.newInstance();
-					FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
-					FragmentUtils.show(mNetworkFragment);
-				} else {//引导用户注册
-					registerGuide();
+		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<LoginInfoEntity>() {
+			@Override
+			public LoginInfoEntity doInBackground() {
+				//创建引导资源文件夹
+				FileUtils.createOrExistsDir(GUIDE_RESOURCE);
+				return LitePal.findFirst(LoginInfoEntity.class);
+			}
+
+			@Override
+			public void onSuccess(LoginInfoEntity result) {
+				if (null == result) {//未绑定
+					//判断网络是否可用
+					NetworkUtils.isAvailableAsync(aBoolean -> {
+						if (!aBoolean) {//配置网络
+							mNetworkFragment = NetworkFragment.newInstance(true);
+							mNetworkDetailFragment = NetworkDetailFragment.newInstance();
+							FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
+							FragmentUtils.show(mNetworkFragment);
+						} else {//引导用户注册
+							registerGuide();
+						}
+					});
+				} else {//已绑定
+					//判断网络是否可用
+					NetworkUtils.isAvailableAsync(aBoolean -> {
+						if (!aBoolean) {//读取并显示缓存引导页
+							showGuideData();
+						} else {//获取并显示最新引导页
+							getDeviceResource();
+						}
+					});
 				}
-			});
-		} else {//已绑定
-			//判断网络是否可用
-			NetworkUtils.isAvailableAsync(aBoolean -> {
-				if (!aBoolean) {//读取并显示缓存引导页
-					showGuideData();
-				} else {//获取并显示最新引导页
-					getDeviceResource();
-				}
-			});
-		}
+			}
+		});
 	}
 
 	@BusUtils.Bus(tag = BusConfig.NETWORK_DETAIL, threadMode = BusUtils.ThreadMode.MAIN)
@@ -192,15 +207,20 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
 							@Override
 							public Void doInBackground() {
-								for (DeviceResourceEntity deviceResourceEntity : resourceList) {
-									if ("guideVideo".equals(deviceResourceEntity.getType())) {
-										String url = deviceResourceEntity.getContent();
-										String filename = FileUtils.getFileName(url);
-										downloadGuideData(new GuideResourceEntity(filename, url, ImageUtils.isImage(filename)));
-										break;
-									}
-								}
 								LitePal.saveAll(resourceList);
+								DeviceResourceEntity deviceResourceEntity = LitePal.where("type = 'guideVideo'")
+								                                                   .findFirst(DeviceResourceEntity.class);
+								List<File> guideFileList = FileUtils.listFilesInDir(GUIDE_RESOURCE);
+								if (null != deviceResourceEntity) {
+									String url = deviceResourceEntity.getContent();
+									String fileName = FileUtils.getFileName(url);
+									//判断文件是否已下载
+									if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
+										return null;
+									}
+									FileUtils.deleteAllInDir(GUIDE_RESOURCE);
+									downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
+								}
 								return null;
 							}
 
@@ -230,17 +250,13 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<GuideResourceEntity>() {
 			@Override
 			public GuideResourceEntity doInBackground() {
-				List<GuideResourceEntity> guideResourceEntityList = LitePal.findAll(GuideResourceEntity.class);
-				if (guideResourceEntityList.isEmpty()) {
-					return null;
-				} else {
-					return guideResourceEntityList.get(0);
-				}
+				return LitePal.findFirst(GuideResourceEntity.class);
 			}
 
 			@Override
 			public void onSuccess(GuideResourceEntity result) {
 				mViewBinding.actvSplashGuideSkip.setOnClickListener(view -> {
+					mGuideSkipCountDownTimer.cancel();
 					ActivityUtils.startActivity(MainActivity.class);
 					finish();
 				});
@@ -248,15 +264,14 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 					mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
 					startCountdown(DEFAULT_GUIDE_TIME);
 				} else {
+					String fileName = GUIDE_RESOURCE + result.getFileName();
 					if (result.isImage()) {
-						Glide.with(mActivity)
-						     .load(PathUtils.getExternalStoragePath() + File.separator + result.getFilename())
-						     .into(mViewBinding.acivSplashGuideImage);
+						Glide.with(mActivity).load(fileName).into(mViewBinding.acivSplashGuideImage);
 						mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
 						startCountdown(DEFAULT_GUIDE_TIME);
 					} else {
 						mViewBinding.sgvpSplashGuideVideo.setVisibility(View.VISIBLE);
-						playGuideVideo(PathUtils.getExternalStoragePath() + File.separator + result.getFilename());
+						playGuideVideo(fileName);
 					}
 				}
 			}
@@ -283,7 +298,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 */
 	private void startCountdown(long duration) {
 		mViewBinding.actvSplashGuideSkip.setVisibility(View.VISIBLE);
-		CountDownTimer countDownTimer = new CountDownTimer(duration, 1000L) {
+		mGuideSkipCountDownTimer = new CountDownTimer(duration, 1000L) {
 			@Override
 			public void onTick(long l) {
 				mViewBinding.actvSplashGuideSkip.setText(StringUtils.getString(R.string.splash_guide_skip) + l / 1000);
@@ -295,7 +310,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				finish();
 			}
 		};
-		countDownTimer.start();
+		mGuideSkipCountDownTimer.start();
 	}
 
 	/**
@@ -304,28 +319,57 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * @param guideResourceEntity
 	 */
 	private void downloadGuideData(GuideResourceEntity guideResourceEntity) {
-		Kalle.Download.get(SPUtils.getInstance().getString(guideResourceEntity.getUrl(), ""))
-		              .directory(PathUtils.getExternalStoragePath())
-		              .fileName(guideResourceEntity.getFilename())
+		Kalle.Download.get(guideResourceEntity.getUrl())
+		              .directory(GUIDE_RESOURCE)
+		              .fileName(guideResourceEntity.getFileName())
 		              .perform(new Callback() {
 			              @Override
 			              public void onStart() {}
 
 			              @Override
 			              public void onFinish(String path) {
-				              LitePal.deleteAll(GuideResourceEntity.class);
-				              guideResourceEntity.save();
+				              ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
+					              @Override
+					              public Void doInBackground() {
+						              LitePal.deleteAll(GuideResourceEntity.class);
+						              guideResourceEntity.save();
+						              return null;
+					              }
+
+					              @Override
+					              public void onSuccess(Void result) {}
+				              });
 			              }
 
 			              @Override
 			              public void onException(Exception e) {
 				              e.printStackTrace();
-				              LitePal.deleteAll(GuideResourceEntity.class);
+				              ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
+					              @Override
+					              public Void doInBackground() {
+						              LitePal.deleteAll(GuideResourceEntity.class);
+						              FileUtils.deleteAllInDir(GUIDE_RESOURCE);
+						              return null;
+					              }
+
+					              @Override
+					              public void onSuccess(Void result) {}
+				              });
 			              }
 
 			              @Override
 			              public void onCancel() {
-				              LitePal.deleteAll(GuideResourceEntity.class);
+				              ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
+					              @Override
+					              public Void doInBackground() {
+						              LitePal.deleteAll(GuideResourceEntity.class);
+						              FileUtils.deleteAllInDir(GUIDE_RESOURCE);
+						              return null;
+					              }
+
+					              @Override
+					              public void onSuccess(Void result) {}
+				              });
 			              }
 
 			              @Override
