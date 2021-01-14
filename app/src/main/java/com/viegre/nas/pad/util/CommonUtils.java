@@ -8,12 +8,12 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.viegre.nas.pad.R;
 
-import java.util.HashMap;
-
 /**
  * Created by レインマン on 2021/01/08 10:54 with Android Studio.
  */
 public class CommonUtils {
+
+	public static final long DEFAULT_SPLASH_GUIDE_DURATION = 5 * 1000L;
 
 	/**
 	 * 标记手机号中间4位为*
@@ -56,24 +56,15 @@ public class CommonUtils {
 	 * @param path
 	 * @return
 	 */
-	public static long getVideoDuration(String path) {
-		long duration;
-		String d = "5";
-		MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+	public static long getLocalVideoDuration(String path) {
+		long duration = DEFAULT_SPLASH_GUIDE_DURATION;
 		try {
-			if (null != path) {
-				HashMap<String, String> headers = new HashMap<>();
-				headers.put("User-Agent",
-				            "Mozilla/5.0 (Linux; U; Android 4.4.2; zh-CN; MW-KW-001 Build/JRO03C) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 UCBrowser/1.0.0.001 U4/0.8.0 Mobile Safari/533.1");
-				mmr.setDataSource(path, headers);
-			}
-			d = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+			MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+			mmr.setDataSource(path);
+			duration = Long.parseLong(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			mmr.release();
 		}
-		duration = Long.parseLong(d);
 		return duration;
 	}
 }

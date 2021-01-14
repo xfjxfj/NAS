@@ -22,6 +22,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.bumptech.glide.Glide;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
+import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.base.BaseFragmentActivity;
 import com.viegre.nas.pad.config.BusConfig;
@@ -50,7 +51,6 @@ import java.util.List;
  */
 public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> {
 
-	private static final long DEFAULT_GUIDE_TIME = 5 * 1000L;
 	private static final String GUIDE_RESOURCE = PathUtils.getExternalAppFilesPath() + File.separator + "guideResource" + File.separator;
 
 	private NetworkFragment mNetworkFragment;
@@ -262,15 +262,15 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				});
 				if (null == result) {
 					mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
-					startCountdown(DEFAULT_GUIDE_TIME);
+					startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
 				} else {
 					String fileName = GUIDE_RESOURCE + result.getFileName();
 					if (result.isImage()) {
 						Glide.with(mActivity).load(fileName).into(mViewBinding.acivSplashGuideImage);
 						mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
-						startCountdown(DEFAULT_GUIDE_TIME);
+						startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
 					} else {
-						mViewBinding.sgvpSplashGuideVideo.setVisibility(View.VISIBLE);
+						mViewBinding.nvpSplashGuideVideo.setVisibility(View.VISIBLE);
 						playGuideVideo(fileName);
 					}
 				}
@@ -284,11 +284,22 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * @param path
 	 */
 	private void playGuideVideo(String path) {
-		mViewBinding.sgvpSplashGuideVideo.setUp(path, true, "");
-		mViewBinding.sgvpSplashGuideVideo.getBackButton().setVisibility(View.GONE);
-		mViewBinding.sgvpSplashGuideVideo.setIsTouchWiget(false);
-		mViewBinding.sgvpSplashGuideVideo.startPlayLogic();
-		startCountdown(CommonUtils.getVideoDuration(path));
+		//全屏拉伸显示，使用这个属性时，surface_container建议使用FrameLayout
+		GSYVideoType.setShowType(GSYVideoType.SCREEN_MATCH_FULL);
+		mViewBinding.nvpSplashGuideVideo.setUp(path, true, "");
+		mViewBinding.nvpSplashGuideVideo.setIsTouchWiget(false);
+		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Long>() {
+			@Override
+			public Long doInBackground() {
+				return CommonUtils.getLocalVideoDuration(path);
+			}
+
+			@Override
+			public void onSuccess(Long result) {
+				mViewBinding.nvpSplashGuideVideo.startPlayLogic();
+				startCountdown(result);
+			}
+		});
 	}
 
 	/**

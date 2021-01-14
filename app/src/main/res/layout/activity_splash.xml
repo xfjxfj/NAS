@@ -21,8 +21,8 @@
 		android:visibility="gone"
 		app:srcCompat="@mipmap/splash_guide_image" />
 
-	<com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
-		android:id="@+id/sgvpSplashGuideVideo"
+	<com.viegre.nas.pad.widget.NasVideoPlayer
+		android:id="@+id/nvpSplashGuideVideo"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:visibility="gone" />
