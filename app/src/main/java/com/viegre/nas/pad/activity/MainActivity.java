@@ -19,6 +19,7 @@ import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.manager.AMapLocationManager;
 import com.viegre.nas.pad.util.CommonUtils;
+import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
@@ -49,10 +50,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	}
 
 	@Override
+	protected void onStart() {
+		super.onStart();
+	}
+
+	@Override
 	protected void onResume() {
 		super.onResume();
 		initUser();
 		AMapLocationManager.INSTANCE.getLocation();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
 	}
 
 	/**
@@ -111,12 +122,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		bannerList.add("https://pic2.zhimg.com/v2-f85f658e4f785d48cf04dd8f47acc6fa_r.jpg?source=1940ef5c");
 		bannerList.add("https://pic4.zhimg.com/v2-e5427c1e9ad8aaad99d643e7bd7e927b_r.jpg?source=1940ef5c");
 		bannerList.add("https://pic2.zhimg.com/v2-d024c6ad6851b266e8509d1aa0948ceb_r.jpg?source=1940ef5c");
-		mViewBinding.bMainBanner.addBannerLifecycleObserver(this).setAdapter(new BannerImageAdapter<String>(bannerList) {
+		Banner<String, BannerImageAdapter<String>> bMainBanner = findViewById(R.id.bMainBanner);
+		bMainBanner.setAdapter(new BannerImageAdapter<String>(bannerList) {
 			@Override
 			public void onBindView(BannerImageHolder holder, String data, int position, int size) {
 				Glide.with(holder.itemView).load(data).into(holder.imageView);
 			}
-		}).setBannerRound2(16F).setIndicator(new CircleIndicator(this));
+		}).addBannerLifecycleObserver(this).setBannerRound2(16F).setIndicator(new CircleIndicator(this));
 	}
 
 	/**
