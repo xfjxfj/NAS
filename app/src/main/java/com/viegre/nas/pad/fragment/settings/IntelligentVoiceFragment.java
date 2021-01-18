@@ -9,14 +9,7 @@ import com.viegre.nas.pad.databinding.FragmentIntelligentVoiceBinding;
 public class IntelligentVoiceFragment extends BaseFragment<FragmentIntelligentVoiceBinding> {
 
 	@Override
-	protected void initView() {
-
-	}
-
-	@Override
-	protected void initData() {
-
-	}
+	protected void initialize() {}
 
 	public static IntelligentVoiceFragment newInstance() {
 		return new IntelligentVoiceFragment();

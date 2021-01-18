@@ -9,14 +9,7 @@ import com.viegre.nas.pad.databinding.FragmentAutoAnswerBinding;
 public class AutoAnswerFragment extends BaseFragment<FragmentAutoAnswerBinding> {
 
 	@Override
-	protected void initView() {
-
-	}
-
-	@Override
-	protected void initData() {
-
-	}
+	protected void initialize() {}
 
 	public static AutoAnswerFragment newInstance() {
 		return new AutoAnswerFragment();

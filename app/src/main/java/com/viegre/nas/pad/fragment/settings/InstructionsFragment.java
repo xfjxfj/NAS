@@ -9,14 +9,7 @@ import com.viegre.nas.pad.databinding.FragmentInstructionsBinding;
 public class InstructionsFragment extends BaseFragment<FragmentInstructionsBinding> {
 
 	@Override
-	protected void initView() {
-
-	}
-
-	@Override
-	protected void initData() {
-
-	}
+	protected void initialize() {}
 
 	public static InstructionsFragment newInstance() {
 		return new InstructionsFragment();

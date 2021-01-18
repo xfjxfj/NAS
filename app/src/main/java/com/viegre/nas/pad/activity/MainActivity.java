@@ -39,13 +39,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	private final Map<String, Integer> mWeatherMap = new HashMap<>();
 
 	@Override
-	protected void initView() {
+	protected void initialize() {
 		initIcon();
 		initBanner();
-	}
-
-	@Override
-	protected void initData() {
 		initWeather();
 	}
 

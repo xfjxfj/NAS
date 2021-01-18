@@ -33,15 +33,12 @@ import org.litepal.LitePal;
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements View.OnClickListener {
 
 	@Override
-	protected void initView() {
+	protected void initialize() {
 		mViewBinding.acivLoginAccountCode.setTag(false);
 		mViewBinding.acetLoginAccountPhone.setText("18715008554");
 		mViewBinding.acetLoginAccountPassword.setText("abcd1234");
 		initListener();
 	}
-
-	@Override
-	protected void initData() {}
 
 	@Override
 	protected void onDestroy() {

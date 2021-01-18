@@ -60,6 +60,10 @@
 			android:name="com.viegre.nas.pad.activity.SettingsActivity"
 			android:screenOrientation="landscape" />
 
+		<activity
+			android:name="com.viegre.nas.pad.activity.ImageActivity"
+			android:screenOrientation="landscape" />
+
 		<service android:name="com.amap.api.location.APSService" />
 	</application>
 

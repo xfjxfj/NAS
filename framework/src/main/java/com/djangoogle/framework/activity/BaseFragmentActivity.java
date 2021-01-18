@@ -32,8 +32,7 @@ public abstract class BaseFragmentActivity<VB extends ViewBinding> extends Fragm
 			Class<?> viewBindingClass = (Class<?>) ((ParameterizedType) superClass).getActualTypeArguments()[0];
 			mViewBinding = ReflectUtils.reflect(viewBindingClass).method("inflate", getLayoutInflater()).get();
 			setContentView(mViewBinding.getRoot());
-			initView();
-			initData();
+			initialize();
 		}
 	}
 
@@ -49,9 +48,7 @@ public abstract class BaseFragmentActivity<VB extends ViewBinding> extends Fragm
 		BusUtils.unregister(this);
 	}
 
-	protected abstract void initView();
-
-	protected abstract void initData();
+	protected abstract void initialize();
 
 	@Override
 	public void onBackPressed() {}

@@ -9,14 +9,7 @@ import com.viegre.nas.pad.databinding.FragmentProtocolBinding;
 public class ProtocolFragment extends BaseFragment<FragmentProtocolBinding> {
 
 	@Override
-	protected void initView() {
-
-	}
-
-	@Override
-	protected void initData() {
-
-	}
+	protected void initialize() {}
 
 	public static ProtocolFragment newInstance() {
 		return new ProtocolFragment();

@@ -60,7 +60,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 	private final List<WiFiEntity> mSavedWiFiList = new ArrayList<>();
 
 	@Override
-	protected void initView() {
+	protected void initialize() {
 		mViewBinding.actvNetworkTitle.setText(R.string.network_settings);
 		NetworkUtils.registerNetworkStatusChangedListener(this);
 		initLoadingAnim();
@@ -78,9 +78,6 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 			scanWiFi();
 		});
 	}
-
-	@Override
-	protected void initData() {}
 
 	@Override
 	public void onDestroy() {

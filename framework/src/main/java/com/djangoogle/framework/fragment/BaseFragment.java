@@ -50,8 +50,7 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mActivity = getActivity();
-		initView();
-		initData();
+		initialize();
 	}
 
 	@Override
@@ -66,7 +65,5 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
 		BusUtils.unregister(this);
 	}
 
-	protected abstract void initView();
-
-	protected abstract void initData();
+	protected abstract void initialize();
 }

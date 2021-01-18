@@ -9,14 +9,7 @@ import com.viegre.nas.pad.databinding.FragmentScreenBinding;
 public class ScreenFragment extends BaseFragment<FragmentScreenBinding> {
 
 	@Override
-	protected void initView() {
-
-	}
-
-	@Override
-	protected void initData() {
-
-	}
+	protected void initialize() {}
 
 	public static ScreenFragment newInstance() {
 		return new ScreenFragment();

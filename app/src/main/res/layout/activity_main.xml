@@ -132,13 +132,13 @@
 		android:layout_width="0dp"
 		android:layout_height="0dp"
 		android:layout_marginTop="25px"
-		app:layout_constraintBottom_toBottomOf="@id/aciv_main_icon_image"
+		app:layout_constraintBottom_toBottomOf="@id/acivMainIconImage"
 		app:layout_constraintEnd_toEndOf="@id/acivMainIcon8"
 		app:layout_constraintStart_toStartOf="@id/acivMainIcon6"
 		app:layout_constraintTop_toBottomOf="@id/llcMainUser" />
 
 	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/aciv_main_icon_image"
+		android:id="@+id/acivMainIconImage"
 		style="@style/main_icon"
 		android:layout_marginBottom="40px"
 		app:layout_constraintBottom_toTopOf="@id/acivMainIcon3"
@@ -147,17 +147,17 @@
 		app:srcCompat="@mipmap/main_icon_image" />
 
 	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/aciv_main_icon_voice"
+		android:id="@+id/acivMainIconVoice"
 		style="@style/main_icon"
-		app:layout_constraintBottom_toBottomOf="@id/aciv_main_icon_image"
+		app:layout_constraintBottom_toBottomOf="@id/acivMainIconImage"
 		app:layout_constraintEnd_toEndOf="@id/acivMainIcon4"
 		app:layout_constraintStart_toStartOf="@id/acivMainIcon4"
 		app:srcCompat="@mipmap/main_icon_voice" />
 
 	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/aciv_main_icon_video"
+		android:id="@+id/acivMainIconVideo"
 		style="@style/main_icon"
-		app:layout_constraintBottom_toBottomOf="@id/aciv_main_icon_image"
+		app:layout_constraintBottom_toBottomOf="@id/acivMainIconImage"
 		app:layout_constraintEnd_toEndOf="@id/acivMainIcon5"
 		app:layout_constraintStart_toStartOf="@id/acivMainIcon5"
 		app:srcCompat="@mipmap/main_icon_video" />
@@ -171,7 +171,7 @@
 		android:includeFontPadding="false"
 		android:textColor="@android:color/white"
 		android:textSize="96px"
-		app:layout_constraintBottom_toTopOf="@id/aciv_main_icon_image"
+		app:layout_constraintBottom_toTopOf="@id/acivMainIconImage"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/llcMainUser" />
 

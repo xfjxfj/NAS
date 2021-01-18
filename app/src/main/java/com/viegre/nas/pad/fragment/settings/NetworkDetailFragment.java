@@ -39,7 +39,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 public class NetworkDetailFragment extends BaseFragment<FragmentNetworkDetailBinding> {
 
 	@Override
-	protected void initView() {
+	protected void initialize() {
 		mViewBinding.llcNetworkDetailBack.setOnClickListener(view -> BusUtils.post(BusConfig.NETWORK_DETAIL, BusConfig.HIDE_NETWORK_DETAIL));
 		String SSID = SPUtils.getInstance().getString(SPConfig.CURRENT_WIFI_SSID, "");
 		mViewBinding.actvNetworkDetailSSID.setText(SSID);
@@ -55,10 +55,6 @@ public class NetworkDetailFragment extends BaseFragment<FragmentNetworkDetailBin
 				ToastUtils.showShort(R.string.network_ignore_network_failed);
 			}
 		}));
-	}
-
-	@Override
-	protected void initData() {
 		initList();
 	}
 

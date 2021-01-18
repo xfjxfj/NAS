@@ -20,13 +20,8 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 	public static final String IS_LOGIN = "isLogin";
 
 	@Override
-	protected void initView() {
+	protected void initialize() {
 		initCurrentlyConnectedDevice();
-	}
-
-	@Override
-	protected void initData() {
-
 	}
 
 	public static MyDeviceFragment newInstance(boolean isLogin) {
@@ -49,8 +44,7 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 		mViewBinding.actvMyDeviceCurrentlyUsed.setText(String.format(getResources().getString(R.string.my_device_currently_used),
 		                                                             usedSizeS,
 		                                                             totalSizeStr));
-		mViewBinding.mpbMyDeviceProgress.setProgressDrawable(ContextCompat.getDrawable(mContext,
-		                                                                               R.drawable.my_device_progress_bar));
+		mViewBinding.mpbMyDeviceProgress.setProgressDrawable(ContextCompat.getDrawable(mContext, R.drawable.my_device_progress_bar));
 		mViewBinding.mpbMyDeviceProgress.setMax((int) totalSizeD);
 		mViewBinding.mpbMyDeviceProgress.setProgress((int) usedSize);
 	}

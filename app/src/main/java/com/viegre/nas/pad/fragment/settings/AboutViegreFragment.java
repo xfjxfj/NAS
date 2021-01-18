@@ -9,14 +9,7 @@ import com.viegre.nas.pad.databinding.FragmentAboutViegreBinding;
 public class AboutViegreFragment extends BaseFragment<FragmentAboutViegreBinding> {
 
 	@Override
-	protected void initView() {
-
-	}
-
-	@Override
-	protected void initData() {
-
-	}
+	protected void initialize() {}
 
 	public static AboutViegreFragment newInstance() {
 		return new AboutViegreFragment();

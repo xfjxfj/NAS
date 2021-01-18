@@ -9,14 +9,7 @@ import com.viegre.nas.pad.databinding.FragmentTimeBinding;
 public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 
 	@Override
-	protected void initView() {
-
-	}
-
-	@Override
-	protected void initData() {
-
-	}
+	protected void initialize() {}
 
 	public static TimeFragment newInstance() {
 		return new TimeFragment();

@@ -56,7 +56,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	private LoginInfoEntity mLoginInfoEntity;
 
 	@Override
-	protected void initView() {
+	protected void initialize() {
 		initFragment();
 		initMenuList();
 		mViewBinding.acivSettingsHome.setOnClickListener(view -> finish());
@@ -71,9 +71,6 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 			                                                                                                                  }
 		                                                                                                                  })));
 	}
-
-	@Override
-	protected void initData() {}
 
 	@Override
 	protected void onResume() {

@@ -58,12 +58,9 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	private CountDownTimer mGuideSkipCountDownTimer;
 
 	@Override
-	protected void initView() {
+	protected void initialize() {
 		requestPermission();
 	}
-
-	@Override
-	protected void initData() {}
 
 	@Override
 	protected void onResume() {

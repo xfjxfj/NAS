@@ -9,14 +9,7 @@ import com.viegre.nas.pad.databinding.FragmentSoundBinding;
 public class SoundFragment extends BaseFragment<FragmentSoundBinding> {
 
 	@Override
-	protected void initView() {
-
-	}
-
-	@Override
-	protected void initData() {
-
-	}
+	protected void initialize() {}
 
 	public static SoundFragment newInstance() {
 		return new SoundFragment();
