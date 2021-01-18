@@ -13,6 +13,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
+import com.djangoogle.framework.fragment.BaseFragment;
 import com.thanosfisherman.wifiutils.WifiUtils;
 import com.thanosfisherman.wifiutils.wifiRemove.RemoveErrorCode;
 import com.thanosfisherman.wifiutils.wifiRemove.RemoveSuccessListener;
@@ -22,7 +23,6 @@ import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.FragmentNetworkDetailBinding;
 import com.viegre.nas.pad.entity.WiFiEntity;
-import com.viegre.nas.pad.fragment.base.BaseFragment;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.util.ArrayList;

@@ -5,7 +5,7 @@ import org.litepal.crud.LitePalSupport;
 import java.io.Serializable;
 
 /**
- * Created by Djangoogle on 2021/01/13 18:54 with Android Studio.
+ * Created by レインマン on 2021/01/13 18:54 with Android Studio.
  */
 public class GuideResourceEntity extends LitePalSupport implements Serializable {
 

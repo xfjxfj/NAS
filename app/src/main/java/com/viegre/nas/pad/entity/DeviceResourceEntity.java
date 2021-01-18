@@ -5,7 +5,7 @@ import org.litepal.crud.LitePalSupport;
 import java.io.Serializable;
 
 /**
- * Created by Djangoogle on 2021/01/13 15:59 with Android Studio.
+ * Created by レインマン on 2021/01/13 15:59 with Android Studio.
  */
 public class DeviceResourceEntity extends LitePalSupport implements Serializable {
 

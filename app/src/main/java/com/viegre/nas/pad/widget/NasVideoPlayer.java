@@ -7,7 +7,7 @@ import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 import com.viegre.nas.pad.R;
 
 /**
- * Created by Djangoogle on 2021/01/14 18:55 with Android Studio.
+ * Created by レインマン on 2021/01/14 18:55 with Android Studio.
  */
 public class NasVideoPlayer extends StandardGSYVideoPlayer {
 

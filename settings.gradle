@@ -1,1 +1,1 @@
-include ':app', ':classify_view', ':vertical_tablayout'
+include ':app', ':classify_view', ':framework', ':vertical_tablayout'

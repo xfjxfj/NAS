@@ -5,9 +5,9 @@ import android.os.Bundle;
 import com.blankj.utilcode.constant.MemoryConstants;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.SDCardUtils;
+import com.djangoogle.framework.fragment.BaseFragment;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.databinding.FragmentMyDeviceBinding;
-import com.viegre.nas.pad.fragment.base.BaseFragment;
 
 import androidx.core.content.ContextCompat;
 

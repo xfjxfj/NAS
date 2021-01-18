@@ -3,7 +3,7 @@ package com.viegre.nas.pad.entity;
 import java.io.Serializable;
 
 /**
- * Created by Djangoogle on 2021/01/12 15:14 with Android Studio.
+ * Created by レインマン on 2021/01/12 15:14 with Android Studio.
  */
 public class WeatherEntity implements Serializable {
 

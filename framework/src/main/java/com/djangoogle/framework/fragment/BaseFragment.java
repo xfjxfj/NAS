@@ -1,4 +1,4 @@
-package com.viegre.nas.pad.fragment.base;
+package com.djangoogle.framework.fragment;
 
 import android.app.Activity;
 import android.content.Context;

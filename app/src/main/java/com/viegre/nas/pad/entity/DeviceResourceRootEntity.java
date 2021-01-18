@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Djangoogle on 2021/01/13 16:00 with Android Studio.
+ * Created by レインマン on 2021/01/13 16:00 with Android Studio.
  */
 public class DeviceResourceRootEntity implements Serializable {
 

@@ -1,9 +1,7 @@
 package com.viegre.nas.pad.application;
 
-import android.app.Application;
-
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.Utils;
+import com.djangoogle.framework.applicaiton.BaseApplication;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.kalle.converter.JsonConverter;
 import com.viegre.nas.pad.manager.AMapLocationManager;
@@ -19,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by レインマン on 2020/09/10 10:21 with Android Studio.
  */
-public class NasApp extends Application {
+public class NasApp extends BaseApplication {
 
 	@Override
 	public void onCreate() {
@@ -34,7 +32,6 @@ public class NasApp extends Application {
 	 * 初始化工具类设置
 	 */
 	private void initUtils() {
-		Utils.init(this);
 		LogUtils.getConfig().setLogSwitch(BuildConfig.DEBUG);
 		LogUtils.getConfig().setConsoleSwitch(BuildConfig.DEBUG);
 		LogUtils.getConfig().setGlobalTag(NasApp.class.getSimpleName());

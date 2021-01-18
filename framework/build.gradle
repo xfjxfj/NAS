@@ -1,0 +1,30 @@
+plugins {
+	id 'com.android.library'
+}
+
+android {
+	compileSdkVersion 30
+
+	defaultConfig {
+		minSdkVersion 19
+		versionCode 1
+		versionName "1.0.0"
+	}
+
+	buildFeatures {
+		viewBinding = true
+	}
+
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JavaVersion.VERSION_1_8
+	}
+}
+
+dependencies {
+	//https://maven.google.com/web/index.html
+	api 'com.google.android.material:material:1.3.0-beta01'
+	api 'androidx.constraintlayout:constraintlayout:2.0.4'
+	//https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README-CN.md
+	api 'com.blankj:utilcodex:1.30.5'
+}
