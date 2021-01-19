@@ -84,6 +84,12 @@
 		<item name="android:includeFontPadding">false</item>
 		<item name="android:textColor">@drawable/file_manager_tag_text_color</item>
 		<item name="android:textSize">20px</item>
-		<item name="android:textStyle">normal</item>
+	</style>
+
+	<style name="item_audio_list_text">
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:includeFontPadding">false</item>
+		<item name="android:textColor">@color/audio_list_unchecked</item>
+		<item name="android:textSize">16px</item>
 	</style>
 </resources>

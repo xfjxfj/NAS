@@ -394,7 +394,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	private void initPath() {
 		ThreadUtils.executeByCached(new VoidTask<Void>() {
 			@Override
-			public Void doInBackground() throws Throwable {
+			public Void doInBackground() {
 				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.IMAGE);
 				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.AUDIO);
 				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.VIDEO);

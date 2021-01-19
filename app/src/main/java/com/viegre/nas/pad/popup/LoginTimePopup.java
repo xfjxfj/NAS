@@ -13,7 +13,7 @@ import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.PopupLoginTimeBinding;
 import com.viegre.nas.pad.entity.LoginEntity;
 import com.viegre.nas.pad.entity.LoginInfoEntity;
-import com.viegre.nas.pad.manager.RadioButtonManager;
+import com.viegre.nas.pad.manager.TextStyleManager;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.simple.SimpleCallback;
@@ -91,10 +91,10 @@ public class LoginTimePopup extends CenterPopupView {
 				mHour = popupLoginTimeBinding.acsbPopupLoginTimeCustom.getProgress() + 2;
 			}
 		});
-		RadioButtonManager.INSTANCE.setBold(popupLoginTimeBinding.acrbPopupLoginTime2hours);
-		RadioButtonManager.INSTANCE.setBold(popupLoginTimeBinding.acrbPopupLoginTime24hours);
-		RadioButtonManager.INSTANCE.setBold(popupLoginTimeBinding.acrbPopupLoginTimeAWeek);
-		RadioButtonManager.INSTANCE.setBold(popupLoginTimeBinding.acrbPopupLoginTimePermanent);
+		TextStyleManager.INSTANCE.setBold(popupLoginTimeBinding.acrbPopupLoginTime2hours,
+		                                  popupLoginTimeBinding.acrbPopupLoginTime24hours,
+		                                  popupLoginTimeBinding.acrbPopupLoginTimeAWeek,
+		                                  popupLoginTimeBinding.acrbPopupLoginTimePermanent);
 		popupLoginTimeBinding.acrbPopupLoginTimeCustom.setOnCheckedChangeListener((compoundButton, b) -> {
 			popupLoginTimeBinding.acrbPopupLoginTimeCustom.getPaint().setFakeBoldText(b);
 			popupLoginTimeBinding.acsbPopupLoginTimeCustom.setEnabled(b);

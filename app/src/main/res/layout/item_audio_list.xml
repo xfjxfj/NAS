@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="740px"
+	android:layout_height="62px"
+	android:paddingStart="24px"
+	android:paddingEnd="24px">
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvItemAudioListNumber"
+		style="@style/item_audio_list_text"
+		android:layout_width="30px"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvItemAudioListName"
+		style="@style/item_audio_list_text"
+		android:layout_width="190px"
+		android:layout_marginStart="16px"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintStart_toEndOf="@id/actvItemAudioListNumber"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvItemAudioListSinger"
+		style="@style/item_audio_list_text"
+		android:layout_width="150px"
+		android:layout_marginStart="30px"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintStart_toEndOf="@id/actvItemAudioListName"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvItemAudioListAlbum"
+		style="@style/item_audio_list_text"
+		android:layout_width="166px"
+		android:layout_marginStart="30px"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintStart_toEndOf="@id/actvItemAudioListSinger"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvItemAudioListDuration"
+		style="@style/item_audio_list_text"
+		android:layout_width="55px"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

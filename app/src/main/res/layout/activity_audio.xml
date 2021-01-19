@@ -34,4 +34,21 @@
 			android:checked="true"
 			android:text="@string/audio" />
 	</RadioGroup>
+
+	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+		android:id="@+id/srlAudioRefresh"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
+		android:layout_marginStart="260px"
+		android:layout_marginEnd="24px"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/clFileManagerTitleRoot">
+
+		<androidx.recyclerview.widget.RecyclerView
+			android:id="@+id/rvAudioList"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" />
+	</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

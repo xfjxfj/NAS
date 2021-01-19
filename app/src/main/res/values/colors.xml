@@ -21,4 +21,5 @@
 	<color name="login_time_radio_button">#767A86</color>
 	<color name="splash_guide_skip_bg">#7A7F8D</color>
 	<color name="file_manager_tag_unpressed">#92979C</color>
+	<color name="audio_list_unchecked">#B5B6BF</color>
 </resources>
