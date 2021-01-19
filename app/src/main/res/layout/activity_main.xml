@@ -147,12 +147,12 @@
 		app:srcCompat="@mipmap/main_icon_image" />
 
 	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivMainIconVoice"
+		android:id="@+id/acivMainIconAudio"
 		style="@style/main_icon"
 		app:layout_constraintBottom_toBottomOf="@id/acivMainIconImage"
 		app:layout_constraintEnd_toEndOf="@id/acivMainIcon4"
 		app:layout_constraintStart_toStartOf="@id/acivMainIcon4"
-		app:srcCompat="@mipmap/main_icon_voice" />
+		app:srcCompat="@mipmap/main_icon_audio" />
 
 	<androidx.appcompat.widget.AppCompatImageView
 		android:id="@+id/acivMainIconVideo"

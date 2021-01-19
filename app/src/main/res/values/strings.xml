@@ -113,4 +113,16 @@
 	<string name="network_gateway">网关</string>
 	<string name="network_dns">DNS</string>
 
+	<!--图片-->
+	<string name="image">图片</string>
+	<string name="image_private">私人图片</string>
+
+	<!--音频-->
+	<string name="audio">音频</string>
+	<string name="audio_private">私人音频</string>
+
+	<!--视频-->
+	<string name="video">视频</string>
+	<string name="video_private">私人视频</string>
+
 </resources>

@@ -75,9 +75,17 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 			@Override
 			public void onSuccess(LoginInfoEntity result) {
 				if (null == result) {
+					Glide.with(mActivity)
+					     .load(R.mipmap.main_unlogin)
+					     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+					     .into(mViewBinding.acivMainUserIcon);
 					mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
 					mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
 				} else {
+					Glide.with(mActivity)
+					     .load(R.mipmap.main_unlogin)
+					     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+					     .into(mViewBinding.acivMainUserIcon);
 					mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(result.getPhoneNumber()));
 					mViewBinding.llcMainUser.setOnClickListener(null);
 				}
@@ -87,19 +95,27 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	}
 
 	private void initIcon() {
-		Glide.with(this).load(R.mipmap.main_unlogin).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(mViewBinding.acivMainUserIcon);
+		//图片
 		Glide.with(this)
 		     .load(R.mipmap.main_icon_image)
 		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
 		     .into(mViewBinding.acivMainIconImage);
+		mViewBinding.acivMainIconImage.setOnClickListener(view -> ActivityUtils.startActivity(ImageActivity.class));
+
+		//音频
 		Glide.with(this)
-		     .load(R.mipmap.main_icon_voice)
+		     .load(R.mipmap.main_icon_audio)
 		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIconVoice);
+		     .into(mViewBinding.acivMainIconAudio);
+		mViewBinding.acivMainIconAudio.setOnClickListener(view -> ActivityUtils.startActivity(AudioActivity.class));
+
+		//视频
 		Glide.with(this)
 		     .load(R.mipmap.main_icon_video)
 		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
 		     .into(mViewBinding.acivMainIconVideo);
+		mViewBinding.acivMainIconVideo.setOnClickListener(view -> ActivityUtils.startActivity(VideoActivity.class));
+
 		Glide.with(this).load(R.mipmap.test_icon_3).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon3);
 		Glide.with(this).load(R.mipmap.test_icon_4).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon4);
 		Glide.with(this).load(R.mipmap.test_icon_5).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon5);

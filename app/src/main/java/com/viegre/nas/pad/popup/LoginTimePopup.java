@@ -13,6 +13,7 @@ import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.PopupLoginTimeBinding;
 import com.viegre.nas.pad.entity.LoginEntity;
 import com.viegre.nas.pad.entity.LoginInfoEntity;
+import com.viegre.nas.pad.manager.RadioButtonManager;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.simple.SimpleCallback;
@@ -21,7 +22,6 @@ import com.yanzhenjie.kalle.simple.SimpleResponse;
 import org.litepal.LitePal;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatRadioButton;
 
 /**
  * Created by レインマン on 2021/01/08 16:03 with Android Studio.
@@ -91,10 +91,10 @@ public class LoginTimePopup extends CenterPopupView {
 				mHour = popupLoginTimeBinding.acsbPopupLoginTimeCustom.getProgress() + 2;
 			}
 		});
-		setRadioButtonBold(popupLoginTimeBinding.acrbPopupLoginTime2hours);
-		setRadioButtonBold(popupLoginTimeBinding.acrbPopupLoginTime24hours);
-		setRadioButtonBold(popupLoginTimeBinding.acrbPopupLoginTimeAWeek);
-		setRadioButtonBold(popupLoginTimeBinding.acrbPopupLoginTimePermanent);
+		RadioButtonManager.INSTANCE.setBold(popupLoginTimeBinding.acrbPopupLoginTime2hours);
+		RadioButtonManager.INSTANCE.setBold(popupLoginTimeBinding.acrbPopupLoginTime24hours);
+		RadioButtonManager.INSTANCE.setBold(popupLoginTimeBinding.acrbPopupLoginTimeAWeek);
+		RadioButtonManager.INSTANCE.setBold(popupLoginTimeBinding.acrbPopupLoginTimePermanent);
 		popupLoginTimeBinding.acrbPopupLoginTimeCustom.setOnCheckedChangeListener((compoundButton, b) -> {
 			popupLoginTimeBinding.acrbPopupLoginTimeCustom.getPaint().setFakeBoldText(b);
 			popupLoginTimeBinding.acsbPopupLoginTimeCustom.setEnabled(b);
@@ -112,9 +112,5 @@ public class LoginTimePopup extends CenterPopupView {
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {}
 		});
-	}
-
-	private void setRadioButtonBold(AppCompatRadioButton appCompatRadioButton) {
-		appCompatRadioButton.setOnCheckedChangeListener((compoundButton, b) -> appCompatRadioButton.getPaint().setFakeBoldText(b));
 	}
 }

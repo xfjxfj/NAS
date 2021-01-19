@@ -54,6 +54,7 @@
 
 		<activity
 			android:name="com.viegre.nas.pad.activity.MainActivity"
+			android:launchMode="singleTask"
 			android:screenOrientation="landscape" />
 
 		<activity
@@ -62,6 +63,14 @@
 
 		<activity
 			android:name="com.viegre.nas.pad.activity.ImageActivity"
+			android:screenOrientation="landscape" />
+
+		<activity
+			android:name="com.viegre.nas.pad.activity.AudioActivity"
+			android:screenOrientation="landscape" />
+
+		<activity
+			android:name="com.viegre.nas.pad.activity.VideoActivity"
 			android:screenOrientation="landscape" />
 
 		<service android:name="com.amap.api.location.APSService" />

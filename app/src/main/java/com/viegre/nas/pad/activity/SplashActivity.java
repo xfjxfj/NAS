@@ -26,6 +26,7 @@ import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.BusConfig;
+import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivitySplashBinding;
 import com.viegre.nas.pad.entity.DeviceResourceEntity;
@@ -34,6 +35,7 @@ import com.viegre.nas.pad.entity.GuideResourceEntity;
 import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.fragment.settings.NetworkDetailFragment;
 import com.viegre.nas.pad.fragment.settings.NetworkFragment;
+import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.download.Callback;
@@ -95,6 +97,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				if (!isAllGranted) {
 					requestPermission();
 				} else {
+					initPath();
 					getDeviceBoundstatus();
 				}
 			}).request();
@@ -383,5 +386,20 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 			              @Override
 			              public void onEnd() {}
 		              });
+	}
+
+	/**
+	 * 初始化路径
+	 */
+	private void initPath() {
+		ThreadUtils.executeByCached(new VoidTask<Void>() {
+			@Override
+			public Void doInBackground() throws Throwable {
+				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.IMAGE);
+				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.AUDIO);
+				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.VIDEO);
+				return null;
+			}
+		});
 	}
 }
