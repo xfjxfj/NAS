@@ -19,10 +19,21 @@ public class AudioFilter implements FileFilter {
 
 	@Override
 	public boolean accept(File file) {
+		//过滤掉目录
+		if (FileUtils.isDir(file)) {
+			return false;
+		}
+		//查看公共空间时过滤私有空间
+		if (mIsPublic && PathConfig.AUDIO.equals(file.getParent())) {
+			return false;
+		}
+		//查看私有空间时过滤私有空间
+		if (!mIsPublic && !PathConfig.AUDIO.equals(file.getParent())) {
+			return false;
+		}
 		String fileName = file.getName();
-		return !FileUtils.isDir(file)//不能为目录
-				&& ((mIsPublic && !PathConfig.AUDIO.equals(file.getParent())) || (!mIsPublic && PathConfig.AUDIO.equals(file.getParent())))//过滤公共/私有目录
-				&& (fileName.endsWith(".mp3") || fileName.endsWith(".wma") || fileName.endsWith(".flac") || fileName.endsWith(".ape") || fileName.endsWith(
-				".m4a"));//通过后缀名过滤
+		//通过后缀名过滤
+		return fileName.endsWith(".mp3") || fileName.endsWith(".wma") || fileName.endsWith(".flac") || fileName.endsWith(".ape") || fileName.endsWith(
+				".m4a");
 	}
 }

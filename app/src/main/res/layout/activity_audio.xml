@@ -5,7 +5,9 @@
 	android:layout_height="match_parent"
 	android:background="@android:color/black">
 
-	<include layout="@layout/title_file_manager" />
+	<include
+		android:id="@+id/iAudioTitle"
+		layout="@layout/title_file_manager" />
 
 	<RadioGroup
 		android:id="@+id/rgAudioTag"
@@ -14,7 +16,7 @@
 		android:layout_marginStart="49px"
 		android:orientation="vertical"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/clFileManagerTitleRoot">
+		app:layout_constraintTop_toBottomOf="@id/iAudioTitle">
 
 		<androidx.appcompat.widget.AppCompatRadioButton
 			android:id="@+id/acrbAudioTagPrivate"
@@ -44,7 +46,7 @@
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/clFileManagerTitleRoot">
+		app:layout_constraintTop_toBottomOf="@id/iAudioTitle">
 
 		<androidx.recyclerview.widget.RecyclerView
 			android:id="@+id/rvAudioList"

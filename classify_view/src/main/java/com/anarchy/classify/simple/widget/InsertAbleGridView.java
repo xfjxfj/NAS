@@ -6,12 +6,12 @@ import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v4.widget.ScrollerCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.OverScroller;
 
 import com.anarchy.classify.R;
 import com.anarchy.classify.simple.ChangeInfo;
@@ -38,7 +38,7 @@ public class InsertAbleGridView extends ViewGroup implements CanMergeView {
 	private List<View> mRecycledViews;
 	private int parentIndex;
 	private final ChangeInfo mReturnInfo = new ChangeInfo();
-	private ScrollerCompat mScroller;
+	private OverScroller mScroller;
 
 	public InsertAbleGridView(Context context) {
 		this(context, null);
@@ -66,7 +66,7 @@ public class InsertAbleGridView extends ViewGroup implements CanMergeView {
 		                             a.getDimensionPixelSize(R.styleable.InsertAbleGridView_OutlineWidth, 3));
 		setBackgroundDrawable(mBagDrawable);
 		a.recycle();
-		mScroller = ScrollerCompat.create(context);
+		mScroller = new OverScroller(context);
 	}
 
 	private void layoutFolder(int childCount, int itemWidth, int itemHeight, int itemTotal) {

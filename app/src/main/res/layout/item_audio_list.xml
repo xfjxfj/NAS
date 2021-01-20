@@ -24,7 +24,7 @@
 		app:layout_constraintTop_toTopOf="parent" />
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvItemAudioListSinger"
+		android:id="@+id/actvItemAudioListArtist"
 		style="@style/item_audio_list_text"
 		android:layout_width="150px"
 		android:layout_marginStart="30px"
@@ -38,7 +38,7 @@
 		android:layout_width="166px"
 		android:layout_marginStart="30px"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toEndOf="@id/actvItemAudioListSinger"
+		app:layout_constraintStart_toEndOf="@id/actvItemAudioListArtist"
 		app:layout_constraintTop_toTopOf="parent" />
 
 	<androidx.appcompat.widget.AppCompatTextView

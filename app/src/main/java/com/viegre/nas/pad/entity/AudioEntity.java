@@ -11,14 +11,14 @@ public class AudioEntity extends LitePalSupport implements Serializable {
 
 	private String number;
 	private String name;
-	private String singer;
+	private String artist;
 	private String album;
 	private String duration;
 
-	public AudioEntity(String number, String name, String singer, String album, String duration) {
+	public AudioEntity(String number, String name, String artist, String album, String duration) {
 		this.number = number;
 		this.name = name;
-		this.singer = singer;
+		this.artist = artist;
 		this.album = album;
 		this.duration = duration;
 	}
@@ -39,12 +39,12 @@ public class AudioEntity extends LitePalSupport implements Serializable {
 		this.name = name;
 	}
 
-	public String getSinger() {
-		return singer;
+	public String getArtist() {
+		return artist;
 	}
 
-	public void setSinger(String singer) {
-		this.singer = singer;
+	public void setArtist(String artist) {
+		this.artist = artist;
 	}
 
 	public String getAlbum() {
