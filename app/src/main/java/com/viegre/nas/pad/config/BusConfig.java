@@ -17,4 +17,10 @@ public class BusConfig {
 	 * 天气
 	 */
 	public static final String WEATHER = "weather";
+
+	/**
+	 * 媒体扫描
+	 */
+	public static final String MEDIA_SCANNER_STARTED = "media_scanner_started";
+	public static final String MEDIA_SCANNER_FINISHED = "media_scanner_finished";
 }

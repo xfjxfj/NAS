@@ -93,14 +93,16 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 			                                PermissionConstants.LOCATION,
 			                                PermissionConstants.MICROPHONE,
 			                                PermissionConstants.PHONE,
-			                                PermissionConstants.STORAGE).callback((isAllGranted, granted, deniedForever, denied) -> {
-				if (!isAllGranted) {
-					requestPermission();
-				} else {
-					initPath();
-					getDeviceBoundstatus();
-				}
-			}).request();
+			                                PermissionConstants.STORAGE)
+			               .callback((isAllGranted, granted, deniedForever, denied) -> {
+				               if (!isAllGranted) {
+					               requestPermission();
+				               } else {
+					               initPath();
+					               getDeviceBoundstatus();
+				               }
+			               })
+			               .request();
 		} else {
 			getDeviceBoundstatus();
 		}
@@ -198,41 +200,43 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 获取资源配置
 	 */
 	private void getDeviceResource() {
-		Kalle.post(UrlConfig.Device.GET_RESOURCE).param("sn", PhoneUtils.getSerial()).perform(new SimpleCallback<DeviceResourceRootEntity>() {
-			@Override
-			public void onResponse(SimpleResponse<DeviceResourceRootEntity, String> response) {
-				if (response.isSucceed()) {
-					List<DeviceResourceEntity> resourceList = response.succeed().getResourceList();
-					if (!resourceList.isEmpty()) {
-						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
-							@Override
-							public Void doInBackground() {
-								LitePal.saveAll(resourceList);
-								DeviceResourceEntity deviceResourceEntity = LitePal.where("type = 'guideVideo'")
-								                                                   .findFirst(DeviceResourceEntity.class);
-								List<File> guideFileList = FileUtils.listFilesInDir(GUIDE_RESOURCE);
-								if (null != deviceResourceEntity) {
-									String url = deviceResourceEntity.getContent();
-									String fileName = FileUtils.getFileName(url);
-									//判断文件是否已下载
-									if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
-										return null;
-									}
-									FileUtils.deleteAllInDir(GUIDE_RESOURCE);
-									downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
-								}
-								return null;
-							}
+		Kalle.post(UrlConfig.Device.GET_RESOURCE)
+		     .param("sn", PhoneUtils.getSerial())
+		     .perform(new SimpleCallback<DeviceResourceRootEntity>() {
+			     @Override
+			     public void onResponse(SimpleResponse<DeviceResourceRootEntity, String> response) {
+				     if (response.isSucceed()) {
+					     List<DeviceResourceEntity> resourceList = response.succeed().getResourceList();
+					     if (!resourceList.isEmpty()) {
+						     ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
+							     @Override
+							     public Void doInBackground() {
+								     LitePal.saveAll(resourceList);
+								     DeviceResourceEntity deviceResourceEntity = LitePal.where("type = 'guideVideo'")
+								                                                        .findFirst(DeviceResourceEntity.class);
+								     List<File> guideFileList = FileUtils.listFilesInDir(GUIDE_RESOURCE);
+								     if (null != deviceResourceEntity) {
+									     String url = deviceResourceEntity.getContent();
+									     String fileName = FileUtils.getFileName(url);
+									     //判断文件是否已下载
+									     if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
+										     return null;
+									     }
+									     FileUtils.deleteAllInDir(GUIDE_RESOURCE);
+									     downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
+								     }
+								     return null;
+							     }
 
-							@Override
-							public void onSuccess(Void result) {
-								showGuideData();
-							}
-						});
-					}
-				}
-			}
-		});
+							     @Override
+							     public void onSuccess(Void result) {
+								     showGuideData();
+							     }
+						     });
+					     }
+				     }
+			     }
+		     });
 	}
 
 	/**

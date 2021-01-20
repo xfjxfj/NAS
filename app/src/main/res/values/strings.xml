@@ -1,9 +1,10 @@
 <resources>
-	<string name="app_name">Viegre Nas Pad</string>
+	<string name="app_name">Viegre NAS Pad</string>
 
 	<!--通用-->
 	<string name="confirm">确定</string>
 	<string name="cancel">取消</string>
+	<string name="unknown">未知</string>
 
 	<!--启动页-->
 	<string name="splash_guide_skip">跳过 </string>

@@ -18,8 +18,8 @@ public class AudioListAdapter extends BaseQuickAdapter<AudioEntity, BaseViewHold
 
 	@Override
 	protected void convert(@NotNull BaseViewHolder baseViewHolder, AudioEntity audioEntity) {
-		baseViewHolder.setText(R.id.actvItemAudioListNumber, audioEntity.getNumber())
-		              .setText(R.id.actvItemAudioListName, audioEntity.getName())
+		baseViewHolder.setText(R.id.actvItemAudioListNumber, String.valueOf(baseViewHolder.getAdapterPosition() + 1))
+		              .setText(R.id.actvItemAudioListName, audioEntity.getTitle())
 		              .setText(R.id.actvItemAudioListArtist, audioEntity.getArtist())
 		              .setText(R.id.actvItemAudioListAlbum, audioEntity.getAlbum())
 		              .setText(R.id.actvItemAudioListDuration, audioEntity.getDuration());
