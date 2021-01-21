@@ -91,5 +91,6 @@
 		<item name="android:includeFontPadding">false</item>
 		<item name="android:textColor">@color/audio_list_unchecked</item>
 		<item name="android:textSize">16px</item>
+		<item name="android:singleLine">true</item>
 	</style>
 </resources>

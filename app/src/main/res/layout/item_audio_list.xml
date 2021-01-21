@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/clItemAudioListRoot"
 	android:layout_width="740px"
 	android:layout_height="62px"
-	android:paddingStart="24px"
-	android:paddingEnd="24px">
+	android:paddingStart="25px"
+	android:paddingEnd="25px">
 
 	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/actvItemAudioListNumber"
 		style="@style/item_audio_list_text"
-		android:layout_width="30px"
+		android:layout_width="40px"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
 
 	<androidx.appcompat.widget.AppCompatTextView
-		android:id="@+id/actvItemAudioListName"
+		android:id="@+id/actvItemAudioListDisplayName"
 		style="@style/item_audio_list_text"
 		android:layout_width="190px"
-		android:layout_marginStart="16px"
+		android:layout_marginStart="30px"
+		android:ellipsize="end"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintStart_toEndOf="@id/actvItemAudioListNumber"
 		app:layout_constraintTop_toTopOf="parent" />
@@ -26,17 +28,19 @@
 	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/actvItemAudioListArtist"
 		style="@style/item_audio_list_text"
-		android:layout_width="150px"
+		android:layout_width="140px"
 		android:layout_marginStart="30px"
+		android:ellipsize="end"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toEndOf="@id/actvItemAudioListName"
+		app:layout_constraintStart_toEndOf="@id/actvItemAudioListDisplayName"
 		app:layout_constraintTop_toTopOf="parent" />
 
 	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/actvItemAudioListAlbum"
 		style="@style/item_audio_list_text"
-		android:layout_width="166px"
+		android:layout_width="160px"
 		android:layout_marginStart="30px"
+		android:ellipsize="end"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintStart_toEndOf="@id/actvItemAudioListArtist"
 		app:layout_constraintTop_toTopOf="parent" />
@@ -44,7 +48,8 @@
 	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/actvItemAudioListDuration"
 		style="@style/item_audio_list_text"
-		android:layout_width="55px"
+		android:layout_width="60px"
+		android:gravity="end"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />

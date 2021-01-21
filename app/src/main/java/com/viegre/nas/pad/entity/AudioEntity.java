@@ -2,59 +2,42 @@ package com.viegre.nas.pad.entity;
 
 import org.litepal.crud.LitePalSupport;
 
-import java.io.Serializable;
-
 /**
  * Created by レインマン on 2021/01/19 17:28 with Android Studio.
  */
-public class AudioEntity extends LitePalSupport implements Serializable {
+public class AudioEntity extends LitePalSupport {
 
-	private String fileName;
-	private String title;
-	private int duration;
+	private int _id;
+	private String displayName;
 	private String artist;
 	private String album;
-	private String year;
-	private String type;
-	private String size;
-	private String fileUrl;
+	private int duration;
+	private String path;
+	private boolean isSelected;
 
-	public AudioEntity() {}
-
-	public AudioEntity(String fileName, String title, int duration, String artist, String album, String year, String type, String size, String fileUrl) {
-		this.fileName = fileName;
-		this.title = title;
-		this.duration = duration;
+	public AudioEntity(int _id, String displayName, String artist, String album, int duration, String path) {
+		this._id = _id;
+		this.displayName = displayName;
 		this.artist = artist;
 		this.album = album;
-		this.year = year;
-		this.type = type;
-		this.size = size;
-		this.fileUrl = fileUrl;
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public int getDuration() {
-		return duration;
-	}
-
-	public void setDuration(int duration) {
 		this.duration = duration;
+		this.path = path;
+	}
+
+	public int get_id() {
+		return _id;
+	}
+
+	public void set_id(int _id) {
+		this._id = _id;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 
 	public String getArtist() {
@@ -73,35 +56,27 @@ public class AudioEntity extends LitePalSupport implements Serializable {
 		this.album = album;
 	}
 
-	public String getYear() {
-		return year;
+	public int getDuration() {
+		return duration;
 	}
 
-	public void setYear(String year) {
-		this.year = year;
+	public void setDuration(int duration) {
+		this.duration = duration;
 	}
 
-	public String getType() {
-		return type;
+	public String getPath() {
+		return path;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setPath(String path) {
+		this.path = path;
 	}
 
-	public String getSize() {
-		return size;
+	public boolean isSelected() {
+		return isSelected;
 	}
 
-	public void setSize(String size) {
-		this.size = size;
-	}
-
-	public String getFileUrl() {
-		return fileUrl;
-	}
-
-	public void setFileUrl(String fileUrl) {
-		this.fileUrl = fileUrl;
+	public void setSelected(boolean selected) {
+		isSelected = selected;
 	}
 }

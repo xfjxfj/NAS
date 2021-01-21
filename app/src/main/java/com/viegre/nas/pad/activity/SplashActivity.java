@@ -20,7 +20,6 @@ import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.PhoneUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
-import com.bumptech.glide.Glide;
 import com.djangoogle.framework.activity.BaseFragmentActivity;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
@@ -93,16 +92,14 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 			                                PermissionConstants.LOCATION,
 			                                PermissionConstants.MICROPHONE,
 			                                PermissionConstants.PHONE,
-			                                PermissionConstants.STORAGE)
-			               .callback((isAllGranted, granted, deniedForever, denied) -> {
-				               if (!isAllGranted) {
-					               requestPermission();
-				               } else {
-					               initPath();
-					               getDeviceBoundstatus();
-				               }
-			               })
-			               .request();
+			                                PermissionConstants.STORAGE).callback((isAllGranted, granted, deniedForever, denied) -> {
+				if (!isAllGranted) {
+					requestPermission();
+				} else {
+					initPath();
+					getDeviceBoundstatus();
+				}
+			}).request();
 		} else {
 			getDeviceBoundstatus();
 		}
@@ -200,43 +197,41 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 获取资源配置
 	 */
 	private void getDeviceResource() {
-		Kalle.post(UrlConfig.Device.GET_RESOURCE)
-		     .param("sn", PhoneUtils.getSerial())
-		     .perform(new SimpleCallback<DeviceResourceRootEntity>() {
-			     @Override
-			     public void onResponse(SimpleResponse<DeviceResourceRootEntity, String> response) {
-				     if (response.isSucceed()) {
-					     List<DeviceResourceEntity> resourceList = response.succeed().getResourceList();
-					     if (!resourceList.isEmpty()) {
-						     ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
-							     @Override
-							     public Void doInBackground() {
-								     LitePal.saveAll(resourceList);
-								     DeviceResourceEntity deviceResourceEntity = LitePal.where("type = 'guideVideo'")
-								                                                        .findFirst(DeviceResourceEntity.class);
-								     List<File> guideFileList = FileUtils.listFilesInDir(GUIDE_RESOURCE);
-								     if (null != deviceResourceEntity) {
-									     String url = deviceResourceEntity.getContent();
-									     String fileName = FileUtils.getFileName(url);
-									     //判断文件是否已下载
-									     if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
-										     return null;
-									     }
-									     FileUtils.deleteAllInDir(GUIDE_RESOURCE);
-									     downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
-								     }
-								     return null;
-							     }
+		Kalle.post(UrlConfig.Device.GET_RESOURCE).param("sn", PhoneUtils.getSerial()).perform(new SimpleCallback<DeviceResourceRootEntity>() {
+			@Override
+			public void onResponse(SimpleResponse<DeviceResourceRootEntity, String> response) {
+				if (response.isSucceed()) {
+					List<DeviceResourceEntity> resourceList = response.succeed().getResourceList();
+					if (!resourceList.isEmpty()) {
+						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
+							@Override
+							public Void doInBackground() {
+								LitePal.saveAll(resourceList);
+								DeviceResourceEntity deviceResourceEntity = LitePal.where("type = 'guideVideo'")
+								                                                   .findFirst(DeviceResourceEntity.class);
+								List<File> guideFileList = FileUtils.listFilesInDir(GUIDE_RESOURCE);
+								if (null != deviceResourceEntity) {
+									String url = deviceResourceEntity.getContent();
+									String fileName = FileUtils.getFileName(url);
+									//判断文件是否已下载
+									if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
+										return null;
+									}
+									FileUtils.deleteAllInDir(GUIDE_RESOURCE);
+									downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
+								}
+								return null;
+							}
 
-							     @Override
-							     public void onSuccess(Void result) {
-								     showGuideData();
-							     }
-						     });
-					     }
-				     }
-			     }
-		     });
+							@Override
+							public void onSuccess(Void result) {
+								showGuideData();
+							}
+						});
+					}
+				}
+			}
+		});
 	}
 
 	/**
@@ -251,35 +246,36 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 显示引导页
 	 */
 	private void showGuideData() {
-		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<GuideResourceEntity>() {
-			@Override
-			public GuideResourceEntity doInBackground() {
-				return LitePal.findFirst(GuideResourceEntity.class);
-			}
-
-			@Override
-			public void onSuccess(GuideResourceEntity result) {
-				mViewBinding.actvSplashGuideSkip.setOnClickListener(view -> {
-					mGuideSkipCountDownTimer.cancel();
-					ActivityUtils.startActivity(MainActivity.class);
-					finish();
-				});
-				if (null == result) {
-					mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
-					startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
-				} else {
-					String fileName = GUIDE_RESOURCE + result.getFileName();
-					if (result.isImage()) {
-						Glide.with(mActivity).load(fileName).into(mViewBinding.acivSplashGuideImage);
-						mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
-						startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
-					} else {
-						mViewBinding.nvpSplashGuideVideo.setVisibility(View.VISIBLE);
-						playGuideVideo(fileName);
-					}
-				}
-			}
-		});
+		ActivityUtils.startActivity(MainActivity.class);
+//		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<GuideResourceEntity>() {
+//			@Override
+//			public GuideResourceEntity doInBackground() {
+//				return LitePal.findFirst(GuideResourceEntity.class);
+//			}
+//
+//			@Override
+//			public void onSuccess(GuideResourceEntity result) {
+//				mViewBinding.actvSplashGuideSkip.setOnClickListener(view -> {
+//					mGuideSkipCountDownTimer.cancel();
+//					ActivityUtils.startActivity(MainActivity.class);
+//					finish();
+//				});
+//				if (null == result) {
+//					mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
+//					startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
+//				} else {
+//					String fileName = GUIDE_RESOURCE + result.getFileName();
+//					if (result.isImage()) {
+//						Glide.with(mActivity).load(fileName).into(mViewBinding.acivSplashGuideImage);
+//						mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
+//						startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
+//					} else {
+//						mViewBinding.nvpSplashGuideVideo.setVisibility(View.VISIBLE);
+//						playGuideVideo(fileName);
+//					}
+//				}
+//			}
+//		});
 	}
 
 	/**

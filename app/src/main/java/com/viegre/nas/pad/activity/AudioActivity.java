@@ -1,33 +1,35 @@
 package com.viegre.nas.pad.activity;
 
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.blankj.utilcode.util.BusUtils;
-import com.blankj.utilcode.util.ConvertUtils;
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
-import com.blankj.utilcode.util.UriUtils;
+import com.blankj.utilcode.util.Utils;
 import com.djangoogle.framework.activity.BaseActivity;
+import com.lzx.starrysky.SongInfo;
+import com.lzx.starrysky.StarrySky;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.AudioListAdapter;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.FileConfig;
+import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.databinding.ActivityAudioBinding;
 import com.viegre.nas.pad.entity.AudioEntity;
 import com.viegre.nas.pad.manager.TextStyleManager;
-import com.viegre.nas.pad.receiver.FileReceiver;
 
+import org.litepal.LitePal;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 /**
  * 音频管理页
@@ -35,39 +37,26 @@ import java.util.List;
  */
 public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 
-	private final GetAudioListTask mGetAudioListTask = new GetAudioListTask();
+	private final QueryAudioByCursorTask mQueryAudioByCursorTask = new QueryAudioByCursorTask();
+	private final QueryAudioByLitepalTask mQueryAudioByLitepalTask = new QueryAudioByLitepalTask();
 	private AudioListAdapter mAudioListAdapter;
 	private volatile boolean mIsPublic = true;
-	private FileReceiver mFileReceiver;
-	private static final String[] AUDIO_MIME_TYPES = new String[]{FileConfig.AUDIO_TYPE_MP3, FileConfig.AUDIO_TYPE_WMA, FileConfig.AUDIO_TYPE_FLAC, FileConfig.AUDIO_TYPE_APE, FileConfig.AUDIO_TYPE_M4A};
 
 	@Override
 	protected void initialize() {
-		registerFileReceiver();
 		mViewBinding.iAudioTitle.actvFileManagerTitle.setText(R.string.audio);
 		mViewBinding.iAudioTitle.llcFileManagerTitleBack.setOnClickListener(view -> finish());
 		initRadioGroup();
 		initList();
 		mViewBinding.srlAudioRefresh.setRefreshing(true);
-		initData();
+		queryAudioByLitepal();
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		ThreadUtils.cancel(mGetAudioListTask);
-		if (null != mFileReceiver) {
-			unregisterReceiver(mFileReceiver);
-		}
-	}
-
-	private void registerFileReceiver() {
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
-		intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
-		intentFilter.addDataScheme("file");
-		mFileReceiver = new FileReceiver();
-		registerReceiver(mFileReceiver, intentFilter);
+		ThreadUtils.cancel(mQueryAudioByCursorTask);
+		ThreadUtils.cancel(mQueryAudioByLitepalTask);
 	}
 
 	private void initRadioGroup() {
@@ -78,109 +67,201 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 				mIsPublic = true;
 			}
 			mViewBinding.srlAudioRefresh.setRefreshing(true);
-			initData();
+			queryAudioByLitepal();
 		});
 		TextStyleManager.INSTANCE.setFileManagerTag(mViewBinding.acrbAudioTagPrivate, mViewBinding.acrbAudioTagPublic);
 	}
 
 	private void initList() {
 		mAudioListAdapter = new AudioListAdapter();
+		mAudioListAdapter.setOnItemClickListener((adapter, view, position) -> {
+			AudioEntity audioEntity = mAudioListAdapter.getItem(position);
+			SongInfo songInfo = new SongInfo();
+			songInfo.setSongId(String.valueOf(audioEntity.get_id()));
+			songInfo.setSongName(audioEntity.getDisplayName());
+			songInfo.setArtist(audioEntity.getArtist());
+			songInfo.setDuration(audioEntity.getDuration());
+			songInfo.setSongUrl(audioEntity.getPath());
+			StarrySky.with().playMusicByInfo(songInfo);
+		});
 		mViewBinding.rvAudioList.setLayoutManager(new LinearLayoutManager(this));
 		mViewBinding.rvAudioList.setAdapter(mAudioListAdapter);
+		//禁用动画以防止更新列表时产生闪烁
+		SimpleItemAnimator simpleItemAnimator = (SimpleItemAnimator) mViewBinding.rvAudioList.getItemAnimator();
+		if (null != simpleItemAnimator) {
+			simpleItemAnimator.setSupportsChangeAnimations(false);
+		}
 		mViewBinding.srlAudioRefresh.setColorSchemeResources(R.color.settings_menu_selected_bg);
 		mViewBinding.srlAudioRefresh.setProgressBackgroundColorSchemeResource(R.color.file_manager_tag_unpressed);
-		mViewBinding.srlAudioRefresh.setOnRefreshListener(this::initData);
+		mViewBinding.srlAudioRefresh.setOnRefreshListener(this::queryAudioByCursor);
 	}
 
-	private void initData() {
-		mViewBinding.rgAudioTag.setEnabled(false);
+	private void queryAudioByCursor() {
+		mViewBinding.acrbAudioTagPrivate.setEnabled(false);
+		mViewBinding.acrbAudioTagPublic.setEnabled(false);
 		mViewBinding.rvAudioList.setEnabled(false);
-		scanFile();
+		scanMediaFile();
 	}
 
-	private class GetAudioListTask extends ThreadUtils.SimpleTask<List<AudioEntity>> {
+	private void scanMediaFile() {
+		mMediaSannerClient = new MediaSannerClient();
+		mMediaScannerConnection = new MediaScannerConnection(this, mMediaSannerClient);
+		scanfile(new File("/sdcard"));
+//		FileUtils.notifySystemToScan(mIsPublic ? PathUtils.getExternalStoragePath() : PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.AUDIO);
+//		BusUtils.post(BusConfig.MEDIA_SCAN_COMPLETED);
+//		MediaScannerConnection.scanFile(this,
+//		                                new String[]{mIsPublic ? PathUtils.getExternalStoragePath() : PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.AUDIO},
+////		                                FileConfig.AUDIO_TYPES,
+////                                        new String[]{"audio/"},
+//                                        null,
+//                                        (s, uri) -> BusUtils.post(BusConfig.MEDIA_SCAN_COMPLETED));
+	}
+
+	private void queryAudioByLitepal() {
+		mViewBinding.acrbAudioTagPrivate.setEnabled(false);
+		mViewBinding.acrbAudioTagPublic.setEnabled(false);
+		mViewBinding.rvAudioList.setEnabled(false);
+		ThreadUtils.executeByCached(mQueryAudioByLitepalTask);
+	}
+
+	private class QueryAudioByCursorTask extends ThreadUtils.SimpleTask<List<AudioEntity>> {
 		@Override
 		public List<AudioEntity> doInBackground() {
-			return getAudioList();
+			return scanAndSaveAudioList();
 		}
 
 		@Override
 		public void onSuccess(List<AudioEntity> result) {
-			mAudioListAdapter.setList(result);
-			mViewBinding.srlAudioRefresh.setRefreshing(false);
-			mViewBinding.rgAudioTag.setEnabled(true);
-			mViewBinding.rvAudioList.setEnabled(true);
+			queryCompleted(result);
 		}
 	}
 
-	private List<AudioEntity> getAudioList() {
-		List<AudioEntity> audioList = new ArrayList<>();
-		Uri uri = UriUtils.file2Uri(FileUtils.getFileByPath(PathUtils.getExternalStoragePath()));
-		Cursor cursor = getContentResolver().query(uri,
-		                                           new String[]{MediaStore.Audio.Media._ID, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.YEAR, MediaStore.Audio.Media.MIME_TYPE, MediaStore.Audio.Media.SIZE, MediaStore.Audio.Media.DATA},
-		                                           MediaStore.Audio.Media.MIME_TYPE + " = ? or " + MediaStore.Audio.Media.MIME_TYPE + " = ? or " + MediaStore.Audio.Media.MIME_TYPE + " = ? or " + MediaStore.Audio.Media.MIME_TYPE + " = ? or " + MediaStore.Audio.Media.MIME_TYPE + " = ?",
-		                                           AUDIO_MIME_TYPES,
-		                                           null);
+	private class QueryAudioByLitepalTask extends ThreadUtils.SimpleTask<List<AudioEntity>> {
+		@Override
+		public List<AudioEntity> doInBackground() {
+			return LitePal.findAll(AudioEntity.class);
+		}
 
-		if (cursor.moveToFirst()) {
-			do {
-				AudioEntity audio = new AudioEntity();
-				//文件名
-				audio.setFileName(cursor.getString(1));
-				//歌曲名
-				audio.setTitle(cursor.getString(2));
-				//时长
-				audio.setDuration(cursor.getInt(3));
-				//歌手名
-				audio.setArtist(cursor.getString(4));
-				//专辑名
-				audio.setAlbum(cursor.getString(5));
-				//年代
-				if (null != cursor.getString(6)) {
-					audio.setYear(cursor.getString(6));
-				} else {
-					audio.setYear(StringUtils.getString(R.string.unknown));
+		@Override
+		public void onSuccess(List<AudioEntity> result) {
+			if (result.isEmpty()) {
+				scanMediaFile();
+			} else {
+				queryCompleted(result);
+			}
+		}
+	}
+
+	private void queryCompleted(List<AudioEntity> audioList) {
+		mAudioListAdapter.setList(audioList);
+		mViewBinding.srlAudioRefresh.setRefreshing(false);
+		mViewBinding.acrbAudioTagPrivate.setEnabled(true);
+		mViewBinding.acrbAudioTagPublic.setEnabled(true);
+		mViewBinding.rvAudioList.setEnabled(true);
+	}
+
+	private List<AudioEntity> scanAndSaveAudioList() {
+		List<AudioEntity> audioList = new ArrayList<>();
+		Cursor cursor = Utils.getApp()
+		                     .getContentResolver()
+		                     .query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+		                            new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.DURATION},
+		                            MediaStore.Audio.Media.MIME_TYPE + "=? or " + MediaStore.Audio.Media.MIME_TYPE + "=? or " + MediaStore.Audio.Media.MIME_TYPE + "=? or " + MediaStore.Audio.Media.MIME_TYPE + "=? or " + MediaStore.Audio.Media.MIME_TYPE + "=?",
+		                            FileConfig.AUDIO_TYPES,
+		                            MediaStore.Audio.Media.DISPLAY_NAME);
+		if (null != cursor) {
+			while (cursor.moveToNext()) {
+				String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+				if (null == path) {
+					continue;
 				}
-				//歌曲格式
-				if (FileConfig.AUDIO_TYPE_MP3.equals(cursor.getString(7).trim())) {
-					audio.setType("mp3");
-				} else if (FileConfig.AUDIO_TYPE_WMA.equals(cursor.getString(7).trim())) {
-					audio.setType("wma");
-				} else if (FileConfig.AUDIO_TYPE_FLAC.equals(cursor.getString(7).trim())) {
-					audio.setType("flac");
-				} else if (FileConfig.AUDIO_TYPE_APE.equals(cursor.getString(7).trim())) {
-					audio.setType("ape");
-				} else if (FileConfig.AUDIO_TYPE_M4A.equals(cursor.getString(7).trim())) {
-					audio.setType("m4a");
+				if (mIsPublic && path.startsWith(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.AUDIO)) {
+					continue;
 				}
-				//文件大小
-				if (null != cursor.getString(8)) {
-					audio.setSize(ConvertUtils.byte2FitMemorySize(cursor.getInt(8), 2));
-				} else {
-					audio.setSize(StringUtils.getString(R.string.unknown));
+				if (!mIsPublic && !path.startsWith(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.AUDIO)) {
+					continue;
 				}
-				//文件路径
-				if (null != cursor.getString(9)) {
-					audio.setFileUrl(cursor.getString(9));
+				String displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME));
+				if (null == displayName) {
+					displayName = StringUtils.getString(R.string.unknown);
 				}
-				audioList.add(audio);
-			} while (cursor.moveToNext());
+				int _id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
+				String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
+				if (null == artist) {
+					artist = StringUtils.getString(R.string.unknown);
+				}
+				String album = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
+				if (null == album) {
+					album = StringUtils.getString(R.string.unknown);
+				}
+				int duration = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
+				if (duration < 0) {
+					duration = 0;
+				}
+				audioList.add(new AudioEntity(_id, displayName, artist, album, duration, path));
+			}
 			cursor.close();
+		}
+		LitePal.deleteAll(AudioEntity.class);
+		if (!audioList.isEmpty()) {
+			LitePal.saveAll(audioList);
 		}
 		return audioList;
 	}
 
-	private void scanFile() {
-		MediaScannerConnection.scanFile(this, new String[]{PathUtils.getExternalStoragePath()}, AUDIO_MIME_TYPES, (s, uri) -> {
-			ThreadUtils.executeByCached(mGetAudioListTask);
-//			Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//			intent.setData(uri);
-//			sendBroadcast(intent);
+	@BusUtils.Bus(tag = BusConfig.MEDIA_SCAN_COMPLETED, threadMode = BusUtils.ThreadMode.MAIN)
+	public void mediaScanCompleted() {
+		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<AudioEntity>>() {
+			@Override
+			public List<AudioEntity> doInBackground() {
+				return scanAndSaveAudioList();
+			}
+
+			@Override
+			public void onSuccess(List<AudioEntity> result) {
+				queryCompleted(result);
+			}
 		});
 	}
 
-	@BusUtils.Bus(tag = BusConfig.MEDIA_SCANNER_FINISHED, threadMode = BusUtils.ThreadMode.MAIN)
-	public void queryAudio() {
-		ThreadUtils.executeByCached(mGetAudioListTask);
+	private MediaScannerConnection mMediaScannerConnection = null;
+	private MediaSannerClient mMediaSannerClient = null;
+	private File filePath = null;
+	private String fileType = null;
+
+	private class MediaSannerClient implements MediaScannerConnection.MediaScannerConnectionClient {
+		@Override
+		public void onMediaScannerConnected() {
+			if (filePath != null) {
+
+				if (filePath.isDirectory()) {
+					File[] files = filePath.listFiles();
+					if (files != null) {
+						for (File file : files) {
+							if (file.isDirectory()) {
+								scanfile(file);
+							} else {
+								mMediaScannerConnection.scanFile(file.getAbsolutePath(), fileType);
+							}
+						}
+					}
+				}
+			}
+
+			filePath = null;
+
+			fileType = null;
+		}
+
+		@Override
+		public void onScanCompleted(String s, Uri uri) {
+			mMediaScannerConnection.disconnect();
+			BusUtils.post(BusConfig.MEDIA_SCAN_COMPLETED);
+		}
+	}
+
+	private void scanfile(File f) {
+		this.filePath = f;
+		mMediaScannerConnection.connect();
 	}
 }

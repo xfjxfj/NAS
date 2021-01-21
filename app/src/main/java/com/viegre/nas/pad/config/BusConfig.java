@@ -21,6 +21,5 @@ public class BusConfig {
 	/**
 	 * 媒体扫描
 	 */
-	public static final String MEDIA_SCANNER_STARTED = "media_scanner_started";
-	public static final String MEDIA_SCANNER_FINISHED = "media_scanner_finished";
+	public static final String MEDIA_SCAN_COMPLETED = "media_scan_completed";
 }

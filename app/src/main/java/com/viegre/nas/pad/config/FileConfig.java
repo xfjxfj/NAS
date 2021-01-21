@@ -10,4 +10,5 @@ public class FileConfig {
 	public static final String AUDIO_TYPE_FLAC = "audio/flac";
 	public static final String AUDIO_TYPE_APE = "audio/ape";
 	public static final String AUDIO_TYPE_M4A = "audio/mp4";
+	public static final String[] AUDIO_TYPES = new String[]{AUDIO_TYPE_MP3, AUDIO_TYPE_WMA, AUDIO_TYPE_FLAC, AUDIO_TYPE_APE, AUDIO_TYPE_M4A};
 }
