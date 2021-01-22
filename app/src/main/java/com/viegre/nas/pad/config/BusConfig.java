@@ -19,7 +19,8 @@ public class BusConfig {
 	public static final String WEATHER = "weather";
 
 	/**
-	 * 媒体扫描
+	 * 媒体挂载/卸载
 	 */
-	public static final String MEDIA_SCAN_COMPLETED = "media_scan_completed";
+	public static final String MEDIA_MOUNTED = "media_mounted";
+	public static final String MEDIA_UNMOUNTED = "media_unmounted";
 }

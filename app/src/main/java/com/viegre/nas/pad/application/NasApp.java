@@ -2,8 +2,6 @@ package com.viegre.nas.pad.application;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.djangoogle.framework.applicaiton.BaseApplication;
-import com.lzx.starrysky.StarrySky;
-import com.lzx.starrysky.StarrySkyConfig;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.kalle.converter.JsonConverter;
 import com.viegre.nas.pad.manager.AMapLocationManager;
@@ -26,7 +24,6 @@ public class NasApp extends BaseApplication {
 		initUtils();
 		initKalle();
 		initAMap();
-		initStarrySky();
 	}
 
 	/**
@@ -48,7 +45,8 @@ public class NasApp extends BaseApplication {
 		KalleConfig kalleConfig = KalleConfig.newBuilder()
 		                                     .connectionTimeout(15, TimeUnit.SECONDS)
 		                                     .readTimeout(15, TimeUnit.SECONDS)
-		                                     .converter(new JsonConverter()).build();
+		                                     .converter(new JsonConverter())
+		                                     .build();
 		Kalle.setConfig(kalleConfig);
 	}
 
@@ -57,13 +55,5 @@ public class NasApp extends BaseApplication {
 	 */
 	private void initAMap() {
 		AMapLocationManager.INSTANCE.initialize(this);
-	}
-
-	/**
-	 * 初始化播放器
-	 */
-	private void initStarrySky() {
-		StarrySkyConfig starrySkyConfig = new StarrySkyConfig.Builder().isOpenCache(true).isUserService(true).build();
-		StarrySky.init(this, starrySkyConfig, null);
 	}
 }

@@ -6,10 +6,10 @@ import com.blankj.utilcode.util.ThreadUtils;
 /**
  * Created by レインマン on 2021/01/19 09:40 with Android Studio.
  */
-public abstract class VoidTask<T> extends ThreadUtils.SimpleTask<T> {
+public abstract class VoidTask extends ThreadUtils.SimpleTask<Void> {
 
 	@Override
-	public void onSuccess(T result) {
+	public void onSuccess(Void v) {
 		LogUtils.iTag(VoidTask.class.getSimpleName(), "VoidTask.onSuccess()");
 	}
 }

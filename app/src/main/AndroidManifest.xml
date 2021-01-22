@@ -18,8 +18,13 @@
 	<uses-permission android:name="android.permission.RECORD_AUDIO" />
 	<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission
 		android:name="android.permission.WRITE_SETTINGS"
+		tools:ignore="ProtectedPermissions" />
+	<uses-permission
+		android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
 		tools:ignore="ProtectedPermissions" />
 
 	<application
@@ -66,7 +71,11 @@
 			android:screenOrientation="landscape" />
 
 		<activity
-			android:name="com.viegre.nas.pad.activity.AudioActivity"
+			android:name="com.viegre.nas.pad.activity.audio.AudioActivity"
+			android:screenOrientation="landscape" />
+
+		<activity
+			android:name="com.viegre.nas.pad.activity.audio.AudioPlayerActivity"
 			android:screenOrientation="landscape" />
 
 		<activity
@@ -74,6 +83,18 @@
 			android:screenOrientation="landscape" />
 
 		<service android:name="com.amap.api.location.APSService" />
+
+		<receiver
+			android:name=".receiver.SdcardStateReceiver"
+			android:enabled="true"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED" />
+				<action android:name="android.intent.action.MEDIA_UNMOUNTED" />
+
+				<data android:scheme="file" />
+			</intent-filter>
+		</receiver>
 	</application>
 
 </manifest>

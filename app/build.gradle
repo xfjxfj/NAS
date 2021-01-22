@@ -94,7 +94,6 @@ dependencies {
 	implementation 'com.shuyu:GSYVideoPlayer:8.0.0'
 	//https://github.com/guolindev/LitePal
 	implementation 'org.litepal.guolindev:core:3.2.2'
-	//https://github.com/EspoirX/StarrySky
-	implementation 'com.lzx:StarrySkyX:2.5.0'
-	implementation 'com.lzx:StarrySkyFlacExt:1.0.0'
+	//https://github.com/jaydeepw/audio-wife
+	implementation 'net.the4thdimension:audio-wife:1.0.3'
 }

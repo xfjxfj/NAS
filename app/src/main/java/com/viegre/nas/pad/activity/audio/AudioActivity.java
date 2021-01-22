@@ -1,18 +1,20 @@
-package com.viegre.nas.pad.activity;
+package com.viegre.nas.pad.activity.audio;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PathUtils;
+import com.blankj.utilcode.util.ShellUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
 import com.djangoogle.framework.activity.BaseActivity;
-import com.lzx.starrysky.SongInfo;
-import com.lzx.starrysky.StarrySky;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.AudioListAdapter;
 import com.viegre.nas.pad.config.BusConfig;
@@ -76,13 +78,9 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 		mAudioListAdapter = new AudioListAdapter();
 		mAudioListAdapter.setOnItemClickListener((adapter, view, position) -> {
 			AudioEntity audioEntity = mAudioListAdapter.getItem(position);
-			SongInfo songInfo = new SongInfo();
-			songInfo.setSongId(String.valueOf(audioEntity.get_id()));
-			songInfo.setSongName(audioEntity.getDisplayName());
-			songInfo.setArtist(audioEntity.getArtist());
-			songInfo.setDuration(audioEntity.getDuration());
-			songInfo.setSongUrl(audioEntity.getPath());
-			StarrySky.with().playMusicByInfo(songInfo);
+			Intent intent = new Intent(this, AudioPlayerActivity.class);
+			intent.putExtra("audioPath", audioEntity.getPath());
+			ActivityUtils.startActivity(intent);
 		});
 		mViewBinding.rvAudioList.setLayoutManager(new LinearLayoutManager(this));
 		mViewBinding.rvAudioList.setAdapter(mAudioListAdapter);
@@ -104,17 +102,19 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 	}
 
 	private void scanMediaFile() {
-		mMediaSannerClient = new MediaSannerClient();
-		mMediaScannerConnection = new MediaScannerConnection(this, mMediaSannerClient);
-		scanfile(new File("/sdcard"));
-//		FileUtils.notifySystemToScan(mIsPublic ? PathUtils.getExternalStoragePath() : PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.AUDIO);
-//		BusUtils.post(BusConfig.MEDIA_SCAN_COMPLETED);
-//		MediaScannerConnection.scanFile(this,
-//		                                new String[]{mIsPublic ? PathUtils.getExternalStoragePath() : PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.AUDIO},
-////		                                FileConfig.AUDIO_TYPES,
-////                                        new String[]{"audio/"},
-//                                        null,
-//                                        (s, uri) -> BusUtils.post(BusConfig.MEDIA_SCAN_COMPLETED));
+		ShellUtils.execCmdAsync("find /mnt/sdcard/Music/ -exec am broadcast \\\n" + "    -a android.intent.action.MEDIA_SCANNER_SCAN_FILE \\\n" + "    -d file://{} \\\\",
+		                        true,
+		                        commandResult -> {
+			                        LogUtils.iTag("ShellUtils", commandResult.toString());
+			                        BusUtils.post(BusConfig.MEDIA_MOUNTED);
+		                        });
+//		sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + PathUtils.getExternalStoragePath())));
+		MediaScannerConnection.scanFile(this, null, null, new MediaScannerConnection.OnScanCompletedListener() {
+			@Override
+			public void onScanCompleted(String s, Uri uri) {
+				BusUtils.post(BusConfig.MEDIA_MOUNTED);
+			}
+		});
 	}
 
 	private void queryAudioByLitepal() {
@@ -209,8 +209,8 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 		return audioList;
 	}
 
-	@BusUtils.Bus(tag = BusConfig.MEDIA_SCAN_COMPLETED, threadMode = BusUtils.ThreadMode.MAIN)
-	public void mediaScanCompleted() {
+	@BusUtils.Bus(tag = BusConfig.MEDIA_MOUNTED, threadMode = BusUtils.ThreadMode.MAIN)
+	public void onMediaMounted() {
 		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<AudioEntity>>() {
 			@Override
 			public List<AudioEntity> doInBackground() {
@@ -222,46 +222,5 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 				queryCompleted(result);
 			}
 		});
-	}
-
-	private MediaScannerConnection mMediaScannerConnection = null;
-	private MediaSannerClient mMediaSannerClient = null;
-	private File filePath = null;
-	private String fileType = null;
-
-	private class MediaSannerClient implements MediaScannerConnection.MediaScannerConnectionClient {
-		@Override
-		public void onMediaScannerConnected() {
-			if (filePath != null) {
-
-				if (filePath.isDirectory()) {
-					File[] files = filePath.listFiles();
-					if (files != null) {
-						for (File file : files) {
-							if (file.isDirectory()) {
-								scanfile(file);
-							} else {
-								mMediaScannerConnection.scanFile(file.getAbsolutePath(), fileType);
-							}
-						}
-					}
-				}
-			}
-
-			filePath = null;
-
-			fileType = null;
-		}
-
-		@Override
-		public void onScanCompleted(String s, Uri uri) {
-			mMediaScannerConnection.disconnect();
-			BusUtils.post(BusConfig.MEDIA_SCAN_COMPLETED);
-		}
-	}
-
-	private void scanfile(File f) {
-		this.filePath = f;
-		mMediaScannerConnection.connect();
 	}
 }

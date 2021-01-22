@@ -1,11 +1,9 @@
 package com.viegre.nas.pad.activity;
 
-import android.content.Intent;
-import android.net.Uri;
+import android.Manifest;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
-import android.provider.Settings;
 import android.view.View;
 
 import com.blankj.utilcode.constant.PermissionConstants;
@@ -14,10 +12,12 @@ import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.ImageUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.PhoneUtils;
+import com.blankj.utilcode.util.ShellUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.activity.BaseFragmentActivity;
@@ -44,6 +44,7 @@ import com.yanzhenjie.kalle.simple.SimpleResponse;
 import org.litepal.LitePal;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,13 +61,12 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 
 	@Override
 	protected void initialize() {
-		requestPermission();
+		grantPermission();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		requestDrawOverlays();
 		GSYVideoManager.onResume();
 	}
 
@@ -84,56 +84,66 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	}
 
 	/**
-	 * 请求运行时权限
+	 * 授予权限、忽略电池优化、创建私有文件夹
 	 */
-	private void requestPermission() {
+	private void grantPermission() {
+		List<String> commandList = new ArrayList<>();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			PermissionUtils.permissionGroup(PermissionConstants.CAMERA,
-			                                PermissionConstants.LOCATION,
-			                                PermissionConstants.MICROPHONE,
-			                                PermissionConstants.PHONE,
-			                                PermissionConstants.STORAGE).callback((isAllGranted, granted, deniedForever, denied) -> {
-				if (!isAllGranted) {
-					requestPermission();
-				} else {
-					initPath();
-					getDeviceBoundstatus();
-				}
-			}).request();
-		} else {
-			getDeviceBoundstatus();
-		}
-	}
-
-	/**
-	 * 申请悬浮窗权限
-	 */
-	private void requestDrawOverlays() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !PermissionUtils.isGrantedDrawOverlays()) {
-			PermissionUtils.requestDrawOverlays(new PermissionUtils.SimpleCallback() {
-				@Override
-				public void onGranted() {
-					ignoreBatteryOptimization();
-				}
-
-				@Override
-				public void onDenied() {
-					requestDrawOverlays();
-				}
-			});
-		}
-	}
-
-	/**
-	 * 忽略电池优化
-	 */
-	private void ignoreBatteryOptimization() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			String space = " ";
+			//授予运行时权限
+			String grantPermission = "pm grant " + getPackageName() + space;
+			if (!PermissionUtils.isGranted(PermissionConstants.CAMERA)) {
+				commandList.add(grantPermission + Manifest.permission.CAMERA);
+			}
+			if (!PermissionUtils.isGranted(PermissionConstants.LOCATION)) {
+				commandList.add(grantPermission + Manifest.permission.ACCESS_FINE_LOCATION);
+				commandList.add(grantPermission + Manifest.permission.ACCESS_COARSE_LOCATION);
+			}
+			if (!PermissionUtils.isGranted(PermissionConstants.MICROPHONE)) {
+				commandList.add(grantPermission + Manifest.permission.RECORD_AUDIO);
+			}
+			if (!PermissionUtils.isGranted(PermissionConstants.PHONE)) {
+				commandList.add(grantPermission + Manifest.permission.READ_PHONE_STATE);
+			}
+			if (!PermissionUtils.isGranted(PermissionConstants.STORAGE)) {
+				commandList.add(grantPermission + Manifest.permission.READ_EXTERNAL_STORAGE);
+				commandList.add(grantPermission + Manifest.permission.WRITE_EXTERNAL_STORAGE);
+			}
+			//授予悬浮窗权限
+			if (!PermissionUtils.isGrantedDrawOverlays()) {
+				commandList.add(grantPermission + Manifest.permission.SYSTEM_ALERT_WINDOW);
+			}
+			//授予修改系统设置权限
+			if (!PermissionUtils.isGrantedWriteSettings()) {
+				commandList.add("appops set " + getPackageName() + " WRITE_SETTINGS allow");
+			}
+			//忽略电池优化
 			PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
 			if (!powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
-				startActivity(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).setData(Uri.parse("package:" + getPackageName())));
+				String ignoreBatteryOptimization = "dumpsys deviceidle whitelist +" + getPackageName();
+				commandList.add(ignoreBatteryOptimization);
 			}
 		}
+		ThreadUtils.executeByCached(new VoidTask() {
+			@Override
+			public Void doInBackground() {
+				if (!commandList.isEmpty()) {
+					ShellUtils.CommandResult commandResult = ShellUtils.execCmd(commandList, true);
+					LogUtils.iTag("ShellUtils", commandResult.toString());
+				}
+				//创建私有文件夹
+				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.IMAGE);
+				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.AUDIO);
+				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.VIDEO);
+				return null;
+			}
+
+			@Override
+			public void onSuccess(Void v) {
+				super.onSuccess(v);
+				getDeviceBoundstatus();
+			}
+		});
 	}
 
 	/**
@@ -386,20 +396,5 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 			              @Override
 			              public void onEnd() {}
 		              });
-	}
-
-	/**
-	 * 初始化路径
-	 */
-	private void initPath() {
-		ThreadUtils.executeByCached(new VoidTask<Void>() {
-			@Override
-			public Void doInBackground() {
-				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.IMAGE);
-				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.AUDIO);
-				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.VIDEO);
-				return null;
-			}
-		});
 	}
 }
