@@ -6,11 +6,12 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PathUtils;
-import com.blankj.utilcode.util.ShellUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
@@ -29,9 +30,6 @@ import org.litepal.LitePal;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 
 /**
  * 音频管理页
@@ -102,12 +100,12 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 	}
 
 	private void scanMediaFile() {
-		ShellUtils.execCmdAsync("find /mnt/sdcard/Music/ -exec am broadcast \\\n" + "    -a android.intent.action.MEDIA_SCANNER_SCAN_FILE \\\n" + "    -d file://{} \\\\",
-		                        true,
-		                        commandResult -> {
-			                        LogUtils.iTag("ShellUtils", commandResult.toString());
-			                        BusUtils.post(BusConfig.MEDIA_MOUNTED);
-		                        });
+//		ShellUtils.execCmdAsync("find /mnt/sdcard/Music/ -exec am broadcast \\\n" + "    -a android.intent.action.MEDIA_SCANNER_SCAN_FILE \\\n" + "    -d file://{} \\\\",
+//		                        true,
+//		                        commandResult -> {
+//			                        LogUtils.iTag("ShellUtils", commandResult.toString());
+//			                        BusUtils.post(BusConfig.MEDIA_MOUNTED);
+//		                        });
 //		sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + PathUtils.getExternalStoragePath())));
 		MediaScannerConnection.scanFile(this, null, null, new MediaScannerConnection.OnScanCompletedListener() {
 			@Override

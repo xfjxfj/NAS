@@ -15,61 +15,66 @@
 		android:layout_height="wrap_content"
 		app:layout_constraintBottom_toBottomOf="parent">
 
-		<androidx.appcompat.widget.AppCompatImageView
-			android:id="@+id/acivAudioPlayerPrevious"
+		<androidx.appcompat.widget.LinearLayoutCompat
+			android:id="@+id/llcAudioPlayerControlPanelButton"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginStart="16px"
-			app:layout_constraintBottom_toBottomOf="@id/acivAudioPlayerPlay"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="@id/acivAudioPlayerPlay"
-			app:srcCompat="@mipmap/audio_previous" />
-
-		<androidx.appcompat.widget.AppCompatImageView
-			android:id="@+id/acivAudioPlayerPlay"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="16px"
-			android:layout_marginBottom="16px"
+			android:gravity="center_vertical"
+			android:orientation="horizontal"
+			android:paddingBottom="16px"
 			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintStart_toEndOf="@id/acivAudioPlayerPrevious"
-			app:srcCompat="@mipmap/audio_play" />
+			app:layout_constraintStart_toStartOf="parent">
 
-		<androidx.appcompat.widget.AppCompatImageView
-			android:id="@+id/acivAudioPlayerPause"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="16px"
-			android:layout_marginBottom="16px"
-			android:visibility="gone"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintStart_toEndOf="@id/acivAudioPlayerPrevious"
-			app:srcCompat="@mipmap/audio_pause" />
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/acivAudioPlayerPrevious"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="16px"
+				app:srcCompat="@mipmap/audio_previous" />
 
-		<androidx.appcompat.widget.AppCompatImageView
-			android:id="@+id/acivAudioPlayerNext"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="16px"
-			app:layout_constraintBottom_toBottomOf="@id/acivAudioPlayerPlay"
-			app:layout_constraintStart_toEndOf="@id/acivAudioPlayerPlay"
-			app:layout_constraintTop_toTopOf="@id/acivAudioPlayerPlay"
-			app:srcCompat="@mipmap/audio_next" />
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/acivAudioPlayerPlay"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="16px"
+				app:srcCompat="@mipmap/audio_play" />
+
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/acivAudioPlayerPause"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="16px"
+				android:visibility="gone"
+				app:srcCompat="@mipmap/audio_pause" />
+
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/acivAudioPlayerNext"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="16px"
+				app:srcCompat="@mipmap/audio_next" />
+		</androidx.appcompat.widget.LinearLayoutCompat>
 
 		<androidx.appcompat.widget.AppCompatTextView
 			android:id="@+id/actvAudioPlayerRunTime"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_marginStart="16px"
 			android:layout_marginBottom="16px"
-			app:layout_constraintBottom_toTopOf="@id/acivAudioPlayerPlay"
+			android:includeFontPadding="false"
+			android:textColor="@color/file_manager_tag_unpressed"
+			app:layout_constraintBottom_toTopOf="@id/llcAudioPlayerControlPanelButton"
 			app:layout_constraintStart_toStartOf="parent" />
 
 		<androidx.appcompat.widget.AppCompatTextView
 			android:id="@+id/actvAudioPlayerTotalTime"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_marginEnd="16px"
 			android:layout_marginBottom="16px"
-			app:layout_constraintBottom_toTopOf="@id/acivAudioPlayerPlay"
+			android:includeFontPadding="false"
+			android:textColor="@color/file_manager_tag_unpressed"
+			app:layout_constraintBottom_toTopOf="@id/llcAudioPlayerControlPanelButton"
 			app:layout_constraintEnd_toEndOf="parent" />
 
 		<androidx.appcompat.widget.AppCompatSeekBar

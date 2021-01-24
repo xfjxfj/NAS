@@ -1,6 +1,7 @@
 package com.viegre.nas.pad.activity.audio;
 
 import android.net.Uri;
+import android.view.View;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.UriUtils;
@@ -19,6 +20,7 @@ public class AudioPlayerActivity extends BaseActivity<ActivityAudioPlayerBinding
 	protected void initialize() {
 		mViewBinding.iAudioPlayerTitle.actvFileManagerTitle.setText(R.string.audio);
 		mViewBinding.iAudioPlayerTitle.llcFileManagerTitleBack.setOnClickListener(view -> finish());
+		mViewBinding.iAudioPlayerTitle.acivFileManagerFilter.setVisibility(View.GONE);
 		Uri uri = UriUtils.file2Uri(FileUtils.getFileByPath(getIntent().getStringExtra("audioPath")));
 		AudioWife.getInstance()
 		         .init(this, uri)
