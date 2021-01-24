@@ -22,9 +22,6 @@ public class ImageListAdapter extends BaseQuickAdapter<ImageEntity, BaseViewHold
 	@Override
 	protected void convert(@NotNull BaseViewHolder baseViewHolder, ImageEntity imageEntity) {
 		AppCompatImageView acivItemImageRoot = baseViewHolder.getView(R.id.acivItemImageRoot);
-//		ViewGroup.LayoutParams params = acivItemImageRoot.getLayoutParams();
-//		params.width = params.height = 168;
-//		acivItemImageRoot.setLayoutParams(params);
 		Glide.with(getContext()).load(imageEntity.getPath()).centerCrop().into(acivItemImageRoot);
 	}
 }
