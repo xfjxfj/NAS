@@ -36,4 +36,20 @@
 			android:checked="true"
 			android:text="@string/audio" />
 	</RadioGroup>
+
+	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+		android:id="@+id/srlImageRefresh"
+		android:layout_width="708px"
+		android:layout_height="0dp"
+		android:layout_marginEnd="45px"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/iImageTitle">
+
+		<androidx.recyclerview.widget.RecyclerView
+			android:id="@+id/rvImageList"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:overScrollMode="never" />
+	</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
