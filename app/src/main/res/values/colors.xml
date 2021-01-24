@@ -22,4 +22,5 @@
 	<color name="splash_guide_skip_bg">#7A7F8D</color>
 	<color name="file_manager_tag_unpressed">#92979C</color>
 	<color name="audio_list_unchecked">#B5B6BF</color>
+	<color name="item_video_name">#B5BAC0</color>
 </resources>

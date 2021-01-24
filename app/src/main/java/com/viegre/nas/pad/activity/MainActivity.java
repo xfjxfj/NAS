@@ -15,6 +15,7 @@ import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.audio.AudioActivity;
 import com.viegre.nas.pad.activity.image.ImageActivity;
+import com.viegre.nas.pad.activity.video.VideoActivity;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.databinding.ActivityMainBinding;
 import com.viegre.nas.pad.entity.LoginInfoEntity;
