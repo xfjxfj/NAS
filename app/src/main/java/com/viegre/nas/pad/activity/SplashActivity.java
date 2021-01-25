@@ -14,7 +14,6 @@ import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
-import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.PhoneUtils;
 import com.blankj.utilcode.util.ShellUtils;
@@ -52,8 +51,6 @@ import java.util.List;
  * Created by レインマン on 2020/11/19 10:26 with Android Studio.
  */
 public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> {
-
-	private static final String GUIDE_RESOURCE = PathUtils.getExternalAppFilesPath() + File.separator + "guideResource" + File.separator;
 
 	private NetworkFragment mNetworkFragment;
 	private NetworkDetailFragment mNetworkDetailFragment;
@@ -132,9 +129,13 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 					LogUtils.iTag("ShellUtils", commandResult.toString());
 				}
 				//创建私有文件夹
-				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.IMAGE);
-				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.AUDIO);
-				FileUtils.createOrExistsDir(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.VIDEO);
+				FileUtils.createOrExistsDir(PathConfig.IMAGE.PRI);
+				FileUtils.createOrExistsDir(PathConfig.IMAGE.PUB);
+				FileUtils.createOrExistsDir(PathConfig.AUDIO.PRI);
+				FileUtils.createOrExistsDir(PathConfig.AUDIO.PUB);
+				FileUtils.createOrExistsDir(PathConfig.VIDEO.PRI);
+				FileUtils.createOrExistsDir(PathConfig.VIDEO.PUB);
+				FileUtils.createOrExistsDir(PathConfig.GUIDE_RESOURCE);
 				return null;
 			}
 
@@ -153,8 +154,6 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<LoginInfoEntity>() {
 			@Override
 			public LoginInfoEntity doInBackground() {
-				//创建引导资源文件夹
-				FileUtils.createOrExistsDir(GUIDE_RESOURCE);
 				return LitePal.findFirst(LoginInfoEntity.class);
 			}
 
@@ -219,7 +218,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 								LitePal.saveAll(resourceList);
 								DeviceResourceEntity deviceResourceEntity = LitePal.where("type = 'guideVideo'")
 								                                                   .findFirst(DeviceResourceEntity.class);
-								List<File> guideFileList = FileUtils.listFilesInDir(GUIDE_RESOURCE);
+								List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
 								if (null != deviceResourceEntity) {
 									String url = deviceResourceEntity.getContent();
 									String fileName = FileUtils.getFileName(url);
@@ -227,7 +226,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 									if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
 										return null;
 									}
-									FileUtils.deleteAllInDir(GUIDE_RESOURCE);
+									FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
 									downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
 								}
 								return null;
@@ -340,8 +339,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * @param guideResourceEntity
 	 */
 	private void downloadGuideData(GuideResourceEntity guideResourceEntity) {
-		Kalle.Download.get(guideResourceEntity.getUrl())
-		              .directory(GUIDE_RESOURCE)
+		Kalle.Download.get(guideResourceEntity.getUrl()).directory(PathConfig.GUIDE_RESOURCE)
 		              .fileName(guideResourceEntity.getFileName())
 		              .perform(new Callback() {
 			              @Override
@@ -369,7 +367,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 					              @Override
 					              public Void doInBackground() {
 						              LitePal.deleteAll(GuideResourceEntity.class);
-						              FileUtils.deleteAllInDir(GUIDE_RESOURCE);
+						              FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
 						              return null;
 					              }
 
@@ -384,7 +382,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 					              @Override
 					              public Void doInBackground() {
 						              LitePal.deleteAll(GuideResourceEntity.class);
-						              FileUtils.deleteAllInDir(GUIDE_RESOURCE);
+						              FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
 						              return null;
 					              }
 

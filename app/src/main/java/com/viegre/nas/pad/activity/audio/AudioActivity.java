@@ -3,19 +3,19 @@ package com.viegre.nas.pad.activity.audio;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.provider.MediaStore;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
-import com.blankj.utilcode.util.Utils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.AudioListAdapter;
 import com.viegre.nas.pad.config.BusConfig;
-import com.viegre.nas.pad.config.FileConfig;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.databinding.ActivityAudioBinding;
 import com.viegre.nas.pad.entity.AudioEntity;
@@ -24,12 +24,12 @@ import com.viegre.nas.pad.manager.TextStyleManager;
 
 import org.litepal.LitePal;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
+import nl.changer.audiowife.AudioWife;
 
 /**
  * 音频管理页
@@ -37,8 +37,6 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
  */
 public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 
-	private final QueryAudioByCursorTask mQueryAudioByCursorTask = new QueryAudioByCursorTask();
-	private final QueryAudioByLitepalTask mQueryAudioByLitepalTask = new QueryAudioByLitepalTask();
 	private AudioListAdapter mAudioListAdapter;
 	private volatile boolean mIsPublic = true;
 
@@ -53,10 +51,15 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 	}
 
 	@Override
+	protected void onResume() {
+		super.onResume();
+		onPlayListUpdate();
+	}
+
+	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		ThreadUtils.cancel(mQueryAudioByCursorTask);
-		ThreadUtils.cancel(mQueryAudioByLitepalTask);
+		ThreadUtils.cancel(ThreadUtils.getSinglePool());
 	}
 
 	private void initRadioGroup() {
@@ -75,7 +78,6 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 	private void initList() {
 		mAudioListAdapter = new AudioListAdapter();
 		mAudioListAdapter.setOnItemClickListener((adapter, view, position) -> {
-			AudioEntity audioEntity = mAudioListAdapter.getItem(position);
 			Intent intent = new Intent(this, AudioPlayerActivity.class);
 			intent.putExtra("position", position);
 			ActivityUtils.startActivity(intent);
@@ -103,45 +105,32 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 		MediaScannerConnection.scanFile(this,
 		                                new String[]{PathUtils.getExternalStoragePath()},
 		                                null,
-		                                (s, uri) -> BusUtils.post(BusConfig.MEDIA_MOUNTED));
+		                                (s, uri) -> BusUtils.post(BusConfig.MEDIA_SCAN_COMPLETED));
 	}
 
 	private void queryAudioByLitepal() {
 		mViewBinding.acrbAudioTagPrivate.setEnabled(false);
 		mViewBinding.acrbAudioTagPublic.setEnabled(false);
 		mViewBinding.rvAudioList.setEnabled(false);
-		ThreadUtils.executeByCached(mQueryAudioByLitepalTask);
-	}
-
-	private class QueryAudioByCursorTask extends ThreadUtils.SimpleTask<List<AudioEntity>> {
-		@Override
-		public List<AudioEntity> doInBackground() {
-			return scanAndSaveAudioList();
-		}
-
-		@Override
-		public void onSuccess(List<AudioEntity> result) {
-			queryCompleted(result);
-		}
-	}
-
-	private class QueryAudioByLitepalTask extends ThreadUtils.SimpleTask<List<AudioEntity>> {
-		@Override
-		public List<AudioEntity> doInBackground() {
-			return LitePal.findAll(AudioEntity.class);
-		}
-
-		@Override
-		public void onSuccess(List<AudioEntity> result) {
-			if (result.isEmpty()) {
-				scanMediaFile();
-			} else {
-				queryCompleted(result);
+		ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<AudioEntity>>() {
+			@Override
+			public List<AudioEntity> doInBackground() {
+				return LitePal.findAll(AudioEntity.class);
 			}
-		}
+
+			@Override
+			public void onSuccess(List<AudioEntity> result) {
+				if (result.isEmpty()) {
+					scanMediaFile();
+				} else {
+					queryCompleted(result);
+				}
+			}
+		});
 	}
 
 	private void queryCompleted(List<AudioEntity> audioList) {
+		AudioWife.getInstance().release();
 		AudioPlayListManager.INSTANCE.getList().clear();
 		AudioPlayListManager.INSTANCE.getList().addAll(audioList);
 		mAudioListAdapter.setList(audioList);
@@ -153,43 +142,48 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 
 	private List<AudioEntity> scanAndSaveAudioList() {
 		List<AudioEntity> audioList = new ArrayList<>();
-		Cursor cursor = Utils.getApp()
-		                     .getContentResolver()
-		                     .query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-		                            new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.DURATION},
-		                            MediaStore.Audio.Media.MIME_TYPE + "=? or " + MediaStore.Audio.Media.MIME_TYPE + "=? or " + MediaStore.Audio.Media.MIME_TYPE + "=? or " + MediaStore.Audio.Media.MIME_TYPE + "=? or " + MediaStore.Audio.Media.MIME_TYPE + "=?",
-		                            FileConfig.AUDIO_TYPES,
-		                            MediaStore.Audio.Media.DISPLAY_NAME);
+		Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+		                                           new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID, MediaStore.Audio.Media.DURATION},
+		                                           null,
+		                                           null,
+		                                           MediaStore.Audio.Media.DISPLAY_NAME);
 		if (null != cursor) {
 			while (cursor.moveToNext()) {
 				String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
 				if (null == path) {
 					continue;
 				}
-				if (mIsPublic && path.startsWith(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.AUDIO)) {
+				if (mIsPublic && path.startsWith(PathConfig.IMAGE.PUB)) {
 					continue;
 				}
-				if (!mIsPublic && !path.startsWith(PathUtils.getExternalAppFilesPath() + File.separator + PathConfig.AUDIO)) {
+				if (!mIsPublic && !path.startsWith(PathConfig.IMAGE.PRI)) {
 					continue;
 				}
+				String name;
+				String suffix;
 				String displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME));
 				if (null == displayName) {
-					displayName = StringUtils.getString(R.string.unknown);
+					name = suffix = StringUtils.getString(R.string.unknown);
+				} else {
+					name = FileUtils.getFileNameNoExtension(displayName);
+					suffix = FileUtils.getFileExtension(displayName);
 				}
 				int _id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
 				String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
 				if (null == artist) {
 					artist = StringUtils.getString(R.string.unknown);
 				}
-				String album = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
-				if (null == album) {
-					album = StringUtils.getString(R.string.unknown);
+				String albumName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
+				if (null == albumName) {
+					albumName = StringUtils.getString(R.string.unknown);
 				}
+				int albumId = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ID));
+				String albumImage = getAlbumImage(albumId);
 				int duration = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
 				if (duration < 0) {
 					duration = 0;
 				}
-				audioList.add(new AudioEntity(_id, displayName, artist, album, duration, path));
+				audioList.add(new AudioEntity(_id, name, suffix, artist, albumName, albumImage, duration, path, false));
 			}
 			cursor.close();
 		}
@@ -200,9 +194,29 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 		return audioList;
 	}
 
-	@BusUtils.Bus(tag = BusConfig.MEDIA_MOUNTED, threadMode = BusUtils.ThreadMode.MAIN)
-	public void onMediaMounted() {
-		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<AudioEntity>>() {
+	private String getAlbumImage(int albumId) {
+		String uriAlbums = "content://media/external/audio/albums/" + albumId;
+		String[] projection = new String[]{"album_art"};
+		Cursor cursor = getContentResolver().query(Uri.parse(uriAlbums), projection, null, null, null);
+		String albumImage = null;
+		if (null != cursor && cursor.getCount() > 0 && cursor.getColumnCount() > 0) {
+			cursor.moveToNext();
+			albumImage = cursor.getString(0);
+			cursor.close();
+		}
+//		Bitmap bitmap;
+//		if (null != album_art) {
+//			bitmap = BitmapFactory.decodeFile(album_art);
+//		} else {
+//			bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.audio_player_album_default);
+//		}
+//		return bitmap;
+		return albumImage;
+	}
+
+	@BusUtils.Bus(tag = BusConfig.MEDIA_SCAN_COMPLETED, threadMode = BusUtils.ThreadMode.MAIN)
+	public void onMediaScanCompleted() {
+		ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<AudioEntity>>() {
 			@Override
 			public List<AudioEntity> doInBackground() {
 				return scanAndSaveAudioList();
@@ -213,5 +227,21 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 				queryCompleted(result);
 			}
 		});
+	}
+
+	@BusUtils.Bus(tag = BusConfig.UPDATE_AUDIO_PLAY_LIST, threadMode = BusUtils.ThreadMode.MAIN)
+	public void onPlayListUpdate() {
+		if (null != mAudioListAdapter) {
+			int position = AudioPlayListManager.INSTANCE.getPosition();
+			if (position >= 0) {
+				mAudioListAdapter.getData().get(position).setChecked(true);
+				mAudioListAdapter.notifyItemChanged(position);
+			}
+			int previousPosition = AudioPlayListManager.INSTANCE.getPreviousPosition();
+			if (previousPosition >= 0) {
+				mAudioListAdapter.getData().get(previousPosition).setChecked(false);
+				mAudioListAdapter.notifyItemChanged(previousPosition);
+			}
+		}
 	}
 }

@@ -3,11 +3,7 @@ package com.viegre.nas.pad.activity.image;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
 import com.blankj.utilcode.util.ThreadUtils;
-import com.blankj.utilcode.util.Utils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.ImageListAdapter;
@@ -18,6 +14,9 @@ import com.viegre.nas.pad.widget.GridSpaceItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 /**
  * Created by レインマン on 2021/01/18 16:36 with Android Studio.
@@ -68,13 +67,11 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> {
 			@Override
 			public List<ImageEntity> doInBackground() {
 				List<ImageEntity> imageList = new ArrayList<>();
-				Cursor cursor = Utils.getApp()
-				                     .getContentResolver()
-				                     .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-				                            new String[]{MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_ADDED},
-				                            null,
-				                            null,
-				                            MediaStore.Images.Media.DATE_ADDED + " desc");
+				Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+				                                           new String[]{MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_ADDED},
+				                                           null,
+				                                           null,
+				                                           MediaStore.Images.Media.DATE_ADDED + " desc");
 
 				if (null != cursor) {
 					while (cursor.moveToNext()) {

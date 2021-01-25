@@ -19,8 +19,12 @@ public class BusConfig {
 	public static final String WEATHER = "weather";
 
 	/**
-	 * 媒体挂载/卸载
+	 * 媒体扫描完毕
 	 */
-	public static final String MEDIA_MOUNTED = "media_mounted";
-	public static final String MEDIA_UNMOUNTED = "media_unmounted";
+	public static final String MEDIA_SCAN_COMPLETED = "media_scan_completed";
+
+	/**
+	 * 更新音频播放列表
+	 */
+	public static final String UPDATE_AUDIO_PLAY_LIST = "update_audio_play_list";
 }

@@ -1,8 +1,5 @@
 package com.viegre.nas.pad.adapter;
 
-import androidx.appcompat.widget.AppCompatImageView;
-
-import com.blankj.utilcode.util.FileUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -11,6 +8,8 @@ import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.entity.VideoEntity;
 
 import org.jetbrains.annotations.NotNull;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * Created by レインマン on 2021/01/25 1:18 AM with Android Studio.
@@ -28,6 +27,6 @@ public class VideoListAdapter extends BaseQuickAdapter<VideoEntity, BaseViewHold
 		     .setDefaultRequestOptions(new RequestOptions().frame(1000000).centerCrop())
 		     .load(videoEntity.getPath())
 		     .into(acivItemVideoThumbnail);
-		baseViewHolder.setText(R.id.actvItemVideoName, FileUtils.getFileNameNoExtension(videoEntity.getDisplayName()));
+		baseViewHolder.setText(R.id.actvItemVideoName, videoEntity.getName());
 	}
 }

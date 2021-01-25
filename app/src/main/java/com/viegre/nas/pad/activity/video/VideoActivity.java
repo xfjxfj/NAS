@@ -3,11 +3,9 @@ package com.viegre.nas.pad.activity.video;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
-import com.blankj.utilcode.util.Utils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.VideoListAdapter;
@@ -18,6 +16,9 @@ import com.viegre.nas.pad.widget.GridSpaceItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 /**
  * Created by レインマン on 2021/01/18 16:36 with Android Studio.
@@ -68,25 +69,28 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 			@Override
 			public List<VideoEntity> doInBackground() {
 				List<VideoEntity> videoList = new ArrayList<>();
-				Cursor cursor = Utils.getApp()
-				                     .getContentResolver()
-				                     .query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-				                            new String[]{MediaStore.Video.VideoColumns.DATA, MediaStore.Video.VideoColumns.DISPLAY_NAME, MediaStore.Video.VideoColumns.DURATION, MediaStore.Video.VideoColumns.DATE_ADDED},
-				                            null,
-				                            null,
-				                            MediaStore.Video.VideoColumns.DISPLAY_NAME);
+				Cursor cursor = getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+				                                           new String[]{MediaStore.Video.VideoColumns.DATA, MediaStore.Video.VideoColumns.DISPLAY_NAME, MediaStore.Video.VideoColumns.DURATION, MediaStore.Video.VideoColumns.DATE_ADDED},
+				                                           null,
+				                                           null,
+				                                           MediaStore.Video.VideoColumns.DISPLAY_NAME);
 
 				if (null != cursor) {
 					while (cursor.moveToNext()) {
-						String displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME));
-						if (null == displayName) {
-							continue;
-						}
 						String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
 						if (null == path) {
 							continue;
 						}
-						videoList.add(new VideoEntity(displayName, path));
+						String name;
+						String suffix;
+						String displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME));
+						if (null == displayName) {
+							name = suffix = StringUtils.getString(R.string.unknown);
+						} else {
+							name = FileUtils.getFileNameNoExtension(displayName);
+							suffix = FileUtils.getFileExtension(displayName);
+						}
+						videoList.add(new VideoEntity(name, suffix, path));
 					}
 					cursor.close();
 				}

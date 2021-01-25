@@ -87,4 +87,13 @@
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent" />
 	</androidx.constraintlayout.widget.ConstraintLayout>
+
+	<androidx.appcompat.widget.AppCompatImageView
+		android:id="@+id/acivAudioPlayerAlbum"
+		android:layout_width="128px"
+		android:layout_height="128px"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

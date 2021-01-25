@@ -1,5 +1,6 @@
 package com.viegre.nas.pad.entity;
 
+import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
 /**
@@ -8,20 +9,25 @@ import org.litepal.crud.LitePalSupport;
 public class AudioEntity extends LitePalSupport {
 
 	private int _id;
-	private String displayName;
+	private String name;
+	private String suffix;
 	private String artist;
-	private String album;
+	private String albumName;
+	private String albumImage;
 	private int duration;
 	private String path;
-	private boolean isSelected;
+	@Column(ignore = true) private boolean isChecked;
 
-	public AudioEntity(int _id, String displayName, String artist, String album, int duration, String path) {
+	public AudioEntity(int _id, String name, String suffix, String artist, String albumName, String albumImage, int duration, String path, boolean isChecked) {
 		this._id = _id;
-		this.displayName = displayName;
+		this.name = name;
+		this.suffix = suffix;
 		this.artist = artist;
-		this.album = album;
+		this.albumName = albumName;
+		this.albumImage = albumImage;
 		this.duration = duration;
 		this.path = path;
+		this.isChecked = isChecked;
 	}
 
 	public int get_id() {
@@ -32,12 +38,20 @@ public class AudioEntity extends LitePalSupport {
 		this._id = _id;
 	}
 
-	public String getDisplayName() {
-		return displayName;
+	public String getName() {
+		return name;
 	}
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSuffix() {
+		return suffix;
+	}
+
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
 	}
 
 	public String getArtist() {
@@ -48,12 +62,20 @@ public class AudioEntity extends LitePalSupport {
 		this.artist = artist;
 	}
 
-	public String getAlbum() {
-		return album;
+	public String getAlbumName() {
+		return albumName;
 	}
 
-	public void setAlbum(String album) {
-		this.album = album;
+	public void setAlbumName(String albumName) {
+		this.albumName = albumName;
+	}
+
+	public String getAlbumImage() {
+		return albumImage;
+	}
+
+	public void setAlbumImage(String albumImage) {
+		this.albumImage = albumImage;
 	}
 
 	public int getDuration() {
@@ -72,11 +94,11 @@ public class AudioEntity extends LitePalSupport {
 		this.path = path;
 	}
 
-	public boolean isSelected() {
-		return isSelected;
+	public boolean isChecked() {
+		return isChecked;
 	}
 
-	public void setSelected(boolean selected) {
-		isSelected = selected;
+	public void setChecked(boolean checked) {
+		isChecked = checked;
 	}
 }

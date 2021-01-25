@@ -7,20 +7,30 @@ import org.litepal.crud.LitePalSupport;
  */
 public class VideoEntity extends LitePalSupport {
 
-	private String displayName;
+	private String name;
+	private String suffix;
 	private String path;
 
-	public VideoEntity(String displayName, String path) {
-		this.displayName = displayName;
+	public VideoEntity(String name, String suffix, String path) {
+		this.name = name;
+		this.suffix = suffix;
 		this.path = path;
 	}
 
-	public String getDisplayName() {
-		return displayName;
+	public String getName() {
+		return name;
 	}
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSuffix() {
+		return suffix;
+	}
+
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
 	}
 
 	public String getPath() {

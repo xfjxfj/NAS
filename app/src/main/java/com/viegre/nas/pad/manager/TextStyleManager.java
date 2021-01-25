@@ -16,15 +16,16 @@ public enum TextStyleManager {
 	INSTANCE;
 
 	/**
-	 * 设置文字是否加粗
+	 * 设置音频播放列表文字是否加粗
 	 *
 	 * @param isChecked
 	 * @param actvList
 	 */
-	public void setAudioListCheck(boolean isChecked, AppCompatTextView... actvList) {
+	public void setAudioPlayListCheck(boolean isChecked, AppCompatTextView... actvList) {
 		for (AppCompatTextView actv : actvList) {
 			actv.setTextColor(isChecked ? ColorUtils.getColor(R.color.settings_menu_selected_bg) : ColorUtils.getColor(R.color.audio_list_unchecked));
 			actv.getPaint().setFakeBoldText(isChecked);
+			actv.setTextSize(TypedValue.COMPLEX_UNIT_PX, isChecked ? 20F : 16F);
 		}
 	}
 
