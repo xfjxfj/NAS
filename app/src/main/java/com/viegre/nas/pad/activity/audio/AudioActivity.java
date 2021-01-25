@@ -78,6 +78,9 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 	private void initList() {
 		mAudioListAdapter = new AudioListAdapter();
 		mAudioListAdapter.setOnItemClickListener((adapter, view, position) -> {
+			if (AudioPlayListManager.INSTANCE.getPosition() < 0) {
+				AudioPlayListManager.INSTANCE.setPosition(position);
+			}
 			Intent intent = new Intent(this, AudioPlayerActivity.class);
 			intent.putExtra("position", position);
 			ActivityUtils.startActivity(intent);
@@ -233,11 +236,22 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 	public void onPlayListUpdate() {
 		if (null != mAudioListAdapter) {
 			int position = AudioPlayListManager.INSTANCE.getPosition();
+			int previousPosition = AudioPlayListManager.INSTANCE.getPreviousPosition();
+			if (position < 0) {
+				return;
+			}
+			if (mAudioListAdapter.getData().isEmpty()) {
+				return;
+			}
+			if (position == previousPosition) {
+				mAudioListAdapter.getData().get(position).setChecked(true);
+				mAudioListAdapter.notifyItemChanged(position);
+				return;
+			}
 			if (position >= 0) {
 				mAudioListAdapter.getData().get(position).setChecked(true);
 				mAudioListAdapter.notifyItemChanged(position);
 			}
-			int previousPosition = AudioPlayListManager.INSTANCE.getPreviousPosition();
 			if (previousPosition >= 0) {
 				mAudioListAdapter.getData().get(previousPosition).setChecked(false);
 				mAudioListAdapter.notifyItemChanged(previousPosition);

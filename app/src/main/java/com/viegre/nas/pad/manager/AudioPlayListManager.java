@@ -15,8 +15,7 @@ public enum AudioPlayListManager {
 	INSTANCE;
 
 	private final List<AudioEntity> mList = new ArrayList<>();
-	private int mPosition = -1;
-	private int mPreviousPosition = -1;
+	private int mPosition = -1, mPreviousPosition = -1;
 
 	public List<AudioEntity> getList() {
 		return mList;
@@ -35,7 +34,11 @@ public enum AudioPlayListManager {
 	}
 
 	public void setPosition(int position) {
-		mPreviousPosition = mPosition;
+		if (mPosition < 0) {
+			mPreviousPosition = position;
+		} else {
+			mPreviousPosition = mPosition;
+		}
 		mPosition = position;
 		BusUtils.post(BusConfig.UPDATE_AUDIO_PLAY_LIST);
 	}
