@@ -8,6 +8,9 @@ public class PathConfig {
 	//私有空间目录
 	public static final String PRIVATE = "private";
 
+	//公共空间目录
+	public static final String PUBLIC = "public";
+
 	//图片目录
 	public static final String IMAGE = "image";
 

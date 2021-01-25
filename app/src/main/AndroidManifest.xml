@@ -76,6 +76,7 @@
 
 		<activity
 			android:name=".activity.audio.AudioPlayerActivity"
+			android:launchMode="singleInstance"
 			android:screenOrientation="landscape" />
 
 		<activity

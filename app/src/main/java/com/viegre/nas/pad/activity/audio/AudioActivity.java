@@ -3,11 +3,7 @@ package com.viegre.nas.pad.activity.audio;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.provider.MediaStore;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
@@ -23,6 +19,7 @@ import com.viegre.nas.pad.config.FileConfig;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.databinding.ActivityAudioBinding;
 import com.viegre.nas.pad.entity.AudioEntity;
+import com.viegre.nas.pad.manager.AudioPlayListManager;
 import com.viegre.nas.pad.manager.TextStyleManager;
 
 import org.litepal.LitePal;
@@ -30,6 +27,9 @@ import org.litepal.LitePal;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 /**
  * 音频管理页
@@ -77,7 +77,7 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 		mAudioListAdapter.setOnItemClickListener((adapter, view, position) -> {
 			AudioEntity audioEntity = mAudioListAdapter.getItem(position);
 			Intent intent = new Intent(this, AudioPlayerActivity.class);
-			intent.putExtra("audioPath", audioEntity.getPath());
+			intent.putExtra("position", position);
 			ActivityUtils.startActivity(intent);
 		});
 		mViewBinding.rvAudioList.setLayoutManager(new LinearLayoutManager(this));
@@ -100,19 +100,10 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 	}
 
 	private void scanMediaFile() {
-//		ShellUtils.execCmdAsync("find /mnt/sdcard/Music/ -exec am broadcast \\\n" + "    -a android.intent.action.MEDIA_SCANNER_SCAN_FILE \\\n" + "    -d file://{} \\\\",
-//		                        true,
-//		                        commandResult -> {
-//			                        LogUtils.iTag("ShellUtils", commandResult.toString());
-//			                        BusUtils.post(BusConfig.MEDIA_MOUNTED);
-//		                        });
-//		sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + PathUtils.getExternalStoragePath())));
-		MediaScannerConnection.scanFile(this, null, null, new MediaScannerConnection.OnScanCompletedListener() {
-			@Override
-			public void onScanCompleted(String s, Uri uri) {
-				BusUtils.post(BusConfig.MEDIA_MOUNTED);
-			}
-		});
+		MediaScannerConnection.scanFile(this,
+		                                new String[]{PathUtils.getExternalStoragePath()},
+		                                null,
+		                                (s, uri) -> BusUtils.post(BusConfig.MEDIA_MOUNTED));
 	}
 
 	private void queryAudioByLitepal() {
@@ -151,6 +142,8 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 	}
 
 	private void queryCompleted(List<AudioEntity> audioList) {
+		AudioPlayListManager.INSTANCE.getList().clear();
+		AudioPlayListManager.INSTANCE.getList().addAll(audioList);
 		mAudioListAdapter.setList(audioList);
 		mViewBinding.srlAudioRefresh.setRefreshing(false);
 		mViewBinding.acrbAudioTagPrivate.setEnabled(true);
