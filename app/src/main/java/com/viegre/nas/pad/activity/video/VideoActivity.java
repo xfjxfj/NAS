@@ -1,8 +1,10 @@
 package com.viegre.nas.pad.activity.video;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -49,6 +51,11 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 
 	private void initList() {
 		mVideoListAdapter = new VideoListAdapter();
+		mVideoListAdapter.setOnItemClickListener((adapter, view, position) -> {
+			Intent intent = new Intent(this, VideoPlayerActivity.class);
+			intent.putExtra("video", mVideoListAdapter.getData().get(position));
+			ActivityUtils.startActivity(intent);
+		});
 		mViewBinding.rvVideoList.setLayoutManager(new GridLayoutManager(this, 3));
 		mViewBinding.rvVideoList.addItemDecoration(new GridSpaceItemDecoration(3, 12, 12));
 		mViewBinding.rvVideoList.setAdapter(mVideoListAdapter);

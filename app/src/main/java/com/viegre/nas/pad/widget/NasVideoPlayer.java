@@ -25,7 +25,7 @@ public class NasVideoPlayer extends StandardGSYVideoPlayer {
 
 	@Override
 	public int getLayoutId() {
-		return R.layout.video_player_nas;
+		return R.layout.splash_video_player;
 	}
 
 	@Override

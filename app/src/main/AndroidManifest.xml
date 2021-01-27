@@ -83,6 +83,10 @@
 			android:name=".activity.video.VideoActivity"
 			android:screenOrientation="landscape" />
 
+		<activity
+			android:name=".activity.video.VideoPlayerActivity"
+			android:screenOrientation="landscape" />
+
 		<service android:name="com.amap.api.location.APSService" />
 
 		<receiver
