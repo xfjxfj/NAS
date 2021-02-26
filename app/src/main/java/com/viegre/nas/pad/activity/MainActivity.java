@@ -1,5 +1,6 @@
 package com.viegre.nas.pad.activity;
 
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.view.View;
 
@@ -33,6 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import hdp.http.APIConstant;
 
 /**
  * Created by レインマン on 2020/12/15 09:29 with Android Studio.
@@ -114,9 +117,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
 		//视频
 		Glide.with(this)
-		     .load(R.mipmap.main_icon_video)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIconVideo);
+		     .load(R.mipmap.main_icon_video).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconVideo);
 		mViewBinding.acivMainIconVideo.setOnClickListener(view -> ActivityUtils.startActivity(VideoActivity.class));
 
 		Glide.with(this).load(R.mipmap.test_icon_3).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon3);
@@ -125,6 +126,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		Glide.with(this).load(R.mipmap.test_icon_6).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon6);
 		Glide.with(this).load(R.mipmap.test_icon_7).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon7);
 		Glide.with(this).load(R.mipmap.test_icon_8).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon8);
+		mViewBinding.acivMainIcon5.setOnClickListener(view -> {
+			Intent liveIntent = new Intent();
+			liveIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
+			liveIntent.putExtra(APIConstant.HIDE_EXIT_DIAG, true);
+			liveIntent.setAction("com.hdpfans.live.start");
+			liveIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			liveIntent.putExtra("ChannelNum", 1);
+			ActivityUtils.startActivity(liveIntent);
+		});
 		mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(SettingsActivity.class));
 	}
 

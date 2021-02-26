@@ -48,7 +48,7 @@ android {
 		variant.outputs.all { output ->
 			def outputFile = output.outputFile
 			if (null != outputFile && outputFile.name.endsWith('.apk')) {
-				output.outputFileName = "ViegreSpeaker_${variant.versionName}.apk"
+				output.outputFileName = "ViegreNasPad_${variant.versionName}.apk"
 			}
 		}
 	}

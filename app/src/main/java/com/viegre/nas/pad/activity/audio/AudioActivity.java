@@ -1,6 +1,7 @@
 package com.viegre.nas.pad.activity.audio;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -21,6 +22,7 @@ import com.viegre.nas.pad.databinding.ActivityAudioBinding;
 import com.viegre.nas.pad.entity.AudioEntity;
 import com.viegre.nas.pad.manager.AudioPlayListManager;
 import com.viegre.nas.pad.manager.TextStyleManager;
+import com.viegre.nas.pad.receiver.MediaScannerReceiver;
 
 import org.litepal.LitePal;
 
@@ -39,6 +41,7 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 
 	private AudioListAdapter mAudioListAdapter;
 	private volatile boolean mIsPublic = true;
+	private MediaScannerReceiver mMediaScannerReceiver;
 
 	@Override
 	protected void initialize() {
@@ -48,6 +51,12 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 		initList();
 		mViewBinding.srlAudioRefresh.setRefreshing(true);
 		queryAudioByLitepal();
+
+		mMediaScannerReceiver = new MediaScannerReceiver();
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
+		intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
+		registerReceiver(mMediaScannerReceiver, intentFilter);
 	}
 
 	@Override
@@ -60,6 +69,7 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 	protected void onDestroy() {
 		super.onDestroy();
 		ThreadUtils.cancel(ThreadUtils.getSinglePool());
+		unregisterReceiver(mMediaScannerReceiver);
 	}
 
 	private void initRadioGroup() {

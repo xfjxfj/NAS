@@ -19,6 +19,7 @@ import com.blankj.utilcode.util.PhoneUtils;
 import com.blankj.utilcode.util.ShellUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
+import com.bumptech.glide.Glide;
 import com.djangoogle.framework.activity.BaseFragmentActivity;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
@@ -255,36 +256,36 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 显示引导页
 	 */
 	private void showGuideData() {
-		ActivityUtils.startActivity(MainActivity.class);
-//		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<GuideResourceEntity>() {
-//			@Override
-//			public GuideResourceEntity doInBackground() {
-//				return LitePal.findFirst(GuideResourceEntity.class);
-//			}
-//
-//			@Override
-//			public void onSuccess(GuideResourceEntity result) {
-//				mViewBinding.actvSplashGuideSkip.setOnClickListener(view -> {
-//					mGuideSkipCountDownTimer.cancel();
-//					ActivityUtils.startActivity(MainActivity.class);
-//					finish();
-//				});
-//				if (null == result) {
-//					mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
-//					startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
-//				} else {
-//					String fileName = GUIDE_RESOURCE + result.getFileName();
-//					if (result.isImage()) {
-//						Glide.with(mActivity).load(fileName).into(mViewBinding.acivSplashGuideImage);
-//						mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
-//						startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
-//					} else {
-//						mViewBinding.nvpSplashGuideVideo.setVisibility(View.VISIBLE);
-//						playGuideVideo(fileName);
-//					}
-//				}
-//			}
-//		});
+//		ActivityUtils.startActivity(MainActivity.class);
+		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<GuideResourceEntity>() {
+			@Override
+			public GuideResourceEntity doInBackground() {
+				return LitePal.findFirst(GuideResourceEntity.class);
+			}
+
+			@Override
+			public void onSuccess(GuideResourceEntity result) {
+				mViewBinding.actvSplashGuideSkip.setOnClickListener(view -> {
+					mGuideSkipCountDownTimer.cancel();
+					ActivityUtils.startActivity(MainActivity.class);
+					finish();
+				});
+				if (null == result) {
+					mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
+					startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
+				} else {
+					String fileName = PathConfig.GUIDE_RESOURCE + result.getFileName();
+					if (result.isImage()) {
+						Glide.with(mActivity).load(fileName).into(mViewBinding.acivSplashGuideImage);
+						mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
+						startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
+					} else {
+						mViewBinding.nvpSplashGuideVideo.setVisibility(View.VISIBLE);
+						playGuideVideo(fileName);
+					}
+				}
+			}
+		});
 	}
 
 	/**
