@@ -13,12 +13,12 @@ import q.rorbin.verticaltablayout.widget.ITabView;
 /**
  * Created by レインマン on 2020/12/22 15:21 with Android Studio.
  */
-public class SettingsMenuAdapter implements TabAdapter {
+public class SettingsMenuListAdapter implements TabAdapter {
 
 	private final Context mContext;
 	private final String[] mMenuNameArr;
 
-	public SettingsMenuAdapter(Context context) {
+	public SettingsMenuListAdapter(Context context) {
 		mContext = context;
 		mMenuNameArr = context.getResources().getStringArray(R.array.settings_menu_name);
 	}

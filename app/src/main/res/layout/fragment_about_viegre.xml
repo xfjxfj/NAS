@@ -22,8 +22,6 @@
 		android:layout_marginBottom="30px"
 		android:background="@drawable/settings_dark_bg"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/actvAboutViegreTitle">
 
 		<androidx.appcompat.widget.AppCompatImageView

@@ -7,7 +7,7 @@ import com.blankj.utilcode.util.PhoneUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.activity.BaseFragmentActivity;
 import com.viegre.nas.pad.R;
-import com.viegre.nas.pad.adapter.SettingsMenuAdapter;
+import com.viegre.nas.pad.adapter.SettingsMenuListAdapter;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivitySettingsBinding;
 import com.viegre.nas.pad.entity.LoginInfoEntity;
@@ -115,7 +115,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 		mViewBinding.vtlSettingsMenu.setupWithFragment(getSupportFragmentManager(),
 		                                               R.id.flSettingsFragment,
 		                                               mFragmentList,
-		                                               new SettingsMenuAdapter(this));
+		                                               new SettingsMenuListAdapter(this));
 	}
 
 	private void initFragment() {
