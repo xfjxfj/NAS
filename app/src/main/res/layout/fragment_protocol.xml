@@ -22,5 +22,6 @@
 		android:layout_marginEnd="30px"
 		android:layout_marginBottom="30px"
 		android:background="@drawable/settings_dark_bg"
+		android:overScrollMode="never"
 		app:layout_constraintTop_toBottomOf="@id/actvProtocolName" />
 </androidx.constraintlayout.widget.ConstraintLayout>
