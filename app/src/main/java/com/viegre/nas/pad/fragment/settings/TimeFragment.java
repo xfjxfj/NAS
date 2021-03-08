@@ -87,7 +87,10 @@ public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 				AppCompatTextView actvPickerViewTimeConfirm = v.findViewById(R.id.actvPickerViewTimeConfirm);
 				AppCompatTextView actvPickerViewTimeCancel = v.findViewById(R.id.actvPickerViewTimeCancel);
 				actvPickerViewTimeTitle.setText(StringUtils.getString(R.string.time_pick_date));
-				actvPickerViewTimeConfirm.setOnClickListener(view1 -> mDatePickerView.returnData());
+				actvPickerViewTimeConfirm.setOnClickListener(view1 -> {
+					mDatePickerView.returnData();
+					mDatePickerView.dismiss();
+				});
 				actvPickerViewTimeCancel.setOnClickListener(view12 -> mDatePickerView.dismiss());
 			}).setType(new boolean[]{true, true, true, false, false, false})// 默认全部显示
 			  .setContentTextSize(40)//滚轮文字大小
