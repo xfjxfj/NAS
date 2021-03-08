@@ -11,6 +11,7 @@ import com.blankj.utilcode.util.ColorUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.djangoogle.framework.fragment.BaseFragment;
 import com.github.iielse.switchbutton.SwitchView;
 import com.viegre.nas.pad.R;
@@ -34,19 +35,19 @@ public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 		boolean isSync = SPUtils.getInstance().getBoolean(SPConfig.TIME_SYNC, true);
 		mViewBinding.svTimeSyncSwitch.setOpened(SPUtils.getInstance().getBoolean(SPConfig.TIME_SYNC, true));
 		if (isSync) {
-			timeSyncOn();
+			timeSyncOn(null);
 		} else {
-			timeSyncOff();
+			timeSyncOff(null);
 		}
 		mViewBinding.svTimeSyncSwitch.setOnStateChangedListener(new SwitchView.OnStateChangedListener() {
 			@Override
 			public void toggleToOn(SwitchView view) {
-				timeSyncOn();
+				timeSyncOn(view);
 			}
 
 			@Override
 			public void toggleToOff(SwitchView view) {
-				timeSyncOff();
+				timeSyncOff(view);
 			}
 		});
 	}
@@ -55,14 +56,14 @@ public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 		return new TimeFragment();
 	}
 
-	private void timeSyncOn() {
+	private void timeSyncOn(SwitchView switchView) {
 		mViewBinding.rlTimeDate.setOnClickListener(null);
 		mViewBinding.rlTime.setOnClickListener(null);
 		ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<Date>() {
 			@Override
 			public Date doInBackground() {
 				SntpClient sntpClient = new SntpClient();
-				if (sntpClient.requestTime("cn.pool.ntp.org", 30000)) {
+				if (sntpClient.requestTime("ntp3.aliyun.com", 10 * 1000)) {
 					long now = sntpClient.getNtpTime() + SystemClock.elapsedRealtime() - sntpClient.getNtpTimeReference();
 					return new Date(now);
 				}
@@ -71,13 +72,22 @@ public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 
 			@Override
 			public void onSuccess(Date result) {
-				SPUtils.getInstance().put(SPConfig.TIME_SYNC, true);
-				mViewBinding.svTimeSyncSwitch.toggleSwitch(true);
+				if (null != switchView) {
+					if (null == result) {
+						SPUtils.getInstance().put(SPConfig.TIME_SYNC, false);
+						switchView.toggleSwitch(false);
+						ToastUtils.showShort(R.string.time_sync_failed);
+					} else {
+						SPUtils.getInstance().put(SPConfig.TIME_SYNC, true);
+						switchView.toggleSwitch(true);
+						ToastUtils.showShort(R.string.time_sync_succeed);
+					}
+				}
 			}
 		});
 	}
 
-	private void timeSyncOff() {
+	private void timeSyncOff(SwitchView switchView) {
 		//设置日期
 		mViewBinding.rlTimeDate.setOnClickListener(view -> {
 			mDatePickerView = new TimePickerBuilder(mActivity, (date, v) -> {
@@ -136,7 +146,9 @@ public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 			  .build();
 			mTimePickerView.show();
 		});
-		SPUtils.getInstance().put(SPConfig.TIME_SYNC, false);
-		mViewBinding.svTimeSyncSwitch.toggleSwitch(false);
+		if (null != switchView) {
+			SPUtils.getInstance().put(SPConfig.TIME_SYNC, false);
+			switchView.toggleSwitch(false);
+		}
 	}
 }

@@ -43,8 +43,7 @@
 				android:layout_width="48px"
 				android:layout_height="28px"
 				android:layout_alignParentEnd="true"
-				android:layout_centerVertical="true"
-				app:isOpened="true" />
+				android:layout_centerVertical="true" />
 		</RelativeLayout>
 
 		<View
