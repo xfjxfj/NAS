@@ -33,55 +33,37 @@
 			android:id="@+id/year"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="1"
-			app:wheelview_dividerColor="#4E4E52"
-			app:wheelview_textColorCenter="#1DD9FA"
-			app:wheelview_textColorOut="#A6A6AD" />
+			android:layout_weight="1" />
 
 		<com.contrarywind.view.WheelView
 			android:id="@+id/month"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="1.1"
-			app:wheelview_dividerColor="#4E4E52"
-			app:wheelview_textColorCenter="#1DD9FA"
-			app:wheelview_textColorOut="#A6A6AD" />
+			android:layout_weight="1.1" />
 
 		<com.contrarywind.view.WheelView
 			android:id="@+id/day"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="1.1"
-			app:wheelview_dividerColor="#4E4E52"
-			app:wheelview_textColorCenter="#1DD9FA"
-			app:wheelview_textColorOut="#A6A6AD" />
+			android:layout_weight="1.1" />
 
 		<com.contrarywind.view.WheelView
 			android:id="@+id/hour"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="1.1"
-			app:wheelview_dividerColor="#4E4E52"
-			app:wheelview_textColorCenter="#1DD9FA"
-			app:wheelview_textColorOut="#A6A6AD" />
+			android:layout_weight="1.1" />
 
 		<com.contrarywind.view.WheelView
 			android:id="@+id/min"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="1.1"
-			app:wheelview_dividerColor="#4E4E52"
-			app:wheelview_textColorCenter="#1DD9FA"
-			app:wheelview_textColorOut="#A6A6AD" />
+			android:layout_weight="1.1" />
 
 		<com.contrarywind.view.WheelView
 			android:id="@+id/second"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="1.1"
-			app:wheelview_dividerColor="#4E4E52"
-			app:wheelview_textColorCenter="#1DD9FA"
-			app:wheelview_textColorOut="#A6A6AD" />
+			android:layout_weight="1.1" />
 	</LinearLayout>
 
 	<androidx.appcompat.widget.AppCompatTextView

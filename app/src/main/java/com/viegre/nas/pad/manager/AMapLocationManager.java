@@ -34,12 +34,12 @@ public enum AMapLocationManager {
 			mAMapLocationClient = new AMapLocationClient(applicationContext);
 			mAMapLocationClient.setLocationListener(aMapLocation -> {
 				if (null == aMapLocation) {
-					BusUtils.post(BusConfig.WEATHER, null);
+					BusUtils.post(BusConfig.WEATHER, new WeatherEntity());
 				} else {
 					if (0 != aMapLocation.getErrorCode()) {
 						//定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
 						LogUtils.e("location Error, ErrCode:" + aMapLocation.getErrorCode() + ", errInfo:" + aMapLocation.getErrorInfo());
-						BusUtils.post(BusConfig.WEATHER, null);
+						BusUtils.post(BusConfig.WEATHER, new WeatherEntity());
 					} else {
 						Kalle.post(UrlConfig.Device.GET_WEATHER)
 						     .param("lat", aMapLocation.getLatitude())
@@ -52,14 +52,15 @@ public enum AMapLocationManager {
 									     List<WeatherEntity> weatherList = response.succeed().getWeather();
 									     if (!weatherList.isEmpty()) {
 										     for (WeatherEntity weather : weatherList) {
-											     if (TimeUtils.isToday(weather.getDate(), new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()))) {
+											     if (TimeUtils.isToday(weather.getDate(),
+											                           new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()))) {
 												     BusUtils.post(BusConfig.WEATHER, weather);
 												     return;
 											     }
 										     }
 									     }
 								     }
-								     BusUtils.post(BusConfig.WEATHER, null);
+								     BusUtils.post(BusConfig.WEATHER, new WeatherEntity());
 							     }
 						     });
 					}

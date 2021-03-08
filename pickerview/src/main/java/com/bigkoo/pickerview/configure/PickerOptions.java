@@ -95,9 +95,9 @@ public class PickerOptions {
 	public int textSizeTitle = 18;//标题文字大小
 	public int textSizeContent = 18;//内容文字大小
 
-	public int textColorOut = 0xFFa8a8a8; //分割线以外的文字颜色
-	public int textColorCenter = 0xFF2a2a2a; //分割线之间的文字颜色
-	public int dividerColor = 0xFFd5d5d5; //分割线的颜色
+	public int textColorOut = 0xFFA6A6AD; //分割线以外的文字颜色
+	public int textColorCenter = 0xFF1DD9FA; //分割线之间的文字颜色
+	public int dividerColor = 0xFF4E4E52; //分割线的颜色
 	public int outSideColor = -1; //显示时的外部背景色颜色,默认是灰色
 
 	public float lineSpacingMultiplier = 1.6f; // 条目间距倍数 默认1.6

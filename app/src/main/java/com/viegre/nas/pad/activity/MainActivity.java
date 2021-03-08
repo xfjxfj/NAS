@@ -111,21 +111,40 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		//音频
 		Glide.with(this)
 		     .load(R.mipmap.main_icon_audio)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIconAudio);
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconAudio);
 		mViewBinding.acivMainIconAudio.setOnClickListener(view -> ActivityUtils.startActivity(AudioActivity.class));
 
 		//视频
 		Glide.with(this)
-		     .load(R.mipmap.main_icon_video).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconVideo);
+		     .load(R.mipmap.main_icon_video)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIconVideo);
 		mViewBinding.acivMainIconVideo.setOnClickListener(view -> ActivityUtils.startActivity(VideoActivity.class));
 
-		Glide.with(this).load(R.mipmap.test_icon_3).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon3);
-		Glide.with(this).load(R.mipmap.test_icon_4).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon4);
-		Glide.with(this).load(R.mipmap.test_icon_5).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon5);
-		Glide.with(this).load(R.mipmap.test_icon_6).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon6);
-		Glide.with(this).load(R.mipmap.test_icon_7).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon7);
-		Glide.with(this).load(R.mipmap.test_icon_8).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon8);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_3)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon3);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_4)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon4);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_5)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon5);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_6)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon6);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_7)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon7);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_8)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon8);
 		mViewBinding.acivMainIcon5.setOnClickListener(view -> {
 			Intent liveIntent = new Intent();
 			liveIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
@@ -184,18 +203,17 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
 	@BusUtils.Bus(tag = BusConfig.WEATHER, threadMode = BusUtils.ThreadMode.MAIN)
 	public void getWeather(WeatherEntity weatherEntity) {
-		if (null == weatherEntity || mWeatherMap.isEmpty()) {
-			mViewBinding.acivMainWeather.setImageResource(R.mipmap.weather_unknown);
-			mViewBinding.actvMainTemperature.setText(R.string.weather_unknown_temperature);
-		} else {
+		if (null != weatherEntity && !mWeatherMap.isEmpty()) {
 			for (Map.Entry<String, Integer> entry : mWeatherMap.entrySet()) {
 				String name = entry.getKey();
 				if (name.contains(weatherEntity.getWeather())) {
 					mViewBinding.acivMainWeather.setImageResource(entry.getValue());
 					mViewBinding.actvMainTemperature.setText(weatherEntity.getCurtemperature() + StringUtils.getString(R.string.weather_temperature));
-					break;
+					return;
 				}
 			}
 		}
+		mViewBinding.acivMainWeather.setImageResource(R.mipmap.weather_unknown);
+		mViewBinding.actvMainTemperature.setText(R.string.weather_unknown_temperature);
 	}
 }
