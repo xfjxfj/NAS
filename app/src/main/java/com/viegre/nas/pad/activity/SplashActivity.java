@@ -76,9 +76,9 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
-		GSYVideoManager.releaseAllVideos();
 		FragmentUtils.removeAll(getSupportFragmentManager());
+		GSYVideoManager.releaseAllVideos();
+		super.onDestroy();
 	}
 
 	/**
@@ -340,7 +340,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * @param guideResourceEntity
 	 */
 	private void downloadGuideData(GuideResourceEntity guideResourceEntity) {
-		Kalle.Download.get(guideResourceEntity.getUrl()).directory(PathConfig.GUIDE_RESOURCE)
+		Kalle.Download.get(guideResourceEntity.getUrl())
+		              .directory(PathConfig.GUIDE_RESOURCE)
 		              .fileName(guideResourceEntity.getFileName())
 		              .perform(new Callback() {
 			              @Override
