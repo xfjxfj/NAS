@@ -59,6 +59,8 @@ dependencies {
 	//https://github.com/AlphaBoom/ClassifyView
 	implementation project(':classify_view')
 	implementation project(':framework')
+	//https://github.com/Bigkoo/Android-PickerView
+	implementation project(':pickerview')
 	//https://github.com/qstumn/VerticalTabLayout
 	implementation project(':vertical_tablayout')
 	//https://maven.google.com/web/index.html

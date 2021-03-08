@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="790px"
+	android:layout_height="wrap_content"
+	android:background="@drawable/popup_prompt_bg">
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPickerViewTimeTitle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="49px"
+		android:layout_marginTop="39px"
+		android:includeFontPadding="false"
+		android:textColor="@android:color/white"
+		android:textSize="30px"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<!--此部分禁止删除-->
+	<LinearLayout
+		android:id="@+id/timepicker"
+		android:layout_width="match_parent"
+		android:layout_height="270px"
+		android:layout_marginStart="50px"
+		android:layout_marginTop="40px"
+		android:layout_marginEnd="50px"
+		android:gravity="center"
+		android:orientation="horizontal"
+		app:layout_constraintTop_toBottomOf="@id/actvPickerViewTimeTitle">
+
+		<com.contrarywind.view.WheelView
+			android:id="@+id/year"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			app:wheelview_dividerColor="#4E4E52"
+			app:wheelview_textColorCenter="#1DD9FA"
+			app:wheelview_textColorOut="#A6A6AD" />
+
+		<com.contrarywind.view.WheelView
+			android:id="@+id/month"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1.1"
+			app:wheelview_dividerColor="#4E4E52"
+			app:wheelview_textColorCenter="#1DD9FA"
+			app:wheelview_textColorOut="#A6A6AD" />
+
+		<com.contrarywind.view.WheelView
+			android:id="@+id/day"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1.1"
+			app:wheelview_dividerColor="#4E4E52"
+			app:wheelview_textColorCenter="#1DD9FA"
+			app:wheelview_textColorOut="#A6A6AD" />
+
+		<com.contrarywind.view.WheelView
+			android:id="@+id/hour"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1.1"
+			app:wheelview_dividerColor="#4E4E52"
+			app:wheelview_textColorCenter="#1DD9FA"
+			app:wheelview_textColorOut="#A6A6AD" />
+
+		<com.contrarywind.view.WheelView
+			android:id="@+id/min"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1.1"
+			app:wheelview_dividerColor="#4E4E52"
+			app:wheelview_textColorCenter="#1DD9FA"
+			app:wheelview_textColorOut="#A6A6AD" />
+
+		<com.contrarywind.view.WheelView
+			android:id="@+id/second"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1.1"
+			app:wheelview_dividerColor="#4E4E52"
+			app:wheelview_textColorCenter="#1DD9FA"
+			app:wheelview_textColorOut="#A6A6AD" />
+	</LinearLayout>
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPickerViewTimeConfirm"
+		android:layout_width="128px"
+		android:layout_height="56px"
+		android:layout_marginTop="58px"
+		android:layout_marginEnd="54px"
+		android:layout_marginBottom="39px"
+		android:background="@drawable/popup_confirm_bg"
+		android:gravity="center"
+		android:includeFontPadding="false"
+		android:text="@string/confirm"
+		android:textColor="@android:color/white"
+		android:textSize="24px"
+		android:textStyle="bold"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/timepicker" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPickerViewTimeCancel"
+		android:layout_width="128px"
+		android:layout_height="56px"
+		android:layout_marginEnd="20px"
+		android:background="@drawable/popup_cancel_bg"
+		android:gravity="center"
+		android:includeFontPadding="false"
+		android:text="@string/cancel"
+		android:textColor="@android:color/white"
+		android:textSize="24px"
+		android:textStyle="bold"
+		app:layout_constraintEnd_toStartOf="@id/actvPickerViewTimeConfirm"
+		app:layout_constraintTop_toTopOf="@id/actvPickerViewTimeConfirm" />
+</androidx.constraintlayout.widget.ConstraintLayout>

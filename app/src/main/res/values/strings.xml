@@ -122,6 +122,13 @@
 	<!--声音-->
 	<string name="sound_modulation">音量调节</string>
 
+	<!--时间-->
+	<string name="time_sync">自动同步网络时间</string>
+	<string name="time_date">日期</string>
+	<string name="time">时间</string>
+	<string name="time_pick_date">选择日期</string>
+	<string name="time_pick_time">选择时间</string>
+
 	<!--图片-->
 	<string name="image">图片</string>
 	<string name="image_private">私人图片</string>

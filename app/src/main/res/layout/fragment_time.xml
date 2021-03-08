@@ -13,12 +13,128 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
 
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
+	<androidx.appcompat.widget.LinearLayoutCompat
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/actvTimeTitle"
-		app:srcCompat="@mipmap/test_settings_time" />
+		android:layout_marginStart="30px"
+		android:layout_marginTop="79px"
+		android:layout_marginEnd="30px"
+		android:background="@drawable/settings_dark_bg"
+		android:orientation="vertical"
+		app:layout_constraintTop_toBottomOf="@id/actvTimeTitle">
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="67px"
+			android:paddingStart="33px"
+			android:paddingEnd="30px">
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:includeFontPadding="false"
+				android:text="@string/time_sync"
+				android:textColor="#E5E5EB"
+				android:textSize="20px" />
+
+			<com.github.iielse.switchbutton.SwitchView
+				android:id="@+id/svTimeSyncSwitch"
+				android:layout_width="48px"
+				android:layout_height="28px"
+				android:layout_alignParentEnd="true"
+				android:layout_centerVertical="true"
+				app:isOpened="true" />
+		</RelativeLayout>
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="1px"
+			android:layout_marginStart="25px"
+			android:layout_marginEnd="25px"
+			android:background="#252529" />
+
+		<RelativeLayout
+			android:id="@+id/rlTimeDate"
+			android:layout_width="match_parent"
+			android:layout_height="67px"
+			android:paddingStart="33px"
+			android:paddingEnd="30px">
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:includeFontPadding="false"
+				android:text="@string/time_date"
+				android:textColor="#E5E5EB"
+				android:textSize="20px" />
+
+			<TextClock
+				android:id="@+id/tcTimeDate"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:layout_toStartOf="@id/acivTimeDateArrow"
+				android:format12Hour="yyyy年MM月dd日"
+				android:format24Hour="yyyy年MM月dd日"
+				android:includeFontPadding="false"
+				android:textColor="#5C5F68"
+				android:textSize="20px" />
+
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/acivTimeDateArrow"
+				android:layout_width="24px"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:layout_centerVertical="true"
+				android:paddingStart="12px"
+				app:srcCompat="@mipmap/network_item_arrow" />
+		</RelativeLayout>
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="1px"
+			android:layout_marginStart="25px"
+			android:layout_marginEnd="25px"
+			android:background="#252529" />
+
+		<RelativeLayout
+			android:id="@+id/rlTime"
+			android:layout_width="match_parent"
+			android:layout_height="67px"
+			android:paddingStart="33px"
+			android:paddingEnd="30px">
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:includeFontPadding="false"
+				android:text="@string/time"
+				android:textColor="#E5E5EB"
+				android:textSize="20px" />
+
+			<TextClock
+				android:id="@+id/tcTime"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:layout_toStartOf="@id/acivTimeArrow"
+				android:format12Hour="hh:mm"
+				android:format24Hour="HH:mm"
+				android:includeFontPadding="false"
+				android:textColor="#5C5F68"
+				android:textSize="20px" />
+
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/acivTimeArrow"
+				android:layout_width="24px"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:layout_centerVertical="true"
+				android:paddingStart="12px"
+				app:srcCompat="@mipmap/network_item_arrow" />
+		</RelativeLayout>
+	</androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>
