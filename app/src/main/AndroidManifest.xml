@@ -20,6 +20,10 @@
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 	<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+	<uses-permission
+		android:name="android.permission.DEVICE_POWER"
+		tools:ignore="ProtectedPermissions" />
 	<uses-permission
 		android:name="android.permission.WRITE_SETTINGS"
 		tools:ignore="ProtectedPermissions" />
@@ -52,6 +56,11 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+
+		<activity
+			android:name=".activity.ScreenSaverActivity"
+			android:launchMode="singleInstance"
+			android:screenOrientation="landscape" />
 
 		<activity
 			android:name=".activity.LoginActivity"
@@ -88,6 +97,8 @@
 			android:screenOrientation="landscape" />
 
 		<service android:name="com.amap.api.location.APSService" />
+
+		<service android:name=".service.ScreenSaverService" />
 
 		<receiver
 			android:name=".receiver.SdcardStateReceiver"
