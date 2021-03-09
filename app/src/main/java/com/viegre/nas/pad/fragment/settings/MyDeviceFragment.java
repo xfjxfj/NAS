@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.blankj.utilcode.constant.MemoryConstants;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.SDCardUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.djangoogle.framework.fragment.BaseFragment;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.databinding.FragmentMyDeviceBinding;
@@ -41,9 +42,7 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 		double totalSizeD = ConvertUtils.byte2MemorySize(totalSizeL, MemoryConstants.MB);
 		double availableSizeD = ConvertUtils.byte2MemorySize(availableSizeL, MemoryConstants.MB);
 		double usedSize = totalSizeD - availableSizeD;
-		mViewBinding.actvMyDeviceCurrentlyUsed.setText(String.format(getResources().getString(R.string.my_device_currently_used),
-		                                                             usedSizeS,
-		                                                             totalSizeStr));
+		mViewBinding.actvMyDeviceCurrentlyUsed.setText(StringUtils.getString(R.string.my_device_currently_used, usedSizeS, totalSizeStr));
 		mViewBinding.mpbMyDeviceProgress.setProgressDrawable(ContextCompat.getDrawable(mContext, R.drawable.my_device_progress_bar));
 		mViewBinding.mpbMyDeviceProgress.setMax((int) totalSizeD);
 		mViewBinding.mpbMyDeviceProgress.setProgress((int) usedSize);

@@ -13,7 +13,7 @@ public class AboutViegreFragment extends BaseFragment<FragmentAboutViegreBinding
 
 	@Override
 	protected void initialize() {
-		mViewBinding.actvAboutViegreVersion.setText(StringUtils.getString(R.string.about_viegre_version) + AppUtils.getAppVersionName());
+		mViewBinding.actvAboutViegreVersion.setText(StringUtils.getString(R.string.about_viegre_version, AppUtils.getAppVersionName()));
 	}
 
 	public static AboutViegreFragment newInstance() {

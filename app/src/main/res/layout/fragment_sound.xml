@@ -30,6 +30,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="66px"
 		android:layout_marginStart="30px"
+		android:layout_marginTop="19px"
 		android:layout_marginEnd="30px"
 		android:background="@drawable/settings_dark_bg"
 		android:paddingStart="30px"
@@ -37,19 +38,19 @@
 		app:layout_constraintTop_toBottomOf="@id/actvSoundModulation">
 
 		<androidx.appcompat.widget.AppCompatImageView
-			android:id="@+id/acivSoundVolumeUp"
+			android:id="@+id/acivSoundVolumeDown"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_centerVertical="true"
-			app:srcCompat="@mipmap/sound_volume_up" />
+			app:srcCompat="@mipmap/sound_volume_down" />
 
 		<androidx.appcompat.widget.AppCompatImageView
-			android:id="@+id/acivSoundVolumeDown"
+			android:id="@+id/acivSoundVolumeUp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentEnd="true"
 			android:layout_centerVertical="true"
-			app:srcCompat="@mipmap/sound_volume_down" />
+			app:srcCompat="@mipmap/sound_volume_up" />
 
 		<androidx.appcompat.widget.AppCompatSeekBar
 			android:id="@+id/acsbSoundVolumeControl"
@@ -58,8 +59,8 @@
 			android:layout_centerVertical="true"
 			android:layout_marginStart="10px"
 			android:layout_marginEnd="10px"
-			android:layout_toStartOf="@id/acivSoundVolumeDown"
-			android:layout_toEndOf="@id/acivSoundVolumeUp"
+			android:layout_toStartOf="@id/acivSoundVolumeUp"
+			android:layout_toEndOf="@id/acivSoundVolumeDown"
 			android:maxHeight="3px"
 			android:progressDrawable="@drawable/login_time_seek_bar_bg"
 			android:thumb="@drawable/sound_volume_seek_bar_thumb"

@@ -15,13 +15,250 @@
 
 	<ScrollView
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="0dp"
+		android:layout_marginTop="43px"
+		android:clipToPadding="false"
+		android:overScrollMode="never"
+		android:paddingBottom="30px"
+		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/actvScreenTitle">
 
-		<androidx.appcompat.widget.AppCompatImageView
-			android:layout_width="wrap_content"
+		<androidx.appcompat.widget.LinearLayoutCompat
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal"
-			app:srcCompat="@mipmap/test_settings_screen" />
+			android:orientation="vertical">
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/actvScreenStandby"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="50px"
+				android:includeFontPadding="false"
+				android:text="@string/screen_standby"
+				android:textColor="#5C5F68"
+				android:textSize="18px" />
+
+			<androidx.appcompat.widget.LinearLayoutCompat
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="30px"
+				android:layout_marginTop="19px"
+				android:layout_marginEnd="30px"
+				android:background="@drawable/settings_dark_bg"
+				android:orientation="vertical">
+
+				<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+					<androidx.appcompat.widget.AppCompatTextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="30px"
+						android:layout_marginTop="24px"
+						android:layout_marginBottom="24px"
+						android:includeFontPadding="false"
+						android:text="@string/screen_standby_mode"
+						android:textColor="#E5E5EB"
+						android:textSize="20px" />
+
+					<com.github.iielse.switchbutton.SwitchView
+						android:id="@+id/avScreenStandbyModeSwitch"
+						android:layout_width="56px"
+						android:layout_height="35px"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="30px" />
+				</RelativeLayout>
+
+				<View
+					android:layout_width="match_parent"
+					android:layout_height="1px"
+					android:layout_marginStart="25px"
+					android:layout_marginEnd="25px"
+					android:background="#252529" />
+
+				<RelativeLayout
+					android:id="@+id/rlScreenEnterStandbyTime"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+					<androidx.appcompat.widget.AppCompatTextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="30px"
+						android:layout_marginTop="24px"
+						android:layout_marginBottom="24px"
+						android:includeFontPadding="false"
+						android:text="@string/screen_enter_standby_time"
+						android:textColor="#E5E5EB"
+						android:textSize="20px" />
+
+					<androidx.appcompat.widget.AppCompatImageView
+						android:id="@+id/acivScreenEnterStandbyTimeArrow"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="28px"
+						app:srcCompat="@mipmap/network_item_arrow" />
+
+					<androidx.appcompat.widget.AppCompatTextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="12px"
+						android:layout_toStartOf="@id/acivScreenEnterStandbyTimeArrow"
+						android:includeFontPadding="false"
+						android:text="@string/screen_misoperation"
+						android:textColor="#5C5F68"
+						android:textSize="20px" />
+				</RelativeLayout>
+			</androidx.appcompat.widget.LinearLayoutCompat>
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/actvScreenStandbyPicture"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="50px"
+				android:layout_marginTop="52px"
+				android:includeFontPadding="false"
+				android:text="@string/screen_standby_picture"
+				android:textColor="#5C5F68"
+				android:textSize="18px" />
+
+			<androidx.appcompat.widget.LinearLayoutCompat
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="30px"
+				android:layout_marginTop="19px"
+				android:layout_marginEnd="30px"
+				android:background="@drawable/settings_dark_bg"
+				android:orientation="vertical">
+
+				<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+					<androidx.appcompat.widget.AppCompatTextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="30px"
+						android:layout_marginTop="24px"
+						android:layout_marginBottom="24px"
+						android:includeFontPadding="false"
+						android:text="@string/screen_custom_standby_picture"
+						android:textColor="#E5E5EB"
+						android:textSize="20px" />
+
+					<com.github.iielse.switchbutton.SwitchView
+						android:id="@+id/avScreenCustomStandbyPictureSwitch"
+						android:layout_width="56px"
+						android:layout_height="35px"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="30px" />
+				</RelativeLayout>
+
+				<View
+					android:layout_width="match_parent"
+					android:layout_height="1px"
+					android:layout_marginStart="25px"
+					android:layout_marginEnd="25px"
+					android:background="#252529" />
+
+				<RelativeLayout
+					android:id="@+id/rlScreenAssignPicture"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+					<androidx.appcompat.widget.AppCompatTextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="30px"
+						android:layout_marginTop="24px"
+						android:layout_marginBottom="24px"
+						android:includeFontPadding="false"
+						android:text="@string/screen_assign_picture"
+						android:textColor="#E5E5EB"
+						android:textSize="20px" />
+
+					<androidx.appcompat.widget.AppCompatImageView
+						android:id="@+id/acivScreenPublicSpacePictureArrow"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="28px"
+						app:srcCompat="@mipmap/network_item_arrow" />
+
+					<androidx.appcompat.widget.AppCompatTextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="12px"
+						android:layout_toStartOf="@id/acivScreenPublicSpacePictureArrow"
+						android:includeFontPadding="false"
+						android:text="@string/screen_public_space_picture"
+						android:textColor="#5C5F68"
+						android:textSize="20px" />
+				</RelativeLayout>
+			</androidx.appcompat.widget.LinearLayoutCompat>
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/actvScreenBrightness"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="50px"
+				android:layout_marginTop="52px"
+				android:includeFontPadding="false"
+				android:text="@string/screen_brightness"
+				android:textColor="#5C5F68"
+				android:textSize="18px" />
+
+			<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="66px"
+				android:layout_marginStart="30px"
+				android:layout_marginTop="19px"
+				android:layout_marginEnd="30px"
+				android:background="@drawable/settings_dark_bg"
+				android:paddingStart="30px"
+				android:paddingEnd="30px">
+
+				<androidx.appcompat.widget.AppCompatImageView
+					android:id="@+id/acivScreenBrightnessDown"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerVertical="true"
+					app:srcCompat="@mipmap/screen_brightness_down" />
+
+				<androidx.appcompat.widget.AppCompatImageView
+					android:id="@+id/acivScreenBrightnessUp"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_centerVertical="true"
+					app:srcCompat="@mipmap/screen_brightness_up" />
+
+				<androidx.appcompat.widget.AppCompatSeekBar
+					android:id="@+id/acsbScreenBrightnessControl"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_centerVertical="true"
+					android:layout_marginStart="10px"
+					android:layout_marginEnd="10px"
+					android:layout_toStartOf="@id/acivScreenBrightnessUp"
+					android:layout_toEndOf="@id/acivScreenBrightnessDown"
+					android:maxHeight="3px"
+					android:progressDrawable="@drawable/login_time_seek_bar_bg"
+					android:thumb="@drawable/sound_volume_seek_bar_thumb"
+					android:thumbOffset="0dp" />
+			</RelativeLayout>
+		</androidx.appcompat.widget.LinearLayoutCompat>
 	</ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
