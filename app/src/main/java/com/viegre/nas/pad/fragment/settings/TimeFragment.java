@@ -3,8 +3,6 @@ package com.viegre.nas.pad.fragment.settings;
 import android.graphics.Color;
 import android.os.SystemClock;
 
-import androidx.appcompat.widget.AppCompatTextView;
-
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.blankj.utilcode.util.ColorUtils;
@@ -21,6 +19,8 @@ import com.viegre.nas.pad.util.SntpClient;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * Created by レインマン on 2020/12/17 17:38 with Android Studio.
