@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="670px"
+	android:layout_height="wrap_content"
+	android:background="@drawable/popup_prompt_bg"
+	android:orientation="vertical"
+	android:paddingStart="50px"
+	android:paddingEnd="50px">
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPickerViewScreenSaverTitle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="39px"
+		android:layout_marginBottom="40px"
+		android:includeFontPadding="false"
+		android:textColor="@android:color/white"
+		android:textSize="30px" />
+
+	<!--此部分禁止删除-->
+	<LinearLayout
+		android:id="@+id/optionspicker"
+		android:layout_width="match_parent"
+		android:layout_height="270px"
+		android:gravity="center"
+		android:orientation="horizontal">
+
+		<com.contrarywind.view.WheelView
+			android:id="@+id/options1"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1" />
+
+		<com.contrarywind.view.WheelView
+			android:id="@+id/options2"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1" />
+
+		<com.contrarywind.view.WheelView
+			android:id="@+id/options3"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1" />
+	</LinearLayout>
+
+	<RelativeLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="end"
+		android:layout_marginTop="58px"
+		android:layout_marginBottom="39px">
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/actvPickerViewScreenSaverConfirm"
+			android:layout_width="128px"
+			android:layout_height="56px"
+			android:layout_alignParentEnd="true"
+			android:background="@drawable/popup_confirm_bg"
+			android:gravity="center"
+			android:includeFontPadding="false"
+			android:text="@string/confirm"
+			android:textColor="@android:color/white"
+			android:textSize="24px"
+			android:textStyle="bold" />
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/actvPickerViewScreenSaverCancel"
+			android:layout_width="128px"
+			android:layout_height="56px"
+			android:layout_marginEnd="20px"
+			android:layout_toStartOf="@id/actvPickerViewScreenSaverConfirm"
+			android:background="@drawable/popup_cancel_bg"
+			android:gravity="center"
+			android:includeFontPadding="false"
+			android:text="@string/cancel"
+			android:textColor="@android:color/white"
+			android:textSize="24px"
+			android:textStyle="bold" />
+	</RelativeLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

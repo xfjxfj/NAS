@@ -101,9 +101,8 @@ public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 					mDatePickerView.returnData();
 					mDatePickerView.dismiss();
 				});
-				actvPickerViewTimeCancel.setOnClickListener(view12 -> mDatePickerView.dismiss());
-			})
-			  .setType(new boolean[]{true, true, true, false, false, false})// 默认全部显示
+				actvPickerViewTimeCancel.setOnClickListener(view2 -> mDatePickerView.dismiss());
+			}).setType(new boolean[]{true, true, true, false, false, false})//默认全部显示
 			  .setContentTextSize(40)//滚轮文字大小
 			  .setOutSideCancelable(false)//点击屏幕，点在控件外部范围时，是否取消显示
 			  .isCyclic(true)//是否循环滚动
@@ -130,9 +129,8 @@ public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 					mTimePickerView.returnData();
 					mTimePickerView.dismiss();
 				});
-				actvPickerViewTimeCancel.setOnClickListener(view12 -> mTimePickerView.dismiss());
-			})
-			  .setType(new boolean[]{false, false, false, true, true, false})// 默认全部显示
+				actvPickerViewTimeCancel.setOnClickListener(view2 -> mTimePickerView.dismiss());
+			}).setType(new boolean[]{false, false, false, true, true, false})//默认全部显示
 			  .setContentTextSize(40)//滚轮文字大小
 			  .setOutSideCancelable(false)//点击屏幕，点在控件外部范围时，是否取消显示
 			  .isCyclic(true)//是否循环滚动

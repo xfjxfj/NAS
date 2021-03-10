@@ -9,7 +9,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.IBinder;
+import android.provider.Settings;
 
+import com.blankj.utilcode.util.SPUtils;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.receiver.ScreenStatusReceiver;
 
 import androidx.annotation.Nullable;
@@ -44,6 +47,7 @@ public class ScreenSaverService extends Service {
 			startForeground(1, notification);
 		}
 		registerScreenStatusReceiver();
+		initSaver();
 	}
 
 	@Override
@@ -62,6 +66,16 @@ public class ScreenSaverService extends Service {
 	private void unregisterScreenStatusReceiver() {
 		if (null != mScreenStatusReceiver) {
 			unregisterReceiver(mScreenStatusReceiver);
+		}
+	}
+
+	private void initSaver() {
+		boolean screenSaverSwitch = SPUtils.getInstance().getBoolean(SPConfig.SCREEN_SAVER_SWITCH, true);
+		if (screenSaverSwitch) {
+			int delay = SPUtils.getInstance().getInt(SPConfig.SCREEN_SAVER_DELAY, 5);
+			Settings.System.putInt(getContentResolver(), android.provider.Settings.System.SCREEN_OFF_TIMEOUT, delay * 1000);
+		} else {
+			Settings.System.putInt(getContentResolver(), android.provider.Settings.System.SCREEN_OFF_TIMEOUT, Integer.MAX_VALUE);
 		}
 	}
 }

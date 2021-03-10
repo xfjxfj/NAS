@@ -16,4 +16,10 @@ public class SPConfig {
 
 	//自动更新时间
 	public static final String TIME_SYNC = "time_sync";
+
+	//待机模式开关
+	public static final String SCREEN_SAVER_SWITCH = "screen_saver_switch";
+
+	//进入待机时长
+	public static final String SCREEN_SAVER_DELAY = "screen_saver_delay";
 }
