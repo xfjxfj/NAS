@@ -136,10 +136,10 @@
 	<string name="screen_standby_mode">待机模式</string>
 	<string name="screen_enter_standby_time">进入待机时长</string>
 	<string name="screen_misoperation">无操作%d分钟后</string>
-	<string name="screen_standby_picture">待机画面</string>
-	<string name="screen_custom_standby_picture">自定义待机画面</string>
-	<string name="screen_assign_picture">指定画面</string>
-	<string name="screen_public_space_picture">公共空间/图片</string>
+	<string name="screen_standby_image">待机画面</string>
+	<string name="screen_custom_standby_image">自定义待机画面</string>
+	<string name="screen_assign_image">指定画面</string>
+	<string name="screen_public_space_image">公共空间/图片</string>
 	<string name="screen_brightness">屏幕亮度</string>
 
 	<!--图片-->

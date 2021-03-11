@@ -22,4 +22,10 @@ public class SPConfig {
 
 	//进入待机时长
 	public static final String SCREEN_SAVER_DELAY = "screen_saver_delay";
+
+	//自定义待机画面开关
+	public static final String SCREEN_SAVER_CUSTOM_SWITCH = "screen_saver_custom_switch";
+
+	//自定义开机画面
+	public static final String SCREEN_SAVER_CUSTOM_IMAGES = "screen_saver_custom_images";
 }

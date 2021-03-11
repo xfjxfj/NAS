@@ -121,18 +121,18 @@
 			</androidx.appcompat.widget.LinearLayoutCompat>
 
 			<androidx.appcompat.widget.AppCompatTextView
-				android:id="@+id/actvScreenStandbyPicture"
+				android:id="@+id/actvScreenStandbyImage"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginStart="50px"
 				android:layout_marginTop="52px"
 				android:includeFontPadding="false"
-				android:text="@string/screen_standby_picture"
+				android:text="@string/screen_standby_image"
 				android:textColor="#5C5F68"
 				android:textSize="18px" />
 
 			<androidx.appcompat.widget.LinearLayoutCompat
-				android:id="@+id/llcScreenStandbyPicture"
+				android:id="@+id/llcScreenStandbyImage"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginStart="30px"
@@ -141,6 +141,70 @@
 				android:background="@drawable/settings_dark_bg"
 				android:orientation="vertical">
 
+				<androidx.constraintlayout.widget.ConstraintLayout
+					android:id="@+id/llcScreenStandbyImageDefault"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal"
+					android:paddingStart="27px"
+					android:paddingTop="25px"
+					android:paddingEnd="27px"
+					android:paddingBottom="27px">
+
+					<androidx.appcompat.widget.AppCompatImageView
+						android:id="@+id/acivScreenStandbyImageDefault1"
+						android:layout_width="130px"
+						android:layout_height="88px"
+						android:scaleType="fitXY"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toStartOf="@id/acivScreenStandbyImageDefault2"
+						app:layout_constraintHorizontal_chainStyle="spread_inside"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="parent"
+						app:srcCompat="@mipmap/screen_standby_image_default_1" />
+
+					<androidx.appcompat.widget.AppCompatImageView
+						android:id="@+id/acivScreenStandbyImageDefault2"
+						android:layout_width="130px"
+						android:layout_height="88px"
+						android:scaleType="fitXY"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toStartOf="@id/acivScreenStandbyImageDefault3"
+						app:layout_constraintStart_toEndOf="@id/acivScreenStandbyImageDefault1"
+						app:layout_constraintTop_toTopOf="parent"
+						app:srcCompat="@mipmap/screen_standby_image_default_2" />
+
+					<androidx.appcompat.widget.AppCompatImageView
+						android:id="@+id/acivScreenStandbyImageDefault3"
+						android:layout_width="130px"
+						android:layout_height="88px"
+						android:scaleType="fitXY"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toStartOf="@id/acivScreenStandbyImageDefault4"
+						app:layout_constraintStart_toEndOf="@id/acivScreenStandbyImageDefault2"
+						app:layout_constraintTop_toTopOf="parent"
+						app:srcCompat="@mipmap/screen_standby_image_default_3" />
+
+					<androidx.appcompat.widget.AppCompatImageView
+						android:id="@+id/acivScreenStandbyImageDefault4"
+						android:layout_width="130px"
+						android:layout_height="88px"
+						android:scaleType="fitXY"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintStart_toEndOf="@id/acivScreenStandbyImageDefault3"
+						app:layout_constraintTop_toTopOf="parent"
+						app:srcCompat="@mipmap/screen_standby_image_default_4" />
+				</androidx.constraintlayout.widget.ConstraintLayout>
+
+				<View
+					android:id="@+id/vScreenStandbyImageLine1"
+					android:layout_width="match_parent"
+					android:layout_height="1px"
+					android:layout_marginStart="25px"
+					android:layout_marginEnd="25px"
+					android:background="#252529" />
+
 				<RelativeLayout
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content">
@@ -153,12 +217,12 @@
 						android:layout_marginTop="24px"
 						android:layout_marginBottom="24px"
 						android:includeFontPadding="false"
-						android:text="@string/screen_custom_standby_picture"
+						android:text="@string/screen_custom_standby_image"
 						android:textColor="#E5E5EB"
 						android:textSize="20px" />
 
 					<com.github.iielse.switchbutton.SwitchView
-						android:id="@+id/svScreenCustomStandbyPictureSwitch"
+						android:id="@+id/svScreenCustomStandbyImageSwitch"
 						android:layout_width="56px"
 						android:layout_height="35px"
 						android:layout_alignParentEnd="true"
@@ -167,6 +231,7 @@
 				</RelativeLayout>
 
 				<View
+					android:id="@+id/vScreenStandbyImageLine2"
 					android:layout_width="match_parent"
 					android:layout_height="1px"
 					android:layout_marginStart="25px"
@@ -174,7 +239,7 @@
 					android:background="#252529" />
 
 				<RelativeLayout
-					android:id="@+id/rlScreenAssignPicture"
+					android:id="@+id/rlScreenAssignImage"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content">
 
@@ -186,12 +251,12 @@
 						android:layout_marginTop="24px"
 						android:layout_marginBottom="24px"
 						android:includeFontPadding="false"
-						android:text="@string/screen_assign_picture"
+						android:text="@string/screen_assign_image"
 						android:textColor="#E5E5EB"
 						android:textSize="20px" />
 
 					<androidx.appcompat.widget.AppCompatImageView
-						android:id="@+id/acivScreenPublicSpacePictureArrow"
+						android:id="@+id/acivScreenPublicSpaceImageArrow"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_alignParentEnd="true"
@@ -204,9 +269,9 @@
 						android:layout_height="wrap_content"
 						android:layout_centerVertical="true"
 						android:layout_marginEnd="12px"
-						android:layout_toStartOf="@id/acivScreenPublicSpacePictureArrow"
+						android:layout_toStartOf="@id/acivScreenPublicSpaceImageArrow"
 						android:includeFontPadding="false"
-						android:text="@string/screen_public_space_picture"
+						android:text="@string/screen_public_space_image"
 						android:textColor="#5C5F68"
 						android:textSize="20px" />
 				</RelativeLayout>

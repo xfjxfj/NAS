@@ -1,4 +1,4 @@
-package com.viegre.nas.pad.fragment.settings;
+package com.viegre.nas.pad.fragment.settings.network;
 
 import android.content.Context;
 import android.net.wifi.ScanResult;

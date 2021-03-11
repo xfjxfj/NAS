@@ -1,16 +1,17 @@
-package com.viegre.nas.pad.fragment.settings;
+package com.viegre.nas.pad.fragment.settings.screen;
 
 import android.graphics.Color;
 import android.provider.Settings;
 import android.view.View;
-
-import androidx.appcompat.widget.AppCompatTextView;
 
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.blankj.utilcode.util.ColorUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.djangoogle.framework.fragment.BaseFragment;
 import com.github.iielse.switchbutton.SwitchView;
 import com.viegre.nas.pad.R;
@@ -19,6 +20,8 @@ import com.viegre.nas.pad.databinding.FragmentScreenBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * Created by レインマン on 2020/12/17 17:37 with Android Studio.
@@ -67,6 +70,7 @@ public class ScreenFragment extends BaseFragment<FragmentScreenBinding> {
 	}
 
 	private void openSaver() {
+		initCustomImage();
 		int screenSaverDelay = SPUtils.getInstance().getInt(SPConfig.SCREEN_SAVER_DELAY, 5);
 		mViewBinding.acivScreenMisoperation.setText(StringUtils.getString(R.string.screen_misoperation, screenSaverDelay));
 		int index = 0;
@@ -80,11 +84,8 @@ public class ScreenFragment extends BaseFragment<FragmentScreenBinding> {
 		mViewBinding.rlScreenEnterStandbyTime.setOnClickListener(view -> {
 			mTimeOptionsPickerView = new OptionsPickerBuilder(mActivity, (options1, options2, options3, v) -> {
 				SPUtils.getInstance().put(SPConfig.SCREEN_SAVER_DELAY, mDurationList.get(options1));
-				mViewBinding.acivScreenMisoperation.setText(StringUtils.getString(R.string.screen_misoperation,
-				                                                                  mDurationList.get(options1)));
-				Settings.System.putInt(mActivity.getContentResolver(),
-				                       android.provider.Settings.System.SCREEN_OFF_TIMEOUT,
-				                       options1 * 60 * 1000);
+				mViewBinding.acivScreenMisoperation.setText(StringUtils.getString(R.string.screen_misoperation, mDurationList.get(options1)));
+				Settings.System.putInt(mActivity.getContentResolver(), android.provider.Settings.System.SCREEN_OFF_TIMEOUT, options1 * 60 * 1000);
 				openSaver();
 			}).setLayoutRes(R.layout.picker_view_screen_saver, v -> {
 				AppCompatTextView actvPickerViewScreenSaverTitle = v.findViewById(R.id.actvPickerViewScreenSaverTitle);
@@ -104,8 +105,7 @@ public class ScreenFragment extends BaseFragment<FragmentScreenBinding> {
 			  .setTextColorOut(ColorUtils.getColor(R.color.pickerview_wheelview_textcolor_out))
 			  .setTextColorCenter(ColorUtils.getColor(R.color.pickerview_wheelview_textcolor_center))
 			  .setDividerColor(ColorUtils.getColor(R.color.pickerview_wheelview_textcolor_divider))
-			  .setLabels("分钟", "", "")
-			  .setSelectOptions(finalIndex, 0, 0)//设置默认选中项
+			  .setLabels("分钟", "", "").setSelectOptions(finalIndex, 0, 0)//设置默认选中项
 			  .isCenterLabel(false)//是否只显示中间选中项的label文字，false则每项item全部都带有label。
 			  .isDialog(true)//是否显示为对话框样式
 			  .build();
@@ -115,18 +115,79 @@ public class ScreenFragment extends BaseFragment<FragmentScreenBinding> {
 		});
 		mViewBinding.vScreenStandbyModeSwitchLine.setVisibility(View.VISIBLE);
 		mViewBinding.rlScreenEnterStandbyTime.setVisibility(View.VISIBLE);
-		mViewBinding.actvScreenStandbyPicture.setVisibility(View.VISIBLE);
-		mViewBinding.llcScreenStandbyPicture.setVisibility(View.VISIBLE);
+		mViewBinding.actvScreenStandbyImage.setVisibility(View.VISIBLE);
+		mViewBinding.llcScreenStandbyImage.setVisibility(View.VISIBLE);
 	}
 
 	private void closeSaver() {
 		mViewBinding.rlScreenEnterStandbyTime.setOnClickListener(null);
 		mViewBinding.vScreenStandbyModeSwitchLine.setVisibility(View.GONE);
 		mViewBinding.rlScreenEnterStandbyTime.setVisibility(View.GONE);
-		mViewBinding.actvScreenStandbyPicture.setVisibility(View.GONE);
-		mViewBinding.llcScreenStandbyPicture.setVisibility(View.GONE);
-		Settings.System.putInt(mActivity.getContentResolver(),
-		                       android.provider.Settings.System.SCREEN_OFF_TIMEOUT,
-		                       Integer.MAX_VALUE);
+		mViewBinding.actvScreenStandbyImage.setVisibility(View.GONE);
+		mViewBinding.llcScreenStandbyImage.setVisibility(View.GONE);
+		Settings.System.putInt(mActivity.getContentResolver(), android.provider.Settings.System.SCREEN_OFF_TIMEOUT, Integer.MAX_VALUE);
+	}
+
+	private void initCustomImage() {
+		boolean screenSaverCustomSwitch = SPUtils.getInstance().getBoolean(SPConfig.SCREEN_SAVER_CUSTOM_SWITCH, false);
+		mViewBinding.svScreenCustomStandbyImageSwitch.setOpened(screenSaverCustomSwitch);
+		if (screenSaverCustomSwitch) {
+			openCustom();
+		} else {
+			closeCustom();
+		}
+		mViewBinding.svScreenCustomStandbyImageSwitch.setOnStateChangedListener(new SwitchView.OnStateChangedListener() {
+			@Override
+			public void toggleToOn(SwitchView view) {
+				SPUtils.getInstance().put(SPConfig.SCREEN_SAVER_CUSTOM_SWITCH, true);
+				openCustom();
+				view.toggleSwitch(true);
+			}
+
+			@Override
+			public void toggleToOff(SwitchView view) {
+				SPUtils.getInstance().put(SPConfig.SCREEN_SAVER_CUSTOM_SWITCH, false);
+				closeCustom();
+				view.toggleSwitch(false);
+			}
+		});
+	}
+
+	private void openCustom() {
+		mViewBinding.llcScreenStandbyImageDefault.setVisibility(View.GONE);
+		mViewBinding.vScreenStandbyImageLine1.setVisibility(View.GONE);
+		mViewBinding.vScreenStandbyImageLine2.setVisibility(View.VISIBLE);
+		mViewBinding.rlScreenAssignImage.setVisibility(View.VISIBLE);
+		mViewBinding.acivScreenStandbyImageDefault1.setImageResource(0);
+		mViewBinding.acivScreenStandbyImageDefault2.setImageResource(0);
+		mViewBinding.acivScreenStandbyImageDefault3.setImageResource(0);
+		mViewBinding.acivScreenStandbyImageDefault4.setImageResource(0);
+		mViewBinding.rlScreenAssignImage.setOnClickListener(view -> {
+
+		});
+	}
+
+	private void closeCustom() {
+		mViewBinding.rlScreenAssignImage.setOnClickListener(null);
+		mViewBinding.llcScreenStandbyImageDefault.setVisibility(View.VISIBLE);
+		mViewBinding.vScreenStandbyImageLine1.setVisibility(View.VISIBLE);
+		mViewBinding.vScreenStandbyImageLine2.setVisibility(View.GONE);
+		mViewBinding.rlScreenAssignImage.setVisibility(View.GONE);
+		Glide.with(this)
+		     .load(R.mipmap.screen_standby_image_default_1)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(4)))
+		     .into(mViewBinding.acivScreenStandbyImageDefault1);
+		Glide.with(this)
+		     .load(R.mipmap.screen_standby_image_default_2)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(4)))
+		     .into(mViewBinding.acivScreenStandbyImageDefault2);
+		Glide.with(this)
+		     .load(R.mipmap.screen_standby_image_default_3)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(4)))
+		     .into(mViewBinding.acivScreenStandbyImageDefault3);
+		Glide.with(this)
+		     .load(R.mipmap.screen_standby_image_default_4)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(4)))
+		     .into(mViewBinding.acivScreenStandbyImageDefault4);
 	}
 }
