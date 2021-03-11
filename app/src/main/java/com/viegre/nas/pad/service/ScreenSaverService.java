@@ -33,6 +33,7 @@ public class ScreenSaverService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		initSaver();
 		return START_STICKY;
 	}
 
@@ -47,7 +48,6 @@ public class ScreenSaverService extends Service {
 			startForeground(1, notification);
 		}
 		registerScreenStatusReceiver();
-		initSaver();
 	}
 
 	@Override
@@ -73,9 +73,9 @@ public class ScreenSaverService extends Service {
 		boolean screenSaverSwitch = SPUtils.getInstance().getBoolean(SPConfig.SCREEN_SAVER_SWITCH, true);
 		if (screenSaverSwitch) {
 			int delay = SPUtils.getInstance().getInt(SPConfig.SCREEN_SAVER_DELAY, 5);
-			Settings.System.putInt(getContentResolver(), android.provider.Settings.System.SCREEN_OFF_TIMEOUT, delay * 1000);
+			Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, delay * 60 * 1000);
 		} else {
-			Settings.System.putInt(getContentResolver(), android.provider.Settings.System.SCREEN_OFF_TIMEOUT, Integer.MAX_VALUE);
+			Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, Integer.MAX_VALUE);
 		}
 	}
 }

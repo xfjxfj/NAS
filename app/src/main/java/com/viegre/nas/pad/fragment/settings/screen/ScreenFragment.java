@@ -87,7 +87,7 @@ public class ScreenFragment extends BaseFragment<FragmentScreenBinding> {
 			mTimeOptionsPickerView = new OptionsPickerBuilder(mActivity, (options1, options2, options3, v) -> {
 				SPUtils.getInstance().put(SPConfig.SCREEN_SAVER_DELAY, mDurationList.get(options1));
 				mViewBinding.acivScreenMisoperation.setText(StringUtils.getString(R.string.screen_misoperation, mDurationList.get(options1)));
-				Settings.System.putInt(mActivity.getContentResolver(), android.provider.Settings.System.SCREEN_OFF_TIMEOUT, options1 * 60 * 1000);
+				Settings.System.putInt(mActivity.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, mDurationList.get(options1) * 60 * 1000);
 				openSaver();
 			}).setLayoutRes(R.layout.picker_view_screen_saver, v -> {
 				AppCompatTextView actvPickerViewScreenSaverTitle = v.findViewById(R.id.actvPickerViewScreenSaverTitle);
@@ -128,7 +128,7 @@ public class ScreenFragment extends BaseFragment<FragmentScreenBinding> {
 		mViewBinding.rlScreenEnterStandbyTime.setVisibility(View.GONE);
 		mViewBinding.actvScreenStandbyImage.setVisibility(View.GONE);
 		mViewBinding.llcScreenStandbyImage.setVisibility(View.GONE);
-		Settings.System.putInt(mActivity.getContentResolver(), android.provider.Settings.System.SCREEN_OFF_TIMEOUT, Integer.MAX_VALUE);
+		Settings.System.putInt(mActivity.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, Integer.MAX_VALUE);
 	}
 
 	private void initCustomImage() {
