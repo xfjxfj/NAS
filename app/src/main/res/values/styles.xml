@@ -93,4 +93,9 @@
 		<item name="android:textSize">16px</item>
 		<item name="android:singleLine">true</item>
 	</style>
+
+	<style name="screen_custom_check_box" parent="@android:style/Widget.CompoundButton.CheckBox">
+		<item name="android:button">@drawable/screen_custom_check_box</item>
+
+	</style>
 </resources>

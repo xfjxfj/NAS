@@ -10,8 +10,10 @@ import com.djangoogle.framework.fragment.BaseFragment;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.databinding.FragmentScreenCustomImageBinding;
+import com.viegre.nas.pad.entity.ImageAlbumEntity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by レインマン on 2021/03/11 11:45 with Android Studio.
@@ -20,6 +22,7 @@ public class ScreenCustomImageFragment extends BaseFragment<FragmentScreenCustom
 
 	@Override
 	protected void initialize() {
+		getAllPhotoInfo();
 		mViewBinding.acivScreenCustomBack.setOnClickListener(view -> BusUtils.post(BusConfig.SCREEN_CUSTOM_HIDE));
 		mViewBinding.acivScreenCustomList.setOnClickListener(view -> {
 			mViewBinding.acivScreenCustomList.setImageResource(R.mipmap.screen_custom_list_checked);
@@ -58,28 +61,29 @@ public class ScreenCustomImageFragment extends BaseFragment<FragmentScreenCustom
 
 		Cursor cursor = mActivity.getContentResolver().query(uri, projection, null, null, null);
 
-		ArrayList<String> ids = new ArrayList<String>();
-		mAlbumsList.clear();
-		if (cursor != null) {
+		List<String> ids = new ArrayList<>();
+		List<ImageAlbumEntity> list = new ArrayList<>();
+		if (null != cursor) {
 			while (cursor.moveToNext()) {
-				Album album = new Album();
+				ImageAlbumEntity imageAlbumEntity = new ImageAlbumEntity();
 
 				int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID);
-				album.id = cursor.getString(columnIndex);
+				imageAlbumEntity.set_id(cursor.getString(columnIndex));
 
-				if (!ids.contains(album.id)) {
+				if (!ids.contains(imageAlbumEntity.get_id())) {
 					columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-					album.name = cursor.getString(columnIndex);
+					imageAlbumEntity.setName(cursor.getString(columnIndex));
 
 					columnIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID);
-					album.coverID = cursor.getLong(columnIndex);
+					imageAlbumEntity.setCoverID(cursor.getLong(columnIndex));
 
-					mAlbumsList.add(album);
-					ids.add(album.id);
+					list.add(imageAlbumEntity);
+					ids.add(imageAlbumEntity.get_id());
 				} else {
-					mAlbumsList.get(ids.indexOf(album.id)).count++;
+					list.get(ids.indexOf(imageAlbumEntity.get_id())).count++;
 				}
 			}
 			cursor.close();
 		}
 	}
+}
