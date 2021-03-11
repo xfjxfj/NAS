@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.view.OptionsPickerView;
+import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ColorUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -15,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.djangoogle.framework.fragment.BaseFragment;
 import com.github.iielse.switchbutton.SwitchView;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.FragmentScreenBinding;
 
@@ -105,7 +107,8 @@ public class ScreenFragment extends BaseFragment<FragmentScreenBinding> {
 			  .setTextColorOut(ColorUtils.getColor(R.color.pickerview_wheelview_textcolor_out))
 			  .setTextColorCenter(ColorUtils.getColor(R.color.pickerview_wheelview_textcolor_center))
 			  .setDividerColor(ColorUtils.getColor(R.color.pickerview_wheelview_textcolor_divider))
-			  .setLabels("分钟", "", "").setSelectOptions(finalIndex, 0, 0)//设置默认选中项
+			  .setLabels("分钟", "", "")
+			  .setSelectOptions(finalIndex, 0, 0)//设置默认选中项
 			  .isCenterLabel(false)//是否只显示中间选中项的label文字，false则每项item全部都带有label。
 			  .isDialog(true)//是否显示为对话框样式
 			  .build();
@@ -162,9 +165,7 @@ public class ScreenFragment extends BaseFragment<FragmentScreenBinding> {
 		mViewBinding.acivScreenStandbyImageDefault2.setImageResource(0);
 		mViewBinding.acivScreenStandbyImageDefault3.setImageResource(0);
 		mViewBinding.acivScreenStandbyImageDefault4.setImageResource(0);
-		mViewBinding.rlScreenAssignImage.setOnClickListener(view -> {
-
-		});
+		mViewBinding.rlScreenAssignImage.setOnClickListener(view -> BusUtils.post(BusConfig.SCREEN_CUSTOM_SHOW));
 	}
 
 	private void closeCustom() {

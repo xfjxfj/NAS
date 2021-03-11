@@ -14,6 +14,16 @@
 		app:layout_constraintTop_toTopOf="parent" />
 
 	<androidx.appcompat.widget.AppCompatImageView
+		android:id="@+id/acivScreenCustomBack"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="24px"
+		app:layout_constraintBottom_toBottomOf="@id/actvScreenCustomTitle"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="@id/actvScreenCustomTitle"
+		app:srcCompat="@mipmap/screen_custom_back" />
+
+	<androidx.appcompat.widget.AppCompatImageView
 		android:id="@+id/acivScreenCustomList"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

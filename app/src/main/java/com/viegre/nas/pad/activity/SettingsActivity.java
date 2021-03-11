@@ -3,11 +3,14 @@ package com.viegre.nas.pad.activity;
 import android.view.View;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.BusUtils;
+import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.PhoneUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.activity.BaseFragmentActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.SettingsMenuListAdapter;
+import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivitySettingsBinding;
 import com.viegre.nas.pad.entity.LoginInfoEntity;
@@ -20,6 +23,7 @@ import com.viegre.nas.pad.fragment.settings.ProtocolFragment;
 import com.viegre.nas.pad.fragment.settings.SoundFragment;
 import com.viegre.nas.pad.fragment.settings.TimeFragment;
 import com.viegre.nas.pad.fragment.settings.network.NetworkFragment;
+import com.viegre.nas.pad.fragment.settings.screen.ScreenCustomImageFragment;
 import com.viegre.nas.pad.fragment.settings.screen.ScreenFragment;
 import com.viegre.nas.pad.impl.PopupClickListener;
 import com.viegre.nas.pad.manager.PopupManager;
@@ -46,13 +50,14 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	private NetworkFragment mNetworkFragment;
 	private AutoAnswerFragment mAutoAnswerFragment;
 	private ScreenFragment mScreenFragment;
+	private ScreenCustomImageFragment mScreenCustomImageFragment;
 	private IntelligentVoiceFragment mIntelligentVoiceFragment;
 	private TimeFragment mTimeFragment;
 	private SoundFragment mSoundFragment;
 	private ProtocolFragment mProtocolFragment;
 	private InstructionsFragment mInstructionsFragment;
 	private AboutViegreFragment mAboutViegreFragment;
-	private final List<Fragment> mFragmentList = new ArrayList<>();
+	private final List<Fragment> mMenuFragmentList = new ArrayList<>();
 	private LoginInfoEntity mLoginInfoEntity;
 
 	@Override
@@ -114,7 +119,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 //		linearLayout.setDividerPadding(66); //设置分割线间隔
 		mViewBinding.vtlSettingsMenu.setupWithFragment(getSupportFragmentManager(),
 		                                               R.id.flSettingsFragment,
-		                                               mFragmentList,
+		                                               mMenuFragmentList,
 		                                               new SettingsMenuListAdapter(this));
 	}
 
@@ -129,16 +134,18 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 		mProtocolFragment = ProtocolFragment.newInstance();
 		mInstructionsFragment = InstructionsFragment.newInstance();
 		mAboutViegreFragment = AboutViegreFragment.newInstance();
-		mFragmentList.add(mMyDeviceFragment);
-		mFragmentList.add(mNetworkFragment);
-		mFragmentList.add(mAutoAnswerFragment);
-		mFragmentList.add(mScreenFragment);
-		mFragmentList.add(mIntelligentVoiceFragment);
-		mFragmentList.add(mTimeFragment);
-		mFragmentList.add(mSoundFragment);
-		mFragmentList.add(mProtocolFragment);
-		mFragmentList.add(mInstructionsFragment);
-		mFragmentList.add(mAboutViegreFragment);
+		mMenuFragmentList.add(mMyDeviceFragment);
+		mMenuFragmentList.add(mNetworkFragment);
+		mMenuFragmentList.add(mAutoAnswerFragment);
+		mMenuFragmentList.add(mScreenFragment);
+		mMenuFragmentList.add(mIntelligentVoiceFragment);
+		mMenuFragmentList.add(mTimeFragment);
+		mMenuFragmentList.add(mSoundFragment);
+		mMenuFragmentList.add(mProtocolFragment);
+		mMenuFragmentList.add(mInstructionsFragment);
+		mMenuFragmentList.add(mAboutViegreFragment);
+
+		mScreenCustomImageFragment = ScreenCustomImageFragment.newInstance();
 	}
 
 	/**
@@ -169,5 +176,16 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 				     }
 			     }
 		     });
+	}
+
+	@BusUtils.Bus(tag = BusConfig.SCREEN_CUSTOM_SHOW, threadMode = BusUtils.ThreadMode.MAIN)
+	public void screenCustomShow() {
+		FragmentUtils.add(getSupportFragmentManager(), mScreenCustomImageFragment, R.id.flSettingsFragment);
+		FragmentUtils.show(mScreenCustomImageFragment);
+	}
+
+	@BusUtils.Bus(tag = BusConfig.SCREEN_CUSTOM_HIDE, threadMode = BusUtils.ThreadMode.MAIN)
+	public void screenCustomHide() {
+		FragmentUtils.remove(mScreenCustomImageFragment);
 	}
 }

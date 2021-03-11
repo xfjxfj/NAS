@@ -1,6 +1,10 @@
 package com.viegre.nas.pad.fragment.settings.screen;
 
+import android.view.View;
+
+import com.blankj.utilcode.util.BusUtils;
 import com.djangoogle.framework.fragment.BaseFragment;
+import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.databinding.FragmentScreenCustomImageBinding;
 
 /**
@@ -10,6 +14,15 @@ public class ScreenCustomImageFragment extends BaseFragment<FragmentScreenCustom
 
 	@Override
 	protected void initialize() {
+		mViewBinding.acivScreenCustomBack.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				BusUtils.post(BusConfig.SCREEN_CUSTOM_HIDE);
+			}
+		});
+	}
 
+	public static ScreenCustomImageFragment newInstance() {
+		return new ScreenCustomImageFragment();
 	}
 }

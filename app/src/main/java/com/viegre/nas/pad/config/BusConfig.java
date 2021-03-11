@@ -27,4 +27,10 @@ public class BusConfig {
 	 * 更新音频播放列表
 	 */
 	public static final String UPDATE_AUDIO_PLAY_LIST = "update_audio_play_list";
+
+	/**
+	 * 显示/隐藏自定义待机画面
+	 */
+	public static final String SCREEN_CUSTOM_SHOW = "screen_custom_show";
+	public static final String SCREEN_CUSTOM_HIDE = "screen_custom_hide";
 }
