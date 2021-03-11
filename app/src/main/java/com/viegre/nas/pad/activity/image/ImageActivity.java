@@ -71,7 +71,7 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> {
 				                                           new String[]{MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_ADDED},
 				                                           null,
 				                                           null,
-				                                           MediaStore.Images.Media.DATE_ADDED + " desc");
+				                                           MediaStore.Images.Media.DATE_MODIFIED + " desc");
 
 				if (null != cursor) {
 					while (cursor.moveToNext()) {

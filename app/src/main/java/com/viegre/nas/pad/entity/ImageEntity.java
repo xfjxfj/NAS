@@ -8,6 +8,7 @@ import org.litepal.crud.LitePalSupport;
 public class ImageEntity extends LitePalSupport {
 
 	private String path;
+	private String album;
 
 	public ImageEntity(String path) {
 		this.path = path;
@@ -19,5 +20,13 @@ public class ImageEntity extends LitePalSupport {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	public String getAlbum() {
+		return album;
+	}
+
+	public void setAlbum(String album) {
+		this.album = album;
 	}
 }
