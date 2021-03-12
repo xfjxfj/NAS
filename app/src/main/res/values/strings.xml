@@ -141,6 +141,7 @@
 	<string name="screen_assign_image">指定画面</string>
 	<string name="screen_public_space_image">公共空间/图片</string>
 	<string name="screen_brightness">屏幕亮度</string>
+	<string name="screen_custom_album_count">%d张</string>
 
 	<!--图片-->
 	<string name="image">图片</string>

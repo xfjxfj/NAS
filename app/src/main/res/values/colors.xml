@@ -24,4 +24,5 @@
 	<color name="audio_list_unchecked">#B5B6BF</color>
 	<color name="item_video_name">#B5BAC0</color>
 	<color name="protocol_divider">#252529</color>
+	<color name="screen_custom_album_list_divider">#232325</color>
 </resources>

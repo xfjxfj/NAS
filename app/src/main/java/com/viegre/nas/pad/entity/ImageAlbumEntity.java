@@ -10,7 +10,8 @@ public class ImageAlbumEntity extends LitePalSupport {
 	private String _id;
 	private String name;
 	private long coverID;
-	public int count = 0;
+	private int count = 0;
+	private boolean check = false;
 
 	public String get_id() {
 		return _id;
@@ -34,5 +35,21 @@ public class ImageAlbumEntity extends LitePalSupport {
 
 	public void setCoverID(long coverID) {
 		this.coverID = coverID;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	public boolean isCheck() {
+		return check;
+	}
+
+	public void setCheck(boolean check) {
+		this.check = check;
 	}
 }
