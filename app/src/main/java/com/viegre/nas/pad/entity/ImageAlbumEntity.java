@@ -2,23 +2,25 @@ package com.viegre.nas.pad.entity;
 
 import org.litepal.crud.LitePalSupport;
 
+import java.util.TreeSet;
+
 /**
  * Created by レインマン on 2021/03/11 8:22 PM with Android Studio.
  */
 public class ImageAlbumEntity extends LitePalSupport {
 
-	private String _id;
+	private String bucketId;
 	private String name;
 	private long coverID;
-	private int count = 0;
+	private final TreeSet<String> imageSet = new TreeSet<>();
 	private boolean check = false;
 
-	public String get_id() {
-		return _id;
+	public String getBucketId() {
+		return bucketId;
 	}
 
-	public void set_id(String _id) {
-		this._id = _id;
+	public void setBucketId(String bucketId) {
+		this.bucketId = bucketId;
 	}
 
 	public String getName() {
@@ -37,12 +39,8 @@ public class ImageAlbumEntity extends LitePalSupport {
 		this.coverID = coverID;
 	}
 
-	public int getCount() {
-		return count;
-	}
-
-	public void setCount(int count) {
-		this.count = count;
+	public TreeSet<String> getImageSet() {
+		return imageSet;
 	}
 
 	public boolean isCheck() {
