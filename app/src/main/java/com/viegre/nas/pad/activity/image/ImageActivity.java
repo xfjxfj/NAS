@@ -3,6 +3,9 @@ package com.viegre.nas.pad.activity.image;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+
 import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
@@ -14,9 +17,6 @@ import com.viegre.nas.pad.widget.GridSpaceItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 
 /**
  * Created by レインマン on 2021/01/18 16:36 with Android Studio.
@@ -42,7 +42,8 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> {
 				mIsPublic = true;
 			}
 		});
-		TextStyleManager.INSTANCE.setFileManagerTag(mViewBinding.acrbImageTagPrivate, mViewBinding.acrbImageTagPublic);
+		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbImageTagPrivate,
+		                                                           mViewBinding.acrbImageTagPublic);
 	}
 
 	private void initList() {

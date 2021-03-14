@@ -2,11 +2,11 @@ package com.viegre.nas.pad.manager;
 
 import android.util.TypedValue;
 
-import com.blankj.utilcode.util.ColorUtils;
-import com.viegre.nas.pad.R;
-
 import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.appcompat.widget.AppCompatTextView;
+
+import com.blankj.utilcode.util.ColorUtils;
+import com.viegre.nas.pad.R;
 
 /**
  * Created by レインマン on 2021/01/19 16:31 with Android Studio.
@@ -41,16 +41,25 @@ public enum TextStyleManager {
 	}
 
 	/**
-	 * 设置文件管理器标签字号和粗细
+	 * 设置文件管理器标签字号和粗细（状态变化时）
 	 *
 	 * @param acrbList
 	 */
-	public void setFileManagerTag(AppCompatRadioButton... acrbList) {
+	public void setFileManagerTagOnCheckedChange(AppCompatRadioButton... acrbList) {
 		for (AppCompatRadioButton acrb : acrbList) {
-			acrb.setOnCheckedChangeListener((compoundButton, b) -> {
-				acrb.setTextSize(TypedValue.COMPLEX_UNIT_PX, b ? 30F : 20F);
-				acrb.getPaint().setFakeBoldText(b);
-			});
+			acrb.setOnCheckedChangeListener((compoundButton, b) -> setFileManagerTag(b, acrb));
+			setFileManagerTag(acrb.isChecked(), acrb);
 		}
+	}
+
+	/**
+	 * 设置文件管理器标签字号和粗细
+	 *
+	 * @param b
+	 * @param acrb
+	 */
+	public void setFileManagerTag(boolean b, AppCompatRadioButton acrb) {
+		acrb.setTextSize(TypedValue.COMPLEX_UNIT_PX, b ? 30F : 20F);
+		acrb.getPaint().setFakeBoldText(b);
 	}
 }

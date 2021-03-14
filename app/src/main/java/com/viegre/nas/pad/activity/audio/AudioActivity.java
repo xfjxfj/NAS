@@ -7,6 +7,9 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FileUtils;
@@ -29,8 +32,6 @@ import org.litepal.LitePal;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 import nl.changer.audiowife.AudioWife;
 
 /**
@@ -82,7 +83,8 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 			mViewBinding.srlAudioRefresh.setRefreshing(true);
 			queryAudioByLitepal();
 		});
-		TextStyleManager.INSTANCE.setFileManagerTag(mViewBinding.acrbAudioTagPrivate, mViewBinding.acrbAudioTagPublic);
+		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbAudioTagPrivate,
+		                                                           mViewBinding.acrbAudioTagPublic);
 	}
 
 	private void initList() {
