@@ -21,6 +21,8 @@ public class ScreenCustomAlbumAdapter extends BaseQuickAdapter<ImageAlbumEntity,
 	protected void convert(@NotNull BaseViewHolder baseViewHolder, ImageAlbumEntity imageAlbumEntity) {
 		baseViewHolder.setText(R.id.actvItemScreenCustomAlbumName, imageAlbumEntity.getName())
 		              .setText(R.id.actvItemScreenCustomAlbumCount,
-		                       StringUtils.getString(R.string.screen_custom_album_count, imageAlbumEntity.getCount()));
+		                       StringUtils.getString(R.string.screen_custom_album_count, imageAlbumEntity.getCount()))
+		              .setImageResource(R.id.acivItemScreenCustomAlbumCheck,
+		                                imageAlbumEntity.isCheck() ? R.mipmap.screen_custom_checked : R.mipmap.screen_custom_unchecked);
 	}
 }

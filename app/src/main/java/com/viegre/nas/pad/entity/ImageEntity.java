@@ -9,6 +9,7 @@ public class ImageEntity extends LitePalSupport {
 
 	private String path;
 	private String album;
+	private boolean check = false;
 
 	public ImageEntity(String path) {
 		this.path = path;
@@ -28,5 +29,13 @@ public class ImageEntity extends LitePalSupport {
 
 	public void setAlbum(String album) {
 		this.album = album;
+	}
+
+	public boolean isCheck() {
+		return check;
+	}
+
+	public void setCheck(boolean check) {
+		this.check = check;
 	}
 }
