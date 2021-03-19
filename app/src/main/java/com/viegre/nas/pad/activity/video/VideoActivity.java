@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -18,9 +21,6 @@ import com.viegre.nas.pad.widget.GridSpaceItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 
 /**
  * Created by レインマン on 2021/01/18 16:36 with Android Studio.
@@ -46,7 +46,8 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 				mIsPublic = true;
 			}
 		});
-		TextStyleManager.INSTANCE.setFileManagerTag(mViewBinding.acrbVideoTagPrivate, mViewBinding.acrbVideoTagPublic);
+		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbVideoTagPrivate,
+		                                                           mViewBinding.acrbVideoTagPublic);
 	}
 
 	private void initList() {

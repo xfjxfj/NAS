@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.provider.Settings;
 import android.view.View;
 
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.blankj.utilcode.util.BusUtils;
@@ -22,8 +24,6 @@ import com.viegre.nas.pad.databinding.FragmentScreenBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * Created by レインマン on 2020/12/17 17:37 with Android Studio.
@@ -86,8 +86,11 @@ public class ScreenFragment extends BaseFragment<FragmentScreenBinding> {
 		mViewBinding.rlScreenEnterStandbyTime.setOnClickListener(view -> {
 			mTimeOptionsPickerView = new OptionsPickerBuilder(mActivity, (options1, options2, options3, v) -> {
 				SPUtils.getInstance().put(SPConfig.SCREEN_SAVER_DELAY, mDurationList.get(options1));
-				mViewBinding.acivScreenMisoperation.setText(StringUtils.getString(R.string.screen_misoperation, mDurationList.get(options1)));
-				Settings.System.putInt(mActivity.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, mDurationList.get(options1) * 60 * 1000);
+				mViewBinding.acivScreenMisoperation.setText(StringUtils.getString(R.string.screen_misoperation,
+				                                                                  mDurationList.get(options1)));
+				Settings.System.putInt(mActivity.getContentResolver(),
+				                       Settings.System.SCREEN_OFF_TIMEOUT,
+				                       mDurationList.get(options1) * 60 * 1000);
 				openSaver();
 			}).setLayoutRes(R.layout.picker_view_screen_saver, v -> {
 				AppCompatTextView actvPickerViewScreenSaverTitle = v.findViewById(R.id.actvPickerViewScreenSaverTitle);
@@ -190,5 +193,6 @@ public class ScreenFragment extends BaseFragment<FragmentScreenBinding> {
 		     .load(R.mipmap.screen_standby_image_default_4)
 		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(4)))
 		     .into(mViewBinding.acivScreenStandbyImageDefault4);
+		SPUtils.getInstance().remove(SPConfig.SCREEN_SAVER_CUSTOM_IMAGES);
 	}
 }

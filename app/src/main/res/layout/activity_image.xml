@@ -24,7 +24,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:button="@drawable/file_manager_tag_private_image"
-			android:text="@string/audio_private" />
+			android:text="@string/image_private" />
 
 		<androidx.appcompat.widget.AppCompatRadioButton
 			android:id="@+id/acrbImageTagPublic"
@@ -34,7 +34,7 @@
 			android:layout_marginTop="40px"
 			android:button="@drawable/file_manager_tag_public_image"
 			android:checked="true"
-			android:text="@string/audio" />
+			android:text="@string/image" />
 	</RadioGroup>
 
 	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
