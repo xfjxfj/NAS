@@ -18,7 +18,7 @@
 			android:title="@string/prefTitleUser" />
 		<org.primftpd.prefs.EncryptingEditTextPreference
 			android:name="password"
-			android:defaultValue="123456"
+			android:defaultValue="topqizhi"
 			android:inputType="textPassword"
 			android:key="passwordPref"
 			android:summary="@string/prefSummaryPassword"
@@ -44,21 +44,21 @@
 			android:title="@string/prefTitleWhichServerToStart" />
 		<org.primftpd.prefs.PortEditTextPreference
 			android:name="port"
-			android:defaultValue="8802"
+			android:defaultValue="2121"
 			android:inputType="number"
 			android:key="portPref"
 			android:summary="@string/prefSummaryPort"
 			android:title="@string/prefTitlePort" />
 		<org.primftpd.prefs.PortEditTextPreference
 			android:name="sslPort"
-			android:defaultValue="1234"
+			android:defaultValue="2122"
 			android:inputType="number"
 			android:key="securePortPref"
 			android:summary="@string/prefSummaryPortSecure"
 			android:title="@string/prefTitlePortSecure" />
 		<org.primftpd.prefs.FtpPassivePortsEditTextPreference
 			android:name="ftpPassivePorts"
-			android:defaultValue="9001-9010"
+			android:defaultValue="23210-23219"
 			android:key="ftpPassivePortsPref"
 			android:summary="@string/prefSummaryFtpPassivePorts"
 			android:title="@string/prefTitleFtpPassivePorts" />

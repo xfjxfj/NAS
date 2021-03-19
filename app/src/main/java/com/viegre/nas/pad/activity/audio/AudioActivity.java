@@ -7,9 +7,6 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FileUtils;
@@ -20,7 +17,6 @@ import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.AudioListAdapter;
 import com.viegre.nas.pad.config.BusConfig;
-import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.databinding.ActivityAudioBinding;
 import com.viegre.nas.pad.entity.AudioEntity;
 import com.viegre.nas.pad.manager.AudioPlayListManager;
@@ -32,6 +28,8 @@ import org.litepal.LitePal;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import nl.changer.audiowife.AudioWife;
 
 /**
@@ -168,12 +166,12 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 				if (null == path) {
 					continue;
 				}
-				if (mIsPublic && path.startsWith(PathConfig.IMAGE.PUB)) {
-					continue;
-				}
-				if (!mIsPublic && !path.startsWith(PathConfig.IMAGE.PRI)) {
-					continue;
-				}
+//				if (mIsPublic && path.startsWith(PathConfig.AUDIO.PUB)) {
+//					continue;
+//				}
+//				if (!mIsPublic && !path.startsWith(PathConfig.AUDIO.PRI)) {
+//					continue;
+//				}
 				String name;
 				String suffix;
 				String displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME));

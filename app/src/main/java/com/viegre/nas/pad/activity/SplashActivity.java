@@ -142,13 +142,13 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 					ShellUtils.CommandResult commandResult = ShellUtils.execCmd(commandList, true);
 					LogUtils.iTag("ShellUtils", commandResult.toString());
 				}
-				//创建私有文件夹
-				FileUtils.createOrExistsDir(PathConfig.IMAGE.PRI);
-				FileUtils.createOrExistsDir(PathConfig.IMAGE.PUB);
-				FileUtils.createOrExistsDir(PathConfig.AUDIO.PRI);
-				FileUtils.createOrExistsDir(PathConfig.AUDIO.PUB);
-				FileUtils.createOrExistsDir(PathConfig.VIDEO.PRI);
-				FileUtils.createOrExistsDir(PathConfig.VIDEO.PUB);
+				//创建文件夹
+//				FileUtils.createOrExistsDir(PathConfig.IMAGE.PRI);
+//				FileUtils.createOrExistsDir(PathConfig.IMAGE.PUB);
+//				FileUtils.createOrExistsDir(PathConfig.AUDIO.PRI);
+//				FileUtils.createOrExistsDir(PathConfig.AUDIO.PUB);
+//				FileUtils.createOrExistsDir(PathConfig.VIDEO.PRI);
+//				FileUtils.createOrExistsDir(PathConfig.VIDEO.PUB);
 				FileUtils.createOrExistsDir(PathConfig.GUIDE_RESOURCE);
 				return null;
 			}
@@ -156,11 +156,26 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 			@Override
 			public void onSuccess(Void v) {
 				super.onSuccess(v);
-				SharedPreferences prefs = LoadPrefsUtil.getPrefs(mActivity);
-				PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
-				keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
-				ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
-				getDeviceBoundstatus();
+				ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
+					@Override
+					public Void doInBackground() {
+						List<String> commands = new ArrayList<>();
+						commands.add("cd /data/data/com.viegre.nas.pad/files/frp/");
+						commands.add("./frpc -c ./frpc.ini > frpc.log  2>&1  &");
+						ShellUtils.CommandResult commandResult = ShellUtils.execCmd(commands, false);
+						LogUtils.iTag("commandResult", commandResult.toString());
+						return null;
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						SharedPreferences prefs = LoadPrefsUtil.getPrefs(mActivity);
+						PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
+						keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
+						ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
+						getDeviceBoundstatus();
+					}
+				});
 			}
 		});
 	}

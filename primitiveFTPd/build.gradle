@@ -5,9 +5,6 @@ android {
 
 	defaultConfig {
 		minSdkVersion 21
-		versionCode 54
-		versionName "6.8-SNAPSHOT"
-		vectorDrawables.useSupportLibrary = true
 	}
 
 	buildTypes {

@@ -37,11 +37,11 @@ public class LoadPrefsUtil {
 	public static final String PREF_KEY_ALLOWED_IPS_PATTERN = "allowedIpsPatternPref";
 	public static final String PREF_QUICK_SETTINGS_REQUIRES_UNLOCK = "quickSettingsRequiresUnlockPref";
 
-	public static final int PORT_DEFAULT_VAL = 12345;
+	public static final int PORT_DEFAULT_VAL = 2121;
 	static final String PORT_DEFAULT_VAL_STR = String.valueOf(PORT_DEFAULT_VAL);
-	public static final int SECURE_PORT_DEFAULT_VAL = 1234;
+	public static final int SECURE_PORT_DEFAULT_VAL = 2122;
 	static final String SECURE_PORT_DEFAULT_VAL_STR = String.valueOf(SECURE_PORT_DEFAULT_VAL);
-	public static final int PORT_PASSIVE_DEFAULT_VAL = 5678;
+	public static final int PORT_PASSIVE_DEFAULT_VAL = 23210 - 23219;
 	static final String PORT_PASSIVE_DEFAULT_VAL_STR = String.valueOf(PORT_PASSIVE_DEFAULT_VAL);
 	public static final int IDLE_TIMEOUT_DEFAULT_VAL = 0;
 	static final String IDLE_TIMEOUT_DEFAULT_VAL_STR = String.valueOf(IDLE_TIMEOUT_DEFAULT_VAL);
@@ -62,7 +62,7 @@ public class LoadPrefsUtil {
 	}
 
 	public static String password(SharedPreferences prefs) {
-		return prefs.getString(LoadPrefsUtil.PREF_KEY_PASSWORD, "123456");
+		return prefs.getString(LoadPrefsUtil.PREF_KEY_PASSWORD, "topqizhi");
 	}
 
 	public static File startDir(SharedPreferences prefs) {
