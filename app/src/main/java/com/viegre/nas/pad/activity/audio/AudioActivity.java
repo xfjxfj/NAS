@@ -1,30 +1,29 @@
 package com.viegre.nas.pad.activity.audio;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.AudioListAdapter;
 import com.viegre.nas.pad.config.BusConfig;
+import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.databinding.ActivityAudioBinding;
 import com.viegre.nas.pad.entity.AudioEntity;
 import com.viegre.nas.pad.manager.AudioPlayListManager;
 import com.viegre.nas.pad.manager.TextStyleManager;
-import com.viegre.nas.pad.receiver.MediaScannerReceiver;
+import com.viegre.nas.pad.util.MediaScanner;
 
 import org.litepal.LitePal;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +39,6 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 
 	private AudioListAdapter mAudioListAdapter;
 	private volatile boolean mIsPublic = true;
-	private MediaScannerReceiver mMediaScannerReceiver;
 
 	@Override
 	protected void initialize() {
@@ -50,12 +48,6 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 		initList();
 		mViewBinding.srlAudioRefresh.setRefreshing(true);
 		queryAudioByLitepal();
-
-		mMediaScannerReceiver = new MediaScannerReceiver();
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
-		intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
-		registerReceiver(mMediaScannerReceiver, intentFilter);
 	}
 
 	@Override
@@ -68,7 +60,6 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 	protected void onDestroy() {
 		super.onDestroy();
 		ThreadUtils.cancel(ThreadUtils.getSinglePool());
-		unregisterReceiver(mMediaScannerReceiver);
 	}
 
 	private void initRadioGroup() {
@@ -81,8 +72,7 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 			mViewBinding.srlAudioRefresh.setRefreshing(true);
 			queryAudioByLitepal();
 		});
-		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbAudioTagPrivate,
-		                                                           mViewBinding.acrbAudioTagPublic);
+		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbAudioTagPrivate, mViewBinding.acrbAudioTagPublic);
 	}
 
 	private void initList() {
@@ -111,14 +101,7 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 		mViewBinding.acrbAudioTagPrivate.setEnabled(false);
 		mViewBinding.acrbAudioTagPublic.setEnabled(false);
 		mViewBinding.rvAudioList.setEnabled(false);
-		scanMediaFile();
-	}
-
-	private void scanMediaFile() {
-		MediaScannerConnection.scanFile(this,
-		                                new String[]{PathUtils.getExternalStoragePath()},
-		                                null,
-		                                (s, uri) -> BusUtils.post(BusConfig.MEDIA_SCAN_COMPLETED));
+		scanMedia();
 	}
 
 	private void queryAudioByLitepal() {
@@ -128,13 +111,15 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 		ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<AudioEntity>>() {
 			@Override
 			public List<AudioEntity> doInBackground() {
-				return LitePal.findAll(AudioEntity.class);
+				return LitePal.where("path like ?", (mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE) + "%")
+				              .order("name desc")
+				              .find(AudioEntity.class);
 			}
 
 			@Override
 			public void onSuccess(List<AudioEntity> result) {
 				if (result.isEmpty()) {
-					scanMediaFile();
+					scanMedia();
 				} else {
 					queryCompleted(result);
 				}
@@ -153,58 +138,73 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 		mViewBinding.rvAudioList.setEnabled(true);
 	}
 
-	private List<AudioEntity> scanAndSaveAudioList() {
-		List<AudioEntity> audioList = new ArrayList<>();
-		Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-		                                           new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID, MediaStore.Audio.Media.DURATION},
-		                                           null,
-		                                           null,
-		                                           MediaStore.Audio.Media.DISPLAY_NAME);
-		if (null != cursor) {
-			while (cursor.moveToNext()) {
-				String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
-				if (null == path) {
-					continue;
-				}
+	private void scanMedia() {
+		MediaScanner mediaScanner = new MediaScanner(this, this::scanAndSaveAudioList);
+		mediaScanner.scanFile(new File(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE));
+	}
+
+	private void scanAndSaveAudioList() {
+		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<AudioEntity>>() {
+			@Override
+			public List<AudioEntity> doInBackground() {
+				List<AudioEntity> audioList = new ArrayList<>();
+				Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				                                           new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID, MediaStore.Audio.Media.DURATION},
+				                                           MediaStore.Audio.Media.DATA + " like ?",
+				                                           new String[]{(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE) + "%"},
+				                                           MediaStore.Images.Media.DISPLAY_NAME + " desc");
+				if (null != cursor) {
+					while (cursor.moveToNext()) {
+						String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+						if (null == path) {
+							continue;
+						}
 //				if (mIsPublic && path.startsWith(PathConfig.AUDIO.PUB)) {
 //					continue;
 //				}
 //				if (!mIsPublic && !path.startsWith(PathConfig.AUDIO.PRI)) {
 //					continue;
 //				}
-				String name;
-				String suffix;
-				String displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME));
-				if (null == displayName) {
-					name = suffix = StringUtils.getString(R.string.unknown);
-				} else {
-					name = FileUtils.getFileNameNoExtension(displayName);
-					suffix = FileUtils.getFileExtension(displayName);
+						String name;
+						String suffix;
+						String displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME));
+						if (null == displayName) {
+							name = suffix = StringUtils.getString(R.string.unknown);
+						} else {
+							name = FileUtils.getFileNameNoExtension(displayName);
+							suffix = FileUtils.getFileExtension(displayName);
+						}
+						int _id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
+						String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
+						if (null == artist) {
+							artist = StringUtils.getString(R.string.unknown);
+						}
+						String albumName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
+						if (null == albumName) {
+							albumName = StringUtils.getString(R.string.unknown);
+						}
+						int albumId = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ID));
+						String albumImage = getAlbumImage(albumId);
+						int duration = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
+						if (duration < 0) {
+							duration = 0;
+						}
+						audioList.add(new AudioEntity(_id, name, suffix, artist, albumName, albumImage, duration, path, false));
+					}
+					cursor.close();
 				}
-				int _id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
-				String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
-				if (null == artist) {
-					artist = StringUtils.getString(R.string.unknown);
+				LitePal.deleteAll(AudioEntity.class);
+				if (!audioList.isEmpty()) {
+					LitePal.saveAll(audioList);
 				}
-				String albumName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
-				if (null == albumName) {
-					albumName = StringUtils.getString(R.string.unknown);
-				}
-				int albumId = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ID));
-				String albumImage = getAlbumImage(albumId);
-				int duration = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
-				if (duration < 0) {
-					duration = 0;
-				}
-				audioList.add(new AudioEntity(_id, name, suffix, artist, albumName, albumImage, duration, path, false));
+				return audioList;
 			}
-			cursor.close();
-		}
-		LitePal.deleteAll(AudioEntity.class);
-		if (!audioList.isEmpty()) {
-			LitePal.saveAll(audioList);
-		}
-		return audioList;
+
+			@Override
+			public void onSuccess(List<AudioEntity> result) {
+				queryCompleted(result);
+			}
+		});
 	}
 
 	private String getAlbumImage(int albumId) {
@@ -217,29 +217,7 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 			albumImage = cursor.getString(0);
 			cursor.close();
 		}
-//		Bitmap bitmap;
-//		if (null != album_art) {
-//			bitmap = BitmapFactory.decodeFile(album_art);
-//		} else {
-//			bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.audio_player_album_default);
-//		}
-//		return bitmap;
 		return albumImage;
-	}
-
-	@BusUtils.Bus(tag = BusConfig.MEDIA_SCAN_COMPLETED, threadMode = BusUtils.ThreadMode.MAIN)
-	public void onMediaScanCompleted() {
-		ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<AudioEntity>>() {
-			@Override
-			public List<AudioEntity> doInBackground() {
-				return scanAndSaveAudioList();
-			}
-
-			@Override
-			public void onSuccess(List<AudioEntity> result) {
-				queryCompleted(result);
-			}
-		});
 	}
 
 	@BusUtils.Bus(tag = BusConfig.UPDATE_AUDIO_PLAY_LIST, threadMode = BusUtils.ThreadMode.MAIN)

@@ -3,20 +3,23 @@ package com.viegre.nas.pad.activity.image;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
 import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.ImageListAdapter;
+import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.databinding.ActivityImageBinding;
 import com.viegre.nas.pad.entity.ImageEntity;
 import com.viegre.nas.pad.manager.TextStyleManager;
+import com.viegre.nas.pad.util.MediaScanner;
 import com.viegre.nas.pad.widget.GridSpaceItemDecoration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 /**
  * Created by レインマン on 2021/01/18 16:36 with Android Studio.
@@ -41,9 +44,9 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> {
 			} else if (R.id.acrbImageTagPublic == i) {
 				mIsPublic = true;
 			}
+			scanMedia();
 		});
-		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbImageTagPrivate,
-		                                                           mViewBinding.acrbImageTagPublic);
+		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbImageTagPrivate, mViewBinding.acrbImageTagPublic);
 	}
 
 	private void initList() {
@@ -58,9 +61,14 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> {
 		}
 		mViewBinding.srlImageRefresh.setColorSchemeResources(R.color.settings_menu_selected_bg);
 		mViewBinding.srlImageRefresh.setProgressBackgroundColorSchemeResource(R.color.file_manager_tag_unpressed);
-		mViewBinding.srlImageRefresh.setOnRefreshListener(this::getImageList);
+		mViewBinding.srlImageRefresh.setOnRefreshListener(this::scanMedia);
 		mViewBinding.srlImageRefresh.setRefreshing(true);
-		getImageList();
+		scanMedia();
+	}
+
+	private void scanMedia() {
+		MediaScanner mediaScanner = new MediaScanner(this, this::getImageList);
+		mediaScanner.scanFile(new File(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE));
 	}
 
 	private void getImageList() {
@@ -69,10 +77,11 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> {
 			public List<ImageEntity> doInBackground() {
 				List<ImageEntity> imageList = new ArrayList<>();
 				Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-				                                           new String[]{MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_ADDED},
-				                                           null,
-				                                           null,
-				                                           MediaStore.Images.Media.DATE_MODIFIED + " desc");
+//				                                           new String[]{MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_ADDED},
+                                                           new String[]{MediaStore.Images.ImageColumns.DATA},
+                                                           MediaStore.Images.Media.DATA + " like ?",
+                                                           new String[]{(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE) + "%"},
+                                                           MediaStore.Images.Media.DATE_MODIFIED + " desc");
 
 				if (null != cursor) {
 					while (cursor.moveToNext()) {

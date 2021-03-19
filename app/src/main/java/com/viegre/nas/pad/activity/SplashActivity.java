@@ -162,8 +162,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 						List<String> commands = new ArrayList<>();
 						commands.add("cd /data/data/com.viegre.nas.pad/files/frp/");
 						commands.add("./frpc -c ./frpc.ini > frpc.log  2>&1  &");
-						ShellUtils.CommandResult commandResult = ShellUtils.execCmd(commands, false);
-						LogUtils.iTag("commandResult", commandResult.toString());
+						ShellUtils.execCmd(commands, false);
 						return null;
 					}
 

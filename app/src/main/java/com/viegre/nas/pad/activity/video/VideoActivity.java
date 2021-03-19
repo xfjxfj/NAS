@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -14,13 +11,19 @@ import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.VideoListAdapter;
+import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.databinding.ActivityVideoBinding;
 import com.viegre.nas.pad.entity.VideoEntity;
 import com.viegre.nas.pad.manager.TextStyleManager;
+import com.viegre.nas.pad.util.MediaScanner;
 import com.viegre.nas.pad.widget.GridSpaceItemDecoration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 /**
  * Created by レインマン on 2021/01/18 16:36 with Android Studio.
@@ -45,9 +48,9 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 			} else if (R.id.acrbVideoTagPublic == i) {
 				mIsPublic = true;
 			}
+			scanMedia();
 		});
-		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbVideoTagPrivate,
-		                                                           mViewBinding.acrbVideoTagPublic);
+		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbVideoTagPrivate, mViewBinding.acrbVideoTagPublic);
 	}
 
 	private void initList() {
@@ -67,9 +70,14 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 		}
 		mViewBinding.srlVideoRefresh.setColorSchemeResources(R.color.settings_menu_selected_bg);
 		mViewBinding.srlVideoRefresh.setProgressBackgroundColorSchemeResource(R.color.file_manager_tag_unpressed);
-		mViewBinding.srlVideoRefresh.setOnRefreshListener(this::getVideoList);
+		mViewBinding.srlVideoRefresh.setOnRefreshListener(this::scanMedia);
 		mViewBinding.srlVideoRefresh.setRefreshing(true);
-		getVideoList();
+		scanMedia();
+	}
+
+	private void scanMedia() {
+		MediaScanner mediaScanner = new MediaScanner(this, this::getVideoList);
+		mediaScanner.scanFile(new File(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE));
 	}
 
 	private void getVideoList() {
@@ -79,9 +87,9 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 				List<VideoEntity> videoList = new ArrayList<>();
 				Cursor cursor = getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
 				                                           new String[]{MediaStore.Video.VideoColumns.DATA, MediaStore.Video.VideoColumns.DISPLAY_NAME, MediaStore.Video.VideoColumns.DURATION, MediaStore.Video.VideoColumns.DATE_ADDED},
-				                                           null,
-				                                           null,
-				                                           MediaStore.Video.VideoColumns.DISPLAY_NAME);
+				                                           MediaStore.Video.Media.DATA + " like ?",
+				                                           new String[]{(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE) + "%"},
+				                                           MediaStore.Images.Media.DATE_MODIFIED + " desc");
 
 				if (null != cursor) {
 					while (cursor.moveToNext()) {
