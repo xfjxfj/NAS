@@ -97,8 +97,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 		}
 		mWiFiEntity = mNetworkListAdapter.getItem(position);
 		if (StringUtils.isEmpty(mWiFiEntity.getPassword())) {
-			PopupManager.INSTANCE.showCustomXPopup(mContext,
-			                                       new NetworkPasswordPopup(mContext, mWiFiEntity.getScanResult().SSID));
+			PopupManager.INSTANCE.showCustomXPopup(mContext, new NetworkPasswordPopup(mContext, mWiFiEntity.getScanResult().SSID));
 		} else {
 			getPassword(mWiFiEntity.getPassword());
 		}

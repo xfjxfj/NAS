@@ -13,41 +13,41 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class ChangeInfo {
 
-    /**
-     * 目标位置横坐标 相对于ItemView
-     */
-    public int targetLeft;
-    /**
-     * 目标位置纵坐标 相对于ItemView
-     */
-    public int targetTop;
-    /**
-     * 目标位置宽度
-     */
-    public float targetWidth;
-    /**
-     * 目标位置高度
-     */
-    public float targetHeight;
-    /**
-     * 源位置横坐标 相对于ItemView
-     */
-    public int sourceLeft;
-    /**
-     * 源位置纵坐标 相对于ItemView
-     */
-    public int sourceTop;
-    /**
-     * 源位置宽度
-     */
-    public float sourceWidth;
-    /**
-     * 源位置高度
-     */
-    public float sourceHeight;
+	/**
+	 * 目标位置横坐标 相对于ItemView
+	 */
+	public int targetLeft;
+	/**
+	 * 目标位置纵坐标 相对于ItemView
+	 */
+	public int targetTop;
+	/**
+	 * 目标位置宽度
+	 */
+	public float targetWidth;
+	/**
+	 * 目标位置高度
+	 */
+	public float targetHeight;
+	/**
+	 * 源位置横坐标 相对于ItemView
+	 */
+	public int sourceLeft;
+	/**
+	 * 源位置纵坐标 相对于ItemView
+	 */
+	public int sourceTop;
+	/**
+	 * 源位置宽度
+	 */
+	public float sourceWidth;
+	/**
+	 * 源位置高度
+	 */
+	public float sourceHeight;
 
-    @Override
-    public String toString() {
-        return "ChangeInfo{" + "targetLeft=" + targetLeft + ", targetTop=" + targetTop + ", targetWidth=" + targetWidth + ", targetHeight=" + targetHeight + ", sourceLeft=" + sourceLeft + ", sourceTop=" + sourceTop + ", sourceWidth=" + sourceWidth + ", sourceHeight=" + sourceHeight + '}';
-    }
+	@Override
+	public String toString() {
+		return "ChangeInfo{" + "targetLeft=" + targetLeft + ", targetTop=" + targetTop + ", targetWidth=" + targetWidth + ", targetHeight=" + targetHeight + ", sourceLeft=" + sourceLeft + ", sourceTop=" + sourceTop + ", sourceWidth=" + sourceWidth + ", sourceHeight=" + sourceHeight + '}';
+	}
 }

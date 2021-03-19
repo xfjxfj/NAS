@@ -1,6 +1,7 @@
 package com.viegre.nas.pad.activity;
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
@@ -44,6 +45,12 @@ import com.yanzhenjie.kalle.simple.SimpleCallback;
 import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import org.litepal.LitePal;
+import org.primftpd.prefs.LoadPrefsUtil;
+import org.primftpd.prefs.PrefsBean;
+import org.primftpd.util.KeyFingerprintProvider;
+import org.primftpd.util.ServicesStartStopUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -58,6 +65,9 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	private NetworkFragment mNetworkFragment;
 	private NetworkDetailFragment mNetworkDetailFragment;
 	private CountDownTimer mGuideSkipCountDownTimer;
+	private PrefsBean prefsBean;
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final KeyFingerprintProvider keyFingerprintProvider = new KeyFingerprintProvider();
 
 	@Override
 	protected void initialize() {
@@ -146,6 +156,10 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 			@Override
 			public void onSuccess(Void v) {
 				super.onSuccess(v);
+				SharedPreferences prefs = LoadPrefsUtil.getPrefs(mActivity);
+				PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
+				keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
+				ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
 				getDeviceBoundstatus();
 			}
 		});

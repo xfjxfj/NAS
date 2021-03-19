@@ -9,6 +9,7 @@ import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.KalleConfig;
 
 import org.litepal.LitePal;
+import org.primftpd.log.CsvLoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -21,6 +22,7 @@ public class NasApp extends BaseApplication {
 	public void onCreate() {
 		super.onCreate();
 		LitePal.initialize(this);
+		CsvLoggerFactory.CONTEXT = this;
 		initUtils();
 		initKalle();
 		initAMap();

@@ -10,9 +10,9 @@ import com.anarchy.classify.adapter.BaseSubAdapter;
  * Author: rsshinide38@163.com
  */
 public interface BaseSimpleAdapter {
-    BaseMainAdapter getMainAdapter();
+	BaseMainAdapter getMainAdapter();
 
-    BaseSubAdapter getSubAdapter();
+	BaseSubAdapter getSubAdapter();
 
-    boolean isShareViewPool();
+	boolean isShareViewPool();
 }

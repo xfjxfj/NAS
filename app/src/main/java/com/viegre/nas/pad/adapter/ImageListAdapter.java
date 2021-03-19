@@ -1,7 +1,5 @@
 package com.viegre.nas.pad.adapter;
 
-import androidx.appcompat.widget.AppCompatImageView;
-
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
@@ -9,6 +7,8 @@ import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.entity.ImageEntity;
 
 import org.jetbrains.annotations.NotNull;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * Created by レインマン on 2021/01/24 11:34 PM with Android Studio.

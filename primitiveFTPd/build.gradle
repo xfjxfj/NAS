@@ -1,0 +1,59 @@
+apply plugin: 'com.android.library'
+
+android {
+	compileSdkVersion 30
+
+	defaultConfig {
+		minSdkVersion 21
+		versionCode 54
+		versionName "6.8-SNAPSHOT"
+		vectorDrawables.useSupportLibrary = true
+	}
+
+	buildTypes {
+		release {
+			minifyEnabled false
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg'
+		}
+	}
+
+	sourceSets {
+		main {
+			manifest {
+				srcFile 'AndroidManifest.xml'
+			}
+			java {
+				srcDir 'src'
+			}
+			res {
+				srcDir 'res'
+			}
+		}
+	}
+}
+
+configurations {
+	implementation.exclude group: 'org.slf4j', module: 'slf4j-api'
+	implementation.exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
+	implementation.exclude group: 'org.springframework'
+}
+
+dependencies {
+	// print dependency tree:
+	// ./gradlew primitiveFTPd:dependencies --configuration releaseCompileClasspath
+	api project(':pftpd-pojo-lib')
+	api project(':slf4j-android-1.6.1-RC1')
+	api project(':apache-ftpserver-1.1.1:core')
+	api project(':apache-ftpserver-1.1.1:ftplet-api')
+	api project(':sshd-core-0.14.0')
+	api 'org.apache.mina:mina-core:2.0.21'
+	api 'org.greenrobot:eventbus:3.0.0'
+	api 'androidx.documentfile:documentfile:1.0.1'
+	api 'androidx.fragment:fragment:1.2.4'
+	api 'androidx.recyclerview:recyclerview:1.1.0'
+	api 'androidx.appcompat:appcompat:1.2.0'
+	api 'eu.chainfire:libsuperuser:1.0.0.201704021214'
+	api 'org.apache.httpcomponents.client5:httpclient5:5.0'
+	api 'org.bouncycastle:bcpg-jdk15to18:1.68'
+	api 'org.bouncycastle:bcpkix-jdk15to18:1.68'
+}

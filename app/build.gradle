@@ -52,6 +52,24 @@ android {
 			}
 		}
 	}
+
+	packagingOptions {
+		exclude 'META-INF/LICENSE'
+		exclude 'META-INF/NOTICE'
+		exclude 'META-INF/DEPENDENCIES'
+		exclude 'META-INF/BCKEY.SF'
+		exclude 'META-INF/BCKEY.DSA'
+	}
+
+	lintOptions {
+		abortOnError false
+	}
+}
+
+configurations {
+	implementation.exclude group: 'org.slf4j', module: 'slf4j-api'
+	implementation.exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
+	implementation.exclude group: 'org.springframework'
 }
 
 dependencies {
@@ -61,6 +79,8 @@ dependencies {
 	implementation project(':framework')
 	//https://github.com/Bigkoo/Android-PickerView
 	implementation project(':pickerview')
+	//https://github.com/wolpi/prim-ftpd
+	implementation project(':primitiveFTPd')
 	//https://github.com/qstumn/VerticalTabLayout
 	implementation project(':vertical_tablayout')
 	//https://maven.google.com/web/index.html

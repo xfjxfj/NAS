@@ -361,7 +361,7 @@ public class ClassifyView extends FrameLayout {
 	protected WindowManager.LayoutParams createDragLayoutParams() {
 		WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
 		layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
-        if (Build.VERSION.SDK_INT >= 19) { layoutParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS; }
+		if (Build.VERSION.SDK_INT >= 19) { layoutParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS; }
 		layoutParams.format = PixelFormat.TRANSPARENT;
 		layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
 		layoutParams.token = this.getWindowToken();
@@ -471,7 +471,7 @@ public class ClassifyView extends FrameLayout {
 			@Override
 			public boolean onSingleTapConfirmed(MotionEvent e) {
 				View pressedView = findChildView(mMainRecyclerView, e);
-                if (pressedView == null) { return false; }
+				if (pressedView == null) { return false; }
 				int position = mMainRecyclerView.getChildAdapterPosition(pressedView);
 				List list = mMainCallBack.explodeItem(position, pressedView);
 				if (list == null) {
@@ -487,7 +487,7 @@ public class ClassifyView extends FrameLayout {
 			@Override
 			public void onLongPress(MotionEvent e) {
 				View pressedView = findChildView(mMainRecyclerView, e);
-                if (pressedView == null) { return; }
+				if (pressedView == null) { return; }
 				L.d("Main recycler view on long press: x: %1$s + y: %2$s", e.getX(), e.getY());
 				int position = mMainRecyclerView.getChildAdapterPosition(pressedView);
 
@@ -566,7 +566,7 @@ public class ClassifyView extends FrameLayout {
 			@Override
 			public boolean onSingleTapConfirmed(MotionEvent e) {
 				View pressedView = findChildView(mSubRecyclerView, e);
-                if (pressedView == null) { return false; }
+				if (pressedView == null) { return false; }
 				int position = mSubRecyclerView.getChildAdapterPosition(pressedView);
 				mSubCallBack.onItemClick(mSubRecyclerView, position, pressedView);
 				return true;
@@ -575,7 +575,7 @@ public class ClassifyView extends FrameLayout {
 			@Override
 			public void onLongPress(MotionEvent e) {
 				View pressedView = findChildView(mSubRecyclerView, e);
-                if (pressedView == null) { return; }
+				if (pressedView == null) { return; }
 				L.d("Sub recycler view on long press: x: %1$s + y: %2$s", e.getX(), e.getY());
 				int position = mSubRecyclerView.getChildAdapterPosition(pressedView);
 				int pointerId = MotionEventCompat.getPointerId(e, 0);
@@ -636,7 +636,7 @@ public class ClassifyView extends FrameLayout {
 
 			@Override
 			public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-                if (mSelected == null) { return; }
+				if (mSelected == null) { return; }
 				mSubGestureDetector.onTouchEvent(e);
 				float x = MotionEventCompat.getX(e, mSubActivePointerId);
 				float y = MotionEventCompat.getY(e, mSubActivePointerId);
@@ -647,7 +647,7 @@ public class ClassifyView extends FrameLayout {
 				int action = MotionEventCompat.getActionMasked(e);
 				switch (action) {
 					case MotionEvent.ACTION_MOVE:
-                        if (mRegion == UNKNOWN_REGION) { break; }
+						if (mRegion == UNKNOWN_REGION) { break; }
 						if ((mRegion & IN_SUB_REGION) != 0 && (x < 0 || y < 0 || x > mSubContainerWidth || y > mSubContainerHeight)) {
 							//离开次级目录范围
 							if (mSubCallBack.canDragOut(mSelectedPosition)) {
@@ -661,7 +661,7 @@ public class ClassifyView extends FrameLayout {
 							}
 							break;
 						}
-                        if (mVelocityTracker != null) { mVelocityTracker.addMovement(e); }
+						if (mVelocityTracker != null) { mVelocityTracker.addMovement(e); }
 						mDx = x - mInitialTouchX;
 						mDy = y - mInitialTouchY;
 						mDragView.setX(rawX - width / 2);
@@ -692,9 +692,9 @@ public class ClassifyView extends FrameLayout {
 						if ((mRegion & IN_MAIN_REGION) != 0) {
 							if (inMergeState) {
 								inMergeState = false;
-                                if (mInMergeQueue.isEmpty()) { break; }
+								if (mInMergeQueue.isEmpty()) { break; }
 								mLastMergePosition = mInMergeQueue.poll();
-                                if (mSelectedPosition == mLastMergePosition) { break; }
+								if (mSelectedPosition == mLastMergePosition) { break; }
 								MergeInfo mergeInfo = mMainCallBack.onPrepareMerge(mMainRecyclerView, mSelectedPosition, mLastMergePosition);
 								RecyclerView.ViewHolder target = mMainRecyclerView.findViewHolderForAdapterPosition(mLastMergePosition);
 								if (target == null || mergeInfo == null || target.itemView == mSelected) {
@@ -776,12 +776,12 @@ public class ClassifyView extends FrameLayout {
 	 */
 	protected ViewGroup findHaveSubTagContainer(ViewGroup group) {
 		String tag = getContext().getString(R.string.sub_container);
-        if (tag.equals(group.getTag())) { return group; }
+		if (tag.equals(group.getTag())) { return group; }
 		for (int i = 0; i < group.getChildCount(); i++) {
 			View child = group.getChildAt(i);
 			if (child instanceof ViewGroup) {
 				ViewGroup temp = findHaveSubTagContainer((ViewGroup) child);
-                if (temp != null) { return temp; }
+				if (temp != null) { return temp; }
 			}
 		}
 		return null;
@@ -888,7 +888,7 @@ public class ClassifyView extends FrameLayout {
 	 * 隐藏次级窗口
 	 */
 	public void hideSubContainer() {
-        if (mSubDialog == null) { return; }
+		if (mSubDialog == null) { return; }
 		mSubDialog.hide();
 	}
 
@@ -900,7 +900,7 @@ public class ClassifyView extends FrameLayout {
 	class MainDragListener implements View.OnDragListener {
 		@Override
 		public boolean onDrag(View v, DragEvent event) {
-            if (mSelected == null) { return false; }
+			if (mSelected == null) { return false; }
 			int action = event.getAction();
 			int width = mSelected.getWidth();
 			int height = mSelected.getHeight();
@@ -932,7 +932,7 @@ public class ClassifyView extends FrameLayout {
 					}
 					break;
 				case DragEvent.ACTION_DRAG_LOCATION:
-                    if (mRegion == UNKNOWN_REGION) { break; }
+					if (mRegion == UNKNOWN_REGION) { break; }
 					mVelocityTracker.addMovement(MotionEvent.obtain(SystemClock.uptimeMillis(),
 					                                                SystemClock.uptimeMillis(),
 					                                                MotionEvent.ACTION_MOVE,
@@ -972,9 +972,9 @@ public class ClassifyView extends FrameLayout {
 				case DragEvent.ACTION_DROP:
 					if (inMergeState) {
 						inMergeState = false;
-                        if (mInMergeQueue.isEmpty()) { break; }
+						if (mInMergeQueue.isEmpty()) { break; }
 						mLastMergePosition = mInMergeQueue.poll();
-                        if (mSelectedPosition == mLastMergePosition) { break; }
+						if (mSelectedPosition == mLastMergePosition) { break; }
 						MergeInfo mergeInfo = mMainCallBack.onPrepareMerge(mMainRecyclerView, mSelectedPosition, mLastMergePosition);
 						RecyclerView.ViewHolder target = mMainRecyclerView.findViewHolderForAdapterPosition(mLastMergePosition);
 						if (target == null || mergeInfo == null || target.itemView == mSelected) {
@@ -1158,7 +1158,7 @@ public class ClassifyView extends FrameLayout {
 				recoverAnimator = ObjectAnimator.ofPropertyValuesHolder(mDragView, xOffset, yOffset, scaleX, scaleY);
 			}
 		}
-        if (recoverAnimator == null) { return; }
+		if (recoverAnimator == null) { return; }
 		recoverAnimator.setDuration(mAnimationDuration);
 		recoverAnimator.setInterpolator(sDragScrollInterpolator);
 		recoverAnimator.addListener(mRecoverAnimatorListener);
@@ -1259,7 +1259,7 @@ public class ClassifyView extends FrameLayout {
 		if ((mRegion & IN_SUB_REGION) != 0) {
 			recyclerView = mSubRecyclerView;
 		}
-        if (recyclerView == null) { return false; }
+		if (recyclerView == null) { return false; }
 		final long now = System.currentTimeMillis();
 		final long scrollDuration = mDragScrollStartTimeInMs == Long.MIN_VALUE ? 0 : now - mDragScrollStartTimeInMs;
 		RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
@@ -1382,9 +1382,9 @@ public class ClassifyView extends FrameLayout {
 			return;
 		}
 		List<View> swapTargets = findSwapTargets(view);
-        if (swapTargets.size() == 0) { return; }
+		if (swapTargets.size() == 0) { return; }
 		View target = chooseTarget(view, swapTargets, x, y);
-        if (target == null) { return; }
+		if (target == null) { return; }
 		if ((mRegion & IN_SUB_REGION) != 0) {//次级目录下 没有merge形式
 			int targetPosition = mSubRecyclerView.getChildAdapterPosition(target);
 			int state = mSubCallBack.getCurrentState(mSelected, target, x, y, mVelocityTracker, mSelectedPosition, targetPosition);
@@ -1392,7 +1392,7 @@ public class ClassifyView extends FrameLayout {
 				if (mSubCallBack.onMove(mSelectedPosition, targetPosition)) {
 					mSelectedPosition = targetPosition;
 					RecyclerView.ViewHolder viewHolder = mSubRecyclerView.findViewHolderForAdapterPosition(mSelectedPosition);
-                    if (viewHolder != null) { mSelected = viewHolder.itemView; }
+					if (viewHolder != null) { mSelected = viewHolder.itemView; }
 					mSubCallBack.setDragPosition(targetPosition, true);
 					mSubCallBack.moved(mSelectedPosition, targetPosition);
 				}
@@ -1408,7 +1408,7 @@ public class ClassifyView extends FrameLayout {
 			int state = mMainCallBack.getCurrentState(mSelected, target, x, y, mVelocityTracker, mSelectedPosition, targetPosition);
 			boolean mergeState = state == MOVE_STATE_MERGE;
 			if (!inScrollMode && mergeState ^ inMergeState) {
-                if (mSelectedPosition == targetPosition) { return; }
+				if (mSelectedPosition == targetPosition) { return; }
 				if (mergeState) {
 					if (mMainCallBack.onMergeStart(mMainRecyclerView, mSelectedPosition, targetPosition)) {
 						inMergeState = true;
@@ -1440,7 +1440,7 @@ public class ClassifyView extends FrameLayout {
 				if (mMainCallBack.onMove(mSelectedPosition, targetPosition)) {
 					mSelectedPosition = targetPosition;
 					RecyclerView.ViewHolder viewHolder = mMainRecyclerView.findViewHolderForAdapterPosition(mSelectedPosition);
-                    if (viewHolder != null) { mSelected = viewHolder.itemView; }
+					if (viewHolder != null) { mSelected = viewHolder.itemView; }
 					mMainCallBack.setDragPosition(targetPosition, true);
 					mMainCallBack.moved(mSelectedPosition, targetPosition);
 				}
@@ -1475,7 +1475,7 @@ public class ClassifyView extends FrameLayout {
 			lm = getSubLayoutManager();
 			recyclerView = mSubRecyclerView;
 		}
-        if (lm == null || recyclerView == null) { return mSwapTargets; }
+		if (lm == null || recyclerView == null) { return mSwapTargets; }
 		int childCount = lm.getChildCount();
 		for (int i = 0; i < childCount; i++) {
 			View child = lm.getChildAt(i);
@@ -1489,10 +1489,10 @@ public class ClassifyView extends FrameLayout {
 			int targetPosition = recyclerView.getChildAdapterPosition(child);
 			//检验目标位置是否能移动
 			if ((mRegion & IN_MAIN_REGION) != 0) {
-                if (!mMainCallBack.canDropOver(mSelectedPosition, targetPosition)) { continue; }
+				if (!mMainCallBack.canDropOver(mSelectedPosition, targetPosition)) { continue; }
 			}
 			if ((mRegion & IN_SUB_REGION) != 0) {
-                if (!mSubCallBack.canDropOver(mSelectedPosition, targetPosition)) { continue; }
+				if (!mSubCallBack.canDropOver(mSelectedPosition, targetPosition)) { continue; }
 			}
 			mSwapTargets.add(child);
 		}

@@ -27,8 +27,7 @@ public class GridSpaceItemDecoration extends RecyclerView.ItemDecoration {
 	}
 
 	@Override
-	public void getItemOffsets(
-			@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+	public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
 		int position = parent.getChildAdapterPosition(view);//获取view 在adapter中的位置。
 		int column = position % mSpanCount;//view 所在的列
 

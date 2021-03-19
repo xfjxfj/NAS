@@ -1,1 +1,1 @@
-include ':app', ':classify_view', ':framework', ':pickerview', ':vertical_tablayout', ':wheelview'
+include ':apache-ftpserver-1.1.1:core', ':apache-ftpserver-1.1.1:ftplet-api', ':app', ':classify_view', ':framework', ':pftpd-pojo-lib', ':pickerview', ':primitiveFTPd', ':slf4j-android-1.6.1-RC1', ':sshd-core-0.14.0', ':vertical_tablayout', ':wheelview'

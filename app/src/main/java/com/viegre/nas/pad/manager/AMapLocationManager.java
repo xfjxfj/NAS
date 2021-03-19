@@ -52,8 +52,7 @@ public enum AMapLocationManager {
 									     List<WeatherEntity> weatherList = response.succeed().getWeather();
 									     if (!weatherList.isEmpty()) {
 										     for (WeatherEntity weather : weatherList) {
-											     if (TimeUtils.isToday(weather.getDate(),
-											                           new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()))) {
+											     if (TimeUtils.isToday(weather.getDate(), new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()))) {
 												     BusUtils.post(BusConfig.WEATHER, weather);
 												     return;
 											     }

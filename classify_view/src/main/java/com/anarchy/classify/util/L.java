@@ -8,22 +8,22 @@ import android.util.Log;
  */
 public class L {
 
-    private static final String TAG = "ClassifyView";
-    private static boolean DEBUG = false;
+	private static final String TAG = "ClassifyView";
+	private static boolean DEBUG = false;
 
-    public static void setDebugAble(boolean debugAble) {
-        DEBUG = debugAble;
-    }
+	public static void setDebugAble(boolean debugAble) {
+		DEBUG = debugAble;
+	}
 
-    public static void d(String msg) {
-        if (DEBUG) {
-            Log.d(TAG, msg);
-        }
-    }
+	public static void d(String msg) {
+		if (DEBUG) {
+			Log.d(TAG, msg);
+		}
+	}
 
-    public static void d(String msg, Object... objects) {
-        if (DEBUG) {
-            Log.d(TAG, String.format(msg, objects));
-        }
-    }
+	public static void d(String msg, Object... objects) {
+		if (DEBUG) {
+			Log.d(TAG, String.format(msg, objects));
+		}
+	}
 }
