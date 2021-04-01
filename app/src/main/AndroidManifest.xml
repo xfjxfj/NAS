@@ -96,6 +96,10 @@
 			android:name=".activity.video.VideoPlayerActivity"
 			android:screenOrientation="landscape" />
 
+		<activity
+			android:name=".activity.ExternalStorageActivity"
+			android:screenOrientation="landscape" />
+
 		<service android:name="com.amap.api.location.APSService" />
 
 		<service android:name=".service.ScreenSaverService" />

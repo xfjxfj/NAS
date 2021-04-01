@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/clacivItemExternalStorageList"
+	android:layout_width="204px"
+	android:layout_height="240px"
+	android:background="@drawable/item_external_storage_bg">
+
+	<androidx.appcompat.widget.AppCompatImageView
+		android:id="@+id/acivItemExternalStorageList"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="52px"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:srcCompat="@mipmap/external_storage_icon" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvItemExternalStorageList"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="33px"
+		android:includeFontPadding="false"
+		android:maxWidth="100px"
+		android:textColor="#5F626B"
+		android:textSize="24px"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/acivItemExternalStorageList" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -46,6 +46,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
 	@Override
 	protected void initialize() {
+		initClick();
 		initIcon();
 		initBanner();
 		initWeather();
@@ -89,15 +90,17 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 					mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
 				} else {
 					Glide.with(mActivity)
-					     .load(R.mipmap.main_unlogin)
-					     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-					     .into(mViewBinding.acivMainUserIcon);
+					     .load(R.mipmap.main_unlogin).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(mViewBinding.acivMainUserIcon);
 					mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(result.getPhoneNumber()));
 					mViewBinding.llcMainUser.setOnClickListener(null);
 				}
 				mViewBinding.llcMainUser.setVisibility(View.VISIBLE);
 			}
 		});
+	}
+
+	private void initClick() {
+		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
 	}
 
 	private void initIcon() {
