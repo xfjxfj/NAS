@@ -1,5 +1,7 @@
 package com.viegre.nas.pad.activity;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -15,8 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-
 /**
  * 外部存储
  * Created by レインマン on 2021/04/01 17:03 with Android Studio.
@@ -24,49 +24,65 @@ import androidx.recyclerview.widget.GridLayoutManager;
 public class ExternalStorageActivity extends BaseActivity<ActivityExternalStorageBinding> {
 
 	private ExternalStorageListAdapter mExternalStorageListAdapter;
-	private final CopyOnWriteArrayList<FileEntity> mTmpList = new CopyOnWriteArrayList<>();
+	private final CopyOnWriteArrayList<List<FileEntity>> mHistoryList = new CopyOnWriteArrayList<>();
 
 	@Override
 	protected void initialize() {
-		mViewBinding.acivExternalStorageBack.setOnClickListener(view -> finish());
 		initList();
 	}
 
 	private void initList() {
+		mViewBinding.acivExternalStorageBack.setOnClickListener(view -> {
+			if (mHistoryList.isEmpty()) {
+				finish();
+			} else {
+				mHistoryList.remove(mHistoryList.size() - 1);
+				List<FileEntity> list = new ArrayList<>(mHistoryList.get(mHistoryList.size() - 1));
+				mExternalStorageListAdapter.setList(list);
+			}
+		});
 		mExternalStorageListAdapter = new ExternalStorageListAdapter();
-		mExternalStorageListAdapter.setOnItemClickListener((adapter, view, position) -> ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<FileEntity>>() {
-			@Override
-			public List<FileEntity> doInBackground() {
-				List<File> subDirList = FileUtils.listFilesInDir(mTmpList.get(position).getPath());
-				if (subDirList.isEmpty()) {
-					return null;
-				}
-				mTmpList.clear();
-				mTmpList.addAll(mExternalStorageListAdapter.getData());
-				List<FileEntity> subFileList = new ArrayList<>();
-				for (File file : subDirList) {
-					FileEntity.Type type;
-					if (FileUtils.isFile(file)) {
-						type = FileEntity.Type.FILE;
-					} else if (FileUtils.isDir(file)) {
-						type = FileEntity.Type.DIR;
-					} else {
-						type = FileEntity.Type.UNKNOWN;
-					}
-					subFileList.add(new FileEntity(file.getName(), file.getAbsolutePath(), type));
-				}
-				return subFileList;
-			}
+		mExternalStorageListAdapter.setOnItemClickListener((adapter, view, position) -> {
+			FileEntity.Type clickFileType = mExternalStorageListAdapter.getData().get(position).getType();
+			switch (clickFileType) {
+				//打开文件夹
+				case DIR:
+					ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<FileEntity>>() {
+						@Override
+						public List<FileEntity> doInBackground() {
+							List<FileEntity> list = new ArrayList<>(mExternalStorageListAdapter.getData());
+							List<File> subDirList = FileUtils.listFilesInDir(list.get(position).getPath());
+							if (subDirList.isEmpty()) {
+								return null;
+							}
+							mHistoryList.add(list);
+							List<FileEntity> subFileList = new ArrayList<>();
+							for (File file : subDirList) {
+								FileEntity.Type type;
+								if (FileUtils.isFile(file)) {
+									type = FileEntity.Type.FILE;
+								} else if (FileUtils.isDir(file)) {
+									type = FileEntity.Type.DIR;
+								} else {
+									type = FileEntity.Type.UNKNOWN;
+								}
+								subFileList.add(new FileEntity(file.getName(), file.getAbsolutePath(), type));
+							}
+							return subFileList;
+						}
 
-			@Override
-			public void onSuccess(List<FileEntity> result) {
-				if (null == result || result.isEmpty()) {
-					ToastUtils.showShort(R.string.external_storage_empty);
-				} else {
-					mExternalStorageListAdapter.setList(result);
-				}
+						@Override
+						public void onSuccess(List<FileEntity> result) {
+							if (null == result || result.isEmpty()) {
+								ToastUtils.showShort(R.string.external_storage_empty);
+							} else {
+								mExternalStorageListAdapter.setList(result);
+							}
+						}
+					});
+					break;
 			}
-		}));
+		});
 		mViewBinding.rvExternalStorageList.setLayoutManager(new GridLayoutManager(this, 4));
 		mViewBinding.rvExternalStorageList.addItemDecoration(new GridSpaceItemDecoration(4, 30, 30));
 		mViewBinding.rvExternalStorageList.setAdapter(mExternalStorageListAdapter);
