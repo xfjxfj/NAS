@@ -155,4 +155,8 @@
 	<string name="video">视频</string>
 	<string name="video_private">私人视频</string>
 
+	<!--外部存储-->
+	<string name="external_storage">外部存储%s</string>
+	<string name="external_storage_empty">该目录为空</string>
+
 </resources>
