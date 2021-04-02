@@ -23,6 +23,7 @@
 		android:layout_marginTop="33px"
 		android:includeFontPadding="false"
 		android:maxWidth="100px"
+		android:maxLines="2"
 		android:textColor="#5F626B"
 		android:textSize="24px"
 		app:layout_constraintEnd_toEndOf="parent"

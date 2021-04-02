@@ -21,6 +21,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginTop="49px"
 		android:clipToPadding="false"
+		android:overScrollMode="never"
 		android:paddingStart="60px"
 		android:paddingEnd="60px"
 		app:layout_constraintEnd_toEndOf="parent"
