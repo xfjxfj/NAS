@@ -23,6 +23,7 @@
 			app:srcCompat="@mipmap/file_manager_back" />
 
 		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/actvExternalStorageTitle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="25px"
@@ -39,12 +40,15 @@
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/rvExternalStorageList"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="49px"
+		android:layout_height="0dp"
+		android:layout_marginTop="19px"
 		android:clipToPadding="false"
 		android:overScrollMode="never"
 		android:paddingStart="60px"
+		android:paddingTop="30px"
 		android:paddingEnd="60px"
+		android:paddingBottom="30px"
+		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/llcExternalStorageTitle" />

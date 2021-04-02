@@ -3,6 +3,7 @@ package com.viegre.nas.pad.activity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.djangoogle.framework.activity.BaseActivity;
@@ -32,13 +33,16 @@ public class ExternalStorageActivity extends BaseActivity<ActivityExternalStorag
 	}
 
 	private void initList() {
-		mViewBinding.acivExternalStorageBack.setOnClickListener(view -> {
+		mViewBinding.llcExternalStorageTitle.setOnClickListener(view -> {
 			if (mHistoryList.isEmpty() || mHistoryList.size() <= 1) {
 				finish();
 			} else {
 				mHistoryList.remove(mHistoryList.size() - 1);
 				List<FileEntity> list = new ArrayList<>(mHistoryList.get(mHistoryList.size() - 1));
 				mExternalStorageListAdapter.setList(list);
+				mViewBinding.actvExternalStorageTitle.setText(StringUtils.getString(R.string.external_storage,
+				                                                                    ": " + FileUtils.getFileName(FileUtils.getFileByPath(
+						                                                                    list.get(0).getPath()).getParent())));
 			}
 		});
 		mExternalStorageListAdapter = new ExternalStorageListAdapter();
@@ -78,6 +82,12 @@ public class ExternalStorageActivity extends BaseActivity<ActivityExternalStorag
 								ToastUtils.showShort(R.string.external_storage_empty);
 							} else {
 								mExternalStorageListAdapter.setList(result);
+								mViewBinding.actvExternalStorageTitle.setText(StringUtils.getString(R.string.external_storage,
+								                                                                    ": " + FileUtils.getFileName(
+										                                                                    FileUtils.getFileByPath(
+												                                                                    result.get(0)
+												                                                                          .getPath())
+										                                                                             .getParent())));
 							}
 						}
 					});
@@ -92,5 +102,6 @@ public class ExternalStorageActivity extends BaseActivity<ActivityExternalStorag
 		list.add(new FileEntity("我的U盘", "/sdcard/U/", FileEntity.Type.STORAGE));
 		mHistoryList.add(list);
 		mExternalStorageListAdapter.setList(list);
+		mViewBinding.actvExternalStorageTitle.setText(StringUtils.getString(R.string.external_storage, ""));
 	}
 }
