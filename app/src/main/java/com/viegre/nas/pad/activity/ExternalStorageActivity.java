@@ -33,7 +33,7 @@ public class ExternalStorageActivity extends BaseActivity<ActivityExternalStorag
 
 	private void initList() {
 		mViewBinding.acivExternalStorageBack.setOnClickListener(view -> {
-			if (mHistoryList.isEmpty()) {
+			if (mHistoryList.isEmpty() || mHistoryList.size() <= 1) {
 				finish();
 			} else {
 				mHistoryList.remove(mHistoryList.size() - 1);
@@ -46,6 +46,7 @@ public class ExternalStorageActivity extends BaseActivity<ActivityExternalStorag
 			FileEntity.Type clickFileType = mExternalStorageListAdapter.getData().get(position).getType();
 			switch (clickFileType) {
 				//打开文件夹
+				case STORAGE:
 				case DIR:
 					ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<FileEntity>>() {
 						@Override
@@ -55,7 +56,6 @@ public class ExternalStorageActivity extends BaseActivity<ActivityExternalStorag
 							if (subDirList.isEmpty()) {
 								return null;
 							}
-							mHistoryList.add(list);
 							List<FileEntity> subFileList = new ArrayList<>();
 							for (File file : subDirList) {
 								FileEntity.Type type;
@@ -68,6 +68,7 @@ public class ExternalStorageActivity extends BaseActivity<ActivityExternalStorag
 								}
 								subFileList.add(new FileEntity(file.getName(), file.getAbsolutePath(), type));
 							}
+							mHistoryList.add(subFileList);
 							return subFileList;
 						}
 
@@ -89,6 +90,7 @@ public class ExternalStorageActivity extends BaseActivity<ActivityExternalStorag
 		List<FileEntity> list = new ArrayList<>();
 		list.add(new FileEntity("外部磁盘", "/sdcard/", FileEntity.Type.STORAGE));
 		list.add(new FileEntity("我的U盘", "/sdcard/U/", FileEntity.Type.STORAGE));
+		mHistoryList.add(list);
 		mExternalStorageListAdapter.setList(list);
 	}
 }
