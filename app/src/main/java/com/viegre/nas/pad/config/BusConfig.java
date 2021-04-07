@@ -33,4 +33,10 @@ public class BusConfig {
 	 */
 	public static final String SCREEN_CUSTOM_SHOW = "screen_custom_show";
 	public static final String SCREEN_CUSTOM_HIDE = "screen_custom_hide";
+
+	/**
+	 * USB设备
+	 */
+	public static final String USB_DEVICE_ATTACHED = "screen_custom_show";
+	public static final String USB_DEVICE_DETACHED = "screen_custom_hide";
 }

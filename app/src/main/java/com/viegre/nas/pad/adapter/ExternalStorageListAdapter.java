@@ -1,5 +1,7 @@
 package com.viegre.nas.pad.adapter;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.viegre.nas.pad.R;
@@ -19,5 +21,19 @@ public class ExternalStorageListAdapter extends BaseQuickAdapter<FileEntity, Bas
 	@Override
 	protected void convert(@NotNull BaseViewHolder baseViewHolder, FileEntity fileEntity) {
 		baseViewHolder.setText(R.id.actvItemExternalStorageIcon, fileEntity.getName());
+		AppCompatImageView acivItemExternalStorage = baseViewHolder.findView(R.id.acivItemExternalStorage);
+		switch (fileEntity.getType()) {
+			case STORAGE:
+				acivItemExternalStorage.setImageResource(R.mipmap.external_storage_icon);
+				break;
+
+			case DIR:
+				acivItemExternalStorage.setImageResource(R.mipmap.external_storage_icon_dir);
+				break;
+
+			default:
+				acivItemExternalStorage.setImageResource(R.mipmap.external_storage_icon_file);
+				break;
+		}
 	}
 }

@@ -1,8 +1,16 @@
 package com.viegre.nas.pad.activity;
 
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.TypedArray;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbManager;
 import android.view.View;
+import android.widget.Toast;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
@@ -42,10 +50,14 @@ import hdp.http.APIConstant;
  */
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
+	private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
+
 	private final Map<String, Integer> mWeatherMap = new HashMap<>();
+	private UsbManager mUsbManager;
 
 	@Override
 	protected void initialize() {
+		openUsbDevice();
 		initClick();
 		initIcon();
 		initBanner();
@@ -90,7 +102,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 					mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
 				} else {
 					Glide.with(mActivity)
-					     .load(R.mipmap.main_unlogin).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(mViewBinding.acivMainUserIcon);
+					     .load(R.mipmap.main_unlogin)
+					     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+					     .into(mViewBinding.acivMainUserIcon);
 					mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(result.getPhoneNumber()));
 					mViewBinding.llcMainUser.setOnClickListener(null);
 				}
@@ -114,8 +128,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		//音频
 		Glide.with(this)
 		     .load(R.mipmap.main_icon_audio)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIconAudio);
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconAudio);
 		mViewBinding.acivMainIconAudio.setOnClickListener(view -> ActivityUtils.startActivity(AudioActivity.class));
 
 		//视频
@@ -125,12 +138,30 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		     .into(mViewBinding.acivMainIconVideo);
 		mViewBinding.acivMainIconVideo.setOnClickListener(view -> ActivityUtils.startActivity(VideoActivity.class));
 
-		Glide.with(this).load(R.mipmap.test_icon_3).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon3);
-		Glide.with(this).load(R.mipmap.test_icon_4).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon4);
-		Glide.with(this).load(R.mipmap.test_icon_5).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon5);
-		Glide.with(this).load(R.mipmap.test_icon_6).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon6);
-		Glide.with(this).load(R.mipmap.test_icon_7).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon7);
-		Glide.with(this).load(R.mipmap.test_icon_8).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon8);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_3)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon3);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_4)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon4);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_5)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon5);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_6)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon6);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_7)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon7);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_8)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon8);
 		mViewBinding.acivMainIcon5.setOnClickListener(view -> {
 			Intent liveIntent = new Intent();
 			liveIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
@@ -202,4 +233,69 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		mViewBinding.acivMainWeather.setImageResource(R.mipmap.weather_unknown);
 		mViewBinding.actvMainTemperature.setText(R.string.weather_unknown_temperature);
 	}
+
+	private void openUsbDevice() {
+		//before open usb device
+		//should try to get usb permission
+		tryGetUsbPermission();
+	}
+
+	private void tryGetUsbPermission() {
+		mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+
+		IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+		registerReceiver(mUsbPermissionActionReceiver, filter);
+
+		PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+
+		//here do emulation to ask all connected usb device for permission
+		for (final UsbDevice usbDevice : mUsbManager.getDeviceList().values()) {
+			//add some conditional check if necessary
+			//if(isWeCaredUsbDevice(usbDevice)){
+			if (mUsbManager.hasPermission(usbDevice)) {
+				//if has already got permission, just goto connect it
+				//that means: user has choose yes for your previously popup window asking for grant perssion for this usb device
+				//and also choose option: not ask again
+				afterGetUsbPermission(usbDevice);
+			} else {
+				//this line will let android popup window, ask user whether to allow this app to have permission to operate this usb device
+				mUsbManager.requestPermission(usbDevice, mPermissionIntent);
+			}
+			//}
+		}
+	}
+
+	private void afterGetUsbPermission(UsbDevice usbDevice) {
+		//call method to set up device communication
+		//Toast.makeText(this, String.valueOf("Got permission for usb device: " + usbDevice), Toast.LENGTH_LONG).show();
+		//Toast.makeText(this, String.valueOf("Found USB device: VID=" + usbDevice.getVendorId() + " PID=" + usbDevice.getProductId()), Toast.LENGTH_LONG).show();
+
+		doYourOpenUsbDevice(usbDevice);
+	}
+
+	private void doYourOpenUsbDevice(UsbDevice usbDevice) {
+		//now follow line will NOT show: User has not given permission to device UsbDevice
+		UsbDeviceConnection connection = mUsbManager.openDevice(usbDevice);
+		//add your operation code here
+	}
+
+	private final BroadcastReceiver mUsbPermissionActionReceiver = new BroadcastReceiver() {
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (ACTION_USB_PERMISSION.equals(action)) {
+				synchronized (this) {
+					UsbDevice usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+					if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+						//user choose YES for your previously popup window asking for grant perssion for this usb device
+						if (null != usbDevice) {
+							afterGetUsbPermission(usbDevice);
+						}
+					} else {
+						//user choose NO for your previously popup window asking for grant perssion for this usb device
+						Toast.makeText(context, "Permission denied for device" + usbDevice, Toast.LENGTH_LONG).show();
+					}
+				}
+			}
+		}
+	};
 }

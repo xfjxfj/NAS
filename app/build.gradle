@@ -120,4 +120,6 @@ dependencies {
 	implementation 'org.litepal.guolindev:core:3.2.2'
 	//https://github.com/jaydeepw/audio-wife
 	implementation 'net.the4thdimension:audio-wife:1.0.3'
+	//https://github.com/magnusja/libaums
+	implementation 'me.jahnen:libaums:0.8.0'
 }
