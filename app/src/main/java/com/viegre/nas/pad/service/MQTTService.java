@@ -290,7 +290,7 @@ public class MQTTService extends Service {
 		jsonObject.put("name", "模拟器");
 		jsonObject.put("mac", DeviceUtils.getMacAddress());
 		jsonObject.put("ip", NetworkUtils.getIPAddress(true));
-		jsonObject.put("cpu", "未知");
+		jsonObject.put("cpu", "Cortex-A53 8核 1.5GHz");
 		ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 		ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
 		activityManager.getMemoryInfo(memoryInfo);
