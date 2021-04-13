@@ -24,6 +24,7 @@ public class MQTTMsg {
 	private String fromId;
 	private String toId;
 	private long timestamp;
+	private String path;
 	private final JSONObject jsonObject;
 
 	public MQTTMsg(String toId, JSONObject jsonObject) {
@@ -84,6 +85,14 @@ public class MQTTMsg {
 
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 
 	public JSONObject getJsonObject() {

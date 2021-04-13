@@ -27,8 +27,6 @@ import com.viegre.nas.pad.entity.MQTTMsg;
 
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.ZipParameters;
-import net.lingala.zip4j.model.enums.EncryptionMethod;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -39,7 +37,6 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.util.Random;
-import java.util.UUID;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -199,10 +196,9 @@ public class MQTTService extends Service {
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<MQTTMsg>() {
 							@Override
 							public MQTTMsg doInBackground() throws ZipException {
-								String restoreFilePath = mqttMsg.getJsonObject().getString("filePath");
-								String passwd = mqttMsg.getJsonObject().getString("passwd");
+								String restoreFilePath = mqttMsg.getPath();
 								MQTTMsg restoreMsg = getRestoreMsg(mqttMsg.getFromId());
-								new ZipFile(restoreFilePath, passwd.toCharArray()).extractAll(PathConfig.NAS);
+								new ZipFile(restoreFilePath).extractAll(PathConfig.NAS);
 								restoreMsg.getJsonObject().put("result", true);
 								return restoreMsg;
 							}
@@ -227,21 +223,13 @@ public class MQTTService extends Service {
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<MQTTMsg>() {
 							@Override
 							public MQTTMsg doInBackground() throws ZipException {
-								String backupDirPath = mqttMsg.getJsonObject().getString("dirPath");
-								String backupFileName = "备份" + TimeUtils.getNowString();
-								String backupFileNameZip = backupFileName + ".zip";
-								String backupFileNameBak = backupFileName + ".bak";
+								String backupDirPath = mqttMsg.getPath();
+								String backupFileName = "备份" + TimeUtils.getNowString() + ".zip";
 								MQTTMsg backupMsg = getBackupMsg(mqttMsg.getFromId());
-								String zipPasswd = UUID.randomUUID().toString();
-								ZipParameters zipParameters = new ZipParameters();
-								zipParameters.setEncryptFiles(true);
-								zipParameters.setEncryptionMethod(EncryptionMethod.AES);
-								ZipFile zipFile = new ZipFile(backupDirPath + backupFileNameZip, zipPasswd.toCharArray());
-								zipFile.addFolder(FileUtils.getFileByPath(PathConfig.PUBLIC), zipParameters);
-								zipFile.addFolder(FileUtils.getFileByPath(PathConfig.PUBLIC), zipParameters);
-								FileUtils.rename(backupDirPath + backupFileNameZip, backupDirPath + backupFileNameBak);
-								backupMsg.getJsonObject().put("filePath", backupDirPath + backupFileNameBak);
-								backupMsg.getJsonObject().put("passwd", zipPasswd);
+								ZipFile zipFile = new ZipFile(backupDirPath + backupFileName);
+								zipFile.addFolder(FileUtils.getFileByPath(PathConfig.PUBLIC));
+								zipFile.addFolder(FileUtils.getFileByPath(PathConfig.PUBLIC));
+								backupMsg.getJsonObject().put("path", backupDirPath + backupFileName);
 								backupMsg.getJsonObject().put("result", true);
 								return backupMsg;
 							}
@@ -305,6 +293,7 @@ public class MQTTService extends Service {
 		jsonObject.put("cpu", "未知");
 		ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 		ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
+		activityManager.getMemoryInfo(memoryInfo);
 		jsonObject.put("ram", memoryInfo.totalMem);
 		jsonObject.put("status", "正常");
 		jsonObject.put("runningTime", SystemClock.elapsedRealtime());
