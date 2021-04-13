@@ -100,7 +100,7 @@ public class MQTTService extends Service {
 	private final MqttCallbackExtended mMqttCallbackExtended = new MqttCallbackExtended() {
 		@Override
 		public void connectComplete(boolean reconnect, String serverURI) {
-			LogUtils.iTag(TAG, "connectComplete: " + Thread.currentThread().getId(), serverURI);
+			LogUtils.iTag(TAG, "connectComplete", Thread.currentThread().getId(), serverURI);
 			try {
 				mMqttAndroidClient.subscribe("nas/device/" + PhoneUtils.getSerial(), 2);
 			} catch (MqttException e) {
@@ -115,11 +115,16 @@ public class MQTTService extends Service {
 
 		@Override
 		public void messageArrived(String topic, MqttMessage message) {
-			if (null != message) {
-				LogUtils.iTag(TAG, "messageArrived, topic: " + topic + "; message: " + new String(message.getPayload()));
-				parseMessage(new String(message.getPayload()));
-			} else {
-				LogUtils.eTag(TAG, "messageArrived: 消息为空");
+			try {
+				if (null != message) {
+					String json = new String(message.getPayload());
+					LogUtils.iTag(TAG, "messageArrived", " topic: " + topic, "message: " + json);
+					parseMessage(json);
+				} else {
+					LogUtils.eTag(TAG, "messageArrived: 消息为空");
+				}
+			} catch (Exception e) {
+				LogUtils.eTag(TAG, e.toString());
 			}
 		}
 
@@ -127,9 +132,9 @@ public class MQTTService extends Service {
 		public void deliveryComplete(IMqttDeliveryToken token) {
 			if (null != token) {
 				try {
-					LogUtils.iTag(TAG, "deliveryComplete: " + new String(token.getMessage().getPayload()));
+					LogUtils.iTag(TAG, "deliveryComplete", new String(token.getMessage().getPayload()));
 				} catch (MqttException e) {
-					LogUtils.eTag(TAG, "connectionLost: " + e.toString());
+					LogUtils.eTag(TAG, "connectionLost", e.toString());
 				}
 			} else {
 				LogUtils.eTag(TAG, "deliveryComplete: token为空");
@@ -160,7 +165,7 @@ public class MQTTService extends Service {
 		try {
 			mMqttAndroidClient.publish("nas/phone/" + mqttMsg.getToId(), mqttMessage);//设置消息的topic，并发送。
 		} catch (MqttException e) {
-			LogUtils.eTag(TAG, "sendMqttMsg: " + e.toString());
+			LogUtils.eTag(TAG, "sendMqttMsg", e.toString());
 		}
 	}
 

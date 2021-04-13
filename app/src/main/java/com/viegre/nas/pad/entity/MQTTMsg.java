@@ -25,7 +25,9 @@ public class MQTTMsg {
 	private String toId;
 	private long timestamp;
 	private String path;
-	private final JSONObject jsonObject;
+	private JSONObject jsonObject;
+
+	public MQTTMsg() {}
 
 	public MQTTMsg(String toId, JSONObject jsonObject) {
 		this.toId = toId;
