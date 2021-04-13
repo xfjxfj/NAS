@@ -39,4 +39,9 @@ public class BusConfig {
 	 */
 	public static final String USB_DEVICE_ATTACHED = "screen_custom_show";
 	public static final String USB_DEVICE_DETACHED = "screen_custom_hide";
+
+	/**
+	 * MQTT消息发送
+	 */
+	public static final String MQTT_MSG = "mqtt_msg";
 }

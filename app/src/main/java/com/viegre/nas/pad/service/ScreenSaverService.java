@@ -40,13 +40,7 @@ public class ScreenSaverService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			String CHANNEL_ID = "nas_channel_screen_saver";
-			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "nas_channel_screen_saver", NotificationManager.IMPORTANCE_DEFAULT);
-			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
-			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("").setContentText("").build();
-			startForeground(1, notification);
-		}
+		initNotificationChannel();
 		registerScreenStatusReceiver();
 	}
 
@@ -76,6 +70,16 @@ public class ScreenSaverService extends Service {
 			Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, delay * 60 * 1000);
 		} else {
 			Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, Integer.MAX_VALUE);
+		}
+	}
+
+	private void initNotificationChannel() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			String CHANNEL_ID = "nas_channel_screen_saver";
+			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT);
+			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("").setContentText("").build();
+			startForeground(1, notification);
 		}
 	}
 }

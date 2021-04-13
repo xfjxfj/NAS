@@ -36,6 +36,7 @@ import com.viegre.nas.pad.entity.GuideResourceEntity;
 import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.fragment.settings.network.NetworkDetailFragment;
 import com.viegre.nas.pad.fragment.settings.network.NetworkFragment;
+import com.viegre.nas.pad.service.MQTTService;
 import com.viegre.nas.pad.service.ScreenSaverService;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
@@ -72,6 +73,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	@Override
 	protected void initialize() {
 		ServiceUtils.startService(ScreenSaverService.class);
+		ServiceUtils.startService(MQTTService.class);
 		grantPermission();
 	}
 

@@ -111,6 +111,10 @@
 
 		<service android:name=".service.ScreenSaverService" />
 
+		<service android:name=".service.MQTTService" />
+
+		<service android:name="org.eclipse.paho.android.service.MqttService" />
+
 		<receiver
 			android:name=".receiver.SdcardStateReceiver"
 			android:enabled="true"
