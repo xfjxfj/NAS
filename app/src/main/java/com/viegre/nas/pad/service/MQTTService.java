@@ -36,6 +36,10 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import androidx.annotation.Nullable;
@@ -323,8 +327,20 @@ public class MQTTService extends Service {
 		jsonObject.put("toId", toId);
 		jsonObject.put("timestamp", System.currentTimeMillis());
 		jsonObject.put("total", FileUtils.getFsTotalSize(PathConfig.NAS));
-		jsonObject.put("publicUsed", PathConfig.PUBLIC);
-		jsonObject.put("privateUsed", PathConfig.PRIVATE);
+		jsonObject.put("publicUsed", FileUtils.getSize(PathConfig.PUBLIC));
+		List<File> privateDirList = FileUtils.listFilesInDir(PathConfig.PRIVATE);
+		if (!privateDirList.isEmpty()) {
+			Map<String, Object> privateDirMap = new HashMap<>();
+			for (File file : privateDirList) {
+				if (FileUtils.isDir(file)) {
+					privateDirMap.put(file.getName(), FileUtils.getSize(file.getAbsolutePath()));
+				}
+			}
+			if (!privateDirMap.isEmpty()) {
+				JSONObject privateDirJson = new JSONObject(privateDirMap);
+				jsonObject.put("privateUsed", privateDirJson.toJSONString());
+			}
+		}
 		return new MQTTMsg(toId, jsonObject);
 	}
 
