@@ -158,5 +158,21 @@
 	<!--外部存储-->
 	<string name="external_storage">外部存储%s</string>
 	<string name="external_storage_empty">该目录为空</string>
+	<!--	常用字符串-->
+    <string name="nasSpData">nasSpData</string>
+	<string name="installNumber">installNumber</string>
+
+	<!--	启动页面-->
+	<string name="hello_first_fragment">Hello first fragment</string>
+	<string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+	<string name="device_bind_QrCode_android">扫描二维码立即下载 安卓版本巍格智能app</string>
+	<string name="device_bind_qrCode_ios">扫描二维码立即下载 IOS版本巍格智能app</string>
+	<string name="device_bind_tips">您好，初次使用NAS设备下载APP进行用户绑定，请扫描上方二 维码进行安装。</string>
+	<string name="welcome_next">跳过</string>
+	<string name="welcome_text1">您好，请打开“巍格智能”APP注册并登录</string>
+	<string name="welcome_nexttext">跳过，下一步</string>
+	<string name="welcome_tips_text">1、手机“设置”-“蓝牙”页面，打开蓝牙开关;\n2、“我的设备”-“设备蓝牙”-“点击连接”； \n3、连接成功后即出现在[我的设备]列表中显示； \n4、返回APP此页面，等待蓝牙设备连接。</string>
+	<string name="welcome_tips_text2">首次绑定NAS可通过蓝牙自动绑定，\n或扫描下方二维码进行绑定。</string>
+
 
 </resources>
