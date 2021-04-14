@@ -327,13 +327,13 @@ public class MQTTService extends Service {
 		jsonObject.put("toId", toId);
 		jsonObject.put("timestamp", System.currentTimeMillis());
 		jsonObject.put("total", FileUtils.getFsTotalSize(PathConfig.NAS));
-		jsonObject.put("publicUsed", FileUtils.getSize(PathConfig.PUBLIC));
+		jsonObject.put("publicUsed", getDirLength(FileUtils.getFileByPath(PathConfig.PUBLIC)));
 		List<File> privateDirList = FileUtils.listFilesInDir(PathConfig.PRIVATE);
 		if (!privateDirList.isEmpty()) {
 			Map<String, Object> privateDirMap = new HashMap<>();
 			for (File file : privateDirList) {
 				if (FileUtils.isDir(file)) {
-					privateDirMap.put(file.getName(), FileUtils.getSize(file.getAbsolutePath()));
+					privateDirMap.put(file.getName(), getDirLength(file));
 				}
 			}
 			if (!privateDirMap.isEmpty()) {
@@ -457,5 +457,20 @@ public class MQTTService extends Service {
 			return random.nextInt(endNum - startNum) + startNum;
 		}
 		return 0;
+	}
+
+	private long getDirLength(final File dir) {
+		long len = 0;
+		File[] files = dir.listFiles();
+		if (files != null && files.length > 0) {
+			for (File file : files) {
+				if (file.isDirectory()) {
+					len += getDirLength(file);
+				} else {
+					len += file.length();
+				}
+			}
+		}
+		return len;
 	}
 }
