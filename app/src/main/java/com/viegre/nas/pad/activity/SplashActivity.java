@@ -7,11 +7,13 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
+import android.util.Log;
 import android.view.View;
 
 import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
+import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.ImageUtils;
@@ -88,8 +90,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		SharedPreferences sharedPreferences = getSharedPreferences(this.getString(R.string.nasSpData), SplashActivity.MODE_APPEND);
 		int nb = sharedPreferences.getInt(getString(R.string.installNumber), 0);
 //        * 等于0说明是第一次进来 跳转到引导页面 然后添加sp数据
-//		if (nb == 0) {
-		if (true) {
+		if (nb == 0) {
+//		if (true) {
 			sharedPreferences.edit().putInt(getString(R.string.installNumber), 1).commit();
 			startActivity(new Intent(SplashActivity.this, WelcomeActivity.class));
 			finish();

@@ -1,5 +1,8 @@
 package com.viegre.nas.pad.util;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.view.Gravity;
@@ -15,6 +18,11 @@ public class CommonUtils {
 
 	public static final long DEFAULT_SPLASH_GUIDE_DURATION = 5 * 1000L;
 
+	public static void getOpenApp(Context context, PackageInfo packageName) {
+		final Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName.packageName);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+		context.startActivity(intent);
+	}
 	/**
 	 * 标记手机号中间4位为*
 	 *

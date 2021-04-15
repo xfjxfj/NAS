@@ -174,5 +174,7 @@
 	<string name="welcome_tips_text">1、手机“设置”-“蓝牙”页面，打开蓝牙开关;\n2、“我的设备”-“设备蓝牙”-“点击连接”； \n3、连接成功后即出现在[我的设备]列表中显示； \n4、返回APP此页面，等待蓝牙设备连接。</string>
 	<string name="welcome_tips_text2">首次绑定NAS可通过蓝牙自动绑定，\n或扫描下方二维码进行绑定。</string>
 
+	<!--    更多页面-->
+	<string name="more_app_text">更多应用</string>
 
 </resources>
