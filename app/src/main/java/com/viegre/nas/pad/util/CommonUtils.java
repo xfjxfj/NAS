@@ -8,40 +8,13 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.viegre.nas.pad.R;
 
-import java.net.NetworkInterface;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Created by レインマン on 2021/01/08 10:54 with Android Studio.
  */
 public class CommonUtils {
 
 	public static final long DEFAULT_SPLASH_GUIDE_DURATION = 5 * 1000L;
-//	获取Mac地址
-	public static String getNewMac() {
-		try {
-			List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
-			for (NetworkInterface nif : all) {
-				if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
-				byte[] macBytes = nif.getHardwareAddress();
-				if (macBytes == null) {
-					return null;
-				}
-				StringBuilder res1 = new StringBuilder();
-				for (byte b : macBytes) {
-					res1.append(String.format("%02X:", b));
-				}
-				if (res1.length() > 0) {
-					res1.deleteCharAt(res1.length() - 1);
-				}
-				return res1.toString();
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return null;
-	}
+
 	/**
 	 * 标记手机号中间4位为*
 	 *
@@ -53,16 +26,16 @@ public class CommonUtils {
 		String end = phoneNumber.substring(phoneNumber.length() - 4);
 		return start + "****" + end;
 	}
+
 	/**
 	 * 弹出普通Toast
 	 *
 	 * @param msg
 	 */
 	public static void showToast(String msg) {
-		ToastUtils.make()
-				.setTextColor(Color.BLACK)
-				.show(msg);
+		ToastUtils.make().setTextColor(Color.BLACK).show(msg);
 	}
+
 	/**
 	 * 弹出失败Toast
 	 *
