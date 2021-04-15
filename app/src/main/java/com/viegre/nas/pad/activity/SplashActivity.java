@@ -1,6 +1,8 @@
 package com.viegre.nas.pad.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -74,9 +76,27 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	protected void initialize() {
 		ServiceUtils.startService(ScreenSaverService.class);
 		ServiceUtils.startService(MQTTService.class);
-		grantPermission();
+		ifDevices();
+//		grantPermission();
 	}
-
+	/**
+	 * xfj 2021年4月8日
+	 * 判断设备是否绑定设备
+	 */
+	@SuppressLint("WrongConstant")
+	private void ifDevices() {
+		SharedPreferences sharedPreferences = getSharedPreferences(this.getString(R.string.nasSpData), SplashActivity.MODE_APPEND);
+		int nb = sharedPreferences.getInt(getString(R.string.installNumber), 0);
+//        * 等于0说明是第一次进来 跳转到引导页面 然后添加sp数据
+//		if (nb == 0) {
+		if (true) {
+			sharedPreferences.edit().putInt(getString(R.string.installNumber), 1).commit();
+			startActivity(new Intent(SplashActivity.this, WelcomeActivity.class));
+			finish();
+		} else {
+			grantPermission();//如果不是第一次进入 执行原有逻辑
+		}
+	}
 	@Override
 	protected void onResume() {
 		super.onResume();
