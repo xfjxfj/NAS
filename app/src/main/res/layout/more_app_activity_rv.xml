@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/widgetTextColorEnabled"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ConstraintLayoutmore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="41px"
+            android:layout_marginTop="65px"
+            android:text="@string/more_app_text"
+            android:textColor="@color/settings_title"
+            app:layout_constraintLeft_toLeftOf="@+id/ConstraintLayoutmore"
+            app:layout_constraintTop_toTopOf="@+id/ConstraintLayoutmore"
+            tools:ignore="MissingConstraints" />
+
+        <ImageView
+            android:id="@+id/more_ac_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35px"
+            android:layout_marginRight="41px"
+            android:background="@mipmap/settings_home"
+            app:layout_constraintRight_toRightOf="@+id/ConstraintLayoutmore"
+            app:layout_constraintTop_toTopOf="@+id/ConstraintLayoutmore"
+            tools:ignore="MissingConstraints" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>
