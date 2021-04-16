@@ -45,7 +45,7 @@ public class MoreAppActivityRvAdapter extends RecyclerView.Adapter<MoreAppActivi
     public void onBindViewHolder(MyHolder holder, int position) {
         PackageManager packageManager = mThis.getPackageManager();
         position = position * 6;
-        if (position <= mList.size()) {
+        if (position < mList.size()) {
             holder.more_app_item_img1.setImageDrawable(packageManager.getApplicationIcon(mList.get(position).applicationInfo));
             int finalPosition1 = position;
             holder.more_app_item_img1.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +56,7 @@ public class MoreAppActivityRvAdapter extends RecyclerView.Adapter<MoreAppActivi
             });
         }
         position = position + 1;
-        if (position <= mList.size()) {
+        if (position < mList.size()) {
             holder.more_app_item_img2.setImageDrawable(packageManager.getApplicationIcon(mList.get(position).applicationInfo));
             int finalPosition = position;
             holder.more_app_item_img2.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +67,7 @@ public class MoreAppActivityRvAdapter extends RecyclerView.Adapter<MoreAppActivi
             });
         }
         position = position + 1;
-        if (position <= mList.size()) {
+        if (position < mList.size()) {
             holder.more_app_item_img3.setImageDrawable(packageManager.getApplicationIcon(mList.get(position).applicationInfo));
             int finalPosition2 = position;
             holder.more_app_item_img3.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +78,7 @@ public class MoreAppActivityRvAdapter extends RecyclerView.Adapter<MoreAppActivi
             });
         }
         position = position + 1;
-        if (position <= mList.size()) {
+        if (position < mList.size()) {
             holder.more_app_item_img4.setImageDrawable(packageManager.getApplicationIcon(mList.get(position).applicationInfo));
             int finalPosition3 = position;
             holder.more_app_item_img4.setOnClickListener(new View.OnClickListener() {
@@ -89,7 +89,7 @@ public class MoreAppActivityRvAdapter extends RecyclerView.Adapter<MoreAppActivi
             });
         }
         position = position + 1;
-        if (position <= mList.size()) {
+        if (position < mList.size()) {
             holder.more_app_item_img5.setImageDrawable(packageManager.getApplicationIcon(mList.get(position).applicationInfo));
             int finalPosition4 = position;
             holder.more_app_item_img5.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +100,7 @@ public class MoreAppActivityRvAdapter extends RecyclerView.Adapter<MoreAppActivi
             });
         }
         position = position + 1;
-        if (position <= mList.size() - 1) {
+        if (position < mList.size()) {
             try {
                 holder.more_app_item_img6.setImageDrawable(packageManager.getApplicationIcon(mList.get(position).applicationInfo));
                 int finalPosition5 = position;
