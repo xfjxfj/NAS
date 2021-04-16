@@ -239,7 +239,7 @@ public class MQTTService extends Service {
 								String backupFileName = "备份" + TimeUtils.getNowString() + ".zip";
 								MQTTMsg backupMsg = getBackupMsg(mqttMsg.getFromId());
 								ZipFile zipFile = new ZipFile(backupDirPath + backupFileName);
-								zipFile.addFolder(FileUtils.getFileByPath(PathConfig.PUBLIC));
+								zipFile.addFolder(FileUtils.getFileByPath(PathConfig.PRIVATE));
 								zipFile.addFolder(FileUtils.getFileByPath(PathConfig.PUBLIC));
 								backupMsg.getJsonObject().put("path", backupDirPath + backupFileName);
 								backupMsg.getJsonObject().put("result", true);
