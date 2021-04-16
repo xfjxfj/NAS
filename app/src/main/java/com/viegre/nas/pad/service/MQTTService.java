@@ -13,6 +13,7 @@ import android.os.SystemClock;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.blankj.utilcode.constant.TimeConstants;
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -37,8 +38,10 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
@@ -406,7 +409,10 @@ public class MQTTService extends Service {
 		jsonObject.put("fromId", PhoneUtils.getSerial());
 		jsonObject.put("toId", toId);
 		jsonObject.put("timestamp", System.currentTimeMillis());
-		jsonObject.put("result", true);
+		jsonObject.put("days",
+		               TimeUtils.getTimeSpan(System.currentTimeMillis(),
+		                                     TimeUtils.string2Millis("20210401", new SimpleDateFormat("yyyyMMdd", Locale.getDefault())),
+		                                     TimeConstants.DAY));
 		return new MQTTMsg(toId, jsonObject);
 	}
 
