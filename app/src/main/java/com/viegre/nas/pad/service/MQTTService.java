@@ -285,8 +285,8 @@ public class MQTTService extends Service {
 
 					//ftp复制
 					case MQTTMsg.MSG_FTP_COPY:
-						String sourceFilePath = JSON.parseObject(mqttMsg.getParam()).getString("sourceFilePath");
-						String targetFilePath = JSON.parseObject(mqttMsg.getParam()).getString("targetFilePath");
+						String sourceFilePath = JSON.parseObject(mqttMsg.getParam()).getString("from");
+						String targetFilePath = JSON.parseObject(mqttMsg.getParam()).getString("to");
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
 							@Override
 							public Boolean doInBackground() {
