@@ -1,6 +1,7 @@
 package com.viegre.nas.pad.entity;
 
 import com.alibaba.fastjson.JSONObject;
+import com.blankj.utilcode.util.PhoneUtils;
 
 /**
  * Created by レインマン on 2021/04/12 14:07 with Android Studio.
@@ -20,33 +21,20 @@ public class MQTTMsg {
 	public final static String MSG_REBOOT = "reboot";//重启
 
 	private String msgType;
-	private String msg;
+	private String action;
 	private String fromId;
 	private String toId;
-	private long timestamp;
-	private String path;
-	private JSONObject jsonObject;
+	private long timeStamp;
+	private JSONObject param = new JSONObject();
 
 	public MQTTMsg() {}
 
-	public MQTTMsg(String toId, JSONObject jsonObject) {
-		this.toId = toId;
-		this.jsonObject = jsonObject;
-	}
-
-	public MQTTMsg(String msgType, String msg, String fromId, String toId, long timestamp) {
+	public MQTTMsg(String msgType, String action, String toId) {
 		this.msgType = msgType;
-		this.msg = msg;
-		this.fromId = fromId;
+		this.action = action;
+		this.fromId = PhoneUtils.getSerial();
 		this.toId = toId;
-		this.timestamp = timestamp;
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msgType", msgType);
-		jsonObject.put("msg", msg);
-		jsonObject.put("fromId", fromId);
-		jsonObject.put("toId", toId);
-		jsonObject.put("timestamp", timestamp);
-		this.jsonObject = jsonObject;
+		this.timeStamp = System.currentTimeMillis();
 	}
 
 	public String getMsgType() {
@@ -57,12 +45,12 @@ public class MQTTMsg {
 		this.msgType = msgType;
 	}
 
-	public String getMsg() {
-		return msg;
+	public String getAction() {
+		return action;
 	}
 
-	public void setMsg(String msg) {
-		this.msg = msg;
+	public void setAction(String action) {
+		this.action = action;
 	}
 
 	public String getFromId() {
@@ -81,23 +69,19 @@ public class MQTTMsg {
 		this.toId = toId;
 	}
 
-	public long getTimestamp() {
-		return timestamp;
+	public long getTimeStamp() {
+		return timeStamp;
 	}
 
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
+	public void setTimeStamp(long timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 
-	public String getPath() {
-		return path;
+	public JSONObject getParam() {
+		return param;
 	}
 
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public JSONObject getJsonObject() {
-		return jsonObject;
+	public void setParam(JSONObject param) {
+		this.param = param;
 	}
 }

@@ -166,7 +166,7 @@ public class MQTTService extends Service {
 	 */
 	public void sendMQTTMsg(MQTTMsg mqttMsg) {
 		MqttMessage mqttMessage = new MqttMessage();
-		mqttMessage.setPayload(mqttMsg.getJsonObject().toJSONString().getBytes());//设置消息内容
+		mqttMessage.setPayload(JSON.toJSONString(mqttMessage).getBytes());//设置消息内容
 		mqttMessage.setQos(2);//设置消息发送质量，可为0,1,2.
 		mqttMessage.setRetained(false);//服务器是否保存最后一条消息，若保存，client再次上线时，将再次受到上次发送的最后一条消息。
 		try {
@@ -180,7 +180,7 @@ public class MQTTService extends Service {
 		MQTTMsg mqttMsg = JSON.parseObject(message, MQTTMsg.class);
 		switch (mqttMsg.getMsgType()) {
 			case MQTTMsg.TYPE_NOTIFY:
-				switch (mqttMsg.getMsg()) {
+				switch (mqttMsg.getAction()) {
 					//设备信息
 					case MQTTMsg.MSG_DEVICE_INFO:
 						sendMQTTMsg(getDeviceInfo(mqttMsg.getFromId()));
@@ -197,7 +197,7 @@ public class MQTTService extends Service {
 				break;
 
 			case MQTTMsg.TYPE_CMD:
-				switch (mqttMsg.getMsg()) {
+				switch (mqttMsg.getAction()) {
 					//磁盘整理
 					case MQTTMsg.MSG_DISK_DEFRAGMENT:
 						ViewUtils.runOnUiThreadDelayed(() -> sendMQTTMsg(diskDefragment(mqttMsg.getFromId())), getRandomNum(10, 20) * 1000L);
@@ -208,10 +208,10 @@ public class MQTTService extends Service {
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<MQTTMsg>() {
 							@Override
 							public MQTTMsg doInBackground() throws ZipException {
-								String restoreFilePath = mqttMsg.getPath();
+								String restoreFilePath = mqttMsg.getParam().getString("path");
 								MQTTMsg restoreMsg = getRestoreMsg(mqttMsg.getFromId());
 								new ZipFile(restoreFilePath).extractAll(PathConfig.NAS);
-								restoreMsg.getJsonObject().put("result", true);
+								restoreMsg.getParam().put("result", true);
 								return restoreMsg;
 							}
 
@@ -219,7 +219,7 @@ public class MQTTService extends Service {
 							public void onFail(Throwable t) {
 								super.onFail(t);
 								MQTTMsg restoreMsg = getRestoreMsg(mqttMsg.getFromId());
-								restoreMsg.getJsonObject().put("result", false);
+								restoreMsg.getParam().put("result", false);
 								sendMQTTMsg(restoreMsg);
 							}
 
@@ -235,14 +235,15 @@ public class MQTTService extends Service {
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<MQTTMsg>() {
 							@Override
 							public MQTTMsg doInBackground() throws ZipException {
-								String backupDirPath = mqttMsg.getPath();
-								String backupFileName = "备份" + TimeUtils.getNowString() + ".zip";
+								String backupDirPath = mqttMsg.getParam().getString("path");
+								String backupFileName = "备份" + TimeUtils.getNowString(new SimpleDateFormat("yyyyMMddHHmmss",
+								                                                                           Locale.getDefault())) + ".zip";
 								MQTTMsg backupMsg = getBackupMsg(mqttMsg.getFromId());
 								ZipFile zipFile = new ZipFile(backupDirPath + backupFileName);
 								zipFile.addFolder(FileUtils.getFileByPath(PathConfig.PRIVATE));
 								zipFile.addFolder(FileUtils.getFileByPath(PathConfig.PUBLIC));
-								backupMsg.getJsonObject().put("path", backupDirPath + backupFileName);
-								backupMsg.getJsonObject().put("result", true);
+								backupMsg.getParam().put("path", backupDirPath + backupFileName);
+								backupMsg.getParam().put("result", true);
 								return backupMsg;
 							}
 
@@ -250,7 +251,7 @@ public class MQTTService extends Service {
 							public void onFail(Throwable t) {
 								super.onFail(t);
 								MQTTMsg backupMsg = getBackupMsg(mqttMsg.getFromId());
-								backupMsg.getJsonObject().put("result", false);
+								backupMsg.getParam().put("result", false);
 								sendMQTTMsg(backupMsg);
 							}
 
@@ -293,27 +294,22 @@ public class MQTTService extends Service {
 	 * @return
 	 */
 	private MQTTMsg getDeviceInfo(String toId) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msgType", MQTTMsg.TYPE_NOTIFY);
-		jsonObject.put("msg", MQTTMsg.MSG_DEVICE_INFO);
-		jsonObject.put("fromId", PhoneUtils.getSerial());
-		jsonObject.put("toId", toId);
-		jsonObject.put("timestamp", System.currentTimeMillis());
-		jsonObject.put("name", "模拟器");
-		jsonObject.put("mac", DeviceUtils.getMacAddress());
-		jsonObject.put("ip", NetworkUtils.getIPAddress(true));
-		jsonObject.put("cpu", "Cortex-A53 8核 1.5GHz");
+		MQTTMsg mqttMsg = new MQTTMsg(MQTTMsg.TYPE_NOTIFY, MQTTMsg.MSG_DEVICE_INFO, toId);
+		mqttMsg.getParam().put("name", "模拟器");
+		mqttMsg.getParam().put("mac", DeviceUtils.getMacAddress());
+		mqttMsg.getParam().put("ip", NetworkUtils.getIPAddress(true));
+		mqttMsg.getParam().put("cpu", "Cortex-A53 8核 1.5GHz");
 		ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 		ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
 		activityManager.getMemoryInfo(memoryInfo);
-		jsonObject.put("ram", memoryInfo.totalMem);
-		jsonObject.put("status", "正常");
-		jsonObject.put("runningTime", SystemClock.elapsedRealtime());
-		jsonObject.put("driveSn", "");
-		jsonObject.put("driveStatus", "");
-		jsonObject.put("driveModel", "");
-		jsonObject.put("driveCapacity", "");
-		return new MQTTMsg(toId, jsonObject);
+		mqttMsg.getParam().put("ram", memoryInfo.totalMem);
+		mqttMsg.getParam().put("status", "正常");
+		mqttMsg.getParam().put("runningTime", SystemClock.elapsedRealtime());
+		mqttMsg.getParam().put("driveSn", "");
+		mqttMsg.getParam().put("driveStatus", "");
+		mqttMsg.getParam().put("driveModel", "");
+		mqttMsg.getParam().put("driveCapacity", "");
+		return mqttMsg;
 	}
 
 	/**
@@ -323,14 +319,9 @@ public class MQTTService extends Service {
 	 * @return
 	 */
 	private MQTTMsg getStorageInfo(String toId) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msgType", MQTTMsg.TYPE_NOTIFY);
-		jsonObject.put("msg", MQTTMsg.MSG_STORAGE_INFO);
-		jsonObject.put("fromId", PhoneUtils.getSerial());
-		jsonObject.put("toId", toId);
-		jsonObject.put("timestamp", System.currentTimeMillis());
-		jsonObject.put("total", FileUtils.getFsTotalSize(PathConfig.NAS));
-		jsonObject.put("publicUsed", getDirLength(FileUtils.getFileByPath(PathConfig.PUBLIC)));
+		MQTTMsg mqttMsg = new MQTTMsg(MQTTMsg.TYPE_NOTIFY, MQTTMsg.MSG_STORAGE_INFO, toId);
+		mqttMsg.getParam().put("total", FileUtils.getFsTotalSize(PathConfig.NAS));
+		mqttMsg.getParam().put("publicUsed", getDirLength(FileUtils.getFileByPath(PathConfig.PUBLIC)));
 		List<File> privateDirList = FileUtils.listFilesInDir(PathConfig.PRIVATE);
 		if (!privateDirList.isEmpty()) {
 			Map<String, Object> privateDirMap = new HashMap<>();
@@ -341,10 +332,10 @@ public class MQTTService extends Service {
 			}
 			if (!privateDirMap.isEmpty()) {
 				JSONObject privateDirJson = new JSONObject(privateDirMap);
-				jsonObject.put("privateUsed", privateDirJson.toJSONString());
+				mqttMsg.getParam().put("privateUsed", privateDirJson.toJSONString());
 			}
 		}
-		return new MQTTMsg(toId, jsonObject);
+		return mqttMsg;
 	}
 
 	/**
@@ -354,14 +345,9 @@ public class MQTTService extends Service {
 	 * @return
 	 */
 	private MQTTMsg diskDefragment(String toId) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msgType", MQTTMsg.TYPE_CMD);
-		jsonObject.put("msg", MQTTMsg.MSG_DISK_DEFRAGMENT);
-		jsonObject.put("fromId", PhoneUtils.getSerial());
-		jsonObject.put("toId", toId);
-		jsonObject.put("timestamp", System.currentTimeMillis());
-		jsonObject.put("result", true);
-		return new MQTTMsg(toId, jsonObject);
+		MQTTMsg mqttMsg = new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_DISK_DEFRAGMENT, toId);
+		mqttMsg.getParam().put("result", true);
+		return mqttMsg;
 	}
 
 	/**
@@ -371,13 +357,7 @@ public class MQTTService extends Service {
 	 * @return
 	 */
 	private MQTTMsg getRestoreMsg(String toId) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msgType", MQTTMsg.TYPE_CMD);
-		jsonObject.put("msg", MQTTMsg.MSG_RESTORE);
-		jsonObject.put("fromId", PhoneUtils.getSerial());
-		jsonObject.put("toId", toId);
-		jsonObject.put("timestamp", System.currentTimeMillis());
-		return new MQTTMsg(toId, jsonObject);
+		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_RESTORE, toId);
 	}
 
 	/**
@@ -387,13 +367,7 @@ public class MQTTService extends Service {
 	 * @return
 	 */
 	private MQTTMsg getBackupMsg(String toId) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msgType", MQTTMsg.TYPE_CMD);
-		jsonObject.put("msg", MQTTMsg.MSG_BACKUP);
-		jsonObject.put("fromId", PhoneUtils.getSerial());
-		jsonObject.put("toId", toId);
-		jsonObject.put("timestamp", System.currentTimeMillis());
-		return new MQTTMsg(toId, jsonObject);
+		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_BACKUP, toId);
 	}
 
 	/**
@@ -403,17 +377,13 @@ public class MQTTService extends Service {
 	 * @return
 	 */
 	private MQTTMsg lifeTest(String toId) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msgType", MQTTMsg.TYPE_CMD);
-		jsonObject.put("msg", MQTTMsg.MSG_LIFE_TEST);
-		jsonObject.put("fromId", PhoneUtils.getSerial());
-		jsonObject.put("toId", toId);
-		jsonObject.put("timestamp", System.currentTimeMillis());
-		jsonObject.put("days",
-		               TimeUtils.getTimeSpan(System.currentTimeMillis(),
-		                                     TimeUtils.string2Millis("20210401", new SimpleDateFormat("yyyyMMdd", Locale.getDefault())),
-		                                     TimeConstants.DAY));
-		return new MQTTMsg(toId, jsonObject);
+		MQTTMsg mqttMsg = new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_LIFE_TEST, toId);
+		mqttMsg.getParam()
+		       .put("days",
+		            TimeUtils.getTimeSpan(System.currentTimeMillis(),
+		                                  TimeUtils.string2Millis("20210401", new SimpleDateFormat("yyyyMMdd", Locale.getDefault())),
+		                                  TimeConstants.DAY));
+		return mqttMsg;
 	}
 
 	/**
@@ -423,14 +393,9 @@ public class MQTTService extends Service {
 	 * @return
 	 */
 	private MQTTMsg shutDown(String toId) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msgType", MQTTMsg.TYPE_CMD);
-		jsonObject.put("msg", MQTTMsg.MSG_SHUT_DOWN);
-		jsonObject.put("fromId", PhoneUtils.getSerial());
-		jsonObject.put("toId", toId);
-		jsonObject.put("timestamp", System.currentTimeMillis());
-		jsonObject.put("result", true);
-		return new MQTTMsg(toId, jsonObject);
+		MQTTMsg mqttMsg = new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_SHUT_DOWN, toId);
+		mqttMsg.getParam().put("result", true);
+		return mqttMsg;
 	}
 
 	/**
@@ -440,14 +405,9 @@ public class MQTTService extends Service {
 	 * @return
 	 */
 	private MQTTMsg reboot(String toId) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msgType", MQTTMsg.TYPE_CMD);
-		jsonObject.put("msg", MQTTMsg.MSG_REBOOT);
-		jsonObject.put("fromId", PhoneUtils.getSerial());
-		jsonObject.put("toId", toId);
-		jsonObject.put("timestamp", System.currentTimeMillis());
-		jsonObject.put("result", true);
-		return new MQTTMsg(toId, jsonObject);
+		MQTTMsg mqttMsg = new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_REBOOT, toId);
+		mqttMsg.getParam().put("result", true);
+		return mqttMsg;
 	}
 
 	/**
