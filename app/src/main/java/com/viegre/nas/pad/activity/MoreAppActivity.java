@@ -27,7 +27,7 @@ public class MoreAppActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         setContentView(R.layout.more_app_activity_rv);
+        setContentView(R.layout.more_app_activity_rv);
         hideBottomUIMenu();
         initView();
         initAdapter();
@@ -76,6 +76,7 @@ public class MoreAppActivity extends AppCompatActivity {
         }
         return apps;
     }
+
     /**
      * 隐藏虚拟按键，并且全屏
      */
