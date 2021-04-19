@@ -1,6 +1,5 @@
 package com.viegre.nas.pad.entity;
 
-import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.PhoneUtils;
 
 /**
@@ -19,13 +18,15 @@ public class MQTTMsg {
 	public final static String MSG_LIFE_TEST = "lifeTest";//使用寿命检测
 	public final static String MSG_SHUT_DOWN = "shutDown";//关机
 	public final static String MSG_REBOOT = "reboot";//重启
+	public final static String MSG_FTP_COPY = "ftpCopy";//ftp复制
+	public final static String MSG_FTP_DELETE = "ftpDelete";//ftp删除
 
 	private String msgType;
 	private String action;
 	private String fromId;
 	private String toId;
 	private long timeStamp;
-	private JSONObject param = new JSONObject();
+	private String param;
 
 	public MQTTMsg() {}
 
@@ -35,6 +36,15 @@ public class MQTTMsg {
 		this.fromId = PhoneUtils.getSerial();
 		this.toId = toId;
 		this.timeStamp = System.currentTimeMillis();
+	}
+
+	public MQTTMsg(String msgType, String action, String toId, String param) {
+		this.msgType = msgType;
+		this.action = action;
+		this.fromId = PhoneUtils.getSerial();
+		this.toId = toId;
+		this.timeStamp = System.currentTimeMillis();
+		this.param = param;
 	}
 
 	public String getMsgType() {
@@ -77,11 +87,11 @@ public class MQTTMsg {
 		this.timeStamp = timeStamp;
 	}
 
-	public JSONObject getParam() {
+	public String getParam() {
 		return param;
 	}
 
-	public void setParam(JSONObject param) {
+	public void setParam(String param) {
 		this.param = param;
 	}
 }
