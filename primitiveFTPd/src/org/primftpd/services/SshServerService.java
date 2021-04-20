@@ -1,6 +1,11 @@
 package org.primftpd.services;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Looper;
 import android.widget.Toast;
 
@@ -47,13 +52,21 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.core.app.NotificationCompat;
 import eu.chainfire.libsuperuser.Shell;
 
 /**
  * Implements a SSH server. Intended to be used for sftp.
  */
 public class SshServerService extends AbstractServerService {
+
 	private SshServer sshServer;
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		initNotificationChannel();
+	}
 
 	@Override
 	protected ServerServiceHandler createServiceHandler(Looper serviceLooper, AbstractServerService service) {
@@ -245,5 +258,15 @@ public class SshServerService extends AbstractServerService {
 			}
 		}
 		return keyPairList;
+	}
+
+	private void initNotificationChannel() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			String CHANNEL_ID = "nas_channel_ftp_ssh";
+			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT);
+			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("").setContentText("").build();
+			startForeground(1, notification);
+		}
 	}
 }
