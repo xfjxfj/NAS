@@ -1,5 +1,6 @@
 package com.viegre.nas.pad.activity;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.ActivityUtils;
@@ -115,6 +117,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     private void initClick() {
         mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
+        mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
     }
 
     private void initIcon() {
@@ -224,6 +227,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         tryGetUsbPermission();
     }
 
+    @SuppressLint("WrongConstant")
     private void tryGetUsbPermission() {
         mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 

@@ -2,6 +2,7 @@ package com.djangoogle.framework.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +27,8 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		BarUtils.setNavBarVisibility(this, false);
 		super.onCreate(savedInstanceState);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);//隐藏状态栏
+
 		mActivity = this;
 		Type superClass = getClass().getGenericSuperclass();
 		if (null == superClass) {

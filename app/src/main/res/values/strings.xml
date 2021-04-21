@@ -1,180 +1,186 @@
 <resources>
-	<string name="app_name">Viegre NAS Pad</string>
+    <string name="app_name">Viegre NAS Pad</string>
 
-	<!--通用-->
-	<string name="confirm">确定</string>
-	<string name="cancel">取消</string>
-	<string name="unknown">未知</string>
+    <!--通用-->
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
+    <string name="unknown">未知</string>
 
-	<!--启动页-->
-	<string name="splash_guide_skip">跳过 </string>
+    <!--启动页-->
+    <string name="splash_guide_skip">跳过 </string>
 
-	<!--登录-->
-	<string name="login">登录</string>
-	<string name="login_scan">扫码登录</string>
-	<string name="login_account">账号密码登录</string>
-	<string name="login_phone_code">手机验证码登录</string>
-	<string name="login_tip">打开巍格智能NAS App - 首页右上角“扫一扫” - 扫码登录</string>
-	<string name="login_enter_phone">请输入手机号码</string>
-	<string name="login_enter_password">请输入密码</string>
-	<string name="login_enter_code">请输入验证码</string>
-	<string name="login_get_code">获取验证码</string>
-	<string name="login_please_input_phone_number">请输入手机号</string>
-	<string name="login_phone_error">手机号码输入有误（校验是否输入为11位数字）</string>
-	<string name="login_please_input_password">请输入密码（校验密码长度8–30位，密码复杂度数字+字母）</string>
-	<string name="login_please_input_code">请输入验证码</string>
-	<string name="login_code_error">验证码错误（4位验证码）</string>
-	<string name="login_account_does_not_exist">手机账户不存在，请先注册（账户不存在）</string>
-	<string name="login_password_error">密码错误</string>
-	<string name="login_login_time_title">请选择本次登录的有效时间</string>
-	<string name="login_login_time_2_hours">2小时</string>
-	<string name="login_login_time_24_hours">24小时</string>
-	<string name="login_login_time_a_week">一周</string>
-	<string name="login_login_time_permanent">永久</string>
-	<string name="login_login_time_custom">自定义</string>
-	<string name="login_login_time_custom_time">自定义时间</string>
-	<string name="login_login_time_hour">小时</string>
+    <!--登录-->
+    <string name="login">登录</string>
+    <string name="login_scan">扫码登录</string>
+    <string name="login_account">账号密码登录</string>
+    <string name="login_phone_code">手机验证码登录</string>
+    <string name="login_tip">打开巍格智能NAS App - 首页右上角“扫一扫” - 扫码登录</string>
+    <string name="login_enter_phone">请输入手机号码</string>
+    <string name="login_enter_password">请输入密码</string>
+    <string name="login_enter_code">请输入验证码</string>
+    <string name="login_get_code">获取验证码</string>
+    <string name="login_please_input_phone_number">请输入手机号</string>
+    <string name="login_phone_error">手机号码输入有误（校验是否输入为11位数字）</string>
+    <string name="login_please_input_password">请输入密码（校验密码长度8–30位，密码复杂度数字+字母）</string>
+    <string name="login_please_input_code">请输入验证码</string>
+    <string name="login_code_error">验证码错误（4位验证码）</string>
+    <string name="login_account_does_not_exist">手机账户不存在，请先注册（账户不存在）</string>
+    <string name="login_password_error">密码错误</string>
+    <string name="login_login_time_title">请选择本次登录的有效时间</string>
+    <string name="login_login_time_2_hours">2小时</string>
+    <string name="login_login_time_24_hours">24小时</string>
+    <string name="login_login_time_a_week">一周</string>
+    <string name="login_login_time_permanent">永久</string>
+    <string name="login_login_time_custom">自定义</string>
+    <string name="login_login_time_custom_time">自定义时间</string>
+    <string name="login_login_time_hour">小时</string>
 
-	<!--首页-->
-	<string name="main_click_to_login">未登录请点击登录</string>
-	<string name="main_usb_drive_not_connected">未连接存储设备</string>
+    <!--首页-->
+    <string name="main_click_to_login">未登录请点击登录</string>
+    <string name="main_usb_drive_not_connected">未连接存储设备</string>
 
-	<!--天气-->
-	<string name="weather_sunny">晴</string>
-	<string name="weather_night">夜</string>
-	<string name="weather_sunny_to_cloudy">晴转多云</string>
-	<string name="weather_cloudy">阴</string>
-	<string name="weather_partly_cloudy">多云</string>
-	<string name="weather_thundershower">雷阵雨</string>
-	<string name="weather_light_rain">小雨|细雨|毛毛雨</string>
-	<string name="weather_moderate_rain">中雨</string>
-	<string name="weather_heavy_rain">大雨</string>
-	<string name="weather_rainstorm">暴雨|大暴雨|特大暴雨</string>
-	<string name="weather_light_snow">小雪|阵雪</string>
-	<string name="weather_moderate_snow">中雪</string>
-	<string name="weather_heavy_snow">大雪</string>
-	<string name="weather_blizzard">暴雪</string>
-	<string name="weather_sleet">雨夹雪|阵雨夹雪</string>
-	<string name="weather_hail">冰雹</string>
-	<string name="weather_freezing_rain">冻雨</string>
-	<string name="weather_fog">雾|轻雾</string>
-	<string name="weather_heavy_fog">大雾|强浓雾|浓雾|特强浓雾</string>
-	<string name="weather_frost">霜</string>
-	<string name="weather_smog">雾霾|中度霾|重度霾|严重霾</string>
-	<string name="weather_breeze">有风|微风|平静|和风</string>
-	<string name="weather_gale">强风|劲风|疾风|大风|烈风</string>
-	<string name="weather_storm">风暴|狂风暴|飓风|热带风暴</string>
-	<string name="weather_typhoon">台风</string>
-	<string name="weather_floating_dust">浮尘|扬沙</string>
-	<string name="weather_sandstorm">沙尘暴|强沙尘暴</string>
-	<string name="weather_tornado">龙卷风</string>
-	<string name="weather_unknown">未知</string>
-	<string name="weather_unknown_temperature">\?°</string>
-	<string name="weather_temperature">°</string>
+    <!--天气-->
+    <string name="weather_sunny">晴</string>
+    <string name="weather_night">夜</string>
+    <string name="weather_sunny_to_cloudy">晴转多云</string>
+    <string name="weather_cloudy">阴</string>
+    <string name="weather_partly_cloudy">多云</string>
+    <string name="weather_thundershower">雷阵雨</string>
+    <string name="weather_light_rain">小雨|细雨|毛毛雨</string>
+    <string name="weather_moderate_rain">中雨</string>
+    <string name="weather_heavy_rain">大雨</string>
+    <string name="weather_rainstorm">暴雨|大暴雨|特大暴雨</string>
+    <string name="weather_light_snow">小雪|阵雪</string>
+    <string name="weather_moderate_snow">中雪</string>
+    <string name="weather_heavy_snow">大雪</string>
+    <string name="weather_blizzard">暴雪</string>
+    <string name="weather_sleet">雨夹雪|阵雨夹雪</string>
+    <string name="weather_hail">冰雹</string>
+    <string name="weather_freezing_rain">冻雨</string>
+    <string name="weather_fog">雾|轻雾</string>
+    <string name="weather_heavy_fog">大雾|强浓雾|浓雾|特强浓雾</string>
+    <string name="weather_frost">霜</string>
+    <string name="weather_smog">雾霾|中度霾|重度霾|严重霾</string>
+    <string name="weather_breeze">有风|微风|平静|和风</string>
+    <string name="weather_gale">强风|劲风|疾风|大风|烈风</string>
+    <string name="weather_storm">风暴|狂风暴|飓风|热带风暴</string>
+    <string name="weather_typhoon">台风</string>
+    <string name="weather_floating_dust">浮尘|扬沙</string>
+    <string name="weather_sandstorm">沙尘暴|强沙尘暴</string>
+    <string name="weather_tornado">龙卷风</string>
+    <string name="weather_unknown">未知</string>
+    <string name="weather_unknown_temperature">\?°</string>
+    <string name="weather_temperature">°</string>
 
-	<!--设置-->
-	<string name="settings">设置</string>
-	<string name="settings_view_after_login">登录后查看</string>
-	<string name="settings_logout_confirmation">注销确认</string>
-	<string name="settings_logout_confirmation_content">是否要退出当前登录</string>
-	<string name="settings_currently_login_account">当前登录账户</string>
-	<string name="settings_my_device">我的设备</string>
-	<string name="settings_network">网络设置</string>
-	<string name="settings_auto_answer">自动接听设置</string>
-	<string name="settings_screen">屏幕</string>
-	<string name="settings_intelligent_voice">智能语音设置</string>
-	<string name="settings_time">时间</string>
-	<string name="settings_sound">声音</string>
-	<string name="settings_protocol">协议</string>
-	<string name="settings_instructions">操作说明</string>
-	<string name="settings_about_viegre">关于巍格</string>
+    <!--设置-->
+    <string name="settings">设置</string>
+    <string name="settings_view_after_login">登录后查看</string>
+    <string name="settings_logout_confirmation">注销确认</string>
+    <string name="settings_logout_confirmation_content">是否要退出当前登录</string>
+    <string name="settings_currently_login_account">当前登录账户</string>
+    <string name="settings_my_device">我的设备</string>
+    <string name="settings_network">网络设置</string>
+    <string name="settings_auto_answer">自动接听设置</string>
+    <string name="settings_screen">屏幕</string>
+    <string name="settings_intelligent_voice">智能语音设置</string>
+    <string name="settings_time">时间</string>
+    <string name="settings_sound">声音</string>
+    <string name="settings_protocol">协议</string>
+    <string name="settings_instructions">操作说明</string>
+    <string name="settings_about_viegre">关于巍格</string>
 
-	<!--我的设备-->
-	<string name="my_device_currently_connected_device">当前连接设备</string>
-	<string name="my_device_currently_used">当前使用：%1$s / %2$s</string>
+    <!--我的设备-->
+    <string name="my_device_currently_connected_device">当前连接设备</string>
+    <string name="my_device_currently_used">当前使用：%1$s / %2$s</string>
 
-	<!--网络设置-->
-	<string name="network_settings">网络设置</string>
-	<string name="network_turn_on_wlan">开启WLAN</string>
-	<string name="network_my_network">我的网络</string>
-	<string name="network_other_network">其他网络</string>
-	<string name="network_password">密码</string>
-	<string name="network_please_enter_password">请输入密码</string>
-	<string name="network_password_must_be_greater_than_8_digits">密码必须大于8位</string>
-	<string name="network_saved">已保存</string>
-	<string name="network_connection_failed">连接失败</string>
-	<string name="network_connection_failed_tip">您的NAS设备网络连接失败，请重新连接</string>
-	<string name="network_detail">网络详情</string>
-	<string name="network_ignore_this_network">忽略此网络</string>
-	<string name="network_ignore_network_failed">忽略网络失败</string>
-	<string name="network_info">网络信息</string>
-	<string name="network_status">状态</string>
-	<string name="network_ip_address">IP地址</string>
-	<string name="network_subnet_mask">子网掩码</string>
-	<string name="network_gateway">网关</string>
-	<string name="network_dns">DNS</string>
+    <!--网络设置-->
+    <string name="network_settings">网络设置</string>
+    <string name="network_turn_on_wlan">开启WLAN</string>
+    <string name="network_my_network">我的网络</string>
+    <string name="network_other_network">其他网络</string>
+    <string name="network_password">密码</string>
+    <string name="network_please_enter_password">请输入密码</string>
+    <string name="network_password_must_be_greater_than_8_digits">密码必须大于8位</string>
+    <string name="network_saved">已保存</string>
+    <string name="network_connection_failed">连接失败</string>
+    <string name="network_connection_failed_tip">您的NAS设备网络连接失败，请重新连接</string>
+    <string name="network_detail">网络详情</string>
+    <string name="network_ignore_this_network">忽略此网络</string>
+    <string name="network_ignore_network_failed">忽略网络失败</string>
+    <string name="network_info">网络信息</string>
+    <string name="network_status">状态</string>
+    <string name="network_ip_address">IP地址</string>
+    <string name="network_subnet_mask">子网掩码</string>
+    <string name="network_gateway">网关</string>
+    <string name="network_dns">DNS</string>
 
-	<!--关于巍格-->
-	<string name="about_viegre_version">当前版本V%s</string>
-	<string name="about_viegre_version_check">检查更新</string>
-	<string name="about_viegre_copyright">巍格智能公司版本所有 Copyright © 2021</string>
+    <!--关于巍格-->
+    <string name="about_viegre_version">当前版本V%s</string>
+    <string name="about_viegre_version_check">检查更新</string>
+    <string name="about_viegre_copyright">巍格智能公司版本所有 Copyright © 2021</string>
 
-	<!--声音-->
-	<string name="sound_modulation">音量调节</string>
+    <!--声音-->
+    <string name="sound_modulation">音量调节</string>
 
-	<!--时间-->
-	<string name="time_sync">自动同步网络时间</string>
-	<string name="time_sync_succeed">已同步网络时间</string>
-	<string name="time_sync_failed">同步网络时间失败，请检查网络或稍后重试</string>
-	<string name="time_date">日期</string>
-	<string name="time">时间</string>
-	<string name="time_pick_date">选择日期</string>
-	<string name="time_pick_time">选择时间</string>
+    <!--时间-->
+    <string name="time_sync">自动同步网络时间</string>
+    <string name="time_sync_succeed">已同步网络时间</string>
+    <string name="time_sync_failed">同步网络时间失败，请检查网络或稍后重试</string>
+    <string name="time_date">日期</string>
+    <string name="time">时间</string>
+    <string name="time_pick_date">选择日期</string>
+    <string name="time_pick_time">选择时间</string>
 
-	<!--屏幕-->
-	<string name="screen_standby">屏幕待机</string>
-	<string name="screen_standby_mode">待机模式</string>
-	<string name="screen_enter_standby_time">进入待机时长</string>
-	<string name="screen_misoperation">无操作%d分钟后</string>
-	<string name="screen_standby_image">待机画面</string>
-	<string name="screen_custom_standby_image">自定义待机画面</string>
-	<string name="screen_assign_image">指定画面</string>
-	<string name="screen_public_space_image">公共空间/图片</string>
-	<string name="screen_brightness">屏幕亮度</string>
-	<string name="screen_custom_album_count">%d张</string>
+    <!--屏幕-->
+    <string name="screen_standby">屏幕待机</string>
+    <string name="screen_standby_mode">待机模式</string>
+    <string name="screen_enter_standby_time">进入待机时长</string>
+    <string name="screen_misoperation">无操作%d分钟后</string>
+    <string name="screen_standby_image">待机画面</string>
+    <string name="screen_custom_standby_image">自定义待机画面</string>
+    <string name="screen_assign_image">指定画面</string>
+    <string name="screen_public_space_image">公共空间/图片</string>
+    <string name="screen_brightness">屏幕亮度</string>
+    <string name="screen_custom_album_count">%d张</string>
 
-	<!--图片-->
-	<string name="image">图片</string>
-	<string name="image_private">私人图片</string>
+    <!--图片-->
+    <string name="image">图片</string>
+    <string name="image_private">私人图片</string>
 
-	<!--音频-->
-	<string name="audio">音频</string>
-	<string name="audio_private">私人音频</string>
+    <!--音频-->
+    <string name="audio">音频</string>
+    <string name="audio_private">私人音频</string>
 
-	<!--视频-->
-	<string name="video">视频</string>
-	<string name="video_private">私人视频</string>
+    <!--视频-->
+    <string name="video">视频</string>
+    <string name="video_private">私人视频</string>
 
-	<!--外部存储-->
-	<string name="external_storage">外部存储%s</string>
-	<string name="external_storage_empty">该目录为空</string>
-	<!--	常用字符串-->
+    <!--外部存储-->
+    <string name="external_storage">外部存储%s</string>
+    <string name="external_storage_empty">该目录为空</string>
+    <!--	常用字符串-->
     <string name="nasSpData">nasSpData</string>
-	<string name="installNumber">installNumber</string>
+    <string name="installNumber">installNumber</string>
 
-	<!--	启动页面-->
-	<string name="hello_first_fragment">Hello first fragment</string>
-	<string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-	<string name="device_bind_QrCode_android">扫描二维码立即下载 安卓版本巍格智能app</string>
-	<string name="device_bind_qrCode_ios">扫描二维码立即下载 IOS版本巍格智能app</string>
-	<string name="device_bind_tips">您好，初次使用NAS设备下载APP进行用户绑定，请扫描上方二 维码进行安装。</string>
-	<string name="welcome_next">跳过</string>
-	<string name="welcome_text1">您好，请打开“巍格智能”APP注册并登录</string>
-	<string name="welcome_nexttext">跳过，下一步</string>
-	<string name="welcome_tips_text">1、手机“设置”-“蓝牙”页面，打开蓝牙开关;\n2、“我的设备”-“设备蓝牙”-“点击连接”； \n3、连接成功后即出现在[我的设备]列表中显示； \n4、返回APP此页面，等待蓝牙设备连接。</string>
-	<string name="welcome_tips_text2">首次绑定NAS可通过蓝牙自动绑定，\n或扫描下方二维码进行绑定。</string>
+    <!--	启动页面-->
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="device_bind_QrCode_android">扫描二维码立即下载 安卓版本巍格智能app</string>
+    <string name="device_bind_qrCode_ios">扫描二维码立即下载 IOS版本巍格智能app</string>
+    <string name="device_bind_tips">您好，初次使用NAS设备下载APP进行用户绑定，请扫描上方二 维码进行安装。</string>
+    <string name="welcome_next">跳过</string>
+    <string name="welcome_text1">您好，请打开“巍格智能”APP注册并登录</string>
+    <string name="welcome_nexttext">跳过，下一步</string>
+    <string name="welcome_tips_text">1、手机“设置”-“蓝牙”页面，打开蓝牙开关;\n2、“我的设备”-“设备蓝牙”-“点击连接”； \n3、连接成功后即出现在[我的设备]列表中显示； \n4、返回APP此页面，等待蓝牙设备连接。</string>
+    <string name="welcome_tips_text2">首次绑定NAS可通过蓝牙自动绑定，\n或扫描下方二维码进行绑定。</string>
 
-	<!--    更多页面-->
-	<string name="more_app_text">更多应用</string>
+    <!--    更多页面-->
+    <string name="more_app_text">更多应用</string>
+    <!--    联系人界面-->
+    <string name="contacts_clean">清除</string>
+    <string name="contacts_record">更多记录</string>
+    <string name="contacts_record_tips">更多NAS设备（添加本品牌其他NAS设备后，即可进行通话）</string>
+    <string name="contacts_record_text">联系人</string>
+    <string name="contacts_record_tips2">已绑定本设备用户</string>
 
 </resources>

@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.MoreAppActivityRvAdapter;
+import com.viegre.nas.pad.util.CommonUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -28,12 +30,14 @@ public class MoreAppActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.more_app_activity_rv);
-        hideBottomUIMenu();
+        CommonUtils.hideBottomUIMenu(this);
         initView();
         initAdapter();
     }
 
     private void initAdapter() {
+
+
         //初始化数据
         mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         //创建适配器，将数据传递给适配器
@@ -77,19 +81,5 @@ public class MoreAppActivity extends AppCompatActivity {
         return apps;
     }
 
-    /**
-     * 隐藏虚拟按键，并且全屏
-     */
-    protected void hideBottomUIMenu() {
-        //隐藏虚拟按键，并且全屏
-        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
-            View v = this.getWindow().getDecorView();
-            v.setSystemUiVisibility(View.GONE);
-        } else if (Build.VERSION.SDK_INT >= 19) {
-            //for new api versions.
-            View decorView = getWindow().getDecorView();
-            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
-            decorView.setSystemUiVisibility(uiOptions);
-        }
-    }
+
 }

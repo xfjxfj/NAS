@@ -25,6 +25,7 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -198,6 +199,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         }
     };
     private ImageView mQRCodeImg;
+    private Button next_3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -251,6 +253,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         Layout2 = findViewById(R.id.Layout2);
         layout3 = findViewById(R.id.Layout3);
         next_to = findViewById(R.id.next_to);
+        next_3 = findViewById(R.id.next_3);
         mQRCodeImg = findViewById(R.id.imageView3);
 
         Layout1.setVisibility(View.VISIBLE);
@@ -303,6 +306,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         Layout1.setVisibility(View.GONE);
         Layout2.setVisibility(View.GONE);
         layout3.setVisibility(View.VISIBLE);
+        next_3.setVisibility(View.VISIBLE);
         runBle();
     }
 

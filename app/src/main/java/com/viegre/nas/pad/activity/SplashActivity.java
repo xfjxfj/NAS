@@ -272,8 +272,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 							@Override
 							public Void doInBackground() {
 								LitePal.saveAll(resourceList);
-								DeviceResourceEntity deviceResourceEntity = LitePal.where("type = 'guideVideo'")
-								                                                   .findFirst(DeviceResourceEntity.class);
+								DeviceResourceEntity deviceResourceEntity = LitePal.where("type = 'guideVideo'").findFirst(DeviceResourceEntity.class);
 								List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
 								if (null != deviceResourceEntity) {
 									String url = deviceResourceEntity.getContent();
@@ -294,6 +293,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 							}
 						});
 					}
+				} else {
+					showGuideData();
 				}
 			}
 		});

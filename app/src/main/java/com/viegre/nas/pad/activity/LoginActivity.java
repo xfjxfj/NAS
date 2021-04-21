@@ -99,7 +99,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		} else if (R.id.actvLoginAccountBtn == view.getId()) {//账号密码登录
 			loginbyAccount();
 		} else if (R.id.acivLoginExit == view.getId()) {//点击退出
-			finish();
+			LoginActivity.this.finish();
 		}
 	}
 
