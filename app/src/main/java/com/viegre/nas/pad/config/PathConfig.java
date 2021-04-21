@@ -20,6 +20,9 @@ public class PathConfig {
 	//公共空间目录
 	public static final String PUBLIC = NAS + "public" + File.separator;
 
+	//回收站目录
+	public static final String RECYCLE_BIN = NAS + ".recycleBin" + File.separator;
+
 //	//图片目录
 //	public static class IMAGE {
 //		private static final String IMAGE = "image";

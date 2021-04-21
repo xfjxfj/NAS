@@ -7,13 +7,11 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
-import android.util.Log;
 import android.view.View;
 
 import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
-import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.ImageUtils;
@@ -81,6 +79,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		ifDevices();
 //		grantPermission();
 	}
+
 	/**
 	 * xfj 2021年4月8日
 	 * 判断设备是否绑定设备
@@ -91,7 +90,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		int nb = sharedPreferences.getInt(getString(R.string.installNumber), 0);
 //        * 等于0说明是第一次进来 跳转到引导页面 然后添加sp数据
 		if (nb == 0) {
-//		if (true) {
+//		if (false) {
 			sharedPreferences.edit().putInt(getString(R.string.installNumber), 1).commit();
 			startActivity(new Intent(SplashActivity.this, WelcomeActivity.class));
 			finish();
@@ -99,6 +98,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 			grantPermission();//如果不是第一次进入 执行原有逻辑
 		}
 	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -174,6 +174,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 //				FileUtils.createOrExistsDir(PathConfig.VIDEO.PRI);
 //				FileUtils.createOrExistsDir(PathConfig.VIDEO.PUB);
 				FileUtils.createOrExistsDir(PathConfig.GUIDE_RESOURCE);
+				FileUtils.createOrExistsDir(PathConfig.RECYCLE_BIN);
 				return null;
 			}
 

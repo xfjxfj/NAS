@@ -24,7 +24,9 @@ import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.Utils;
 import com.blankj.utilcode.util.ViewUtils;
 import com.viegre.nas.pad.config.PathConfig;
+import com.viegre.nas.pad.entity.FtpCmdEntity;
 import com.viegre.nas.pad.entity.MQTTMsg;
+import com.viegre.nas.pad.entity.RecycleBinEntity;
 
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -36,6 +38,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.litepal.LitePal;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -285,18 +288,23 @@ public class MQTTService extends Service {
 
 					//ftp复制
 					case MQTTMsg.MSG_FTP_COPY:
-						String sourceFilePath = JSON.parseObject(mqttMsg.getParam()).getString("from");
-						String targetFilePath = JSON.parseObject(mqttMsg.getParam()).getString("to");
+						String destPath = JSON.parseObject(mqttMsg.getParam()).getString("destPath");
+						List<FtpCmdEntity> srcPathList = JSON.parseObject(mqttMsg.getParam())
+						                                     .getJSONArray("srcPathList")
+						                                     .toJavaList(FtpCmdEntity.class);
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
 							@Override
 							public Boolean doInBackground() {
-								if (!FileUtils.isFileExists(sourceFilePath) || !FileUtils.isFileExists(targetFilePath)) {
+								if (!FileUtils.isFileExists(destPath) || !FileUtils.isDir(destPath)) {
 									return false;
 								}
-								if (!FileUtils.isDir(targetFilePath)) {
-									return false;
+								for (FtpCmdEntity ftpCmdEntity : srcPathList) {
+									if (!FileUtils.isFileExists(ftpCmdEntity.getPath())) {
+										continue;
+									}
+									FileUtils.copy(ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
 								}
-								return FileUtils.copy(sourceFilePath, targetFilePath + FileUtils.getFileName(sourceFilePath));
+								return true;
 							}
 
 							@Override
@@ -312,11 +320,38 @@ public class MQTTService extends Service {
 
 					//ftp删除
 					case MQTTMsg.MSG_FTP_DELETE:
-						String deleteFilePath = JSON.parseObject(mqttMsg.getParam()).getString("path");
+						List<FtpCmdEntity> delPathList = JSON.parseObject(mqttMsg.getParam())
+						                                     .getJSONArray("delPathList")
+						                                     .toJavaList(FtpCmdEntity.class);
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
 							@Override
 							public Boolean doInBackground() {
-								return FileUtils.delete(deleteFilePath);
+								for (FtpCmdEntity ftpCmdEntity : delPathList) {
+									File deleteFile = FileUtils.getFileByPath(ftpCmdEntity.getPath());
+									if (!FileUtils.isFileExists(deleteFile)) {
+										continue;
+									}
+									SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+									String deleteTime = TimeUtils.getNowString(sdf);
+									String createTime = TimeUtils.millis2String(FileUtils.getFileLastModified(deleteFile), sdf);
+									String type;
+									if (ftpCmdEntity.getPath().startsWith(PathConfig.PRIVATE)) {
+										type = "private";
+									} else if (ftpCmdEntity.getPath().startsWith(PathConfig.PUBLIC)) {
+										type = "public";
+									} else {
+										type = "unknown";
+									}
+									RecycleBinEntity recycleBinEntity = new RecycleBinEntity(deleteTime,
+									                                                         createTime,
+									                                                         type,
+									                                                         ftpCmdEntity.getPath(),
+									                                                         PathConfig.RECYCLE_BIN + FileUtils.getFileName(
+											                                                         ftpCmdEntity.getPath()));
+									FileUtils.move(recycleBinEntity.getPathBeforeDelete(), recycleBinEntity.getPathAfterDelete());
+									recycleBinEntity.save();
+								}
+								return true;
 							}
 
 							@Override
@@ -326,6 +361,101 @@ public class MQTTService extends Service {
 								MQTTMsg ftpDeleteMsg = ftpDelete(mqttMsg.getFromId());
 								ftpDeleteMsg.setParam(new JSONObject(ftpDeleteParamMap).toJSONString());
 								sendMQTTMsg(ftpDeleteMsg);
+							}
+						});
+						break;
+
+					//ftp删除列表
+					case MQTTMsg.MSG_FTP_DELETE_LIST:
+						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<RecycleBinEntity>>() {
+							@Override
+							public List<RecycleBinEntity> doInBackground() {
+								return LitePal.findAll(RecycleBinEntity.class);
+							}
+
+							@Override
+							public void onSuccess(List<RecycleBinEntity> result) {
+								Map<String, Object> ftpDeleteListMap = new HashMap<>();
+								ftpDeleteListMap.put("delPathList", result);
+								MQTTMsg ftpDeleteListMsg = ftpDeleteList(mqttMsg.getFromId());
+								ftpDeleteListMsg.setParam(new JSONObject(ftpDeleteListMap).toJSONString());
+								sendMQTTMsg(ftpDeleteListMsg);
+							}
+						});
+						break;
+
+					//ftp还原列表
+					case MQTTMsg.MSG_FTP_RESTORE_LIST:
+						List<FtpCmdEntity> rstPathList = JSON.parseObject(mqttMsg.getParam())
+						                                     .getJSONArray("rstPathList")
+						                                     .toJavaList(FtpCmdEntity.class);
+						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
+							@Override
+							public Boolean doInBackground() {
+								if (rstPathList.isEmpty()) {
+									return false;
+								}
+								for (FtpCmdEntity ftpCmdEntity : rstPathList) {
+									RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ", ftpCmdEntity.getPath())
+									                                           .findFirst(RecycleBinEntity.class);
+									if (null == recycleBinEntity) {
+										continue;
+									}
+									FileUtils.move(recycleBinEntity.getPathAfterDelete(), recycleBinEntity.getPathBeforeDelete());
+									recycleBinEntity.delete();
+								}
+								return true;
+							}
+
+							@Override
+							public void onSuccess(Boolean result) {
+								Map<String, Object> ftpRestoreParamMap = new HashMap<>();
+								ftpRestoreParamMap.put("result", result);
+								MQTTMsg ftpDeleteMsg = ftpRestoreList(mqttMsg.getFromId());
+								ftpDeleteMsg.setParam(new JSONObject(ftpRestoreParamMap).toJSONString());
+								sendMQTTMsg(ftpDeleteMsg);
+							}
+						});
+						break;
+
+					//ftp文件清除
+					case MQTTMsg.MSG_FTP_ERASE:
+						boolean erase = JSON.parseObject(mqttMsg.getParam()).getBoolean("erase");
+						List<FtpCmdEntity> erasePathList = JSON.parseObject(mqttMsg.getParam())
+						                                       .getJSONArray("erasePathList")
+						                                       .toJavaList(FtpCmdEntity.class);
+						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
+							@Override
+							public Boolean doInBackground() {
+								if (erase) {
+									FileUtils.deleteAllInDir(PathConfig.RECYCLE_BIN);
+									return true;
+								}
+								if (!erase) {
+									if (null == erasePathList || erasePathList.isEmpty()) {
+										return false;
+									} else {
+										for (FtpCmdEntity ftpCmdEntity : erasePathList) {
+											FileUtils.delete(ftpCmdEntity.getPath());
+											RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ", ftpCmdEntity.getPath())
+											                                           .findFirst(RecycleBinEntity.class);
+											if (null != recycleBinEntity) {
+												recycleBinEntity.delete();
+											}
+										}
+									}
+									return true;
+								}
+								return false;
+							}
+
+							@Override
+							public void onSuccess(Boolean result) {
+								Map<String, Object> ftpEraseParamMap = new HashMap<>();
+								ftpEraseParamMap.put("result", result);
+								MQTTMsg ftpEraseMsg = ftpErase(mqttMsg.getFromId());
+								ftpEraseMsg.setParam(new JSONObject(ftpEraseParamMap).toJSONString());
+								sendMQTTMsg(ftpEraseMsg);
 							}
 						});
 						break;
@@ -343,8 +473,8 @@ public class MQTTService extends Service {
 	/**
 	 * 获取设备信息
 	 *
-	 * @param toId
-	 * @return
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
 	 */
 	private MQTTMsg getDeviceInfo(String toId) {
 		Map<String, Object> paramMap = new HashMap<>();
@@ -369,8 +499,8 @@ public class MQTTService extends Service {
 	/**
 	 * 获取公共/私人存储空间信息
 	 *
-	 * @param toId
-	 * @return
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
 	 */
 	private MQTTMsg getStorageInfo(String toId) {
 		Map<String, Object> paramMap = new HashMap<>();
@@ -396,8 +526,8 @@ public class MQTTService extends Service {
 	/**
 	 * 磁盘整理
 	 *
-	 * @param toId
-	 * @return
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
 	 */
 	private MQTTMsg diskDefragment(String toId) {
 		Map<String, Object> paramMap = new HashMap<>();
@@ -409,8 +539,8 @@ public class MQTTService extends Service {
 	/**
 	 * 还原
 	 *
-	 * @param toId
-	 * @return
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
 	 */
 	private MQTTMsg getRestoreMsg(String toId) {
 		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_RESTORE, toId);
@@ -419,8 +549,8 @@ public class MQTTService extends Service {
 	/**
 	 * 备份
 	 *
-	 * @param toId
-	 * @return
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
 	 */
 	private MQTTMsg getBackupMsg(String toId) {
 		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_BACKUP, toId);
@@ -429,8 +559,8 @@ public class MQTTService extends Service {
 	/**
 	 * 使用寿命检测
 	 *
-	 * @param toId
-	 * @return
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
 	 */
 	private MQTTMsg lifeTest(String toId) {
 		Map<String, Object> paramMap = new HashMap<>();
@@ -445,8 +575,8 @@ public class MQTTService extends Service {
 	/**
 	 * 关机
 	 *
-	 * @param toId
-	 * @return
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
 	 */
 	private MQTTMsg shutDown(String toId) {
 		Map<String, Object> paramMap = new HashMap<>();
@@ -458,8 +588,8 @@ public class MQTTService extends Service {
 	/**
 	 * 重启
 	 *
-	 * @param toId
-	 * @return
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
 	 */
 	private MQTTMsg reboot(String toId) {
 		Map<String, Object> paramMap = new HashMap<>();
@@ -471,8 +601,8 @@ public class MQTTService extends Service {
 	/**
 	 * ftp复制
 	 *
-	 * @param toId
-	 * @return
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
 	 */
 	private MQTTMsg ftpCopy(String toId) {
 		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_COPY, toId);
@@ -481,11 +611,41 @@ public class MQTTService extends Service {
 	/**
 	 * ftp删除
 	 *
-	 * @param toId
-	 * @return
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
 	 */
 	private MQTTMsg ftpDelete(String toId) {
 		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_DELETE, toId);
+	}
+
+	/**
+	 * ftp删除列表
+	 *
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
+	 */
+	private MQTTMsg ftpDeleteList(String toId) {
+		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_DELETE_LIST, toId);
+	}
+
+	/**
+	 * ftp还原列表
+	 *
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
+	 */
+	private MQTTMsg ftpRestoreList(String toId) {
+		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_RESTORE_LIST, toId);
+	}
+
+	/**
+	 * ftp文件清除
+	 *
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
+	 */
+	private MQTTMsg ftpErase(String toId) {
+		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_ERASE, toId);
 	}
 
 	/**

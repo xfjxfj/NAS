@@ -20,6 +20,9 @@ public class MQTTMsg {
 	public final static String MSG_REBOOT = "reboot";//重启
 	public final static String MSG_FTP_COPY = "ftpCopy";//ftp复制
 	public final static String MSG_FTP_DELETE = "ftpDelete";//ftp删除
+	public final static String MSG_FTP_DELETE_LIST = "ftpDeleteList";//ftp删除列表
+	public final static String MSG_FTP_RESTORE_LIST = "ftpRestoreList";//ftp还原列表
+	public final static String MSG_FTP_ERASE = "ftpErase";//ftp文件清除
 
 	private String msgType;
 	private String action;
