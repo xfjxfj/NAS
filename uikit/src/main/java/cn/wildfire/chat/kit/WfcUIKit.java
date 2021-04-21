@@ -4,6 +4,7 @@
 
 package cn.wildfire.chat.kit;
 
+
 import android.app.Activity;
 import android.app.Application;
 import android.app.PendingIntent;

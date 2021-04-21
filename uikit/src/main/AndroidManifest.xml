@@ -242,7 +242,7 @@
         <!--moment end-->
 
         <provider
-            android:name="androidx.core.content.FileProvider"
+            android:name=".provider.UIKitProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
