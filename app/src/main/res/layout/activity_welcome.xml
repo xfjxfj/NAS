@@ -195,8 +195,8 @@
 
             <ImageView
                 android:id="@+id/imageView3"
-                android:layout_width="198px"
-                android:layout_height="189px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@mipmap/test_login_qr_code"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
