@@ -17,6 +17,7 @@ import android.bluetooth.le.AdvertiseSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelUuid;
@@ -24,12 +25,15 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.DeviceUtils;
+import com.blankj.utilcode.util.PhoneUtils;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.util.CommonUtils;
+import com.viegre.nas.pad.util.ZxingUtils;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -37,6 +41,9 @@ import java.util.UUID;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -66,6 +73,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         public void onStartFailure(int errorCode) {
             CommonUtils.showToast("BLE广播开启失败,错误码:" + errorCode);
+
 //            Toast.makeText(MainActivity2.this,"BLE广播开启失败,错误码:" + errorCode,Toast.LENGTH_SHORT).show();
         }
     };
@@ -189,6 +197,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
             Log.i(TAG, String.format("onMtuChanged:%s,%s,%s", device.getName(), device.getAddress(), mtu));
         }
     };
+    private ImageView mQRCodeImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,6 +251,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         Layout2 = findViewById(R.id.Layout2);
         layout3 = findViewById(R.id.Layout3);
         next_to = findViewById(R.id.next_to);
+        mQRCodeImg = findViewById(R.id.imageView3);
 
         Layout1.setVisibility(View.VISIBLE);
         Layout2.setVisibility(View.GONE);
@@ -249,6 +259,19 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
         welcomeSkip.setOnClickListener(this);
         next_to.setOnClickListener(this);
+        createQRCode();
+    }
+
+    private void createQRCode() {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("sn", PhoneUtils.getSerial());
+            jsonObject.put("deviceName", "GOV NAS 2020");
+            Bitmap qweqweqweqweqweq = ZxingUtils.createQRCode(jsonObject.toString(), 500, 500, true);
+            mQRCodeImg.setImageBitmap(qweqweqweqweqweq);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

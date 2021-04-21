@@ -1,5 +1,6 @@
 package org.primftpd.log;
 
+
 import android.content.Context;
 
 import org.primftpd.util.Defaults;
@@ -20,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 
 public class CsvLoggerFactory implements ILoggerFactory {
 	public static Context CONTEXT;
