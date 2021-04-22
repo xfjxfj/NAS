@@ -16,4 +16,5 @@
 	<color name="filepickerLightSeparatorColor">#1e000000</color>
 	<!-- 12% white in BLACK THEME -->
 	<color name="filepickerDarkSeparatorColor">#1effffff</color>
+	<color name="black1">#18181A</color>
 </resources>

@@ -1,14 +1,57 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/widgetTextColorEnabled"
     android:gravity="center_horizontal"
     android:orientation="horizontal">
 
+    <ImageView
+        android:id="@+id/img_im1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:src="@mipmap/weather_tornado"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/img_im2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/weather_tornado"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/img_im3"
+        app:layout_constraintEnd_toStartOf="@+id/img_im3"
+        app:layout_constraintTop_toTopOf="@+id/img_im3"
+        tools:ignore="MissingConstraints" />
+
     <TextView
-        android:id="@+id/text_fr"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="sssssssss"
-        android:textColor="@color/white" />
+        android:id="@+id/textfr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginLeft="16px"
+        android:text="123222222"
+        android:textColor="#E5E5EB"
+        app:layout_constraintBottom_toBottomOf="@+id/img_im1"
+        app:layout_constraintStart_toEndOf="@+id/img_im1"
+        app:layout_constraintTop_toTopOf="@+id/img_im1"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/img_im3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="30dp"
+        android:src="@mipmap/weather_tornado"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>

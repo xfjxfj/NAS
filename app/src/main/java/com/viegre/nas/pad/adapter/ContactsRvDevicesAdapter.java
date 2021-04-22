@@ -35,7 +35,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
 
     @Override
     public void onBindViewHolder(@NonNull ContactsRvDevicesAdapter.MyHolder holder, int position) {
-        holder.textdv.setText(languages.get(position));
+//        holder.textdv.setText(languages.get(position));
     }
 
     @Override
@@ -48,11 +48,11 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
      */
     class MyHolder extends RecyclerView.ViewHolder {
 
-        private final TextView textdv;
+//        private final TextView textdv;
 
         public MyHolder(View itemView) {
             super(itemView);
-            textdv = itemView.findViewById(R.id.text_dv);
+//            textdv = itemView.findViewById(R.id.text_dv);
         }
     }
 }

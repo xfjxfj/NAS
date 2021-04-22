@@ -13,6 +13,7 @@ import com.viegre.nas.pad.adapter.ContactsRvDevicesAdapter;
 import com.viegre.nas.pad.adapter.ContactsRvFriendsAdapter;
 import com.viegre.nas.pad.adapter.ContactsRvRecordAdapter;
 import com.viegre.nas.pad.adapter.MoreAppActivityRvAdapter;
+import com.viegre.nas.pad.util.CommonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +34,12 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CommonUtils.hideBottomUIMenu(this);
+        CommonUtils.hideStatusBar(this);
+
         setContentView(R.layout.activity_contacts);
-        initView();
+//        initView();
+        getContactsDatas();
     }
 
     private void initView() {
@@ -51,7 +56,7 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
     private void initAdapter() {
         List<String> languages = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            languages.add(i+"");
+            languages.add(i + "");
         }
 
         //初始化数据
@@ -60,21 +65,23 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
         contactsRv1.setLayoutManager(linearLayoutManager);
         //创建适配器，将数据传递给适配器
         //设置适配器adapter
-        contactsRv1.setAdapter(new ContactsRvRecordAdapter(this,languages));
+        contactsRv1.setAdapter(new ContactsRvRecordAdapter(this, languages));
 
-        //设置布局管理器
+        //初始化数据
         LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        //设置布局管理器
         contactsRv2.setLayoutManager(linearLayoutManager1);
         //创建适配器，将数据传递给适配器
         //设置适配器adapter
-        contactsRv2.setAdapter(new ContactsRvFriendsAdapter(this,languages));
+        contactsRv2.setAdapter(new ContactsRvFriendsAdapter(this, languages));
 
+        //初始化数据
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         //设置布局管理器
-        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         contactsRv3.setLayoutManager(linearLayoutManager2);
         //创建适配器，将数据传递给适配器
         //设置适配器adapter
-        contactsRv3.setAdapter(new ContactsRvDevicesAdapter(this,languages));
+        contactsRv3.setAdapter(new ContactsRvDevicesAdapter(this, languages));
     }
 
     @Override
@@ -84,5 +91,10 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
                 ContactsActivity.this.finish();
                 break;
         }
+    }
+
+    private void getContactsDatas() {
+
+
     }
 }

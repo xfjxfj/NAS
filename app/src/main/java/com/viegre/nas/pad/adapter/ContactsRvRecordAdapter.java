@@ -52,7 +52,7 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
 
         public MyHolder(View itemView) {
             super(itemView);
-            textView123 = itemView.findViewById(R.id.text_re);
+            textView123 = itemView.findViewById(R.id.text_rv1);
         }
     }
 }
