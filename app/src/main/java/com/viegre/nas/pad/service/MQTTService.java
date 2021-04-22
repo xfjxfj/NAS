@@ -396,7 +396,7 @@ public class MQTTService extends Service {
 									return false;
 								}
 								for (FtpCmdEntity ftpCmdEntity : rstPathList) {
-									RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ", ftpCmdEntity.getPath())
+									RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = '" + ftpCmdEntity.getPath() + "'")
 									                                           .findFirst(RecycleBinEntity.class);
 									if (null == recycleBinEntity) {
 										continue;
