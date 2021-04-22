@@ -436,22 +436,19 @@ public class MQTTService extends Service {
 									LitePal.deleteAll(RecycleBinEntity.class);
 									return true;
 								}
-								if (!erase) {
-									if (null == erasePathList || erasePathList.isEmpty()) {
-										return false;
-									} else {
-										for (FtpCmdEntity ftpCmdEntity : erasePathList) {
-											FileUtils.delete(ftpCmdEntity.getPath());
-											RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?", ftpCmdEntity.getPath())
-											                                           .findFirst(RecycleBinEntity.class);
-											if (null != recycleBinEntity) {
-												recycleBinEntity.delete();
-											}
+								if (null == erasePathList || erasePathList.isEmpty()) {
+									return false;
+								} else {
+									for (FtpCmdEntity ftpCmdEntity : erasePathList) {
+										FileUtils.delete(ftpCmdEntity.getPath());
+										RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?", ftpCmdEntity.getPath())
+										                                           .findFirst(RecycleBinEntity.class);
+										if (null != recycleBinEntity) {
+											recycleBinEntity.delete();
 										}
 									}
-									return true;
 								}
-								return false;
+								return true;
 							}
 
 							@Override
