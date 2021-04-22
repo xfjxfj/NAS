@@ -52,7 +52,7 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
 
         public MyHolder(View itemView) {
             super(itemView);
-            textfr = itemView.findViewById(R.id.text_fr);
+            textfr = itemView.findViewById(R.id.textfr);
         }
     }
 }
