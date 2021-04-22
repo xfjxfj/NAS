@@ -1,6 +1,7 @@
 package com.viegre.nas.pad.entity;
 
-import com.blankj.utilcode.util.PhoneUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.viegre.nas.pad.config.SPConfig;
 
 /**
  * Created by レインマン on 2021/04/12 14:07 with Android Studio.
@@ -36,7 +37,7 @@ public class MQTTMsg {
 	public MQTTMsg(String msgType, String action, String toId) {
 		this.msgType = msgType;
 		this.action = action;
-		this.fromId = PhoneUtils.getSerial();
+		this.fromId = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
 		this.toId = toId;
 		this.timeStamp = System.currentTimeMillis();
 	}
@@ -44,7 +45,7 @@ public class MQTTMsg {
 	public MQTTMsg(String msgType, String action, String toId, String param) {
 		this.msgType = msgType;
 		this.action = action;
-		this.fromId = PhoneUtils.getSerial();
+		this.fromId = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
 		this.toId = toId;
 		this.timeStamp = System.currentTimeMillis();
 		this.param = param;

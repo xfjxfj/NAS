@@ -5,12 +5,13 @@ import android.view.View;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FragmentUtils;
-import com.blankj.utilcode.util.PhoneUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.activity.BaseFragmentActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.SettingsMenuListAdapter;
 import com.viegre.nas.pad.config.BusConfig;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivitySettingsBinding;
 import com.viegre.nas.pad.entity.LoginInfoEntity;
@@ -154,7 +155,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	private void logout() {
 		Kalle.post(UrlConfig.User.LOGOUT)
 		     .param("phoneNumber", mLoginInfoEntity.getPhoneNumber())
-		     .param("sn", PhoneUtils.getSerial())
+		     .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
 		     .perform(new SimpleCallback<String>() {
 			     @Override
 			     public void onResponse(SimpleResponse<String, String> response) {

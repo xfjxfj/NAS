@@ -2,12 +2,16 @@ package com.viegre.nas.pad.application;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.provider.Settings;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.didichuxing.doraemonkit.DoraemonKit;
 import com.djangoogle.framework.applicaiton.BaseApplication;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.kalle.converter.JsonConverter;
 import com.viegre.nas.pad.manager.AMapLocationManager;
 import com.viegre.nas.pad.service.AppService;
@@ -33,10 +37,11 @@ public class NasApp extends BaseApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		LitePal.initialize(this);
-//		CsvLoggerFactory.CONTEXT = this;
-		CsvLoggerFactory.CONTEXT = this;
 		initUtils();
+		initAndroidId();
+		LitePal.initialize(this);
+		DoraemonKit.install(this, "6f1d65f538aa1fe2c813e712c95b773d");
+		CsvLoggerFactory.CONTEXT = this;
 		initKalle();
 		initAMap();
 		initIM();
@@ -101,8 +106,7 @@ public class NasApp extends BaseApplication {
 		KalleConfig kalleConfig = KalleConfig.newBuilder()
 		                                     .connectionTimeout(15, TimeUnit.SECONDS)
 		                                     .readTimeout(15, TimeUnit.SECONDS)
-		                                     .converter(new JsonConverter())
-		                                     .build();
+		                                     .converter(new JsonConverter()).build();
 		Kalle.setConfig(kalleConfig);
 	}
 
@@ -111,5 +115,11 @@ public class NasApp extends BaseApplication {
 	 */
 	private void initAMap() {
 		AMapLocationManager.INSTANCE.initialize(this);
+	}
+
+	private void initAndroidId() {
+		if (!SPUtils.getInstance().contains(SPConfig.ANDROID_ID)) {
+			SPUtils.getInstance().put(SPConfig.ANDROID_ID, Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+		}
 	}
 }

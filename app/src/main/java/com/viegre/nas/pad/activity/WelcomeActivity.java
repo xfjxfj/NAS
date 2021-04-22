@@ -31,10 +31,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.DeviceUtils;
-import com.blankj.utilcode.util.PhoneUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.ZxingUtils;
+
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -42,9 +45,6 @@ import java.util.UUID;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -268,7 +268,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     private void createQRCode() {
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("sn", PhoneUtils.getSerial());
+            jsonObject.put("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
             jsonObject.put("deviceName", "GOV NAS 2020");
             Bitmap qweqweqweqweqweq = ZxingUtils.createQRCode(jsonObject.toString(), 500, 500, true);
             mQRCodeImg.setImageBitmap(qweqweqweqweqweq);

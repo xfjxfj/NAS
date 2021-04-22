@@ -6,9 +6,10 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.PhoneUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.viegre.nas.pad.config.BusConfig;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.entity.WeatherRootEntity;
@@ -44,7 +45,7 @@ public enum AMapLocationManager {
 						Kalle.post(UrlConfig.Device.GET_WEATHER)
 						     .param("lat", aMapLocation.getLatitude())
 						     .param("lng", aMapLocation.getLongitude())
-						     .param("sn", PhoneUtils.getSerial())
+						     .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
 						     .perform(new SimpleCallback<WeatherRootEntity>() {
 							     @Override
 							     public void onResponse(SimpleResponse<WeatherRootEntity, String> response) {

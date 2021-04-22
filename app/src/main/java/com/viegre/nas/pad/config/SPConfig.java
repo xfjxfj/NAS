@@ -28,4 +28,7 @@ public class SPConfig {
 
 	//自定义开机画面
 	public static final String SCREEN_SAVER_CUSTOM_IMAGES = "screen_saver_custom_images";
+
+	//ANDROID_ID
+	public static final String ANDROID_ID = "android_id";
 }
