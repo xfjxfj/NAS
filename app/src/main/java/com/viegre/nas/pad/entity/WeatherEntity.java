@@ -12,9 +12,9 @@ public class WeatherEntity implements Serializable {
 	private String airQuality;
 	private String province;
 	private String city;
-	private String weather;
+	private String weather = "未知";
 	private String temperature;
-	private String curtemperature;
+	private String curtemperature = "?";
 	private String wind;
 
 	public String getDate() {
