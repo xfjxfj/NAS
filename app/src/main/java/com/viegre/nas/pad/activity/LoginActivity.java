@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.view.View;
 
 import com.blankj.utilcode.util.ColorUtils;
-import com.blankj.utilcode.util.PhoneUtils;
 import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -176,7 +175,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		     .param("code", code)
 		     .param("password", password)
 		     .param("phoneNumber", phone)
-		     .param("sn", PhoneUtils.getSerial())
+		     .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
 		     .perform(new SimpleCallback<LoginEntity>() {
 			     @Override
 			     public void onResponse(SimpleResponse<LoginEntity, String> response) {

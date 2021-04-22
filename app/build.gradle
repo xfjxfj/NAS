@@ -133,4 +133,6 @@ dependencies {
 	implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 	//https://github.com/srikanth-lingala/zip4j
 	implementation 'net.lingala.zip4j:zip4j:2.7.0'
+	//https://github.com/didi/DoraemonKit
+	debugImplementation 'com.didichuxing.doraemonkit:dokitx:3.3.5'
 }

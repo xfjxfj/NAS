@@ -18,7 +18,7 @@ import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.PermissionUtils;
-import com.blankj.utilcode.util.PhoneUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ShellUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -30,6 +30,7 @@ import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivitySplashBinding;
 import com.viegre.nas.pad.entity.DeviceResourceEntity;
@@ -263,17 +264,20 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 获取资源配置
 	 */
 	private void getDeviceResource() {
-		Kalle.post(UrlConfig.Device.GET_RESOURCE).param("sn", PhoneUtils.getSerial()).perform(new SimpleCallback<DeviceResourceRootEntity>() {
-			@Override
-			public void onResponse(SimpleResponse<DeviceResourceRootEntity, String> response) {
-				if (response.isSucceed()) {
-					List<DeviceResourceEntity> resourceList = response.succeed().getResourceList();
-					if (!resourceList.isEmpty()) {
-						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
-							@Override
-							public Void doInBackground() {
-								LitePal.saveAll(resourceList);
-								DeviceResourceEntity deviceResourceEntity = LitePal.where("type = 'guideVideo'").findFirst(DeviceResourceEntity.class);
+		Kalle.post(UrlConfig.Device.GET_RESOURCE)
+		     .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+		     .perform(new SimpleCallback<DeviceResourceRootEntity>() {
+			     @Override
+			     public void onResponse(SimpleResponse<DeviceResourceRootEntity, String> response) {
+				     if (response.isSucceed()) {
+					     List<DeviceResourceEntity> resourceList = response.succeed().getResourceList();
+					     if (!resourceList.isEmpty()) {
+						     ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
+							     @Override
+							     public Void doInBackground() {
+								     LitePal.saveAll(resourceList);
+								     DeviceResourceEntity deviceResourceEntity = LitePal.where("type = 'guideVideo'")
+								                                                        .findFirst(DeviceResourceEntity.class);
 								List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
 								if (null != deviceResourceEntity) {
 									String url = deviceResourceEntity.getContent();

@@ -18,12 +18,13 @@ import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
-import com.blankj.utilcode.util.PhoneUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.Utils;
 import com.blankj.utilcode.util.ViewUtils;
 import com.viegre.nas.pad.config.PathConfig;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.entity.FtpCmdEntity;
 import com.viegre.nas.pad.entity.MQTTMsg;
 import com.viegre.nas.pad.entity.RecycleBinEntity;
@@ -99,7 +100,10 @@ public class MQTTService extends Service {
 		initMqttConnectOptions();
 		try {
 			MemoryPersistence memoryPersistence = new MemoryPersistence();
-			mMqttAndroidClient = new MqttAndroidClient(Utils.getApp(), "tcp://39.108.236.191:1883", PhoneUtils.getSerial(), memoryPersistence);
+			mMqttAndroidClient = new MqttAndroidClient(Utils.getApp(),
+			                                           "tcp://39.108.236.191:1883",
+			                                           SPUtils.getInstance().getString(SPConfig.ANDROID_ID),
+			                                           memoryPersistence);
 			mMqttAndroidClient.setCallback(mMqttCallbackExtended);
 			mMqttAndroidClient.connect(mMqttConnectOptions);
 		} catch (MqttException e) {
@@ -112,7 +116,7 @@ public class MQTTService extends Service {
 		public void connectComplete(boolean reconnect, String serverURI) {
 			LogUtils.iTag(TAG, "connectComplete", Thread.currentThread().getId(), serverURI);
 			try {
-				mMqttAndroidClient.subscribe("nas/device/" + PhoneUtils.getSerial(), 2);
+				mMqttAndroidClient.subscribe("nas/device/" + SPUtils.getInstance().getString(SPConfig.ANDROID_ID), 2);
 			} catch (MqttException e) {
 				LogUtils.eTag(TAG, e.toString());
 			}
@@ -396,7 +400,7 @@ public class MQTTService extends Service {
 									return false;
 								}
 								for (FtpCmdEntity ftpCmdEntity : rstPathList) {
-									RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = '" + ftpCmdEntity.getPath() + "'")
+									RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?", ftpCmdEntity.getPath())
 									                                           .findFirst(RecycleBinEntity.class);
 									if (null == recycleBinEntity) {
 										continue;
@@ -429,6 +433,7 @@ public class MQTTService extends Service {
 							public Boolean doInBackground() {
 								if (erase) {
 									FileUtils.deleteAllInDir(PathConfig.RECYCLE_BIN);
+									LitePal.deleteAll(RecycleBinEntity.class);
 									return true;
 								}
 								if (!erase) {
@@ -437,7 +442,7 @@ public class MQTTService extends Service {
 									} else {
 										for (FtpCmdEntity ftpCmdEntity : erasePathList) {
 											FileUtils.delete(ftpCmdEntity.getPath());
-											RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ", ftpCmdEntity.getPath())
+											RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?", ftpCmdEntity.getPath())
 											                                           .findFirst(RecycleBinEntity.class);
 											if (null != recycleBinEntity) {
 												recycleBinEntity.delete();
