@@ -3,7 +3,7 @@
 
 	<dbname value="viegre_nas_pad" />
 
-	<version value="5" />
+	<version value="8" />
 
 	<list>
 		<mapping class="com.viegre.nas.pad.entity.DeviceResourceEntity" />
@@ -12,6 +12,6 @@
 		<mapping class="com.viegre.nas.pad.entity.ImageEntity" />
 		<mapping class="com.viegre.nas.pad.entity.AudioEntity" />
 		<mapping class="com.viegre.nas.pad.entity.RecycleBinEntity" />
-		<mapping class="com.viegre.nas.pad.entity.FtpFileFavoritesEntity" />
+		<mapping class="com.viegre.nas.pad.entity.FtpFavoritesEntity" />
 	</list>
 </litepal>

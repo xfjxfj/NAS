@@ -278,31 +278,31 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 								     LitePal.saveAll(resourceList);
 								     DeviceResourceEntity deviceResourceEntity = LitePal.where("type = 'guideVideo'")
 								                                                        .findFirst(DeviceResourceEntity.class);
-								List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
-								if (null != deviceResourceEntity) {
-									String url = deviceResourceEntity.getContent();
-									String fileName = FileUtils.getFileName(url);
-									//判断文件是否已下载
-									if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
-										return null;
-									}
-									FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
-									downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
-								}
-								return null;
-							}
+								     List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
+								     if (null != deviceResourceEntity) {
+									     String url = deviceResourceEntity.getContent();
+									     String fileName = FileUtils.getFileName(url);
+									     //判断文件是否已下载
+									     if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
+										     return null;
+									     }
+									     FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
+									     downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
+								     }
+								     return null;
+							     }
 
-							@Override
-							public void onSuccess(Void result) {
-								showGuideData();
-							}
-						});
-					}
-				} else {
-					showGuideData();
-				}
-			}
-		});
+							     @Override
+							     public void onSuccess(Void result) {
+								     showGuideData();
+							     }
+						     });
+					     }
+				     } else {
+					     showGuideData();
+				     }
+			     }
+		     });
 	}
 
 	/**

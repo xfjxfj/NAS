@@ -7,12 +7,16 @@ import java.io.Serializable;
 /**
  * Created by レインマン on 2021/04/22 15:49 with Android Studio.
  */
-public class FtpFileFavoritesEntity extends LitePalSupport implements Serializable {
+public class FtpFavoritesEntity extends LitePalSupport implements Serializable {
 
 	private String path;
+	private String time;
 
-	public FtpFileFavoritesEntity(String path) {
+	public FtpFavoritesEntity() {}
+
+	public FtpFavoritesEntity(String path, String time) {
 		this.path = path;
+		this.time = time;
 	}
 
 	public String getPath() {
@@ -21,5 +25,13 @@ public class FtpFileFavoritesEntity extends LitePalSupport implements Serializab
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
 	}
 }
