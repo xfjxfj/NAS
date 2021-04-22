@@ -11,6 +11,9 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.constant.TimeConstants;
@@ -45,15 +48,11 @@ import org.litepal.LitePal;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 /**
  * Created by レインマン on 2021/04/12 09:40 with Android Studio.
@@ -75,10 +74,10 @@ public class MQTTService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		List<File> ftpFileObserverList = new ArrayList<>();
-		ftpFileObserverList.add(FileUtils.getFileByPath(PathConfig.PRIVATE));
-		ftpFileObserverList.add(FileUtils.getFileByPath(PathConfig.PUBLIC));
-		mFtpFileObserver = new FtpFileObserver(ftpFileObserverList);
+//		List<File> ftpFileObserverList = new ArrayList<>();
+//		ftpFileObserverList.add(FileUtils.getFileByPath(PathConfig.PRIVATE));
+//		ftpFileObserverList.add(FileUtils.getFileByPath(PathConfig.PUBLIC));
+		mFtpFileObserver = new FtpFileObserver(PathConfig.NAS);
 		mFtpFileObserver.startWatching();
 		initNotificationChannel();
 		initMqttAndroidClient();
