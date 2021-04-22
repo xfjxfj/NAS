@@ -26,7 +26,7 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         //将我们自定义的item布局R.layout.item_one转换为View
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.more_app_activity_rv_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contacts_record_rv_item, parent, false);
         //将view传递给我们自定义的ViewHolder
         ContactsRvRecordAdapter.MyHolder holder = new ContactsRvRecordAdapter.MyHolder(view);
         //返回这个MyHolder实体
@@ -35,7 +35,7 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
-
+        holder.textView123.setText(languages.get(position));
     }
 
     @Override
@@ -48,8 +48,11 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
      */
     class MyHolder extends RecyclerView.ViewHolder {
 
+        private final TextView textView123;
+
         public MyHolder(View itemView) {
             super(itemView);
+            textView123 = itemView.findViewById(R.id.text_re);
         }
     }
 }

@@ -63,16 +63,18 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
         contactsRv1.setAdapter(new ContactsRvRecordAdapter(this,languages));
 
         //设置布局管理器
-        contactsRv1.setLayoutManager(linearLayoutManager);
+        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        contactsRv2.setLayoutManager(linearLayoutManager1);
         //创建适配器，将数据传递给适配器
         //设置适配器adapter
-        contactsRv1.setAdapter(new ContactsRvFriendsAdapter(this,languages));
+        contactsRv2.setAdapter(new ContactsRvFriendsAdapter(this,languages));
 
         //设置布局管理器
-        contactsRv1.setLayoutManager(linearLayoutManager);
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        contactsRv3.setLayoutManager(linearLayoutManager2);
         //创建适配器，将数据传递给适配器
         //设置适配器adapter
-        contactsRv1.setAdapter(new ContactsRvDevicesAdapter(this,languages));
+        contactsRv3.setAdapter(new ContactsRvDevicesAdapter(this,languages));
     }
 
     @Override
