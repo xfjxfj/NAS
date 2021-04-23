@@ -4,21 +4,30 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.kongzue.dialog.v3.CustomDialog;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.entity.ContactsBean;
 
 import java.util.List;
 
 public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDevicesAdapter.MyHolder> {
 
     private final List<String> languages;
+    private final Context mContext;
 
     public ContactsRvDevicesAdapter(Context context, List<String> languages) {
         this.languages = languages;
+        this.mContext = context;
 
     }
 
@@ -35,7 +44,28 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
 
     @Override
     public void onBindViewHolder(@NonNull ContactsRvDevicesAdapter.MyHolder holder, int position) {
-//        holder.textdv.setText(languages.get(position));
+        holder.textdv.setText(languages.get(position));
+        holder.de_laytou.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "123", Toast.LENGTH_LONG).show();
+                CustomDialog.build((AppCompatActivity) mContext, R.layout.contacts_add_devices_dialog, new CustomDialog.OnBindView() {
+                    @Override
+                    public void onBind(final CustomDialog dialog, View v) {
+                        Button btnOk = v.findViewById(R.id.cancle_bt);
+                        btnOk.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.doDismiss();
+                            }
+                        });
+                    }
+                }).setFullScreen(true)
+                        .show();
+
+
+            }
+        });
     }
 
     @Override
@@ -48,11 +78,13 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
      */
     class MyHolder extends RecyclerView.ViewHolder {
 
-//        private final TextView textdv;
+        private final TextView textdv;
+        private final ConstraintLayout de_laytou;
 
         public MyHolder(View itemView) {
             super(itemView);
-//            textdv = itemView.findViewById(R.id.text_dv);
+            textdv = itemView.findViewById(R.id.text_dv);
+            de_laytou = itemView.findViewById(R.id.de_laytou);
         }
     }
 }

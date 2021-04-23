@@ -6,9 +6,9 @@ package com.viegre.nas.pad.config;
 public class UrlConfig {
 
     //服务器地址
-//    public static final String SERVER = "http://39.108.98.92:8708/";
+    public static final String SERVER = "http://39.108.98.92:8708/";
 //    測試服務器
-    public static final String SERVER = "http://192.168.10.11:8080/";
+//    public static final String SERVER = "http://192.168.10.11:8080/";
 
     /**
      * 用户相关接口

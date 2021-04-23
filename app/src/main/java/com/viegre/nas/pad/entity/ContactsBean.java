@@ -1,11 +1,12 @@
 package com.viegre.nas.pad.entity;
 
-public class ContactsBean {
+public class ContactsBean{
 
     private int deviceId;
     private int id;
     private StatusDTO status;
     private String userName;
+    private String userimg;
 
     public int getDeviceId() {
         return deviceId;
@@ -37,6 +38,14 @@ public class ContactsBean {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getUserimg() {
+        return userimg;
+    }
+
+    public void setUserimg(String userimg) {
+        this.userimg = userimg;
     }
 
     public static class StatusDTO {

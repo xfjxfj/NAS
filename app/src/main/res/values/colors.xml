@@ -26,4 +26,5 @@
 	<color name="protocol_divider">#252529</color>
 	<color name="screen_custom_album_list_divider">#232325</color>
 	<color name="welcome_next_text">#485DE5</color>
+	<color name="contacts_dialog_ok">#4452E5</color>
 </resources>

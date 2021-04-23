@@ -67,7 +67,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     private final AdvertiseCallback mAdvertiseCallback = new AdvertiseCallback() {
         @Override
         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
-//            CommonUtils.showToast("BLE广播开启成功");
+            CommonUtils.showToast("BLE广播开启成功");
 //            Toast.makeText(MainActivity2.this,"BLE广播开启成功",Toast.LENGTH_SHORT).show();
         }
 

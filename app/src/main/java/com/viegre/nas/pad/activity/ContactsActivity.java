@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -36,6 +37,7 @@ import com.yanzhenjie.kalle.simple.SimpleResponse;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.viegre.nas.pad.R.id.homeImg;
@@ -71,7 +73,6 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
         //初始化点击事件
         homeImg.setOnClickListener(this);
         //初始化RecycleViewAdapter
-        initAdapter();
     }
 
     private void initAdapter() {
@@ -117,6 +118,7 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
     @SuppressLint("WrongConstant")
     private void getContactsDatas() {
         TipDialog show = WaitDialog.show(this, "请稍候...");
+        //    获取所有设备
         Kalle.post(UrlConfig.Device.GET_GETALLFOLLOWS)
                 .addHeader("token", String.valueOf(ContactsActivity.this.getSharedPreferences(ContactsActivity.this.getString(R.string.nasSpData), SplashActivity.MODE_APPEND).getString("token", "")))
                 .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
@@ -126,6 +128,8 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
                     public void onResponse(SimpleResponse<String, String> response) {
                         TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
                         Log.d("", "");
+//                        List<ContactsBean> contactsBeans = new List<>();
+                        initAdapter();
                     }
 
                     @Override
@@ -134,6 +138,25 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
                         Log.d("", "");
                     }
                 });
+////    获取联系人
+//        Kalle.post(UrlConfig.App.GET_DEVICETYPELIST)
+//                .addHeader("token", String.valueOf(ContactsActivity.this.getSharedPreferences(ContactsActivity.this.getString(R.string.nasSpData), SplashActivity.MODE_APPEND).getString("token", "")))
+//                .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+//                .perform(new SimpleCallback<String>() {
+//                    @SuppressLint({"WrongConstant", "ApplySharedPref"})
+//                    @Override
+//                    public void onResponse(SimpleResponse<String, String> response) {
+//
+//                        TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
+//                        Log.d("", "");
+//                    }
+//
+//                    @Override
+//                    public void onEnd() {
+//                        super.onEnd();
+//                        Log.d("", "");
+//                    }
+//                });
     }
 }
 
