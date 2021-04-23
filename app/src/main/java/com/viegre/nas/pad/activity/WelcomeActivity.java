@@ -27,11 +27,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.bumptech.glide.Glide;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.ActivityWelcomeBinding;
 import com.viegre.nas.pad.util.CommonUtils;
@@ -104,7 +106,8 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 			mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, macAddress.getBytes());// 响应客户端
 //            CommonUtils.showToast("客户端读取Characteristic[" + characteristic.getUuid() + "]:\n" + response);
 			if (true) {
-				SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
+//				SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
+				BusUtils.post(BusConfig.DEVICE_BOUND_RESULT);
 				finish();
 			}
 		}
@@ -127,7 +130,8 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 			mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, requestBytes);// 响应客户端
 //            CommonUtils.showToast("客户端写入Characteristic[" + characteristic.getUuid() + "]:\n" + requestStr);
 			if (true) {
-				SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
+//				SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
+				BusUtils.post(BusConfig.DEVICE_BOUND_RESULT);
 				finish();
 			}
 		}

@@ -82,10 +82,10 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	protected void onResume() {
 		super.onResume();
 		GSYVideoManager.onResume();
-		if (SPUtils.getInstance().getBoolean(SPConfig.IS_BOUND, false)) {
-			//获取并显示最新引导页
-			getDeviceResource();
-		}
+//		if (SPUtils.getInstance().getBoolean(SPConfig.IS_BOUND, false)) {
+//			//获取并显示最新引导页
+//			getDeviceResource();
+//		}
 	}
 
 	@Override
@@ -228,12 +228,12 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		}
 	}
 
-//	@BusUtils.Bus(tag = BusConfig.DEVICE_BOUND, threadMode = BusUtils.ThreadMode.MAIN)
-//	public void deviceBoundResult() {
-//		SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
-//		//获取并显示最新引导页
-//		getDeviceResource();
-//	}
+	@BusUtils.Bus(tag = BusConfig.DEVICE_BOUND_RESULT, threadMode = BusUtils.ThreadMode.MAIN)
+	public void deviceBoundResult() {
+		SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
+		//获取并显示最新引导页
+		getDeviceResource();
+	}
 
 	/**
 	 * 获取资源配置
