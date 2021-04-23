@@ -67,7 +67,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     private final AdvertiseCallback mAdvertiseCallback = new AdvertiseCallback() {
         @Override
         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
-            CommonUtils.showToast("BLE广播开启成功");
+//            CommonUtils.showToast("BLE广播开启成功");
 //            Toast.makeText(MainActivity2.this,"BLE广播开启成功",Toast.LENGTH_SHORT).show();
         }
 
@@ -253,7 +253,6 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         Layout2 = findViewById(R.id.Layout2);
         layout3 = findViewById(R.id.Layout3);
         next_to = findViewById(R.id.next_to);
-        next_3 = findViewById(R.id.next_3);
         mQRCodeImg = findViewById(R.id.imageView3);
 
         Layout1.setVisibility(View.VISIBLE);
@@ -297,8 +296,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
             startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
             WelcomeActivity.this.finish();
         } else {
-            startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
-        }
+            startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));        }
     }
 
     private void initLayout3() {
@@ -306,13 +304,12 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         Layout1.setVisibility(View.GONE);
         Layout2.setVisibility(View.GONE);
         layout3.setVisibility(View.VISIBLE);
-        next_3.setVisibility(View.VISIBLE);
         runBle();
     }
 
     @SuppressLint("NewApi")
     private void runBle() {
-        BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        @SuppressLint("WrongConstant") BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
 //        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 

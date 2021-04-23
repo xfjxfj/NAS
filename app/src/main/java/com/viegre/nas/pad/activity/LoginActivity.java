@@ -1,5 +1,6 @@
 package com.viegre.nas.pad.activity;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.view.View;
 
@@ -177,13 +178,16 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		     .param("phoneNumber", phone)
 		     .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
 		     .perform(new SimpleCallback<LoginEntity>() {
-			     @Override
+			     @SuppressLint({"WrongConstant", "ApplySharedPref"})
+				 @Override
 			     public void onResponse(SimpleResponse<LoginEntity, String> response) {
 				     if (!response.isSucceed()) {
 					     CommonUtils.showErrorToast(response.failed());
 				     } else {
 					     String token = response.succeed().getToken();
+						 getSharedPreferences(LoginActivity.this.getString(R.string.nasSpData), SplashActivity.MODE_APPEND).edit().putString("token",token).commit();
 					     LoginInfoEntity loginInfoEntity = new LoginInfoEntity(token, phone);
+
 					     ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
 						     @Override
 						     public Void doInBackground() {

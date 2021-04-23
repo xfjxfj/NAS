@@ -90,6 +90,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		SharedPreferences sharedPreferences = getSharedPreferences(this.getString(R.string.nasSpData), SplashActivity.MODE_APPEND);
 		int nb = sharedPreferences.getInt(getString(R.string.installNumber), 0);
 //        * 等于0说明是第一次进来 跳转到引导页面 然后添加sp数据
+		String string = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
 		if (nb == 0) {
 //		if (false) {
 			sharedPreferences.edit().putInt(getString(R.string.installNumber), 1).commit();

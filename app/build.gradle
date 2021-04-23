@@ -135,4 +135,6 @@ dependencies {
 	implementation 'net.lingala.zip4j:zip4j:2.7.0'
 	//https://github.com/didi/DoraemonKit
 	debugImplementation 'com.didichuxing.doraemonkit:dokitx:3.3.5'
+//	https://github.com/kongzue/DialogV3
+	implementation 'com.kongzue.dialog_v3x:dialog:3.2.4'
 }
