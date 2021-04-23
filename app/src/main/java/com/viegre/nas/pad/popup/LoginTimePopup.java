@@ -4,11 +4,12 @@ import android.content.Context;
 import android.widget.SeekBar;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.lxj.xpopup.core.CenterPopupView;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.LoginActivity;
 import com.viegre.nas.pad.activity.MainActivity;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.PopupLoginTimeBinding;
 import com.viegre.nas.pad.entity.LoginEntity;
@@ -54,27 +55,17 @@ public class LoginTimePopup extends CenterPopupView {
 					                                                                                CommonUtils.showErrorToast(response.failed());
 					                                                                                LitePal.deleteAll(LoginInfoEntity.class);
 				                                                                                } else {
-					                                                                                String token = response.succeed().getToken();
-					                                                                                ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
-						                                                                                @Override
-						                                                                                public Void doInBackground() {
-							                                                                                LoginInfoEntity loginInfoEntity = LitePal.findFirst(
-									                                                                                LoginInfoEntity.class);
-							                                                                                loginInfoEntity.setToken(token);
-							                                                                                loginInfoEntity.saveOrUpdate();
-							                                                                                return null;
-						                                                                                }
-
-						                                                                                @Override
-						                                                                                public void onSuccess(Void result) {
-							                                                                                Kalle.getConfig()
-							                                                                                     .getHeaders()
-							                                                                                     .set("token", token);
-							                                                                                Kalle.setConfig(Kalle.getConfig());
-							                                                                                ActivityUtils.startActivity(MainActivity.class);
-							                                                                                ActivityUtils.finishActivity(LoginActivity.class);
-						                                                                                }
-					                                                                                });
+					                                                                                SPUtils.getInstance()
+					                                                                                       .put(SPConfig.LOGIN_CODE_SESSION_ID,
+					                                                                                            response.succeed().getToken());
+					                                                                                Kalle.getConfig()
+					                                                                                     .getHeaders()
+					                                                                                     .set("token",
+					                                                                                          SPUtils.getInstance()
+					                                                                                                 .getString(SPConfig.LOGIN_CODE_SESSION_ID));
+					                                                                                Kalle.setConfig(Kalle.getConfig());
+					                                                                                ActivityUtils.startActivity(MainActivity.class);
+					                                                                                ActivityUtils.finishActivity(LoginActivity.class);
 				                                                                                }
 			                                                                                }
 		                                                                                }));

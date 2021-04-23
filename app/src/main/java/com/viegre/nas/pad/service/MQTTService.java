@@ -11,12 +11,10 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.constant.TimeConstants;
+import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -24,13 +22,16 @@ import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.TimeUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.blankj.utilcode.util.ViewUtils;
+import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
+import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.entity.FtpCmdEntity;
 import com.viegre.nas.pad.entity.FtpFavoritesEntity;
-import com.viegre.nas.pad.entity.MQTTMsg;
+import com.viegre.nas.pad.entity.MQTTMsgEntity;
 import com.viegre.nas.pad.entity.RecycleBinEntity;
 import com.viegre.nas.pad.observer.FtpFileObserver;
 
@@ -54,6 +55,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+
 /**
  * Created by レインマン on 2021/04/12 09:40 with Android Studio.
  */
@@ -74,11 +78,8 @@ public class MQTTService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-//		List<File> ftpFileObserverList = new ArrayList<>();
-//		ftpFileObserverList.add(FileUtils.getFileByPath(PathConfig.PRIVATE));
-//		ftpFileObserverList.add(FileUtils.getFileByPath(PathConfig.PUBLIC));
-		mFtpFileObserver = new FtpFileObserver(PathConfig.NAS);
-		mFtpFileObserver.startWatching();
+		mFtpFileObserver = new FtpFileObserver(PathConfig.NAS.substring(0, PathConfig.NAS.length() - 1), FtpFileObserver.MULTI_DIRS_TYPE);
+		mFtpFileObserver.startDirWatch();
 		initNotificationChannel();
 		initMqttAndroidClient();
 	}
@@ -91,7 +92,7 @@ public class MQTTService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		mFtpFileObserver.stopWatching();
+		mFtpFileObserver.stopDirWatch();
 	}
 
 	private void initMqttConnectOptions() {
@@ -110,7 +111,7 @@ public class MQTTService extends Service {
 		try {
 			MemoryPersistence memoryPersistence = new MemoryPersistence();
 			mMqttAndroidClient = new MqttAndroidClient(Utils.getApp(),
-			                                           "tcp://39.108.236.191:1883",
+			                                           UrlConfig.MQTT_SERVER,
 			                                           SPUtils.getInstance().getString(SPConfig.ANDROID_ID),
 			                                           memoryPersistence);
 			mMqttAndroidClient.setCallback(mMqttCallbackExtended);
@@ -178,33 +179,47 @@ public class MQTTService extends Service {
 	/**
 	 * 发送消息
 	 *
-	 * @param mqttMsg
+	 * @param mqttMsgEntity
 	 */
-	public void sendMQTTMsg(MQTTMsg mqttMsg) {
+	public void sendMQTTMsg(MQTTMsgEntity mqttMsgEntity) {
 		MqttMessage mqttMessage = new MqttMessage();
-		mqttMessage.setPayload(JSON.toJSONString(mqttMsg).getBytes());//设置消息内容
+		mqttMessage.setPayload(JSON.toJSONString(mqttMsgEntity).getBytes());//设置消息内容
 		mqttMessage.setQos(2);//设置消息发送质量，可为0,1,2.
 		mqttMessage.setRetained(false);//服务器是否保存最后一条消息，若保存，client再次上线时，将再次受到上次发送的最后一条消息。
 		try {
-			mMqttAndroidClient.publish("nas/user/" + mqttMsg.getToId(), mqttMessage);//设置消息的topic，并发送。
+			mMqttAndroidClient.publish("nas/user/" + mqttMsgEntity.getToId(), mqttMessage);//设置消息的topic，并发送。
 		} catch (MqttException e) {
 			LogUtils.eTag(TAG, "sendMqttMsg", e.toString());
 		}
 	}
 
 	private void parseMessage(String message) {
-		MQTTMsg mqttMsg = JSON.parseObject(message, MQTTMsg.class);
-		switch (mqttMsg.getMsgType()) {
-			case MQTTMsg.TYPE_NOTIFY:
-				switch (mqttMsg.getAction()) {
+		MQTTMsgEntity mqttMsgEntity = JSON.parseObject(message, MQTTMsgEntity.class);
+		switch (mqttMsgEntity.getMsgType()) {
+			case MQTTMsgEntity.TYPE_NOTIFY:
+				switch (mqttMsgEntity.getAction()) {
 					//设备信息
-					case MQTTMsg.MSG_DEVICE_INFO:
-						sendMQTTMsg(getDeviceInfo(mqttMsg.getFromId()));
+					case MQTTMsgEntity.MSG_DEVICE_INFO:
+						sendMQTTMsg(getDeviceInfo(mqttMsgEntity.getFromId()));
 						break;
 
 					//公共/私人存储空间
-					case MQTTMsg.MSG_STORAGE_INFO:
-						sendMQTTMsg(getStorageInfo(mqttMsg.getFromId()));
+					case MQTTMsgEntity.MSG_STORAGE_INFO:
+						sendMQTTMsg(getStorageInfo(mqttMsgEntity.getFromId()));
+						break;
+
+					//设备绑定
+					case MQTTMsgEntity.MSG_BIND_RESULT:
+						String userName = JSON.parseObject(mqttMsgEntity.getParam()).getString("userName");
+						String sn = JSON.parseObject(mqttMsgEntity.getParam()).getString("sn");
+						//0 申请中、1 普通角色、2 拒绝、3 管理员
+						int state = JSON.parseObject(mqttMsgEntity.getParam()).getInteger("state");
+						LogUtils.iTag(TAG, "绑定结果: ", userName, sn, state);
+						if (2 == state) {
+							ToastUtils.showShort("管理员拒绝绑定");
+						} else if (1 == state || 3 == state) {
+							BusUtils.post(BusConfig.DEVICE_BOUND);
+						}
 						break;
 
 					default:
@@ -212,21 +227,21 @@ public class MQTTService extends Service {
 				}
 				break;
 
-			case MQTTMsg.TYPE_CMD:
-				switch (mqttMsg.getAction()) {
+			case MQTTMsgEntity.TYPE_CMD:
+				switch (mqttMsgEntity.getAction()) {
 					//磁盘整理
-					case MQTTMsg.MSG_DISK_DEFRAGMENT:
-						ViewUtils.runOnUiThreadDelayed(() -> sendMQTTMsg(diskDefragment(mqttMsg.getFromId())), getRandomNum(10, 20) * 1000L);
+					case MQTTMsgEntity.MSG_DISK_DEFRAGMENT:
+						ViewUtils.runOnUiThreadDelayed(() -> sendMQTTMsg(diskDefragment(mqttMsgEntity.getFromId())), getRandomNum(10, 20) * 1000L);
 						break;
 
 					//还原
-					case MQTTMsg.MSG_RESTORE:
+					case MQTTMsgEntity.MSG_RESTORE:
 						Map<String, Object> restoreParamMap = new HashMap<>();
-						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<MQTTMsg>() {
+						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<MQTTMsgEntity>() {
 							@Override
-							public MQTTMsg doInBackground() throws ZipException {
-								String restoreFilePath = JSON.parseObject(mqttMsg.getParam()).getString("path");
-								MQTTMsg restoreMsg = getRestoreMsg(mqttMsg.getFromId());
+							public MQTTMsgEntity doInBackground() throws ZipException {
+								String restoreFilePath = JSON.parseObject(mqttMsgEntity.getParam()).getString("path");
+								MQTTMsgEntity restoreMsg = getRestoreMsg(mqttMsgEntity.getFromId());
 								new ZipFile(restoreFilePath).extractAll(PathConfig.NAS);
 								restoreParamMap.put("result", true);
 								restoreMsg.setParam(new JSONObject(restoreParamMap).toJSONString());
@@ -236,29 +251,29 @@ public class MQTTService extends Service {
 							@Override
 							public void onFail(Throwable t) {
 								super.onFail(t);
-								MQTTMsg restoreMsg = getRestoreMsg(mqttMsg.getFromId());
+								MQTTMsgEntity restoreMsg = getRestoreMsg(mqttMsgEntity.getFromId());
 								restoreParamMap.put("result", false);
 								restoreMsg.setParam(new JSONObject(restoreParamMap).toJSONString());
 								sendMQTTMsg(restoreMsg);
 							}
 
 							@Override
-							public void onSuccess(MQTTMsg result) {
+							public void onSuccess(MQTTMsgEntity result) {
 								sendMQTTMsg(result);
 							}
 						});
 						break;
 
 					//备份
-					case MQTTMsg.MSG_BACKUP:
+					case MQTTMsgEntity.MSG_BACKUP:
 						Map<String, Object> backupParamMap = new HashMap<>();
-						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<MQTTMsg>() {
+						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<MQTTMsgEntity>() {
 							@Override
-							public MQTTMsg doInBackground() throws ZipException {
-								String backupDirPath = JSON.parseObject(mqttMsg.getParam()).getString("path");
+							public MQTTMsgEntity doInBackground() throws ZipException {
+								String backupDirPath = JSON.parseObject(mqttMsgEntity.getParam()).getString("path");
 								String backupFileName = "备份" + TimeUtils.getNowString(new SimpleDateFormat("yyyyMMddHHmmss",
 								                                                                           Locale.getDefault())) + ".zip";
-								MQTTMsg backupMsg = getBackupMsg(mqttMsg.getFromId());
+								MQTTMsgEntity backupMsg = getBackupMsg(mqttMsgEntity.getFromId());
 								ZipFile zipFile = new ZipFile(backupDirPath + backupFileName);
 								zipFile.addFolder(FileUtils.getFileByPath(PathConfig.PRIVATE));
 								zipFile.addFolder(FileUtils.getFileByPath(PathConfig.PUBLIC));
@@ -271,38 +286,38 @@ public class MQTTService extends Service {
 							@Override
 							public void onFail(Throwable t) {
 								super.onFail(t);
-								MQTTMsg backupMsg = getBackupMsg(mqttMsg.getFromId());
+								MQTTMsgEntity backupMsg = getBackupMsg(mqttMsgEntity.getFromId());
 								backupParamMap.put("result", false);
 								backupMsg.setParam(new JSONObject(backupParamMap).toJSONString());
 								sendMQTTMsg(backupMsg);
 							}
 
 							@Override
-							public void onSuccess(MQTTMsg result) {
+							public void onSuccess(MQTTMsgEntity result) {
 								sendMQTTMsg(result);
 							}
 						});
 						break;
 
 					//使用寿命检测
-					case MQTTMsg.MSG_LIFE_TEST:
-						ViewUtils.runOnUiThreadDelayed(() -> sendMQTTMsg(lifeTest(mqttMsg.getFromId())), getRandomNum(10, 20) * 1000L);
+					case MQTTMsgEntity.MSG_LIFE_TEST:
+						ViewUtils.runOnUiThreadDelayed(() -> sendMQTTMsg(lifeTest(mqttMsgEntity.getFromId())), getRandomNum(10, 20) * 1000L);
 						break;
 
 					//关机
-					case MQTTMsg.MSG_SHUT_DOWN:
-						sendMQTTMsg(shutDown(mqttMsg.getFromId()));
+					case MQTTMsgEntity.MSG_SHUT_DOWN:
+						sendMQTTMsg(shutDown(mqttMsgEntity.getFromId()));
 						break;
 
 					//重启
-					case MQTTMsg.MSG_REBOOT:
-						sendMQTTMsg(reboot(mqttMsg.getFromId()));
+					case MQTTMsgEntity.MSG_REBOOT:
+						sendMQTTMsg(reboot(mqttMsgEntity.getFromId()));
 						break;
 
 					//ftp复制
-					case MQTTMsg.MSG_FTP_COPY:
-						String destPath = JSON.parseObject(mqttMsg.getParam()).getString("destPath");
-						List<FtpCmdEntity> srcPathList = JSON.parseObject(mqttMsg.getParam())
+					case MQTTMsgEntity.MSG_FTP_COPY:
+						String destPath = JSON.parseObject(mqttMsgEntity.getParam()).getString("destPath");
+						List<FtpCmdEntity> srcPathList = JSON.parseObject(mqttMsgEntity.getParam())
 						                                     .getJSONArray("srcPathList")
 						                                     .toJavaList(FtpCmdEntity.class);
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
@@ -324,7 +339,7 @@ public class MQTTService extends Service {
 							public void onSuccess(Boolean result) {
 								Map<String, Object> ftpCopyParamMap = new HashMap<>();
 								ftpCopyParamMap.put("result", result);
-								MQTTMsg ftpCopyMsg = ftpCopy(mqttMsg.getFromId());
+								MQTTMsgEntity ftpCopyMsg = ftpCopy(mqttMsgEntity.getFromId());
 								ftpCopyMsg.setParam(new JSONObject(ftpCopyParamMap).toJSONString());
 								sendMQTTMsg(ftpCopyMsg);
 							}
@@ -332,8 +347,8 @@ public class MQTTService extends Service {
 						break;
 
 					//ftp删除
-					case MQTTMsg.MSG_FTP_DELETE:
-						List<FtpCmdEntity> delPathList = JSON.parseObject(mqttMsg.getParam())
+					case MQTTMsgEntity.MSG_FTP_DELETE:
+						List<FtpCmdEntity> delPathList = JSON.parseObject(mqttMsgEntity.getParam())
 						                                     .getJSONArray("delPathList")
 						                                     .toJavaList(FtpCmdEntity.class);
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
@@ -371,7 +386,7 @@ public class MQTTService extends Service {
 							public void onSuccess(Boolean result) {
 								Map<String, Object> ftpDeleteParamMap = new HashMap<>();
 								ftpDeleteParamMap.put("result", result);
-								MQTTMsg ftpDeleteMsg = ftpDelete(mqttMsg.getFromId());
+								MQTTMsgEntity ftpDeleteMsg = ftpDelete(mqttMsgEntity.getFromId());
 								ftpDeleteMsg.setParam(new JSONObject(ftpDeleteParamMap).toJSONString());
 								sendMQTTMsg(ftpDeleteMsg);
 							}
@@ -379,7 +394,7 @@ public class MQTTService extends Service {
 						break;
 
 					//ftp删除列表
-					case MQTTMsg.MSG_FTP_DELETE_LIST:
+					case MQTTMsgEntity.MSG_FTP_DELETE_LIST:
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<RecycleBinEntity>>() {
 							@Override
 							public List<RecycleBinEntity> doInBackground() {
@@ -390,7 +405,7 @@ public class MQTTService extends Service {
 							public void onSuccess(List<RecycleBinEntity> result) {
 								Map<String, Object> ftpDeleteListMap = new HashMap<>();
 								ftpDeleteListMap.put("delPathList", result);
-								MQTTMsg ftpDeleteListMsg = ftpDeleteList(mqttMsg.getFromId());
+								MQTTMsgEntity ftpDeleteListMsg = ftpDeleteList(mqttMsgEntity.getFromId());
 								ftpDeleteListMsg.setParam(new JSONObject(ftpDeleteListMap).toJSONString());
 								sendMQTTMsg(ftpDeleteListMsg);
 							}
@@ -398,8 +413,8 @@ public class MQTTService extends Service {
 						break;
 
 					//ftp还原列表
-					case MQTTMsg.MSG_FTP_RESTORE_LIST:
-						List<FtpCmdEntity> rstPathList = JSON.parseObject(mqttMsg.getParam())
+					case MQTTMsgEntity.MSG_FTP_RESTORE_LIST:
+						List<FtpCmdEntity> rstPathList = JSON.parseObject(mqttMsgEntity.getParam())
 						                                     .getJSONArray("rstPathList")
 						                                     .toJavaList(FtpCmdEntity.class);
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
@@ -424,7 +439,7 @@ public class MQTTService extends Service {
 							public void onSuccess(Boolean result) {
 								Map<String, Object> ftpRestoreParamMap = new HashMap<>();
 								ftpRestoreParamMap.put("result", result);
-								MQTTMsg ftpDeleteMsg = ftpRestoreList(mqttMsg.getFromId());
+								MQTTMsgEntity ftpDeleteMsg = ftpRestoreList(mqttMsgEntity.getFromId());
 								ftpDeleteMsg.setParam(new JSONObject(ftpRestoreParamMap).toJSONString());
 								sendMQTTMsg(ftpDeleteMsg);
 							}
@@ -432,9 +447,9 @@ public class MQTTService extends Service {
 						break;
 
 					//ftp文件清除
-					case MQTTMsg.MSG_FTP_ERASE:
-						boolean erase = JSON.parseObject(mqttMsg.getParam()).getBoolean("erase");
-						List<FtpCmdEntity> erasePathList = JSON.parseObject(mqttMsg.getParam())
+					case MQTTMsgEntity.MSG_FTP_ERASE:
+						boolean erase = JSON.parseObject(mqttMsgEntity.getParam()).getBoolean("erase");
+						List<FtpCmdEntity> erasePathList = JSON.parseObject(mqttMsgEntity.getParam())
 						                                       .getJSONArray("erasePathList")
 						                                       .toJavaList(FtpCmdEntity.class);
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
@@ -464,7 +479,7 @@ public class MQTTService extends Service {
 							public void onSuccess(Boolean result) {
 								Map<String, Object> ftpEraseParamMap = new HashMap<>();
 								ftpEraseParamMap.put("result", result);
-								MQTTMsg ftpEraseMsg = ftpErase(mqttMsg.getFromId());
+								MQTTMsgEntity ftpEraseMsg = ftpErase(mqttMsgEntity.getFromId());
 								ftpEraseMsg.setParam(new JSONObject(ftpEraseParamMap).toJSONString());
 								sendMQTTMsg(ftpEraseMsg);
 							}
@@ -472,9 +487,9 @@ public class MQTTService extends Service {
 						break;
 
 					//ftp文件收藏
-					case MQTTMsg.MSG_FTP_FAVORITES:
-						boolean isAdd = JSON.parseObject(mqttMsg.getParam()).getBoolean("isAdd");
-						List<FtpFavoritesEntity> favoritesPathList = JSON.parseObject(mqttMsg.getParam())
+					case MQTTMsgEntity.MSG_FTP_FAVORITES:
+						boolean isAdd = JSON.parseObject(mqttMsgEntity.getParam()).getBoolean("isAdd");
+						List<FtpFavoritesEntity> favoritesPathList = JSON.parseObject(mqttMsgEntity.getParam())
 						                                                 .getJSONArray("favoritesPathList")
 						                                                 .toJavaList(FtpFavoritesEntity.class);
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
@@ -488,6 +503,7 @@ public class MQTTService extends Service {
 										if (isAdd) {
 											ftpFavoritesEntity.setTime(TimeUtils.millis2String(FileUtils.getFileLastModified(ftpFavoritesEntity.getPath()),
 											                                                   sdf));
+											ftpFavoritesEntity.setSize(FileUtils.getSize(ftpFavoritesEntity.getPath()));
 											ftpFavoritesEntity.save();
 										} else {
 											FtpFavoritesEntity ftpFavorites = LitePal.where("path = ?", ftpFavoritesEntity.getPath())
@@ -505,7 +521,7 @@ public class MQTTService extends Service {
 							public void onSuccess(Boolean result) {
 								Map<String, Object> ftpFavoritesParamMap = new HashMap<>();
 								ftpFavoritesParamMap.put("result", result);
-								MQTTMsg ftpFavoritesMsg = ftpFavorites(mqttMsg.getFromId());
+								MQTTMsgEntity ftpFavoritesMsg = ftpFavorites(mqttMsgEntity.getFromId());
 								ftpFavoritesMsg.setParam(new JSONObject(ftpFavoritesParamMap).toJSONString());
 								sendMQTTMsg(ftpFavoritesMsg);
 							}
@@ -513,7 +529,7 @@ public class MQTTService extends Service {
 						break;
 
 					//ftp收藏列表
-					case MQTTMsg.MSG_FTP_FAVORITES_LIST:
+					case MQTTMsgEntity.MSG_FTP_FAVORITES_LIST:
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<FtpFavoritesEntity>>() {
 							@Override
 							public List<FtpFavoritesEntity> doInBackground() {
@@ -524,7 +540,7 @@ public class MQTTService extends Service {
 							public void onSuccess(List<FtpFavoritesEntity> result) {
 								Map<String, Object> ftpFavoritesListMap = new HashMap<>();
 								ftpFavoritesListMap.put("favoritesPathList", result);
-								MQTTMsg ftpFavoritesListMsg = ftpFavoritesList(mqttMsg.getFromId());
+								MQTTMsgEntity ftpFavoritesListMsg = ftpFavoritesList(mqttMsgEntity.getFromId());
 								ftpFavoritesListMsg.setParam(new JSONObject(ftpFavoritesListMap).toJSONString());
 								sendMQTTMsg(ftpFavoritesListMsg);
 							}
@@ -547,7 +563,7 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg getDeviceInfo(String toId) {
+	private MQTTMsgEntity getDeviceInfo(String toId) {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("name", "模拟器");
 		paramMap.put("mac", DeviceUtils.getMacAddress());
@@ -564,7 +580,7 @@ public class MQTTService extends Service {
 		paramMap.put("driveModel", "");
 		paramMap.put("driveCapacity", "");
 		JSONObject paramJson = new JSONObject(paramMap);
-		return new MQTTMsg(MQTTMsg.TYPE_NOTIFY, MQTTMsg.MSG_DEVICE_INFO, toId, paramJson.toJSONString());
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_NOTIFY, MQTTMsgEntity.MSG_DEVICE_INFO, toId, paramJson.toJSONString());
 	}
 
 	/**
@@ -573,7 +589,7 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg getStorageInfo(String toId) {
+	private MQTTMsgEntity getStorageInfo(String toId) {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("total", FileUtils.getFsTotalSize(PathConfig.NAS));
 		paramMap.put("publicUsed", getDirLength(FileUtils.getFileByPath(PathConfig.PUBLIC)));
@@ -591,7 +607,7 @@ public class MQTTService extends Service {
 			}
 		}
 		JSONObject paramJson = new JSONObject(paramMap);
-		return new MQTTMsg(MQTTMsg.TYPE_NOTIFY, MQTTMsg.MSG_STORAGE_INFO, toId, paramJson.toJSONString());
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_NOTIFY, MQTTMsgEntity.MSG_STORAGE_INFO, toId, paramJson.toJSONString());
 	}
 
 	/**
@@ -600,11 +616,11 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg diskDefragment(String toId) {
+	private MQTTMsgEntity diskDefragment(String toId) {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("result", true);
 		JSONObject paramJson = new JSONObject(paramMap);
-		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_DISK_DEFRAGMENT, toId, paramJson.toJSONString());
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_DISK_DEFRAGMENT, toId, paramJson.toJSONString());
 	}
 
 	/**
@@ -613,8 +629,8 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg getRestoreMsg(String toId) {
-		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_RESTORE, toId);
+	private MQTTMsgEntity getRestoreMsg(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_RESTORE, toId);
 	}
 
 	/**
@@ -623,8 +639,8 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg getBackupMsg(String toId) {
-		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_BACKUP, toId);
+	private MQTTMsgEntity getBackupMsg(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_BACKUP, toId);
 	}
 
 	/**
@@ -633,14 +649,14 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg lifeTest(String toId) {
+	private MQTTMsgEntity lifeTest(String toId) {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("days",
 		             TimeUtils.getTimeSpan(System.currentTimeMillis(),
 		                                   TimeUtils.string2Millis("20210401", new SimpleDateFormat("yyyyMMdd", Locale.getDefault())),
 		                                   TimeConstants.DAY));
 		JSONObject paramJson = new JSONObject(paramMap);
-		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_LIFE_TEST, toId, paramJson.toJSONString());
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_LIFE_TEST, toId, paramJson.toJSONString());
 	}
 
 	/**
@@ -649,11 +665,11 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg shutDown(String toId) {
+	private MQTTMsgEntity shutDown(String toId) {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("result", true);
 		JSONObject paramJson = new JSONObject(paramMap);
-		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_SHUT_DOWN, toId, paramJson.toJSONString());
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_SHUT_DOWN, toId, paramJson.toJSONString());
 	}
 
 	/**
@@ -662,11 +678,11 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg reboot(String toId) {
+	private MQTTMsgEntity reboot(String toId) {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("result", true);
 		JSONObject paramJson = new JSONObject(paramMap);
-		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_REBOOT, toId, paramJson.toJSONString());
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_REBOOT, toId, paramJson.toJSONString());
 	}
 
 	/**
@@ -675,8 +691,8 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg ftpCopy(String toId) {
-		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_COPY, toId);
+	private MQTTMsgEntity ftpCopy(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_COPY, toId);
 	}
 
 	/**
@@ -685,8 +701,8 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg ftpDelete(String toId) {
-		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_DELETE, toId);
+	private MQTTMsgEntity ftpDelete(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_DELETE, toId);
 	}
 
 	/**
@@ -695,8 +711,8 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg ftpDeleteList(String toId) {
-		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_DELETE_LIST, toId);
+	private MQTTMsgEntity ftpDeleteList(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_DELETE_LIST, toId);
 	}
 
 	/**
@@ -705,8 +721,8 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg ftpRestoreList(String toId) {
-		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_RESTORE_LIST, toId);
+	private MQTTMsgEntity ftpRestoreList(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_RESTORE_LIST, toId);
 	}
 
 	/**
@@ -715,8 +731,8 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg ftpErase(String toId) {
-		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_ERASE, toId);
+	private MQTTMsgEntity ftpErase(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_ERASE, toId);
 	}
 
 	/**
@@ -725,8 +741,8 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg ftpFavorites(String toId) {
-		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_FAVORITES, toId);
+	private MQTTMsgEntity ftpFavorites(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_FAVORITES, toId);
 	}
 
 	/**
@@ -735,8 +751,8 @@ public class MQTTService extends Service {
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsg ftpFavoritesList(String toId) {
-		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_FAVORITES_LIST, toId);
+	private MQTTMsgEntity ftpFavoritesList(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_FAVORITES_LIST, toId);
 	}
 
 	/**

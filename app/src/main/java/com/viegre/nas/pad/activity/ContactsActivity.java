@@ -1,51 +1,37 @@
 package com.viegre.nas.pad.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.ThreadUtils;
-import com.kongzue.dialog.interfaces.OnDismissListener;
-import com.kongzue.dialog.util.DialogSettings;
+import com.djangoogle.framework.activity.BaseActivity;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.ContactsRvDevicesAdapter;
 import com.viegre.nas.pad.adapter.ContactsRvFriendsAdapter;
 import com.viegre.nas.pad.adapter.ContactsRvRecordAdapter;
-import com.viegre.nas.pad.adapter.MoreAppActivityRvAdapter;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
-import com.viegre.nas.pad.entity.ContactsBean;
-import com.viegre.nas.pad.entity.LoginEntity;
-import com.viegre.nas.pad.entity.LoginInfoEntity;
+import com.viegre.nas.pad.databinding.ActivityContactsBinding;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.simple.SimpleCallback;
 import com.yanzhenjie.kalle.simple.SimpleResponse;
 
-import org.litepal.LitePal;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.viegre.nas.pad.R.id.homeImg;
-import static com.viegre.nas.pad.R.id.thumb;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 联系人相关类
  */
 
-public class ContactsActivity extends AppCompatActivity implements View.OnClickListener {
+public class ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.OnClickListener {
 
     private RecyclerView contactsRv1;
     private RecyclerView contactsRv2;
@@ -53,12 +39,9 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
     private ImageView homeImg;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void initialize() {
         CommonUtils.hideBottomUIMenu(this);
         CommonUtils.hideStatusBar(this);
-
-        setContentView(R.layout.activity_contacts);
         initView();
         getContactsDatas();
     }
@@ -118,7 +101,6 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
     private void getContactsDatas() {
         TipDialog show = WaitDialog.show(this, "请稍候...");
         Kalle.post(UrlConfig.Device.GET_GETALLFOLLOWS)
-                .addHeader("token", String.valueOf(ContactsActivity.this.getSharedPreferences(ContactsActivity.this.getString(R.string.nasSpData), SplashActivity.MODE_APPEND).getString("token", "")))
                 .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
                 .perform(new SimpleCallback<String>() {
                     @SuppressLint({"WrongConstant", "ApplySharedPref"})

@@ -184,9 +184,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 				     if (!response.isSucceed()) {
 					     CommonUtils.showErrorToast(response.failed());
 				     } else {
-					     String token = response.succeed().getToken();
-						 getSharedPreferences(LoginActivity.this.getString(R.string.nasSpData), SplashActivity.MODE_APPEND).edit().putString("token",token).commit();
-					     LoginInfoEntity loginInfoEntity = new LoginInfoEntity(token, phone);
+					     SPUtils.getInstance().put(SPConfig.LOGIN_CODE_SESSION_ID, response.succeed().getToken());
+					     LoginInfoEntity loginInfoEntity = new LoginInfoEntity(phone);
 
 					     ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
 						     @Override
@@ -198,7 +197,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 
 						     @Override
 						     public void onSuccess(Void result) {
-							     Kalle.getConfig().getHeaders().set("token", token);
+							     Kalle.getConfig().getHeaders().set("token", SPUtils.getInstance().getString(SPConfig.LOGIN_CODE_SESSION_ID));
 							     Kalle.setConfig(Kalle.getConfig());
 							     setLoginTime();
 						     }

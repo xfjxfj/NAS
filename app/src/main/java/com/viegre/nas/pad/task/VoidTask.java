@@ -1,6 +1,5 @@
 package com.viegre.nas.pad.task;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 
 /**
@@ -9,7 +8,5 @@ import com.blankj.utilcode.util.ThreadUtils;
 public abstract class VoidTask extends ThreadUtils.SimpleTask<Void> {
 
 	@Override
-	public void onSuccess(Void v) {
-		LogUtils.iTag(VoidTask.class.getSimpleName(), "VoidTask.onSuccess()");
-	}
+	public void onSuccess(Void v) {}
 }

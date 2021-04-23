@@ -1,8 +1,6 @@
 package com.viegre.nas.pad.activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -36,7 +34,6 @@ import com.viegre.nas.pad.databinding.ActivitySplashBinding;
 import com.viegre.nas.pad.entity.DeviceResourceEntity;
 import com.viegre.nas.pad.entity.DeviceResourceRootEntity;
 import com.viegre.nas.pad.entity.GuideResourceEntity;
-import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.fragment.settings.network.NetworkDetailFragment;
 import com.viegre.nas.pad.fragment.settings.network.NetworkFragment;
 import com.viegre.nas.pad.service.MQTTService;
@@ -77,28 +74,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	protected void initialize() {
 		ServiceUtils.startService(ScreenSaverService.class);
 		ServiceUtils.startService(MQTTService.class);
-		ifDevices();
-//		grantPermission();
-	}
-
-	/**
-	 * xfj 2021年4月8日
-	 * 判断设备是否绑定设备
-	 */
-	@SuppressLint("WrongConstant")
-	private void ifDevices() {
-		SharedPreferences sharedPreferences = getSharedPreferences(this.getString(R.string.nasSpData), SplashActivity.MODE_APPEND);
-		int nb = sharedPreferences.getInt(getString(R.string.installNumber), 0);
-//        * 等于0说明是第一次进来 跳转到引导页面 然后添加sp数据
-		String string = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
-		if (nb == 0) {
-//		if (false) {
-			sharedPreferences.edit().putInt(getString(R.string.installNumber), 1).commit();
-			startActivity(new Intent(SplashActivity.this, WelcomeActivity.class));
-			finish();
-		} else {
-			grantPermission();//如果不是第一次进入 执行原有逻辑
-		}
+		grantPermission();
 	}
 
 	@Override
@@ -169,12 +145,6 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 					LogUtils.iTag("ShellUtils", commandResult.toString());
 				}
 				//创建文件夹
-//				FileUtils.createOrExistsDir(PathConfig.IMAGE.PRI);
-//				FileUtils.createOrExistsDir(PathConfig.IMAGE.PUB);
-//				FileUtils.createOrExistsDir(PathConfig.AUDIO.PRI);
-//				FileUtils.createOrExistsDir(PathConfig.AUDIO.PUB);
-//				FileUtils.createOrExistsDir(PathConfig.VIDEO.PRI);
-//				FileUtils.createOrExistsDir(PathConfig.VIDEO.PUB);
 				FileUtils.createOrExistsDir(PathConfig.GUIDE_RESOURCE);
 				FileUtils.createOrExistsDir(PathConfig.RECYCLE_BIN);
 				return null;
@@ -210,38 +180,28 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 判断设备是否绑定用户
 	 */
 	private void getDeviceBoundstatus() {
-		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<LoginInfoEntity>() {
-			@Override
-			public LoginInfoEntity doInBackground() {
-				return LitePal.findFirst(LoginInfoEntity.class);
-			}
-
-			@Override
-			public void onSuccess(LoginInfoEntity result) {
-				if (null == result) {//未绑定
-					//判断网络是否可用
-					NetworkUtils.isAvailableAsync(aBoolean -> {
-						if (!aBoolean) {//配置网络
-							mNetworkFragment = NetworkFragment.newInstance(true);
-							mNetworkDetailFragment = NetworkDetailFragment.newInstance();
-							FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
-							FragmentUtils.show(mNetworkFragment);
-						} else {//引导用户注册
-							registerGuide();
-						}
-					});
-				} else {//已绑定
-					//判断网络是否可用
-					NetworkUtils.isAvailableAsync(aBoolean -> {
-						if (!aBoolean) {//读取并显示缓存引导页
-							showGuideData();
-						} else {//获取并显示最新引导页
-							getDeviceResource();
-						}
-					});
+		if (!SPUtils.getInstance().getBoolean(SPConfig.IS_BOUND, false)) {//未绑定
+			//判断网络是否可用
+			NetworkUtils.isAvailableAsync(aBoolean -> {
+				if (!aBoolean) {//配置网络
+					mNetworkFragment = NetworkFragment.newInstance(true);
+					mNetworkDetailFragment = NetworkDetailFragment.newInstance();
+					FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
+					FragmentUtils.show(mNetworkFragment);
+				} else {//引导用户注册
+					ActivityUtils.startActivity(WelcomeActivity.class);
 				}
-			}
-		});
+			});
+		} else {//已绑定
+			//判断网络是否可用
+			NetworkUtils.isAvailableAsync(aBoolean -> {
+				if (!aBoolean) {//读取并显示缓存引导页
+					showGuideData();
+				} else {//获取并显示最新引导页
+					getDeviceResource();
+				}
+			});
+		}
 	}
 
 	@BusUtils.Bus(tag = BusConfig.NETWORK_DETAIL, threadMode = BusUtils.ThreadMode.MAIN)
@@ -259,6 +219,13 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 			default:
 				break;
 		}
+	}
+
+	@BusUtils.Bus(tag = BusConfig.DEVICE_BOUND, threadMode = BusUtils.ThreadMode.MAIN)
+	public void deviceBound() {
+		SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
+		//获取并显示最新引导页
+		getDeviceResource();
 	}
 
 	/**
@@ -307,18 +274,9 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	}
 
 	/**
-	 * 引导用户注册
-	 */
-	private void registerGuide() {
-		//显示引导页
-		showGuideData();
-	}
-
-	/**
 	 * 显示引导页
 	 */
 	private void showGuideData() {
-//		ActivityUtils.startActivity(MainActivity.class);
 		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<GuideResourceEntity>() {
 			@Override
 			public GuideResourceEntity doInBackground() {

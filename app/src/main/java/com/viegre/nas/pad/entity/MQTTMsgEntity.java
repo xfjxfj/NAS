@@ -3,16 +3,21 @@ package com.viegre.nas.pad.entity;
 import com.blankj.utilcode.util.SPUtils;
 import com.viegre.nas.pad.config.SPConfig;
 
+import java.io.Serializable;
+
 /**
  * Created by レインマン on 2021/04/12 14:07 with Android Studio.
  */
-public class MQTTMsg {
+public class MQTTMsgEntity implements Serializable {
 
 	public final static String TYPE_NOTIFY = "notify";
-	public final static String TYPE_CMD = "cmd";
 
 	public final static String MSG_DEVICE_INFO = "deviceInfo";//设备信息
 	public final static String MSG_STORAGE_INFO = "storageInfo";//公共/私人存储空间
+	public final static String MSG_BIND_RESULT = "bindResult";//设备绑定
+
+	public final static String TYPE_CMD = "cmd";
+
 	public final static String MSG_DISK_DEFRAGMENT = "diskDefragment";//磁盘整理
 	public final static String MSG_RESTORE = "restore";//还原
 	public final static String MSG_BACKUP = "backup";//备份
@@ -34,9 +39,9 @@ public class MQTTMsg {
 	private long timeStamp;
 	private String param;
 
-	public MQTTMsg() {}
+	public MQTTMsgEntity() {}
 
-	public MQTTMsg(String msgType, String action, String toId) {
+	public MQTTMsgEntity(String msgType, String action, String toId) {
 		this.msgType = msgType;
 		this.action = action;
 		this.fromId = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
@@ -44,7 +49,7 @@ public class MQTTMsg {
 		this.timeStamp = System.currentTimeMillis();
 	}
 
-	public MQTTMsg(String msgType, String action, String toId, String param) {
+	public MQTTMsgEntity(String msgType, String action, String toId, String param) {
 		this.msgType = msgType;
 		this.action = action;
 		this.fromId = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);

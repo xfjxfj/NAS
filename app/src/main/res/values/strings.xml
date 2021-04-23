@@ -157,9 +157,6 @@
 	<!--外部存储-->
 	<string name="external_storage">外部存储%s</string>
 	<string name="external_storage_empty">该目录为空</string>
-	<!--	常用字符串-->
-	<string name="nasSpData">nasSpData</string>
-	<string name="installNumber">installNumber</string>
 
 	<!--	启动页面-->
 	<string name="hello_first_fragment">Hello first fragment</string>
