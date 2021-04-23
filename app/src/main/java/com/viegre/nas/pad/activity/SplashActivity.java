@@ -82,10 +82,6 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	protected void onResume() {
 		super.onResume();
 		GSYVideoManager.onResume();
-//		if (SPUtils.getInstance().getBoolean(SPConfig.IS_BOUND, false)) {
-//			//获取并显示最新引导页
-//			getDeviceResource();
-//		}
 	}
 
 	@Override
@@ -98,7 +94,6 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	protected void onDestroy() {
 		FragmentUtils.removeAll(getSupportFragmentManager());
 		GSYVideoManager.releaseAllVideos();
-		LogUtils.iTag("splashh", "已关闭");
 		super.onDestroy();
 	}
 
@@ -189,25 +184,21 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	private void getDeviceBoundstatus() {
 		if (!SPUtils.getInstance().getBoolean(SPConfig.IS_BOUND, false)) {//未绑定
 			//判断网络是否可用
-			NetworkUtils.isAvailableAsync(aBoolean -> {
-				if (!aBoolean) {//配置网络
-					mNetworkFragment = NetworkFragment.newInstance(true);
-					mNetworkDetailFragment = NetworkDetailFragment.newInstance();
-					FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
-					FragmentUtils.show(mNetworkFragment);
-				} else {//引导用户注册
-					ActivityUtils.startActivity(WelcomeActivity.class);
-				}
-			});
+			if (!NetworkUtils.isConnected()) {//配置网络
+				mNetworkFragment = NetworkFragment.newInstance(true);
+				mNetworkDetailFragment = NetworkDetailFragment.newInstance();
+				FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
+				FragmentUtils.show(mNetworkFragment);
+			} else {//引导用户注册
+				ActivityUtils.startActivity(WelcomeActivity.class);
+			}
 		} else {//已绑定
 			//判断网络是否可用
-			NetworkUtils.isAvailableAsync(aBoolean -> {
-				if (!aBoolean) {//读取并显示缓存引导页
-					showGuideData();
-				} else {//获取并显示最新引导页
-					getDeviceResource();
-				}
-			});
+			if (!NetworkUtils.isConnected()) {
+				showGuideData();
+			} else {//获取并显示最新引导页
+				getDeviceResource();
+			}
 		}
 	}
 
@@ -228,8 +219,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		}
 	}
 
-	@BusUtils.Bus(tag = BusConfig.DEVICE_BOUND_RESULT, threadMode = BusUtils.ThreadMode.MAIN)
-	public void deviceBoundResult() {
+	@BusUtils.Bus(tag = BusConfig.DEVICE_BOUND, sticky = true, threadMode = BusUtils.ThreadMode.MAIN)
+	public void deviceBound() {
 		SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
 		//获取并显示最新引导页
 		getDeviceResource();
