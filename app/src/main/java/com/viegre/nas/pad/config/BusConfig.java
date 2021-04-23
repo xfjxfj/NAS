@@ -41,7 +41,7 @@ public class BusConfig {
 	public static final String USB_DEVICE_DETACHED = "screen_custom_hide";
 
 	/**
-	 * MQTT消息发送
+	 * 设备绑定成功
 	 */
-	public static final String MQTT_MSG = "mqtt_msg";
+	public static final String DEVICE_BOUND = "device_bound";
 }

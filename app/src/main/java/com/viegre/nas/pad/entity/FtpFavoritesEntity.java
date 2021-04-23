@@ -11,12 +11,14 @@ public class FtpFavoritesEntity extends LitePalSupport implements Serializable {
 
 	private String path;
 	private String time;
+	private String size;
 
 	public FtpFavoritesEntity() {}
 
-	public FtpFavoritesEntity(String path, String time) {
+	public FtpFavoritesEntity(String path, String time, String size) {
 		this.path = path;
 		this.time = time;
+		this.size = size;
 	}
 
 	public String getPath() {
@@ -33,5 +35,13 @@ public class FtpFavoritesEntity extends LitePalSupport implements Serializable {
 
 	public void setTime(String time) {
 		this.time = time;
+	}
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
 	}
 }

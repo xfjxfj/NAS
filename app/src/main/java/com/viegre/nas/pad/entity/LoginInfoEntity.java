@@ -9,20 +9,10 @@ import java.io.Serializable;
  */
 public class LoginInfoEntity extends LitePalSupport implements Serializable {
 
-	private String token;
 	private String phoneNumber;
 
-	public LoginInfoEntity(String token, String phoneNumber) {
-		this.token = token;
+	public LoginInfoEntity(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
 	}
 
 	public String getPhoneNumber() {

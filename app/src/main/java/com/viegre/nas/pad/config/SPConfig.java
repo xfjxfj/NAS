@@ -5,6 +5,9 @@ package com.viegre.nas.pad.config;
  */
 public class SPConfig {
 
+	//是否绑定
+	public static final String IS_BOUND = "is_bound";
+
 	//已保存的WiFi
 	public static final String SAVED_WIFI = "saved_wifi";
 
