@@ -24,6 +24,8 @@ public class MQTTMsg {
 	public final static String MSG_FTP_DELETE_LIST = "ftpDeleteList";//ftp删除列表
 	public final static String MSG_FTP_RESTORE_LIST = "ftpRestoreList";//ftp还原列表
 	public final static String MSG_FTP_ERASE = "ftpErase";//ftp文件清除
+	public final static String MSG_FTP_FAVORITES = "ftpFavorites";//ftp文件收藏
+	public final static String MSG_FTP_FAVORITES_LIST = "ftpFavoritesList";//ftp收藏列表
 
 	private String msgType;
 	private String action;

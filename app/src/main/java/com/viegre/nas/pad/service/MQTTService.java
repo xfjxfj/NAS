@@ -11,6 +11,9 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.constant.TimeConstants;
@@ -26,8 +29,10 @@ import com.blankj.utilcode.util.ViewUtils;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.entity.FtpCmdEntity;
+import com.viegre.nas.pad.entity.FtpFavoritesEntity;
 import com.viegre.nas.pad.entity.MQTTMsg;
 import com.viegre.nas.pad.entity.RecycleBinEntity;
+import com.viegre.nas.pad.observer.FtpFileObserver;
 
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -49,9 +54,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-
 /**
  * Created by レインマン on 2021/04/12 09:40 with Android Studio.
  */
@@ -61,6 +63,7 @@ public class MQTTService extends Service {
 
 	private MqttConnectOptions mMqttConnectOptions;
 	private MqttAndroidClient mMqttAndroidClient;
+	private FtpFileObserver mFtpFileObserver;
 
 	@Nullable
 	@Override
@@ -71,6 +74,11 @@ public class MQTTService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+//		List<File> ftpFileObserverList = new ArrayList<>();
+//		ftpFileObserverList.add(FileUtils.getFileByPath(PathConfig.PRIVATE));
+//		ftpFileObserverList.add(FileUtils.getFileByPath(PathConfig.PUBLIC));
+		mFtpFileObserver = new FtpFileObserver(PathConfig.NAS);
+		mFtpFileObserver.startWatching();
 		initNotificationChannel();
 		initMqttAndroidClient();
 	}
@@ -83,6 +91,7 @@ public class MQTTService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		mFtpFileObserver.stopWatching();
 	}
 
 	private void initMqttConnectOptions() {
@@ -436,22 +445,19 @@ public class MQTTService extends Service {
 									LitePal.deleteAll(RecycleBinEntity.class);
 									return true;
 								}
-								if (!erase) {
-									if (null == erasePathList || erasePathList.isEmpty()) {
-										return false;
-									} else {
-										for (FtpCmdEntity ftpCmdEntity : erasePathList) {
-											FileUtils.delete(ftpCmdEntity.getPath());
-											RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?", ftpCmdEntity.getPath())
-											                                           .findFirst(RecycleBinEntity.class);
-											if (null != recycleBinEntity) {
-												recycleBinEntity.delete();
-											}
+								if (null == erasePathList || erasePathList.isEmpty()) {
+									return false;
+								} else {
+									for (FtpCmdEntity ftpCmdEntity : erasePathList) {
+										FileUtils.delete(ftpCmdEntity.getPath());
+										RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?", ftpCmdEntity.getPath())
+										                                           .findFirst(RecycleBinEntity.class);
+										if (null != recycleBinEntity) {
+											recycleBinEntity.delete();
 										}
 									}
-									return true;
 								}
-								return false;
+								return true;
 							}
 
 							@Override
@@ -461,6 +467,66 @@ public class MQTTService extends Service {
 								MQTTMsg ftpEraseMsg = ftpErase(mqttMsg.getFromId());
 								ftpEraseMsg.setParam(new JSONObject(ftpEraseParamMap).toJSONString());
 								sendMQTTMsg(ftpEraseMsg);
+							}
+						});
+						break;
+
+					//ftp文件收藏
+					case MQTTMsg.MSG_FTP_FAVORITES:
+						boolean isAdd = JSON.parseObject(mqttMsg.getParam()).getBoolean("isAdd");
+						List<FtpFavoritesEntity> favoritesPathList = JSON.parseObject(mqttMsg.getParam())
+						                                                 .getJSONArray("favoritesPathList")
+						                                                 .toJavaList(FtpFavoritesEntity.class);
+						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
+							@Override
+							public Boolean doInBackground() {
+								if (null == favoritesPathList || favoritesPathList.isEmpty()) {
+									return false;
+								} else {
+									SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+									for (FtpFavoritesEntity ftpFavoritesEntity : favoritesPathList) {
+										if (isAdd) {
+											ftpFavoritesEntity.setTime(TimeUtils.millis2String(FileUtils.getFileLastModified(ftpFavoritesEntity.getPath()),
+											                                                   sdf));
+											ftpFavoritesEntity.save();
+										} else {
+											FtpFavoritesEntity ftpFavorites = LitePal.where("path = ?", ftpFavoritesEntity.getPath())
+											                                         .findFirst(FtpFavoritesEntity.class);
+											if (null != ftpFavorites) {
+												ftpFavorites.delete();
+											}
+										}
+									}
+								}
+								return true;
+							}
+
+							@Override
+							public void onSuccess(Boolean result) {
+								Map<String, Object> ftpFavoritesParamMap = new HashMap<>();
+								ftpFavoritesParamMap.put("result", result);
+								MQTTMsg ftpFavoritesMsg = ftpFavorites(mqttMsg.getFromId());
+								ftpFavoritesMsg.setParam(new JSONObject(ftpFavoritesParamMap).toJSONString());
+								sendMQTTMsg(ftpFavoritesMsg);
+							}
+						});
+						break;
+
+					//ftp收藏列表
+					case MQTTMsg.MSG_FTP_FAVORITES_LIST:
+						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<FtpFavoritesEntity>>() {
+							@Override
+							public List<FtpFavoritesEntity> doInBackground() {
+								return LitePal.findAll(FtpFavoritesEntity.class);
+							}
+
+							@Override
+							public void onSuccess(List<FtpFavoritesEntity> result) {
+								Map<String, Object> ftpFavoritesListMap = new HashMap<>();
+								ftpFavoritesListMap.put("favoritesPathList", result);
+								MQTTMsg ftpFavoritesListMsg = ftpFavoritesList(mqttMsg.getFromId());
+								ftpFavoritesListMsg.setParam(new JSONObject(ftpFavoritesListMap).toJSONString());
+								sendMQTTMsg(ftpFavoritesListMsg);
 							}
 						});
 						break;
@@ -651,6 +717,26 @@ public class MQTTService extends Service {
 	 */
 	private MQTTMsg ftpErase(String toId) {
 		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_ERASE, toId);
+	}
+
+	/**
+	 * ftp文件收藏
+	 *
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
+	 */
+	private MQTTMsg ftpFavorites(String toId) {
+		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_FAVORITES, toId);
+	}
+
+	/**
+	 * ftp收藏列表
+	 *
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
+	 */
+	private MQTTMsg ftpFavoritesList(String toId) {
+		return new MQTTMsg(MQTTMsg.TYPE_CMD, MQTTMsg.MSG_FTP_FAVORITES_LIST, toId);
 	}
 
 	/**
