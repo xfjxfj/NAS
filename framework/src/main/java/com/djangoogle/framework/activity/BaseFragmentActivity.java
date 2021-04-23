@@ -3,16 +3,16 @@ package com.djangoogle.framework.activity;
 import android.app.Activity;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.viewbinding.ViewBinding;
-
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ReflectUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewbinding.ViewBinding;
 
 /**
  * Created by レインマン on 2020/11/26 14:19 with Android Studio.

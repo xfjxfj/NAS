@@ -14,7 +14,7 @@ import android.os.SystemClock;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.constant.TimeConstants;
-import com.blankj.utilcode.util.BusUtils;
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -25,7 +25,7 @@ import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.blankj.utilcode.util.ViewUtils;
-import com.viegre.nas.pad.config.BusConfig;
+import com.viegre.nas.pad.activity.WelcomeActivity;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
@@ -218,7 +218,7 @@ public class MQTTService extends Service {
 						if (2 == state) {
 							ToastUtils.showShort("管理员拒绝绑定");
 						} else if (1 == state || 3 == state) {
-							BusUtils.post(BusConfig.DEVICE_BOUND);
+							ActivityUtils.finishActivity(WelcomeActivity.class);
 						}
 						break;
 

@@ -2,7 +2,6 @@ package com.viegre.nas.pad.observer;
 
 import android.os.FileObserver;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.viegre.nas.pad.config.PathConfig;
@@ -74,7 +73,7 @@ public class FtpFileObserver extends FileObserver {
 							for (FtpFileObserverEntity f : list) {
 								test += "[" + f.getPath() + ", " + f.getTime() + "]\n";
 							}
-							LogUtils.iTag(TAG, test);
+//							LogUtils.iTag(TAG, test);
 						}
 						return null;
 					}

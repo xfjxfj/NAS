@@ -72,6 +72,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 
 	@Override
 	protected void initialize() {
+		SPUtils.getInstance().put(SPConfig.IS_BOUND, false);
 		ServiceUtils.startService(ScreenSaverService.class);
 		ServiceUtils.startService(MQTTService.class);
 		grantPermission();
@@ -81,6 +82,10 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	protected void onResume() {
 		super.onResume();
 		GSYVideoManager.onResume();
+		if (SPUtils.getInstance().getBoolean(SPConfig.IS_BOUND, false)) {
+			//获取并显示最新引导页
+			getDeviceResource();
+		}
 	}
 
 	@Override
@@ -93,6 +98,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	protected void onDestroy() {
 		FragmentUtils.removeAll(getSupportFragmentManager());
 		GSYVideoManager.releaseAllVideos();
+		LogUtils.iTag("splashh", "已关闭");
 		super.onDestroy();
 	}
 
@@ -169,6 +175,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 						PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
 						keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
 						ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
+//						ActivityUtils.startActivity(LoginActivity.class);
 						getDeviceBoundstatus();
 					}
 				});
@@ -221,12 +228,12 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		}
 	}
 
-	@BusUtils.Bus(tag = BusConfig.DEVICE_BOUND, threadMode = BusUtils.ThreadMode.MAIN)
-	public void deviceBound() {
-		SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
-		//获取并显示最新引导页
-		getDeviceResource();
-	}
+//	@BusUtils.Bus(tag = BusConfig.DEVICE_BOUND, threadMode = BusUtils.ThreadMode.MAIN)
+//	public void deviceBoundResult() {
+//		SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
+//		//获取并显示最新引导页
+//		getDeviceResource();
+//	}
 
 	/**
 	 * 获取资源配置
