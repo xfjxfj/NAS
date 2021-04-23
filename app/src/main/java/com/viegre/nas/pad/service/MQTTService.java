@@ -218,6 +218,7 @@ public class MQTTService extends Service {
 						if (2 == state) {
 							ToastUtils.showShort("管理员拒绝绑定");
 						} else if (1 == state || 3 == state) {
+							SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
 							ActivityUtils.finishActivity(WelcomeActivity.class);
 						}
 						break;
