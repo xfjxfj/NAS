@@ -72,7 +72,6 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 
 	@Override
 	protected void initialize() {
-		SPUtils.getInstance().put(SPConfig.IS_BOUND, false);
 		ServiceUtils.startService(ScreenSaverService.class);
 		ServiceUtils.startService(MQTTService.class);
 		grantPermission();
