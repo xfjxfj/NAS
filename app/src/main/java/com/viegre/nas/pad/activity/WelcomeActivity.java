@@ -106,7 +106,8 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 			mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, macAddress.getBytes());// 响应客户端
 //            CommonUtils.showToast("客户端读取Characteristic[" + characteristic.getUuid() + "]:\n" + response);
 			if (true) {
-				BusUtils.post(BusConfig.DEVICE_BOUND);
+//				SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
+				BusUtils.post(BusConfig.DEVICE_BOUND_RESULT);
 				finish();
 			}
 		}
@@ -129,7 +130,8 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 			mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, requestBytes);// 响应客户端
 //            CommonUtils.showToast("客户端写入Characteristic[" + characteristic.getUuid() + "]:\n" + requestStr);
 			if (true) {
-				BusUtils.post(BusConfig.DEVICE_BOUND);
+//				SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
+				BusUtils.post(BusConfig.DEVICE_BOUND_RESULT);
 				finish();
 			}
 		}
