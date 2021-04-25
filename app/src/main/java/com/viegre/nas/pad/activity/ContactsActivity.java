@@ -11,35 +11,26 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.blankj.utilcode.util.GsonUtils;
+
 import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.ThreadUtils;
-import com.kongzue.dialog.interfaces.OnDismissListener;
-import com.kongzue.dialog.util.DialogSettings;
+
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.ContactsRvDevicesAdapter;
 import com.viegre.nas.pad.adapter.ContactsRvFriendsAdapter;
 import com.viegre.nas.pad.adapter.ContactsRvRecordAdapter;
-import com.viegre.nas.pad.adapter.MoreAppActivityRvAdapter;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
-import com.viegre.nas.pad.entity.ContactsBean;
-import com.viegre.nas.pad.entity.LoginEntity;
-import com.viegre.nas.pad.entity.LoginInfoEntity;
+import com.djangoogle.framework.activity.BaseActivity;
+import com.viegre.nas.pad.databinding.ActivityContactsBinding;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.simple.SimpleCallback;
 import com.yanzhenjie.kalle.simple.SimpleResponse;
-
-import org.litepal.LitePal;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.viegre.nas.pad.R.id.homeImg;
-import static com.viegre.nas.pad.R.id.thumb;
 
 /**
  * 联系人相关类
@@ -68,6 +59,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         //初始化点击事件
         homeImg.setOnClickListener(this);
         //初始化RecycleViewAdapter
+//        initAdapter();
         initAdapter();
     }
 
@@ -113,7 +105,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
 
     @SuppressLint("WrongConstant")
     private void getContactsDatas() {
-        TipDialog show = WaitDialog.show(this, "请稍候...");
+        TipDialog show = WaitDialog.show(ContactsActivity.this, "请稍候...");
         Kalle.post(UrlConfig.Device.GET_GETALLFOLLOWS)
                 .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
                 .perform(new SimpleCallback<String>() {

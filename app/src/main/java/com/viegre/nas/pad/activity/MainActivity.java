@@ -22,6 +22,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.djangoogle.framework.activity.BaseActivity;
+import com.kongzue.dialog.util.DialogSettings;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.audio.AudioActivity;
 import com.viegre.nas.pad.activity.image.ImageActivity;

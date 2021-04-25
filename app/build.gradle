@@ -13,6 +13,9 @@ android {
 		versionName "0.0.1"
 		vectorDrawables.useSupportLibrary = true
 		multiDexEnabled true
+
+		renderscriptTargetApi 19
+		renderscriptSupportModeEnabled true
 	}
 
 	signingConfigs {

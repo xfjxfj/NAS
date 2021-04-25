@@ -66,6 +66,7 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 		@Override
 		public void onStartSuccess(AdvertiseSettings settingsInEffect) {
 //            CommonUtils.showToast("BLE广播开启成功");
+            CommonUtils.showToast("蓝牙开启成功");
 //            Toast.makeText(MainActivity2.this,"BLE广播开启成功",Toast.LENGTH_SHORT).show();
 		}
 

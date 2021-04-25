@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.kongzue.dialog.util.DialogSettings;
 import com.kongzue.dialog.v3.CustomDialog;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.entity.ContactsBean;
@@ -49,19 +50,20 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
             @Override
             public void onClick(View v) {
                 Toast.makeText(mContext, "123", Toast.LENGTH_LONG).show();
+//                DialogSettings.use_blur = true;
+                DialogSettings.isUseBlur = true;
                 CustomDialog.build((AppCompatActivity) mContext, R.layout.contacts_add_devices_dialog, new CustomDialog.OnBindView() {
                     @Override
                     public void onBind(final CustomDialog dialog, View v) {
-                        Button btnOk = v.findViewById(R.id.cancle_bt);
-                        btnOk.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.doDismiss();
-                            }
-                        });
+//                        Button btnOk = v.findViewById(R.id.cancle_bt);
+//                        btnOk.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                dialog.doDismiss();
+//                            }
+//                        });
                     }
-                }).setFullScreen(true)
-                        .show();
+                }).setFullScreen(true).show();
 
 
             }

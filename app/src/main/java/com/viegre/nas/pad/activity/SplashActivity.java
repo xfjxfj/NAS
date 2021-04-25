@@ -1,6 +1,7 @@
 package com.viegre.nas.pad.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -176,6 +177,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 						keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
 						ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
 //						ActivityUtils.startActivity(LoginActivity.class);
+//						startActivity(new Intent(SplashActivity.this,WelcomeActivity.class));
+						startActivity(new Intent(SplashActivity.this,MainActivity.class));
 						getDeviceBoundstatus();
 					}
 				});
@@ -196,7 +199,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 					FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
 					FragmentUtils.show(mNetworkFragment);
 				} else {//引导用户注册
-					ActivityUtils.startActivity(WelcomeActivity.class);
+//					ActivityUtils.startActivity(WelcomeActivity.class);
+					ActivityUtils.startActivity(MainActivity.class);
 				}
 			});
 		} else {//已绑定
