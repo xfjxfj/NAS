@@ -27,6 +27,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -41,9 +44,6 @@ import com.viegre.nas.pad.util.ZxingUtils;
 
 import java.util.Arrays;
 import java.util.UUID;
-
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implements View.OnClickListener {
 
@@ -82,8 +82,10 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 		@SuppressLint("MissingPermission")
 		@Override
 		public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
-			Log.i(TAG, String.format("onConnectionStateChange:%s,%s,%s,%s", device.getName(), device.getAddress(), status, newState));
-			CommonUtils.showToast(String.format(status == 0 ? (newState == 2 ? "与[%s]连接成功" : "与[%s]连接断开") : ("与[%s]连接出错,错误码:" + status), device));
+			Log.i(TAG,
+			      String.format("onConnectionStateChange:%s,%s,%s,%s", device.getName(), device.getAddress(), status, newState));
+			CommonUtils.showToast(String.format(status == 0 ? (newState == 2 ? "与[%s]连接成功" : "与[%s]连接断开") : ("与[%s]连接出错,错误码:" + status),
+			                                    device));
 		}
 
 		@Override
@@ -104,11 +106,14 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 			                    characteristic.getUuid()));
 //            String response = "CHAR_" + (int) (Math.random() * 100); //模拟数据
 			String macAddress = DeviceUtils.getMacAddress();//获取本地Mac地址
-			mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, macAddress.getBytes());// 响应客户端
+			mBluetoothGattServer.sendResponse(device,
+			                                  requestId,
+			                                  BluetoothGatt.GATT_SUCCESS,
+			                                  offset,
+			                                  macAddress.getBytes());// 响应客户端
 //            CommonUtils.showToast("客户端读取Characteristic[" + characteristic.getUuid() + "]:\n" + response);
 			if (true) {
-//				SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
-				BusUtils.post(BusConfig.DEVICE_BOUND_RESULT);
+				BusUtils.postSticky(BusConfig.DEVICE_BOUND);
 				finish();
 			}
 		}
@@ -131,8 +136,7 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 			mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, requestBytes);// 响应客户端
 //            CommonUtils.showToast("客户端写入Characteristic[" + characteristic.getUuid() + "]:\n" + requestStr);
 			if (true) {
-//				SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
-				BusUtils.post(BusConfig.DEVICE_BOUND_RESULT);
+				BusUtils.postSticky(BusConfig.DEVICE_BOUND);
 				finish();
 			}
 		}
@@ -148,7 +152,11 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 			                    offset,
 			                    descriptor.getUuid()));
 			String response = "DESC_" + (int) (Math.random() * 100); //模拟数据
-			mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, response.getBytes()); // 响应客户端
+			mBluetoothGattServer.sendResponse(device,
+			                                  requestId,
+			                                  BluetoothGatt.GATT_SUCCESS,
+			                                  offset,
+			                                  response.getBytes()); // 响应客户端
 //            CommonUtils.showToast("客户端读取Descriptor[" + descriptor.getUuid() + "]:\n" + response);
 		}
 
@@ -344,7 +352,8 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 		BluetoothGattCharacteristic characteristicRead = new BluetoothGattCharacteristic(UUID_CHAR_READ_NOTIFY,
 		                                                                                 BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_NOTIFY,
 		                                                                                 BluetoothGattCharacteristic.PERMISSION_READ);
-		characteristicRead.addDescriptor(new BluetoothGattDescriptor(UUID_DESC_NOTITY, BluetoothGattCharacteristic.PERMISSION_WRITE));
+		characteristicRead.addDescriptor(new BluetoothGattDescriptor(UUID_DESC_NOTITY,
+		                                                             BluetoothGattCharacteristic.PERMISSION_WRITE));
 		service.addCharacteristic(characteristicRead);
 		//添加可写characteristic
 		BluetoothGattCharacteristic characteristicWrite = new BluetoothGattCharacteristic(UUID_CHAR_WRITE,
