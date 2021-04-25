@@ -13,6 +13,9 @@ android {
 		versionName "0.0.1"
 		vectorDrawables.useSupportLibrary = true
 		multiDexEnabled true
+		ndk {
+			abiFilters "armeabi-v7a"
+		}
 	}
 
 	signingConfigs {
@@ -76,6 +79,7 @@ configurations {
 
 dependencies {
 	implementation fileTree(dir: "libs", include: ["*.jar"])
+	implementation project(':ai')
 	//https://github.com/AlphaBoom/ClassifyView
 	implementation project(':classify_view')
 	implementation project(':framework')

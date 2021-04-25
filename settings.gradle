@@ -1,3 +1,4 @@
+include ':ai'
 include ':app'
 include ':classify_view'
 include ':framework', ':pickerview'
