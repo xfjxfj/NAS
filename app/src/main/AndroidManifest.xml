@@ -112,8 +112,9 @@
 			android:screenOrientation="landscape" />
 
 		<service android:name="com.amap.api.location.APSService" />
-		<service android:name=".service.ScreenSaverService" />
 		<service android:name=".service.MQTTService" />
+		<service android:name=".service.MscService" />
+		<service android:name=".service.ScreenSaverService" />
 		<service android:name="org.eclipse.paho.android.service.MqttService" />
 
 		<receiver

@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
+import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.bumptech.glide.Glide;
@@ -32,6 +33,7 @@ import com.viegre.nas.pad.databinding.ActivityMainBinding;
 import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.manager.AMapLocationManager;
+import com.viegre.nas.pad.service.MscService;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerImageAdapter;
@@ -59,16 +61,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
 	@Override
 	protected void initialize() {
+		ServiceUtils.startService(MscService.class);
 		openUsbDevice();
 		initClick();
 		initIcon();
 		initBanner();
 		initWeather();
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
 	}
 
 	@Override

@@ -9,6 +9,9 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.didichuxing.doraemonkit.DoraemonKit;
 import com.djangoogle.framework.applicaiton.BaseApplication;
+import com.topqizhi.ai.manager.AIUIManager;
+import com.topqizhi.ai.manager.MscManager;
+import com.topqizhi.ai.manager.VolumeManager;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.SPConfig;
@@ -37,10 +40,13 @@ public class NasApp extends BaseApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		DoraemonKit.install(this, "6f1d65f538aa1fe2c813e712c95b773d");
 		initUtils();
 		initAndroidId();
 		LitePal.initialize(this);
-		DoraemonKit.install(this, "6f1d65f538aa1fe2c813e712c95b773d");
+		MscManager.INSTANCE.initialize(this);
+		AIUIManager.INSTANCE.initialize(this);
+		VolumeManager.INSTANCE.initialize(this);
 		CsvLoggerFactory.CONTEXT = this;
 		initKalle();
 		initAMap();
@@ -106,7 +112,8 @@ public class NasApp extends BaseApplication {
 		KalleConfig kalleConfig = KalleConfig.newBuilder()
 		                                     .connectionTimeout(15, TimeUnit.SECONDS)
 		                                     .readTimeout(15, TimeUnit.SECONDS)
-		                                     .converter(new JsonConverter()).build();
+		                                     .converter(new JsonConverter())
+		                                     .build();
 		Kalle.setConfig(kalleConfig);
 	}
 
