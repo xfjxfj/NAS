@@ -82,6 +82,8 @@ dependencies {
 	implementation project(':ai')
 	//https://github.com/AlphaBoom/ClassifyView
 	implementation project(':classify_view')
+	//https://github.com/jiangchaochao/fileObserver
+	implementation project(':file_observer')
 	implementation project(':framework')
 	//https://github.com/Bigkoo/Android-PickerView
 	implementation project(':pickerview')
@@ -138,7 +140,10 @@ dependencies {
 	//https://github.com/srikanth-lingala/zip4j
 	implementation 'net.lingala.zip4j:zip4j:2.7.0'
 	//https://github.com/didi/DoraemonKit
-	debugImplementation 'com.didichuxing.doraemonkit:dokitx:3.3.5'
+//	debugImplementation 'com.didichuxing.doraemonkit:dokitx:3.3.5'
+//	releaseImplementation 'com.didichuxing.doraemonkit:dokitx-no-op:3.3.5'
 	//https://github.com/kongzue/DialogV3
 	implementation 'com.kongzue.dialog_v3x:dialog:3.2.4'
+	//https://github.com/EspoirX/StarrySky
+	implementation 'com.lzx:StarrySkyX:2.6.3'
 }
