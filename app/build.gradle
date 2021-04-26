@@ -140,4 +140,7 @@ dependencies {
 	debugImplementation 'com.didichuxing.doraemonkit:dokitx:3.3.5'
 	//https://github.com/kongzue/DialogV3
 	implementation 'com.kongzue.dialog_v3x:dialog:3.2.4'
+
+//	https://gitee.com/mercy_lo/EasyPhotos#%E5%85%B3%E4%BA%8Eeasyphotos%E7%9A%84sdk%E5%8F%8A%E7%9B%B8%E5%85%B3%E7%89%88%E6%9C%AC%E5%85%AC%E7%A4%BAandroidx%E7%89%88%E6%9C%AC
+	implementation 'com.github.HuanTanSheng:EasyPhotos:3.1.3'
 }

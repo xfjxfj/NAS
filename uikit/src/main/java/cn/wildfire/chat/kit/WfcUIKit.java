@@ -37,6 +37,7 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
+
 import cn.wildfire.chat.kit.common.AppScopeViewModel;
 import cn.wildfire.chat.kit.net.OKHttpHelper;
 import cn.wildfire.chat.kit.third.utils.UIUtils;
@@ -139,7 +140,6 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
             for (String[] server : Config.ICE_SERVERS) {
                 ChatManagerHolder.gAVEngine.addIceServer(server[0], server[1], server[2]);
             }
-
             SharedPreferences sp = application.getSharedPreferences("config", Context.MODE_PRIVATE);
             String id = sp.getString("id", null);
             String token = sp.getString("token", null);
@@ -209,6 +209,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
             if (conversation.type == Conversation.ConversationType.Single) {
                 Intent intent = new Intent(WfcIntent.ACTION_VOIP_SINGLE);
                 startActivity(application, intent);
+
             } else {
                 Intent intent = new Intent(WfcIntent.ACTION_VOIP_MULTI);
                 startActivity(application, intent);
@@ -285,7 +286,9 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
             context.startActivity(intent);
             ((Activity) context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } else {
-            Intent main = new Intent(context.getPackageName() + ".main");
+//            Intent main = new Intent(context.getPackageName() + ".main");
+            Intent main = new Intent(context,SingleCallActivity.class);
+
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivities(context, 100, new Intent[]{main, intent}, PendingIntent.FLAG_UPDATE_CURRENT);
             try {
@@ -321,7 +324,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
             while (iterator.hasNext()) {
                 Message message = iterator.next();
                 if (message.content.getPersistFlag() == PersistFlag.No_Persist
-                    || now - (message.serverTime - delta) > 10 * 1000) {
+                        || now - (message.serverTime - delta) > 10 * 1000) {
                     iterator.remove();
                 }
             }

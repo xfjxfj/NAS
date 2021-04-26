@@ -5,7 +5,6 @@
 	<solid android:color="#29303A" />
 
 	<stroke
-		android:width="0px"
 		android:color="@color/splash_guide_skip_bg" />
 	<corners android:radius="50px" />
 </shape>

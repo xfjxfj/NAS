@@ -3,20 +3,110 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/contacts_layout_dialog_bg"
     android:gravity="center_horizontal|center_vertical"
     android:orientation="horizontal"
     android:padding="6px"
     tools:ignore="MissingDefaultResource">
 
+<!--        android:background="#212123"-->
     <LinearLayout
         android:layout_width="790px"
         android:layout_height="402px"
-        android:background="#212123"
+        android:background="@drawable/contacts_layout_dialog_bg"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="40px"
         tools:ignore="MissingDefaultResource,RedundantNamespace">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/contacts_add_devices"
+            android:textColor="@color/white"
+            android:textSize="30px"
+            tools:ignore="MissingConstraints" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/contacts_add_devices"
+                android:textColor="@color/gray24"
+                android:textSize="24px" />
+
+            <EditText
+                android:id="@+id/add_device_dialog_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/contacts_add_devices3"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray25"
+                android:textSize="20px" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/contacts_add_devices"
+                android:textColor="@color/gray24"
+                android:textSize="24px" />
+
+            <EditText
+                android:id="@+id/add_device_username_dialog_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/contacts_add_devices4"
+                android:textColor="@color/gray25"
+                android:textColorHint="@color/gray25"
+                android:textSize="20px" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40px"
+            android:layout_marginBottom="40px"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="128px"
+                android:layout_height="56px"
+                android:background="@drawable/contacts_add_button_ok_bg"
+                android:text="@string/contacts_add_devices2"
+                android:textColor="@color/white"
+                android:textSize="24px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/cancle_bt"
+                android:layout_width="128px"
+                android:layout_height="56px"
+                android:layout_marginRight="20px"
+                android:background="@drawable/contacts_add_button_no_bg"
+                android:text="@string/cancel"
+                android:textColor="@color/white"
+                android:textSize="24px"
+                app:layout_constraintBottom_toBottomOf="@+id/button2"
+                app:layout_constraintEnd_toStartOf="@+id/button2"
+                app:layout_constraintTop_toTopOf="@+id/button2"
+                tools:ignore="MissingConstraints" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </LinearLayout>

@@ -11,7 +11,6 @@ import android.os.Environment;
  */
 
 public class Config {
-
     /**
      * 仅仅是host，没有http开头，也不用配置端口，<strong> 底层会使用默认的80端口</strong>，不可配置为127.0.0.1 或者 192.168.0.1
      * <br>
@@ -23,7 +22,8 @@ public class Config {
      * <br>
      * <br>
      */
-    public static String IM_SERVER_HOST /*请仔细阅读上面的注释*/ = "wildfirechat.cn";
+//    public static String IM_SERVER_HOST /*请仔细阅读上面的注释*/ = "wildfirechat.cn";
+    public static String IM_SERVER_HOST /*请仔细阅读上面的注释*/ = "im.topqizhi.com";
 
     // 注意APP_SERVER_ADDRESS已从kit中移除，移动到了AppService.java中
     //public static String APP_SERVER_ADDRESS = "http://wildfirechat.cn:8888";
@@ -41,7 +41,8 @@ public class Config {
         // 如果是高级版，请删除掉下面的配置项目，保持ICE_SERVERS为空数组就行。
         // 数组元素定义
         /*{"turn server uri", "userName", "password"}*/
-        {"turn:turn.wildfirechat.net:3478", "wfchat", "wfchat"}
+//        {"turn:turn.wildfirechat.net:3478", "wfchat", "wfchat"}
+        {"turn:turn.topqizhi.com:3478", "topqizhi", "topqizhi2020"}
     };
 
     //文件传输助手用户ID，服务器有个默认文件助手的机器人，如果修改它的ID，需要客户端和服务器数据库同步修改

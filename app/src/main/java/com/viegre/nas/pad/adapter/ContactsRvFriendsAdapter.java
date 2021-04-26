@@ -5,20 +5,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.viegre.nas.pad.R;
 
 import java.util.List;
 
+import cn.wildfire.chat.kit.WfcUIKit;
+
 public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFriendsAdapter.MyHolder> {
 
     private final List<String> languages;
+    private final Context context1;
 
     public ContactsRvFriendsAdapter(Context context, List<String> languages) {
         this.languages = languages;
+        context1 = context;
 
     }
 
@@ -36,24 +42,59 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
     @Override
     public void onBindViewHolder(@NonNull ContactsRvFriendsAdapter.MyHolder holder, int position) {
         holder.textfr.setText(languages.get(position));
+        holder.contactsFr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context1, position + "", Toast.LENGTH_LONG).show();
+                RunCall();
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return languages.size();
     }
-
+    private void RunCall() {
+//        WfcUIKit.singleCall(context1, "TUT9T9LL", false);
+        WfcUIKit.singleCall(context1, "sws8s888", false);
+//        WfcUIKit.singleCall(context1, "dzxGhGjj", false);
+    }
     /**
      * 自定义的ViewHolder
      */
     class MyHolder extends RecyclerView.ViewHolder {
 
         private final TextView textfr;
+        private final ConstraintLayout contactsFr;
 
         public MyHolder(View itemView) {
             super(itemView);
             textfr = itemView.findViewById(R.id.textfr);
+            contactsFr = itemView.findViewById(R.id.contactsFr);
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

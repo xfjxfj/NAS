@@ -2,9 +2,12 @@ package com.viegre.nas.pad.activity.image;
 
 import android.database.Cursor;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.activity.BaseActivity;
+import com.huantansheng.easyphotos.models.album.AlbumModel;
+import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.ImageListAdapter;
 import com.viegre.nas.pad.config.PathConfig;
@@ -35,6 +38,10 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> {
 		mViewBinding.iImageTitle.llcFileManagerTitleBack.setOnClickListener(view -> finish());
 		initRadioGroup();
 		initList();
+		ArrayList<Photo> currAlbumItemPhotos = AlbumModel.getInstance().getCurrAlbumItemPhotos(0);
+		for (Photo currAlbumItemPhoto : currAlbumItemPhotos) {
+			Log.d("123", "initialize: "+currAlbumItemPhoto.toString());
+		}
 	}
 
 	private void initRadioGroup() {

@@ -5,11 +5,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 import com.blankj.utilcode.util.SPUtils;
@@ -24,12 +28,16 @@ import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.databinding.ActivityContactsBinding;
+import com.viegre.nas.pad.entity.LoginResult;
+import com.viegre.nas.pad.service.AppService;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.simple.SimpleCallback;
 import com.yanzhenjie.kalle.simple.SimpleResponse;
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.wildfire.chat.kit.ChatManagerHolder;
 
 
 /**
@@ -60,7 +68,44 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         homeImg.setOnClickListener(this);
         //初始化RecycleViewAdapter
 //        initAdapter();
-        initAdapter();
+//        initAdapter();
+        login();
+    }
+
+    private void login() {
+        //音视频登录
+        String phoneNumber = "15357906428";
+//        String phoneNumber = "13168306428";
+        String authCode = "66666";
+
+        AppService.Instance().smsLogin(phoneNumber, authCode, new AppService.LoginCallback() {
+            @Override
+            public void onUiSuccess(LoginResult loginResult) {
+                if (isFinishing()) {
+                    return;
+                }
+                //需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
+                ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
+                SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
+                sp.edit()
+                        .putString("id", loginResult.getUserId())
+                        .putString("token", loginResult.getToken())
+                        .apply();
+//                Intent intent = new Intent(ContactsActivity.this, MainActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                startActivity(intent);
+//                finish();
+            }
+
+            @Override
+            public void onUiFailure(int code, String msg) {
+                if (isFinishing()) {
+                    return;
+                }
+                Toast.makeText(ContactsActivity.this, "登录失败：" + code + " " + msg, Toast.LENGTH_SHORT).show();
+//                loginButton.setEnabled(true);
+            }
+        });
     }
 
     private void initAdapter() {

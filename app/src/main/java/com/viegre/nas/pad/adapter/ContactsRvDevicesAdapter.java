@@ -55,13 +55,13 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                 CustomDialog.build((AppCompatActivity) mContext, R.layout.contacts_add_devices_dialog, new CustomDialog.OnBindView() {
                     @Override
                     public void onBind(final CustomDialog dialog, View v) {
-//                        Button btnOk = v.findViewById(R.id.cancle_bt);
-//                        btnOk.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                dialog.doDismiss();
-//                            }
-//                        });
+                        Button btnOk = v.findViewById(R.id.cancle_bt);
+                        btnOk.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.doDismiss();
+                            }
+                        });
                     }
                 }).setFullScreen(true).show();
 
