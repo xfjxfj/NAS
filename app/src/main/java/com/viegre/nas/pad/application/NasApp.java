@@ -8,6 +8,7 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.djangoogle.framework.applicaiton.BaseApplication;
+import com.djangoogle.framework.manager.OkHttpManager;
 import com.lzx.starrysky.StarrySky;
 import com.topqizhi.ai.manager.AIUIManager;
 import com.topqizhi.ai.manager.MscManager;
@@ -31,6 +32,7 @@ import cn.wildfire.chat.kit.WfcUIKit;
 import cn.wildfire.chat.kit.conversation.message.viewholder.MessageViewHolderManager;
 import cn.wildfire.chat.kit.third.location.viewholder.LocationMessageContentViewHolder;
 import cn.wildfirechat.push.PushService;
+import rxhttp.RxHttp;
 
 /**
  * Created by レインマン on 2020/09/10 10:21 with Android Studio.
@@ -40,7 +42,6 @@ public class NasApp extends BaseApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-//		DoraemonKit.install(this, "6f1d65f538aa1fe2c813e712c95b773d");
 		initUtils();
 		initAndroidId();
 		LitePal.initialize(this);
@@ -48,6 +49,7 @@ public class NasApp extends BaseApplication {
 		AIUIManager.INSTANCE.initialize(this);
 		VolumeManager.INSTANCE.initialize(this);
 		CsvLoggerFactory.CONTEXT = this;
+		initRxHttp();
 		initKalle();
 		initAMap();
 		initIM();
@@ -105,11 +107,15 @@ public class NasApp extends BaseApplication {
 		LogUtils.getConfig().setBorderSwitch(false);
 	}
 
+	private void initRxHttp() {
+		RxHttp.setDebug(BuildConfig.DEBUG);
+		RxHttp.init(OkHttpManager.INSTANCE.getOkHttpClient());
+	}
+
 	/**
 	 * 初始化Kalle
 	 */
 	private void initKalle() {
-//		CacheStore cacheStore = DiskCacheStore.newBuilder("/sdcard").password("t0PqIzHI@COM").build();
 		KalleConfig kalleConfig = KalleConfig.newBuilder()
 		                                     .connectionTimeout(15, TimeUnit.SECONDS)
 		                                     .readTimeout(15, TimeUnit.SECONDS)

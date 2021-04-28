@@ -30,9 +30,6 @@ import com.viegre.nas.pad.impl.PopupClickListener;
 import com.viegre.nas.pad.manager.PopupManager;
 import com.viegre.nas.pad.popup.PromptPopup;
 import com.viegre.nas.pad.util.CommonUtils;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import org.litepal.LitePal;
 
@@ -40,6 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.fragment.app.Fragment;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import rxhttp.RxHttp;
 
 /**
  * 设置页
@@ -153,30 +154,29 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	 * 登出接口
 	 */
 	private void logout() {
-		Kalle.post(UrlConfig.User.LOGOUT)
-		     .param("phoneNumber", mLoginInfoEntity.getPhoneNumber())
-		     .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
-		     .perform(new SimpleCallback<String>() {
-			     @Override
-			     public void onResponse(SimpleResponse<String, String> response) {
-				     if (!response.isSucceed()) {
-					     CommonUtils.showErrorToast(response.failed());
-				     } else {
-					     ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
-						     @Override
-						     public Void doInBackground() {
-							     LitePal.deleteAll(LoginInfoEntity.class);
-							     return null;
-						     }
+		RxHttp.postForm(UrlConfig.User.LOGOUT)
+		      .addHeader("token", SPUtils.getInstance().getString(SPConfig.LOGIN_CODE_SESSION_ID))
+		      .add("phoneNumber", mLoginInfoEntity.getPhoneNumber())
+		      .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+		      .asString()
+		      .subscribe(new Observer<String>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {}
 
-						     @Override
-						     public void onSuccess(Void result) {
-							     checkLoginStatus();
-						     }
-					     });
-				     }
-			     }
-		     });
+			      @Override
+			      public void onNext(@NonNull String s) {
+				      LitePal.deleteAll(LoginInfoEntity.class);
+				      checkLoginStatus();
+			      }
+
+			      @Override
+			      public void onError(@NonNull Throwable e) {
+				      CommonUtils.showErrorToast(e.getMessage());
+			      }
+
+			      @Override
+			      public void onComplete() {}
+		      });
 	}
 
 	@BusUtils.Bus(tag = BusConfig.SCREEN_CUSTOM_SHOW, threadMode = BusUtils.ThreadMode.MAIN)

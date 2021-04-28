@@ -1,6 +1,5 @@
 package com.viegre.nas.pad.activity;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.view.View;
 
@@ -26,6 +25,11 @@ import com.yanzhenjie.kalle.simple.SimpleCallback;
 import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import org.litepal.LitePal;
+
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import rxhttp.RxHttp;
 
 /**
  * Created by レインマン on 2021/01/06 10:39 with Android Studio.
@@ -99,7 +103,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		} else if (R.id.actvLoginAccountBtn == view.getId()) {//账号密码登录
 			loginbyAccount();
 		} else if (R.id.acivLoginExit == view.getId()) {//点击退出
-			LoginActivity.this.finish();
+			finish();
 		}
 	}
 
@@ -171,6 +175,49 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 			mViewBinding.actvLoginAccountBtn.setClickable(true);
 			return;
 		}
+		RxHttp.postForm(UrlConfig.User.LOGIN)
+		      .addHeader("Cookie", SPUtils.getInstance().getString(SPConfig.LOGIN_CODE_SESSION_ID))
+		      .add("code", code)
+		      .add("password", password)
+		      .add("phoneNumber", phone)
+		      .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+		      .asResponse(LoginEntity.class)
+		      .subscribe(new Observer<LoginEntity>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {}
+
+			      @Override
+			      public void onNext(@NonNull LoginEntity loginEntity) {
+				      SPUtils.getInstance().put(SPConfig.LOGIN_CODE_SESSION_ID, loginEntity.getToken());
+				      LoginInfoEntity loginInfoEntity = new LoginInfoEntity(phone);
+
+				      ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
+					      @Override
+					      public Void doInBackground() {
+						      LitePal.deleteAll(LoginInfoEntity.class);
+						      loginInfoEntity.save();
+						      return null;
+					      }
+
+					      @Override
+					      public void onSuccess(Void result) {
+						      Kalle.getConfig().getHeaders().set("token", SPUtils.getInstance().getString(SPConfig.LOGIN_CODE_SESSION_ID));
+						      Kalle.setConfig(Kalle.getConfig());
+						      setLoginTime();
+					      }
+				      });
+			      }
+
+			      @Override
+			      public void onError(@NonNull Throwable e) {
+
+			      }
+
+			      @Override
+			      public void onComplete() {
+
+			      }
+		      });
 		Kalle.post(UrlConfig.User.LOGIN)
 		     .addHeader("Cookie", SPUtils.getInstance().getString(SPConfig.LOGIN_CODE_SESSION_ID))
 		     .param("code", code)
@@ -178,30 +225,12 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		     .param("phoneNumber", phone)
 		     .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
 		     .perform(new SimpleCallback<LoginEntity>() {
-			     @SuppressLint({"WrongConstant", "ApplySharedPref"})
-				 @Override
+			     @Override
 			     public void onResponse(SimpleResponse<LoginEntity, String> response) {
 				     if (!response.isSucceed()) {
 					     CommonUtils.showErrorToast(response.failed());
 				     } else {
-					     SPUtils.getInstance().put(SPConfig.LOGIN_CODE_SESSION_ID, response.succeed().getToken());
-					     LoginInfoEntity loginInfoEntity = new LoginInfoEntity(phone);
 
-					     ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
-						     @Override
-						     public Void doInBackground() {
-							     LitePal.deleteAll(LoginInfoEntity.class);
-							     loginInfoEntity.save();
-							     return null;
-						     }
-
-						     @Override
-						     public void onSuccess(Void result) {
-							     Kalle.getConfig().getHeaders().set("token", SPUtils.getInstance().getString(SPConfig.LOGIN_CODE_SESSION_ID));
-							     Kalle.setConfig(Kalle.getConfig());
-							     setLoginTime();
-						     }
-					     });
 				     }
 			     }
 

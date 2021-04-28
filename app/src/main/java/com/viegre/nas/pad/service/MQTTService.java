@@ -26,7 +26,6 @@ import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.blankj.utilcode.util.ViewUtils;
-import com.jiangc.receiver.FileObserverJni;
 import com.viegre.nas.pad.activity.WelcomeActivity;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
@@ -71,7 +70,7 @@ public class MQTTService extends Service {
 
 	private MqttConnectOptions mMqttConnectOptions;
 	private MqttAndroidClient mMqttAndroidClient;
-	private FileObserverJni mFileObserverJni;
+//	private FileObserverJni mFileObserverJni;
 
 	@Nullable
 	@Override
@@ -82,8 +81,8 @@ public class MQTTService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		mFileObserverJni = new FileObserverJni(PathConfig.NAS, FileObserverJni.ALL_EVENTS);
-		SetFileObserverJni();
+//		mFileObserverJni = new FileObserverJni(PathConfig.NAS, FileObserverJni.ALL_EVENTS);
+//		SetFileObserverJni();
 //		RecursiveFileObserver recursiveFileObserver = new RecursiveFileObserver(PathConfig.NAS.substring(0, PathConfig.NAS.length() - 1),
 //		                                                                        FileObserver.ALL_EVENTS);
 
@@ -106,18 +105,18 @@ public class MQTTService extends Service {
 		super.onDestroy();
 	}
 
-	private void SetFileObserverJni() {
-		FileObserverJni.setmCallback((path, mask) -> {
-//			if ((FileObserver.CREATE | FileObserver.DELETE | FileObserver.DELETE_SELF | FileObserver.MODIFY | FileObserver.MOVED_FROM | FileObserver.MOVED_TO | FileObserver.MOVE_SELF) == mask) {
-//				LogUtils.iTag("FileObserverJni_NOT_OPEN", path);
-//				mFileObserverJni.setmCallback(null);
-//				SetFileObserverJni();
-//			}
-//			if (FileObserver.OPEN == mask) {
-//				LogUtils.iTag("FileObserverJni_OPEN", path);
-//			}
-		});
-	}
+//	private void SetFileObserverJni() {
+//		FileObserverJni.setmCallback((path, mask) -> {
+////			if ((FileObserver.CREATE | FileObserver.DELETE | FileObserver.DELETE_SELF | FileObserver.MODIFY | FileObserver.MOVED_FROM | FileObserver.MOVED_TO | FileObserver.MOVE_SELF) == mask) {
+////				LogUtils.iTag("FileObserverJni_NOT_OPEN", path);
+////				mFileObserverJni.setmCallback(null);
+////				SetFileObserverJni();
+////			}
+////			if (FileObserver.OPEN == mask) {
+////				LogUtils.iTag("FileObserverJni_OPEN", path);
+////			}
+//		});
+//	}
 
 	private void initMqttConnectOptions() {
 		mMqttConnectOptions = new MqttConnectOptions();

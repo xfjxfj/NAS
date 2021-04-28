@@ -10,6 +10,7 @@ import com.iflytek.aiui.AIUIConstant;
 import com.iflytek.aiui.AIUIEvent;
 import com.iflytek.aiui.AIUIListener;
 import com.iflytek.aiui.AIUIMessage;
+import com.lzx.starrysky.StarrySky;
 import com.topqizhi.ai.impl.AIUIResultListener;
 
 import org.json.JSONException;
@@ -36,9 +37,10 @@ public enum AIUIManager {
 	private AIUIResultListener mAIUIResultListener;
 	private boolean hasResult = false;
 	private boolean isManualStopVoiceNlp = false;
+	private volatile boolean mIsMusicPaused = false;
+	private volatile boolean mIsPlayNewMusicList = true;
 
 	public void initialize(Context applicationContext) {
-		MscManager.INSTANCE.initVoiceWakeuper(applicationContext);
 		mAIUIAgent = AIUIAgent.createAgent(applicationContext, getAIUIParams(applicationContext), mAIUIListener);
 	}
 
@@ -74,6 +76,10 @@ public enum AIUIManager {
 	}
 
 	public void startListening() {
+		if (!mIsPlayNewMusicList && mIsMusicPaused && StarrySky.with().isPaused()) {
+			mIsMusicPaused = false;
+			StarrySky.with().restoreMusic();
+		}
 //		//唤醒结束后恢复音量
 //		if (VolumeManager.INSTANCE.getCurrentVolumel() >= 0) {
 //			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
@@ -86,6 +92,10 @@ public enum AIUIManager {
 			Log.i("WakeuperResultListener", wakeuperResultEntity.getRaw());
 //			//唤醒时静音
 //			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
+			if (StarrySky.with().isPlaying()) {
+				mIsMusicPaused = true;
+				StarrySky.with().pauseMusic();
+			}
 			startTTS("在呢。", () -> {
 				//先发送唤醒消息，改变AIUI内部状态，只有唤醒状态才能接收语音输入
 				//默认为oneshot模式，即一次唤醒后就进入休眠。可以修改aiui_phone.cfg中speech参数的interact_mode为continuous以支持持续交互
@@ -316,5 +326,9 @@ public enum AIUIManager {
 			mAIUIAgent.destroy();
 			mAIUIAgent = null;
 		}
+	}
+
+	public void setPlayNewMusicList(boolean playNewMusicList) {
+		mIsPlayNewMusicList = playNewMusicList;
 	}
 }

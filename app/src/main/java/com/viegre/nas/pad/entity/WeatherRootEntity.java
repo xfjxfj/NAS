@@ -11,6 +11,8 @@ public class WeatherRootEntity implements Serializable {
 
 	private final List<WeatherEntity> weather = new ArrayList<>();
 
+	public WeatherRootEntity() {}
+
 	public List<WeatherEntity> getWeather() {
 		return weather;
 	}

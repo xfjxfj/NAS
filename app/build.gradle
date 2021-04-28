@@ -13,6 +13,14 @@ android {
 		versionName "0.0.1"
 		vectorDrawables.useSupportLibrary = true
 		multiDexEnabled true
+		javaCompileOptions {
+			annotationProcessorOptions {
+				arguments = [
+						rxhttp_rxjava : 'rxjava3',
+						rxhttp_package: 'rxhttp'
+				]
+			}
+		}
 		ndk {
 			abiFilters "armeabi-v7a", "x86"
 		}
@@ -83,7 +91,7 @@ dependencies {
 	//https://github.com/AlphaBoom/ClassifyView
 	implementation project(':classify_view')
 	//https://github.com/jiangchaochao/fileObserver
-	implementation project(':file_observer')
+//	implementation project(':file_observer')
 	implementation project(':framework')
 	//https://github.com/Bigkoo/Android-PickerView
 	implementation project(':pickerview')
@@ -111,9 +119,6 @@ dependencies {
 	implementation 'com.thanosfisherman.wifiutils:wifiutils:1.6.4'
 	//https://github.com/ThanosFisherman/Elvis
 	implementation 'com.thanosfisherman.elvis:elvis:3.0'
-	//https://github.com/alibaba/fastjson
-	//noinspection GradleDependency
-	implementation 'com.alibaba:fastjson:1.1.72.android'
 	//https://github.com/youth5201314/banner
 	implementation 'com.youth.banner:banner:2.1.0'
 	//https://github.com/bumptech/glide
@@ -139,11 +144,14 @@ dependencies {
 	implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 	//https://github.com/srikanth-lingala/zip4j
 	implementation 'net.lingala.zip4j:zip4j:2.7.0'
-	//https://github.com/didi/DoraemonKit
-//	debugImplementation 'com.didichuxing.doraemonkit:dokitx:3.3.5'
-//	releaseImplementation 'com.didichuxing.doraemonkit:dokitx-no-op:3.3.5'
 	//https://github.com/kongzue/DialogV3
 	implementation 'com.kongzue.dialog_v3x:dialog:3.2.4'
-	//https://github.com/EspoirX/StarrySky
-	implementation 'com.lzx:StarrySkyX:2.6.3'
+	//https://github.com/liujingxing/okhttp-RxHttp
+	implementation 'com.ljx.rxhttp:rxhttp:2.5.7'
+	annotationProcessor 'com.ljx.rxhttp:rxhttp-compiler:2.5.7'
+	implementation 'com.ljx.rxlife:rxlife-coroutine:2.0.1'
+	implementation 'io.reactivex.rxjava3:rxjava:3.0.6'
+	implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+	implementation 'com.ljx.rxlife3:rxlife-rxjava:3.0.0'
+	implementation 'com.ljx.rxhttp:converter-fastjson:2.5.7'
 }

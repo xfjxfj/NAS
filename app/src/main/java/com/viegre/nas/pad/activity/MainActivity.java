@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
-import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.bumptech.glide.Glide;
@@ -23,6 +22,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.djangoogle.framework.activity.BaseActivity;
+import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.audio.AudioActivity;
 import com.viegre.nas.pad.activity.image.ImageActivity;
@@ -32,7 +32,6 @@ import com.viegre.nas.pad.databinding.ActivityMainBinding;
 import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.manager.AMapLocationManager;
-import com.viegre.nas.pad.service.MscService;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerImageAdapter;
@@ -40,13 +39,14 @@ import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
 import org.litepal.LitePal;
+import org.primftpd.PrimitiveFtpdActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import hdp.http.APIConstant;
+import hdp.http.HdpConstant;
 
 /**
  * Created by レインマン on 2020/12/15 09:29 with Android Studio.
@@ -60,7 +60,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
 	@Override
 	protected void initialize() {
-		ServiceUtils.startService(MscService.class);
+//		ServiceUtils.startService(MscService.class);
 		openUsbDevice();
 		initClick();
 		initIcon();
@@ -113,6 +113,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	}
 
 	private void initClick() {
+		if (BuildConfig.DEBUG) {
+			mViewBinding.tcMainTime.setOnClickListener(view -> ActivityUtils.startActivity(PrimitiveFtpdActivity.class));
+		}
 		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
 		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
 	}
@@ -147,8 +150,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		Glide.with(this).load(R.mipmap.test_icon_8).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon8);
 		mViewBinding.acivMainIcon5.setOnClickListener(view -> {
 			Intent liveIntent = new Intent();
-			liveIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
-			liveIntent.putExtra(APIConstant.HIDE_EXIT_DIAG, true);
+			liveIntent.putExtra(HdpConstant.HIDE_LOADING_DEFAULT, true);
+			liveIntent.putExtra(HdpConstant.HIDE_EXIT_DIAG, true);
 			liveIntent.setAction("com.hdpfans.live.start");
 			liveIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			liveIntent.putExtra("ChannelNum", 1);

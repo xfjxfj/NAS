@@ -40,10 +40,6 @@ import com.viegre.nas.pad.service.MQTTService;
 import com.viegre.nas.pad.service.ScreenSaverService;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.download.Callback;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import org.litepal.LitePal;
 import org.primftpd.prefs.LoadPrefsUtil;
@@ -56,6 +52,11 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import rxhttp.RxHttp;
 
 /**
  * 启动页
@@ -169,8 +170,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 						PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
 						keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
 						ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
-						ActivityUtils.startActivity(MainActivity.class);
-//						getDeviceBoundstatus();
+						getDeviceBoundstatus();
 					}
 				});
 			}
@@ -229,45 +229,44 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 获取资源配置
 	 */
 	private void getDeviceResource() {
-		Kalle.post(UrlConfig.Device.GET_RESOURCE)
-		     .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
-		     .perform(new SimpleCallback<DeviceResourceRootEntity>() {
-			     @Override
-			     public void onResponse(SimpleResponse<DeviceResourceRootEntity, String> response) {
-				     if (response.isSucceed()) {
-					     List<DeviceResourceEntity> resourceList = response.succeed().getResourceList();
-					     if (!resourceList.isEmpty()) {
-						     ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
-							     @Override
-							     public Void doInBackground() {
-								     LitePal.saveAll(resourceList);
-								     DeviceResourceEntity deviceResourceEntity = LitePal.where("type = 'guideVideo'")
-								                                                        .findFirst(DeviceResourceEntity.class);
-								     List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
-								     if (null != deviceResourceEntity) {
-									     String url = deviceResourceEntity.getContent();
-									     String fileName = FileUtils.getFileName(url);
-									     //判断文件是否已下载
-									     if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
-										     return null;
-									     }
-									     FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
-									     downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
-								     }
-								     return null;
-							     }
+		RxHttp.postForm(UrlConfig.Device.GET_RESOURCE)
+		      .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+		      .asResponse(DeviceResourceRootEntity.class)
+		      .subscribe(new Observer<DeviceResourceRootEntity>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {}
 
-							     @Override
-							     public void onSuccess(Void result) {
-								     showGuideData();
-							     }
-						     });
-					     }
-				     } else {
-					     showGuideData();
-				     }
-			     }
-		     });
+			      @Override
+			      public void onNext(@NonNull DeviceResourceRootEntity deviceResourceRootEntity) {
+				      List<DeviceResourceEntity> resourceList = deviceResourceRootEntity.getResourceList();
+				      if (!resourceList.isEmpty()) {
+					      LitePal.deleteAll(DeviceResourceEntity.class);
+					      LitePal.saveAll(resourceList);
+					      DeviceResourceEntity deviceResourceEntity = LitePal.where("type = ?", "guideVideo").findFirst(DeviceResourceEntity.class);
+					      List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
+					      if (null != deviceResourceEntity) {
+						      String url = deviceResourceEntity.getContent();
+						      String fileName = FileUtils.getFileName(url);
+						      //判断文件是否已下载
+						      if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
+							      showGuideData();
+							      return;
+						      }
+						      downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
+					      }
+				      }
+				      showGuideData();
+			      }
+
+			      @Override
+			      public void onError(@NonNull Throwable e) {
+				      e.printStackTrace();
+				      showGuideData();
+			      }
+
+			      @Override
+			      public void onComplete() {}
+		      });
 	}
 
 	/**
@@ -357,61 +356,28 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * @param guideResourceEntity
 	 */
 	private void downloadGuideData(GuideResourceEntity guideResourceEntity) {
-		Kalle.Download.get(guideResourceEntity.getUrl())
-		              .directory(PathConfig.GUIDE_RESOURCE)
-		              .fileName(guideResourceEntity.getFileName())
-		              .perform(new Callback() {
-			              @Override
-			              public void onStart() {}
+		FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
+		RxHttp.get(guideResourceEntity.getUrl())
+		      .asDownload(PathConfig.GUIDE_RESOURCE + guideResourceEntity.getFileName())
+		      .subscribe(new Observer<String>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {}
 
-			              @Override
-			              public void onFinish(String path) {
-				              ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
-					              @Override
-					              public Void doInBackground() {
-						              LitePal.deleteAll(GuideResourceEntity.class);
-						              guideResourceEntity.save();
-						              return null;
-					              }
+			      @Override
+			      public void onNext(@NonNull String s) {
+				      LitePal.deleteAll(GuideResourceEntity.class);
+				      guideResourceEntity.save();
+			      }
 
-					              @Override
-					              public void onSuccess(Void result) {}
-				              });
-			              }
+			      @Override
+			      public void onError(@NonNull Throwable e) {
+				      e.printStackTrace();
+				      LitePal.deleteAll(GuideResourceEntity.class);
+				      FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
+			      }
 
-			              @Override
-			              public void onException(Exception e) {
-				              e.printStackTrace();
-				              ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
-					              @Override
-					              public Void doInBackground() {
-						              LitePal.deleteAll(GuideResourceEntity.class);
-						              FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
-						              return null;
-					              }
-
-					              @Override
-					              public void onSuccess(Void result) {}
-				              });
-			              }
-
-			              @Override
-			              public void onCancel() {
-				              ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
-					              @Override
-					              public Void doInBackground() {
-						              LitePal.deleteAll(GuideResourceEntity.class);
-						              FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
-						              return null;
-					              }
-
-					              @Override
-					              public void onSuccess(Void result) {}
-				              });
-			              }
-
-			              @Override
-			              public void onEnd() {}
-		              });
+			      @Override
+			      public void onComplete() {}
+		      });
 	}
 }
