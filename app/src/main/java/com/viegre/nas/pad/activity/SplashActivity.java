@@ -73,6 +73,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 
 	@Override
 	protected void initialize() {
+		SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
 		ServiceUtils.startService(ScreenSaverService.class);
 		ServiceUtils.startService(MQTTService.class);
 		grantPermission();
@@ -229,7 +230,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 获取资源配置
 	 */
 	private void getDeviceResource() {
-		RxHttp.postForm(UrlConfig.Device.GET_RESOURCE)
+		RxHttp.postForm(UrlConfig.Device.GET_RESOURCE).setAssemblyEnabled(false)
 		      .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
 		      .asResponse(DeviceResourceRootEntity.class)
 		      .subscribe(new Observer<DeviceResourceRootEntity>() {
@@ -242,7 +243,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				      if (!resourceList.isEmpty()) {
 					      LitePal.deleteAll(DeviceResourceEntity.class);
 					      LitePal.saveAll(resourceList);
-					      DeviceResourceEntity deviceResourceEntity = LitePal.where("type = ?", "guideVideo").findFirst(DeviceResourceEntity.class);
+					      DeviceResourceEntity deviceResourceEntity = LitePal.where("type = ?", "guideVideo")
+					                                                         .findFirst(DeviceResourceEntity.class);
 					      List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
 					      if (null != deviceResourceEntity) {
 						      String url = deviceResourceEntity.getContent();
@@ -357,7 +359,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 */
 	private void downloadGuideData(GuideResourceEntity guideResourceEntity) {
 		FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
-		RxHttp.get(guideResourceEntity.getUrl())
+		RxHttp.get(guideResourceEntity.getUrl()).setAssemblyEnabled(false)
 		      .asDownload(PathConfig.GUIDE_RESOURCE + guideResourceEntity.getFileName())
 		      .subscribe(new Observer<String>() {
 			      @Override

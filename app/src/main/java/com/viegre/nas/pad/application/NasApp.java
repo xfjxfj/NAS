@@ -16,16 +16,11 @@ import com.topqizhi.ai.manager.VolumeManager;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.SPConfig;
-import com.viegre.nas.pad.kalle.converter.JsonConverter;
 import com.viegre.nas.pad.manager.AMapLocationManager;
 import com.viegre.nas.pad.service.AppService;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.KalleConfig;
 
 import org.litepal.LitePal;
 import org.primftpd.log.CsvLoggerFactory;
-
-import java.util.concurrent.TimeUnit;
 
 import cn.wildfire.chat.kit.Config;
 import cn.wildfire.chat.kit.WfcUIKit;
@@ -45,12 +40,11 @@ public class NasApp extends BaseApplication {
 		initUtils();
 		initAndroidId();
 		LitePal.initialize(this);
+		initRxHttp();
 		MscManager.INSTANCE.initialize(this);
 		AIUIManager.INSTANCE.initialize(this);
 		VolumeManager.INSTANCE.initialize(this);
 		CsvLoggerFactory.CONTEXT = this;
-		initRxHttp();
-		initKalle();
 		initAMap();
 		initIM();
 		StarrySky.init(this).apply();
@@ -113,18 +107,6 @@ public class NasApp extends BaseApplication {
 	}
 
 	/**
-	 * 初始化Kalle
-	 */
-	private void initKalle() {
-		KalleConfig kalleConfig = KalleConfig.newBuilder()
-		                                     .connectionTimeout(15, TimeUnit.SECONDS)
-		                                     .readTimeout(15, TimeUnit.SECONDS)
-		                                     .converter(new JsonConverter())
-		                                     .build();
-		Kalle.setConfig(kalleConfig);
-	}
-
-	/**
 	 * 初始化高德地图
 	 */
 	private void initAMap() {
@@ -133,7 +115,8 @@ public class NasApp extends BaseApplication {
 
 	private void initAndroidId() {
 		if (!SPUtils.getInstance().contains(SPConfig.ANDROID_ID)) {
-			SPUtils.getInstance().put(SPConfig.ANDROID_ID, Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+			SPUtils.getInstance()
+			       .put(SPConfig.ANDROID_ID, Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
 		}
 	}
 }

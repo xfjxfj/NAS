@@ -68,7 +68,8 @@ public enum SkillManager {
 
 					case SkillEntity.TV_SMART_HOME:
 						AIUIManager.INSTANCE.setPlayNewMusicList(true);
-						SkillSemanticObjectEntity skillSemanticObjectEntity = JSON.parseObject(message, SkillSemanticObjectEntity.class);
+						SkillSemanticObjectEntity skillSemanticObjectEntity = JSON.parseObject(message,
+						                                                                       SkillSemanticObjectEntity.class);
 						parseTvSmartHome(skillSemanticObjectEntity.getOperation(),
 						                 skillSemanticObjectEntity.getSemantic().getSlots().getAttr(),
 						                 skillSemanticObjectEntity.getSemantic().getSlots().getAttrValue());
@@ -77,12 +78,14 @@ public enum SkillManager {
 					case SkillEntity.VIDEO:
 						AIUIManager.INSTANCE.setPlayNewMusicList(true);
 						SkillSemanticArrayEntity videoEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
-						parseVideo(videoEntity.getSemantic().get(0).getIntent(), videoEntity.getSemantic().get(0).getSlots().get(0).getValue());
+						parseVideo(videoEntity.getSemantic().get(0).getIntent(),
+						           videoEntity.getSemantic().get(0).getSlots().get(0).getValue());
 						break;
 
 					case SkillEntity.APP:
 						SkillSemanticArrayEntity appEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
-						parseApp(appEntity.getSemantic().get(0).getIntent(), appEntity.getSemantic().get(0).getSlots().get(0).getValue());
+						parseApp(appEntity.getSemantic().get(0).getIntent(),
+						         appEntity.getSemantic().get(0).getSlots().get(0).getValue());
 						break;
 
 					case SkillEntity.MUSIC_PRO:
@@ -90,7 +93,8 @@ public enum SkillManager {
 						ThreadUtils.executeByCached(new VoidTask() {
 							@Override
 							public Void doInBackground() {
-								parseMusicPro(musicProEntity.getText(), JSONArray.parseArray(musicProEntity.getSemantic()).getJSONObject(0));
+								parseMusicPro(musicProEntity.getText(),
+								              JSONArray.parseArray(musicProEntity.getSemantic()).getJSONObject(0));
 								return null;
 							}
 						});
@@ -179,7 +183,8 @@ public enum SkillManager {
 							case "关":
 								ThreadUtils.runOnUiThread(() -> {
 									//获取ActivityManager
-									ActivityManager mAm = (ActivityManager) Utils.getApp().getSystemService(Context.ACTIVITY_SERVICE);
+									ActivityManager mAm = (ActivityManager) Utils.getApp()
+									                                             .getSystemService(Context.ACTIVITY_SERVICE);
 									// 获得当前运行的task
 									List<ActivityManager.RunningTaskInfo> taskList = mAm.getRunningTasks(100);
 									for (ActivityManager.RunningTaskInfo rti : taskList) {
@@ -188,7 +193,8 @@ public enum SkillManager {
 											//判断app进程是否存活
 											Log.i("NotificationReceiver", "the app process is alive");
 											try {
-												Intent resultIntent = new Intent(Utils.getApp(), Class.forName(rti.topActivity.getClassName()));
+												Intent resultIntent = new Intent(Utils.getApp(),
+												                                 Class.forName(rti.topActivity.getClassName()));
 												resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 												Utils.getApp().startActivity(resultIntent);
 											} catch (ClassNotFoundException e) {
@@ -270,76 +276,87 @@ public enum SkillManager {
 		}
 
 		//查询歌曲
-		RxHttp.get(MUSIC_SERVER + "search").add("limit", 5).add("keywords", keywords.toString()).asString().subscribe(new Observer<String>() {
-			@Override
-			public void onSubscribe(@NonNull Disposable d) {}
+		RxHttp.get(MUSIC_SERVER + "search")
+		      .setAssemblyEnabled(false)
+		      .add("limit", 5)
+		      .add("keywords", keywords.toString())
+		      .asString()
+		      .subscribe(new Observer<String>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {}
 
-			@Override
-			public void onNext(@NonNull String s) {
-				LogUtils.iTag("parseMusicPro", "查询歌曲");
-				JSONObject resultObj = JSON.parseObject(s);
-				List<JSONObject> musicObjList = JSONObject.parseArray(resultObj.getJSONObject("result").getJSONArray("songs").toJSONString(),
-				                                                      JSONObject.class);
-				//乱序排列
-				Collections.shuffle(musicObjList);
-				List<SongInfo> playList = new ArrayList<>();
-				//遍历检查歌曲是否能播放
-				for (JSONObject musicObj : musicObjList) {
-					String id = musicObj.getString("id");
-					String name = musicObj.getString("name");
-					//同步请求
-					RxHttp.get(MUSIC_SERVER + "check/music").add("id", id).setSync().asString().subscribe(new Observer<String>() {
-						@Override
-						public void onSubscribe(@NonNull Disposable d) {}
+			      @Override
+			      public void onNext(@NonNull String s) {
+				      LogUtils.iTag("parseMusicPro", "查询歌曲");
+				      JSONObject resultObj = JSON.parseObject(s);
+				      List<JSONObject> musicObjList = JSONObject.parseArray(resultObj.getJSONObject("result")
+				                                                                     .getJSONArray("songs")
+				                                                                     .toJSONString(), JSONObject.class);
+				      //乱序排列
+				      Collections.shuffle(musicObjList);
+				      List<SongInfo> playList = new ArrayList<>();
+				      //遍历检查歌曲是否能播放
+				      for (JSONObject musicObj : musicObjList) {
+					      String id = musicObj.getString("id");
+					      String name = musicObj.getString("name");
+					      //同步请求
+					      RxHttp.get(MUSIC_SERVER + "check/music")
+					            .setAssemblyEnabled(false)
+					            .add("id", id)
+					            .setSync()
+					            .asString()
+					            .subscribe(new Observer<String>() {
+						            @Override
+						            public void onSubscribe(@NonNull Disposable d) {}
 
-						@Override
-						public void onNext(@NonNull String s) {
-							LogUtils.iTag("parseMusicPro", "遍历检查歌曲是否能播放");
-							JSONObject checkJson = JSON.parseObject(s);
-							if (checkJson.getBoolean("success")) {
-								SongInfo songInfo = new SongInfo();
-								String url = MUSIC_PLAY_URL + id + ".mp3";
-								songInfo.setSongId(CommExtKt.md5(url));
-								songInfo.setSongName(name);
-								songInfo.setSongUrl(url);
-								playList.add(songInfo);
-							}
-						}
+						            @Override
+						            public void onNext(@NonNull String s) {
+							            LogUtils.iTag("parseMusicPro", "遍历检查歌曲是否能播放");
+							            JSONObject checkJson = JSON.parseObject(s);
+							            if (checkJson.getBoolean("success")) {
+								            SongInfo songInfo = new SongInfo();
+								            String url = MUSIC_PLAY_URL + id + ".mp3";
+								            songInfo.setSongId(CommExtKt.md5(url));
+								            songInfo.setSongName(name);
+								            songInfo.setSongUrl(url);
+								            playList.add(songInfo);
+							            }
+						            }
 
-						@Override
-						public void onError(@NonNull Throwable e) {
-							e.printStackTrace();
-							LogUtils.iTag("parseMusicPro", "遍历歌曲报错", e);
-						}
+						            @Override
+						            public void onError(@NonNull Throwable e) {
+							            e.printStackTrace();
+							            LogUtils.iTag("parseMusicPro", "遍历歌曲报错", e);
+						            }
 
-						@Override
-						public void onComplete() {
-							LogUtils.iTag("parseMusicPro", "遍历完毕");
-						}
-					});
-				}
+						            @Override
+						            public void onComplete() {
+							            LogUtils.iTag("parseMusicPro", "遍历完毕");
+						            }
+					            });
+				      }
 
-				if (!playList.isEmpty()) {
-					AIUIManager.INSTANCE.setPlayNewMusicList(true);
-					StarrySky.with().playMusic(playList, 0);
-				} else {
-					AIUIManager.INSTANCE.setPlayNewMusicList(false);
-				}
-			}
+				      if (!playList.isEmpty()) {
+					      AIUIManager.INSTANCE.setPlayNewMusicList(true);
+					      StarrySky.with().playMusic(playList, 0);
+				      } else {
+					      AIUIManager.INSTANCE.setPlayNewMusicList(false);
+				      }
+			      }
 
-			@Override
-			public void onError(@NonNull Throwable e) {
-				e.printStackTrace();
-				AIUIManager.INSTANCE.setPlayNewMusicList(true);
-				LogUtils.iTag("parseMusicPro", "查询歌曲报错", e);
-			}
+			      @Override
+			      public void onError(@NonNull Throwable e) {
+				      e.printStackTrace();
+				      AIUIManager.INSTANCE.setPlayNewMusicList(true);
+				      LogUtils.iTag("parseMusicPro", "查询歌曲报错", e);
+			      }
 
-			@Override
-			public void onComplete() {
-				LogUtils.iTag("parseMusicPro", "查询完毕");
-				AIUIManager.INSTANCE.startListening();
-			}
-		});
+			      @Override
+			      public void onComplete() {
+				      LogUtils.iTag("parseMusicPro", "查询完毕");
+				      AIUIManager.INSTANCE.startListening();
+			      }
+		      });
 	}
 
 	private String parseLiveList() {

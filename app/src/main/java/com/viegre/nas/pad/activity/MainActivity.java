@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.bumptech.glide.Glide;
@@ -28,8 +29,8 @@ import com.viegre.nas.pad.activity.audio.AudioActivity;
 import com.viegre.nas.pad.activity.image.ImageActivity;
 import com.viegre.nas.pad.activity.video.VideoActivity;
 import com.viegre.nas.pad.config.BusConfig;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.ActivityMainBinding;
-import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.manager.AMapLocationManager;
 import com.viegre.nas.pad.util.CommonUtils;
@@ -38,7 +39,6 @@ import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
-import org.litepal.LitePal;
 import org.primftpd.PrimitiveFtpdActivity;
 
 import java.util.ArrayList;
@@ -84,32 +84,23 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	 * 初始化用户区域
 	 */
 	private void initUser() {
-		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<LoginInfoEntity>() {
-			@Override
-			public LoginInfoEntity doInBackground() {
-				return LitePal.findFirst(LoginInfoEntity.class);
-			}
-
-			@Override
-			public void onSuccess(LoginInfoEntity result) {
-				if (null == result) {
-					Glide.with(mActivity)
-					     .load(R.mipmap.main_unlogin)
-					     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-					     .into(mViewBinding.acivMainUserIcon);
-					mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
-					mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
-				} else {
-					Glide.with(mActivity)
-					     .load(R.mipmap.main_unlogin)
-					     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-					     .into(mViewBinding.acivMainUserIcon);
-					mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(result.getPhoneNumber()));
-					mViewBinding.llcMainUser.setOnClickListener(null);
-				}
-				mViewBinding.llcMainUser.setVisibility(View.VISIBLE);
-			}
-		});
+		if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
+			Glide.with(mActivity)
+			     .load(R.mipmap.main_unlogin)
+			     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+			     .into(mViewBinding.acivMainUserIcon);
+			mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance()
+			                                                                              .getString(SPConfig.PHONE)));
+			mViewBinding.llcMainUser.setOnClickListener(null);
+		} else {
+			Glide.with(mActivity)
+			     .load(R.mipmap.main_unlogin)
+			     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+			     .into(mViewBinding.acivMainUserIcon);
+			mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
+			mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
+		}
+		mViewBinding.llcMainUser.setVisibility(View.VISIBLE);
 	}
 
 	private void initClick() {
@@ -131,8 +122,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		//音频
 		Glide.with(this)
 		     .load(R.mipmap.main_icon_audio)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIconAudio);
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconAudio);
 		mViewBinding.acivMainIconAudio.setOnClickListener(view -> ActivityUtils.startActivity(AudioActivity.class));
 
 		//视频
@@ -142,12 +132,30 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		     .into(mViewBinding.acivMainIconVideo);
 		mViewBinding.acivMainIconVideo.setOnClickListener(view -> ActivityUtils.startActivity(VideoActivity.class));
 
-		Glide.with(this).load(R.mipmap.test_icon_3).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon3);
-		Glide.with(this).load(R.mipmap.test_icon_4).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon4);
-		Glide.with(this).load(R.mipmap.test_icon_5).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon5);
-		Glide.with(this).load(R.mipmap.test_icon_6).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon6);
-		Glide.with(this).load(R.mipmap.test_icon_7).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon7);
-		Glide.with(this).load(R.mipmap.test_icon_8).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon8);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_3)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon3);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_4)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon4);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_5)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon5);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_6)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon6);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_7)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon7);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_8)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon8);
 		mViewBinding.acivMainIcon5.setOnClickListener(view -> {
 			Intent liveIntent = new Intent();
 			liveIntent.putExtra(HdpConstant.HIDE_LOADING_DEFAULT, true);

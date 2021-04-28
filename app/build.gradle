@@ -126,9 +126,6 @@ dependencies {
 	annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 	//https://github.com/zhanghai/MaterialProgressBar
 	implementation 'me.zhanghai.android.materialprogressbar:library:1.6.1'
-	//https://github.com/yanzhenjie/Kalle
-	//https://yanzhenjie.com/Kalle
-	implementation 'com.yanzhenjie:kalle:0.1.7'
 	//https://lbs.amap.com/api/android-location-sdk/guide/create-project/android-studio-create-project
 	implementation 'com.amap.api:location:5.2.0'
 	//https://github.com/CarGuo/GSYVideoPlayer

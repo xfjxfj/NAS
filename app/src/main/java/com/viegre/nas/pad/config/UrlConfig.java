@@ -22,8 +22,6 @@ public class UrlConfig {
 		public static final String LOGIN = USER + "login";
 		//登出接口
 		public static final String LOGOUT = USER + "logout";
-		//刷新Token，限制有效时间
-		public static final String REFRESH_TOKEN = USER + "refreshToken";
 	}
 
 	/**
@@ -35,6 +33,8 @@ public class UrlConfig {
 		public static final String GET_WEATHER = DEVICE + "getWeather";
 		//获取资源配置
 		public static final String GET_RESOURCE = DEVICE + "getResource";
+		//刷新Token，限制有效时间
+		public static final String REFRESH_TOKEN = DEVICE + "refreshToken";
 		//获取设备所有的绑定用户
 		public static final String GET_GETALLFOLLOWS = DEVICE + "getAllFollows";
 	}

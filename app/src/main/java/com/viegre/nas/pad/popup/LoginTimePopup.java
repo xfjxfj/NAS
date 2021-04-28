@@ -3,6 +3,8 @@ package com.viegre.nas.pad.popup;
 import android.content.Context;
 import android.widget.SeekBar;
 
+import androidx.annotation.NonNull;
+
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.lxj.xpopup.core.CenterPopupView;
@@ -13,16 +15,13 @@ import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.PopupLoginTimeBinding;
 import com.viegre.nas.pad.entity.LoginEntity;
-import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.manager.TextStyleManager;
 import com.viegre.nas.pad.util.CommonUtils;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
 
-import org.litepal.LitePal;
-
-import androidx.annotation.NonNull;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import rxhttp.RxHttp;
 
 /**
  * Created by レインマン on 2021/01/08 16:03 with Android Studio.
@@ -45,30 +44,7 @@ public class LoginTimePopup extends CenterPopupView {
 		super.onCreate();
 		PopupLoginTimeBinding popupLoginTimeBinding = PopupLoginTimeBinding.bind(getPopupImplView());
 		popupLoginTimeBinding.actvPopupLoginTimeCancel.setVisibility(GONE);
-		popupLoginTimeBinding.actvPopupLoginTimeConfirm.setOnClickListener(view -> Kalle.post(UrlConfig.User.REFRESH_TOKEN)
-		                                                                                .param("hour", mHour)
-		                                                                                .perform(new SimpleCallback<LoginEntity>() {
-			                                                                                @Override
-			                                                                                public void onResponse(SimpleResponse<LoginEntity, String> response) {
-				                                                                                dismiss();
-				                                                                                if (!response.isSucceed()) {
-					                                                                                CommonUtils.showErrorToast(response.failed());
-					                                                                                LitePal.deleteAll(LoginInfoEntity.class);
-				                                                                                } else {
-					                                                                                SPUtils.getInstance()
-					                                                                                       .put(SPConfig.LOGIN_CODE_SESSION_ID,
-					                                                                                            response.succeed().getToken());
-					                                                                                Kalle.getConfig()
-					                                                                                     .getHeaders()
-					                                                                                     .set("token",
-					                                                                                          SPUtils.getInstance()
-					                                                                                                 .getString(SPConfig.LOGIN_CODE_SESSION_ID));
-					                                                                                Kalle.setConfig(Kalle.getConfig());
-					                                                                                ActivityUtils.startActivity(MainActivity.class);
-					                                                                                ActivityUtils.finishActivity(LoginActivity.class);
-				                                                                                }
-			                                                                                }
-		                                                                                }));
+		popupLoginTimeBinding.actvPopupLoginTimeConfirm.setOnClickListener(view -> refreshToken());
 		popupLoginTimeBinding.rgPopupLoginTime.setOnCheckedChangeListener((radioGroup, i) -> {
 			if (R.id.acrbPopupLoginTime2hours == i) {
 				mHour = 2;
@@ -103,5 +79,34 @@ public class LoginTimePopup extends CenterPopupView {
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {}
 		});
+	}
+
+	private void refreshToken() {
+		RxHttp.postForm(UrlConfig.Device.REFRESH_TOKEN)
+		      .add("hour", mHour)
+		      .asResponse(LoginEntity.class)
+		      .observeOn(AndroidSchedulers.mainThread())
+		      .subscribe(new Observer<LoginEntity>() {
+			      @Override
+			      public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {}
+
+			      @Override
+			      public void onNext(@io.reactivex.rxjava3.annotations.NonNull LoginEntity loginEntity) {
+				      RxHttp.setOnParamAssembly(param -> param.setHeader("token", loginEntity.getToken()));
+				      ActivityUtils.startActivity(MainActivity.class);
+				      ActivityUtils.finishActivity(LoginActivity.class);
+			      }
+
+			      @Override
+			      public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+				      CommonUtils.showErrorToast(e.getMessage());
+				      SPUtils.getInstance().remove(SPConfig.PHONE);
+			      }
+
+			      @Override
+			      public void onComplete() {
+				      dismiss();
+			      }
+		      });
 	}
 }

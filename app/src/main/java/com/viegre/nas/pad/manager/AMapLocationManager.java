@@ -44,7 +44,7 @@ public enum AMapLocationManager {
 						LogUtils.e("location Error, ErrCode:" + aMapLocation.getErrorCode() + ", errInfo:" + aMapLocation.getErrorInfo());
 						BusUtils.post(BusConfig.WEATHER, new WeatherEntity());
 					} else {
-						RxHttp.postForm(UrlConfig.Device.GET_WEATHER)
+						RxHttp.postForm(UrlConfig.Device.GET_WEATHER).setAssemblyEnabled(false)
 						      .add("lat", aMapLocation.getLatitude())
 						      .add("lng", aMapLocation.getLongitude())
 						      .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
@@ -58,7 +58,8 @@ public enum AMapLocationManager {
 								      List<WeatherEntity> weatherList = weatherRootEntity.getWeather();
 								      if (!weatherList.isEmpty()) {
 									      for (WeatherEntity weather : weatherList) {
-										      if (TimeUtils.isToday(weather.getDate(), new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()))) {
+										      if (TimeUtils.isToday(weather.getDate(),
+										                            new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()))) {
 											      BusUtils.post(BusConfig.WEATHER, weather);
 											      return;
 										      }

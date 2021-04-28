@@ -15,17 +15,12 @@ import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivityLoginBinding;
 import com.viegre.nas.pad.entity.LoginEntity;
-import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.manager.PopupManager;
 import com.viegre.nas.pad.popup.LoginTimePopup;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.ImageStreamUtils;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
 
-import org.litepal.LitePal;
-
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -148,7 +143,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 	 */
 	private void loginbyAccount() {
 		mViewBinding.actvLoginAccountBtn.setClickable(false);
-		String phone = String.valueOf(mViewBinding.acetLoginAccountPhone.getText()), password = String.valueOf(mViewBinding.acetLoginAccountPassword.getText()), code = String
+		String phone = String.valueOf(mViewBinding.acetLoginAccountPhone.getText()), password = String.valueOf(mViewBinding.acetLoginAccountPassword
+				                                                                                                       .getText()), code = String
 				.valueOf(mViewBinding.acetLoginAccountCode.getText());
 		if (StringUtils.isEmpty(phone)) {
 			CommonUtils.showErrorToast(R.string.login_please_input_phone_number);
@@ -182,65 +178,30 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		      .add("phoneNumber", phone)
 		      .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
 		      .asResponse(LoginEntity.class)
+		      .observeOn(AndroidSchedulers.mainThread())
 		      .subscribe(new Observer<LoginEntity>() {
 			      @Override
 			      public void onSubscribe(@NonNull Disposable d) {}
 
 			      @Override
 			      public void onNext(@NonNull LoginEntity loginEntity) {
-				      SPUtils.getInstance().put(SPConfig.LOGIN_CODE_SESSION_ID, loginEntity.getToken());
-				      LoginInfoEntity loginInfoEntity = new LoginInfoEntity(phone);
-
-				      ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
-					      @Override
-					      public Void doInBackground() {
-						      LitePal.deleteAll(LoginInfoEntity.class);
-						      loginInfoEntity.save();
-						      return null;
-					      }
-
-					      @Override
-					      public void onSuccess(Void result) {
-						      Kalle.getConfig().getHeaders().set("token", SPUtils.getInstance().getString(SPConfig.LOGIN_CODE_SESSION_ID));
-						      Kalle.setConfig(Kalle.getConfig());
-						      setLoginTime();
-					      }
-				      });
+				      //添加公共请求头
+				      RxHttp.setOnParamAssembly(param -> param.addHeader("token", loginEntity.getToken()));
+				      SPUtils.getInstance().put(SPConfig.PHONE, phone);
+				      setLoginTime();
 			      }
 
 			      @Override
 			      public void onError(@NonNull Throwable e) {
-
+				      CommonUtils.showErrorToast(e.getMessage());
 			      }
 
 			      @Override
 			      public void onComplete() {
-
+				      SPUtils.getInstance().remove(SPConfig.LOGIN_CODE_SESSION_ID);
+				      mViewBinding.actvLoginAccountBtn.setClickable(true);
 			      }
 		      });
-		Kalle.post(UrlConfig.User.LOGIN)
-		     .addHeader("Cookie", SPUtils.getInstance().getString(SPConfig.LOGIN_CODE_SESSION_ID))
-		     .param("code", code)
-		     .param("password", password)
-		     .param("phoneNumber", phone)
-		     .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
-		     .perform(new SimpleCallback<LoginEntity>() {
-			     @Override
-			     public void onResponse(SimpleResponse<LoginEntity, String> response) {
-				     if (!response.isSucceed()) {
-					     CommonUtils.showErrorToast(response.failed());
-				     } else {
-
-				     }
-			     }
-
-			     @Override
-			     public void onEnd() {
-				     super.onEnd();
-				     SPUtils.getInstance().remove(SPConfig.LOGIN_CODE_SESSION_ID);
-				     mViewBinding.actvLoginAccountBtn.setClickable(true);
-			     }
-		     });
 	}
 
 	/**
