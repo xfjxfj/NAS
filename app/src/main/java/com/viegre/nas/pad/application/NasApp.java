@@ -7,8 +7,8 @@ import android.provider.Settings;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
-import com.didichuxing.doraemonkit.DoraemonKit;
 import com.djangoogle.framework.applicaiton.BaseApplication;
+import com.lzx.starrysky.StarrySky;
 import com.topqizhi.ai.manager.AIUIManager;
 import com.topqizhi.ai.manager.MscManager;
 import com.topqizhi.ai.manager.VolumeManager;
@@ -40,7 +40,7 @@ public class NasApp extends BaseApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		DoraemonKit.install(this, "6f1d65f538aa1fe2c813e712c95b773d");
+//		DoraemonKit.install(this, "6f1d65f538aa1fe2c813e712c95b773d");
 		initUtils();
 		initAndroidId();
 		LitePal.initialize(this);
@@ -51,6 +51,7 @@ public class NasApp extends BaseApplication {
 		initKalle();
 		initAMap();
 		initIM();
+		StarrySky.init(this).apply();
 	}
 
 	/**

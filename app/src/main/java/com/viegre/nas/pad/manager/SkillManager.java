@@ -7,14 +7,18 @@ import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
 import com.topqizhi.ai.entity.skill.SkillEntity;
+import com.topqizhi.ai.entity.skill.SkillMusicProSemanticEntity;
 import com.topqizhi.ai.entity.skill.SkillSemanticArrayEntity;
 import com.topqizhi.ai.entity.skill.SkillSemanticObjectEntity;
 import com.topqizhi.ai.manager.AIUIManager;
+import com.viegre.nas.pad.api.Api;
+import com.viegre.nas.pad.task.VoidTask;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,8 +68,15 @@ public enum SkillManager {
 				break;
 
 			case SkillEntity.MUSIC_PRO:
-				SkillSemanticArrayEntity musicProEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
-				parseMusicPro(musicProEntity.getSemantic().get(0).getIntent(), musicProEntity.getSemantic().get(0).getSlots().get(0).getValue());
+				SkillMusicProSemanticEntity musicProEntity = JSON.parseObject(message, SkillMusicProSemanticEntity.class);
+				ThreadUtils.executeByCached(new VoidTask() {
+					@Override
+					public Void doInBackground() {
+						Api.queryMusic(musicProEntity.getText(), JSONArray.parseArray(musicProEntity.getSemantic()).getJSONObject(0));
+						return null;
+					}
+				});
+//				parseMusicPro(musicProEntity.getSemantic().get(0).getIntent(), musicProEntity.getSemantic().get(0).getSlots().get(0).getValue());
 				break;
 
 			default:
