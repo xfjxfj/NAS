@@ -56,7 +56,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         CommonUtils.hideBottomUIMenu(this);
         CommonUtils.hideStatusBar(this);
         initView();
-        getContactsDatas();
+//        getContactsDatas();
     }
 
     private void initView() {
@@ -67,15 +67,16 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         //初始化点击事件
         homeImg.setOnClickListener(this);
         //初始化RecycleViewAdapter
-//        initAdapter();
+        initAdapter();
 //        initAdapter();
         login();
     }
 
     private void login() {
         //音视频登录
-        String phoneNumber = "15357906428";
-//        String phoneNumber = "13168306428";
+//        String phoneNumber = "15357906428";
+        String phoneNumber = "13168306428";
+//        String phoneNumber = "7dd40314e43596cf";
         String authCode = "66666";
 
         AppService.Instance().smsLogin(phoneNumber, authCode, new AppService.LoginCallback() {
@@ -166,6 +167,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                     @Override
                     public void onEnd() {
                         super.onEnd();
+
                         Log.d("", "");
                     }
                 });

@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.lqr.emoji.LQREmotionKit;
+import com.topqizhi.ai.manager.MscManager;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -138,7 +139,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
             ChatManager.Instance().registerMessageContent(ConferenceKickoffMemberContent.class);
             ChatManagerHolder.gAVEngine = AVEngineKit.Instance();
             for (String[] server : Config.ICE_SERVERS) {
-                ChatManagerHolder.gAVEngine.addIceServer(server[0], server[1], server[2]);
+                ChatManagerHolder.gAVEngine.addIceServer(server[0], server[1], server[2]);//初始化音视频
             }
             SharedPreferences sp = application.getSharedPreferences("config", Context.MODE_PRIVATE);
             String id = sp.getString("id", null);
@@ -255,7 +256,6 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
 
         Intent voip = new Intent(context, SingleCallActivity.class);
         startActivity(context, voip);
-
         VoipCallService.start(context, false);
     }
 
@@ -282,6 +282,8 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
     }
 
     public static void startActivity(Context context, Intent intent) {
+//        xfj 2021年4月28日
+        MscManager.INSTANCE.stopListening();
         if (context instanceof Activity) {
             context.startActivity(intent);
             ((Activity) context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

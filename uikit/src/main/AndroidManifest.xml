@@ -86,7 +86,8 @@
         <activity
             android:name="cn.wildfire.chat.kit.voip.SingleCallActivity"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait">
+            android:screenOrientation="landscape">
+
             <intent-filter>
                 <action android:name="${packageName}.kit.voip.single" />
                 <category android:name="android.intent.category.DEFAULT" />

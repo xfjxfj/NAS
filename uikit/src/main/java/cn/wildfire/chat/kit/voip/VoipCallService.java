@@ -33,6 +33,9 @@ import java.util.List;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+
+import com.topqizhi.ai.manager.AIUIManager;
+
 import cn.wildfire.chat.kit.BuildConfig;
 import cn.wildfire.chat.kit.R;
 import cn.wildfirechat.avenginekit.AVEngineKit;
@@ -120,6 +123,9 @@ public class VoipCallService extends Service {
     private void checkCallState() {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
         if (session == null || AVEngineKit.CallState.Idle == session.getState()) {
+//            xfj 2021年4月28日
+            AIUIManager.INSTANCE.startListening();
+//            ************
             stopSelf();
         } else {
             updateNotification(session);
@@ -175,10 +181,10 @@ public class VoipCallService extends Service {
                 break;
         }
         return builder.setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle(title)
-            .setContentIntent(pendingIntent)
-            .setOngoing(true)
-            .build();
+                .setContentTitle(title)
+                .setContentIntent(pendingIntent)
+                .setOngoing(true)
+                .build();
     }
 
     @Override
@@ -205,8 +211,8 @@ public class VoipCallService extends Service {
         }
         params.type = type;
         params.flags = WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
-            | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
 
         params.format = PixelFormat.TRANSLUCENT;
         params.width = ViewGroup.LayoutParams.WRAP_CONTENT;

@@ -11,11 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.topqizhi.ai.manager.AIUIManager;
+import com.topqizhi.ai.manager.MscManager;
 import com.viegre.nas.pad.R;
 
 import java.util.List;
 
 import cn.wildfire.chat.kit.WfcUIKit;
+import cn.wildfire.chat.kit.conversation.ext.VoipExt;
 
 public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFriendsAdapter.MyHolder> {
 
@@ -56,8 +59,11 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
         return languages.size();
     }
     private void RunCall() {
+//        VoipExt.video
 //        WfcUIKit.singleCall(context1, "TUT9T9LL", false);
         WfcUIKit.singleCall(context1, "sws8s888", false);
+//        WfcUIKit.singleCall(context1, "VaVvVvii", false);
+//        WfcUIKit.singleCall(context1, "agahahss", false);
 //        WfcUIKit.singleCall(context1, "dzxGhGjj", false);
     }
     /**
