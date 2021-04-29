@@ -21,16 +21,20 @@ import com.topqizhi.ai.entity.skill.SkillMusicProSemanticEntity;
 import com.topqizhi.ai.entity.skill.SkillSemanticArrayEntity;
 import com.topqizhi.ai.entity.skill.SkillSemanticObjectEntity;
 import com.topqizhi.ai.manager.AIUIManager;
+import com.viegre.nas.pad.entity.TvChannelInfoEntity;
+import com.viegre.nas.pad.entity.TvChannelInfoEntityClassEntity;
 import com.viegre.nas.pad.task.VoidTask;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import fr.arnaudguyon.xmltojsonlib.XmlToJson;
-import hdp.http.HdpConstant;
+import hdp.http.APIConstant;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -47,6 +51,8 @@ public enum SkillManager {
 
 	public static final String MUSIC_SERVER = "http://119.23.253.236:3000/";
 	public static final String MUSIC_PLAY_URL = "http://music.163.com/song/media/outer/url?id=";
+
+	private final Set<TvChannelInfoEntity> mTvChannelInfoSet = new HashSet<>();
 
 	public void parseSkillMsg(String message) {
 		ThreadUtils.executeByCached(new VoidTask() {
@@ -68,8 +74,7 @@ public enum SkillManager {
 
 					case SkillEntity.TV_SMART_HOME:
 						AIUIManager.INSTANCE.setPlayNewMusicList(true);
-						SkillSemanticObjectEntity skillSemanticObjectEntity = JSON.parseObject(message,
-						                                                                       SkillSemanticObjectEntity.class);
+						SkillSemanticObjectEntity skillSemanticObjectEntity = JSON.parseObject(message, SkillSemanticObjectEntity.class);
 						parseTvSmartHome(skillSemanticObjectEntity.getOperation(),
 						                 skillSemanticObjectEntity.getSemantic().getSlots().getAttr(),
 						                 skillSemanticObjectEntity.getSemantic().getSlots().getAttrValue());
@@ -78,14 +83,12 @@ public enum SkillManager {
 					case SkillEntity.VIDEO:
 						AIUIManager.INSTANCE.setPlayNewMusicList(true);
 						SkillSemanticArrayEntity videoEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
-						parseVideo(videoEntity.getSemantic().get(0).getIntent(),
-						           videoEntity.getSemantic().get(0).getSlots().get(0).getValue());
+						parseVideo(videoEntity.getSemantic().get(0).getIntent(), videoEntity.getSemantic().get(0).getSlots().get(0).getValue());
 						break;
 
 					case SkillEntity.APP:
 						SkillSemanticArrayEntity appEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
-						parseApp(appEntity.getSemantic().get(0).getIntent(),
-						         appEntity.getSemantic().get(0).getSlots().get(0).getValue());
+						parseApp(appEntity.getSemantic().get(0).getIntent(), appEntity.getSemantic().get(0).getSlots().get(0).getValue());
 						break;
 
 					case SkillEntity.MUSIC_PRO:
@@ -93,8 +96,7 @@ public enum SkillManager {
 						ThreadUtils.executeByCached(new VoidTask() {
 							@Override
 							public Void doInBackground() {
-								parseMusicPro(musicProEntity.getText(),
-								              JSONArray.parseArray(musicProEntity.getSemantic()).getJSONObject(0));
+								parseMusicPro(musicProEntity.getText(), JSONArray.parseArray(musicProEntity.getSemantic()).getJSONObject(0));
 								return null;
 							}
 						});
@@ -118,8 +120,8 @@ public enum SkillManager {
 					case "live":
 						ThreadUtils.runOnUiThread(() -> {
 							Intent liveIntent = new Intent();
-							liveIntent.putExtra(HdpConstant.HIDE_LOADING_DEFAULT, true);
-							liveIntent.putExtra(HdpConstant.HIDE_EXIT_DIAG, true);
+							liveIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
+							liveIntent.putExtra(APIConstant.HIDE_EXIT_DIAG, true);
 							liveIntent.setAction("com.hdpfans.live.start");
 							liveIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 							liveIntent.putExtra("ChannelNum", 1);
@@ -139,26 +141,25 @@ public enum SkillManager {
 				if (value.contains("综合频道")) {
 					tvchannelPlayId = "1";
 				} else {
+					if (mTvChannelInfoSet.isEmpty()) {
+						parseChannelList();
+					}
 					String[] tvchannelPlayValueArr = value.split("`");
+					TvchannelPlayValue:
 					for (String tvchannelPlayValue : tvchannelPlayValueArr) {
-						try {
-							String playStr = parseLiveList();
-							int pos = playStr.indexOf("\"" + tvchannelPlayValue + "\"");
-							playStr = playStr.substring(pos);
-							pos = playStr.indexOf("频道号");
-							playStr = playStr.substring(pos + 6);
-							int pos1 = playStr.indexOf("\"");
-							tvchannelPlayId = playStr.substring(0, pos1);
-						} catch (Exception e) {
-							e.printStackTrace();
+						for (TvChannelInfoEntity tvChannelInfoEntity : mTvChannelInfoSet) {
+							if (tvchannelPlayValue.equals(tvChannelInfoEntity.getChannelName())) {
+								tvchannelPlayId = tvChannelInfoEntity.getChannelId();
+								break TvchannelPlayValue;
+							}
 						}
 					}
 				}
 				String finalTvchannelPlayId = tvchannelPlayId;
 				ThreadUtils.runOnUiThread(() -> {
 					Intent playIntent = new Intent();
-					playIntent.putExtra(HdpConstant.HIDE_LOADING_DEFAULT, true);
-					playIntent.putExtra(HdpConstant.HIDE_EXIT_DIAG, true);
+					playIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
+					playIntent.putExtra(APIConstant.HIDE_EXIT_DIAG, true);
 					playIntent.setAction("com.hdpfans.live.start");
 					playIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					playIntent.putExtra("ChannelNum", Integer.parseInt(finalTvchannelPlayId));
@@ -183,8 +184,7 @@ public enum SkillManager {
 							case "关":
 								ThreadUtils.runOnUiThread(() -> {
 									//获取ActivityManager
-									ActivityManager mAm = (ActivityManager) Utils.getApp()
-									                                             .getSystemService(Context.ACTIVITY_SERVICE);
+									ActivityManager mAm = (ActivityManager) Utils.getApp().getSystemService(Context.ACTIVITY_SERVICE);
 									// 获得当前运行的task
 									List<ActivityManager.RunningTaskInfo> taskList = mAm.getRunningTasks(100);
 									for (ActivityManager.RunningTaskInfo rti : taskList) {
@@ -193,8 +193,7 @@ public enum SkillManager {
 											//判断app进程是否存活
 											Log.i("NotificationReceiver", "the app process is alive");
 											try {
-												Intent resultIntent = new Intent(Utils.getApp(),
-												                                 Class.forName(rti.topActivity.getClassName()));
+												Intent resultIntent = new Intent(Utils.getApp(), Class.forName(rti.topActivity.getClassName()));
 												resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 												Utils.getApp().startActivity(resultIntent);
 											} catch (ClassNotFoundException e) {
@@ -289,9 +288,8 @@ public enum SkillManager {
 			      public void onNext(@NonNull String s) {
 				      LogUtils.iTag("parseMusicPro", "查询歌曲");
 				      JSONObject resultObj = JSON.parseObject(s);
-				      List<JSONObject> musicObjList = JSONObject.parseArray(resultObj.getJSONObject("result")
-				                                                                     .getJSONArray("songs")
-				                                                                     .toJSONString(), JSONObject.class);
+				      List<JSONObject> musicObjList = JSONObject.parseArray(resultObj.getJSONObject("result").getJSONArray("songs").toJSONString(),
+				                                                            JSONObject.class);
 				      //乱序排列
 				      Collections.shuffle(musicObjList);
 				      List<SongInfo> playList = new ArrayList<>();
@@ -300,8 +298,7 @@ public enum SkillManager {
 					      String id = musicObj.getString("id");
 					      String name = musicObj.getString("name");
 					      //同步请求
-					      RxHttp.get(MUSIC_SERVER + "check/music")
-					            .setAssemblyEnabled(false)
+					      RxHttp.get(MUSIC_SERVER + "check/music").setAssemblyEnabled(false)
 					            .add("id", id)
 					            .setSync()
 					            .asString()
@@ -359,17 +356,26 @@ public enum SkillManager {
 		      });
 	}
 
-	private String parseLiveList() {
-		AssetManager assetManager = Utils.getApp().getAssets();
-		String jsonString = "";
+	private void parseChannelList() {
+		String xmlString;
 		try {
+			AssetManager assetManager = Utils.getApp().getAssets();
 			InputStream inputStream = assetManager.open("hdp_channel_list.xml");
 			XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
-			jsonString = xmlToJson.toString();
+			xmlString = xmlToJson.toString();
 			inputStream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			return;
 		}
-		return jsonString;
+		if (!xmlString.isEmpty()) {
+			JSONObject jsonObject = JSON.parseObject(xmlString);
+			JSONObject channel_list = jsonObject.getJSONObject("channel_list");
+			JSONArray classArr = channel_list.getJSONArray("class");
+			List<TvChannelInfoEntityClassEntity> tvInfoClassList = JSON.parseArray(classArr.toJSONString(), TvChannelInfoEntityClassEntity.class);
+			for (TvChannelInfoEntityClassEntity tvInfoClass : tvInfoClassList) {
+				mTvChannelInfoSet.addAll(tvInfoClass.getChannel());
+			}
+		}
 	}
 }

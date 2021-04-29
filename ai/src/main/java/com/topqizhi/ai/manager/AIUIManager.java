@@ -2,6 +2,8 @@ package com.topqizhi.ai.manager;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -28,6 +30,7 @@ public enum AIUIManager {
 	INSTANCE;
 
 	private static final String TAG = AIUIManager.class.getSimpleName();
+	private static final boolean IS_HARD_WAKEUP = true;
 
 	private AIUIAgent mAIUIAgent;
 	private int mAIUIState = AIUIConstant.STATE_IDLE;
@@ -39,6 +42,8 @@ public enum AIUIManager {
 	private boolean isManualStopVoiceNlp = false;
 	private volatile boolean mIsMusicPaused = false;
 	private volatile boolean mIsPlayNewMusicList = true;
+	private volatile boolean mIsHardWakeup = false;
+	private AudioTrack mAudioTrack;
 
 	public void initialize(Context applicationContext) {
 		mAIUIAgent = AIUIAgent.createAgent(applicationContext, getAIUIParams(applicationContext), mAIUIListener);
@@ -76,6 +81,17 @@ public enum AIUIManager {
 	}
 
 	public void startListening() {
+		if (IS_HARD_WAKEUP) {
+			mIsHardWakeup = false;
+			if (!mIsPlayNewMusicList && mIsMusicPaused && StarrySky.with().isPaused()) {
+				mIsMusicPaused = false;
+				StarrySky.with().restoreMusic();
+			}
+			//唤醒结束后恢复音量
+			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
+			hasResult = false;
+			return;
+		}
 		if (!mIsPlayNewMusicList && mIsMusicPaused && StarrySky.with().isPaused()) {
 			mIsMusicPaused = false;
 			StarrySky.with().restoreMusic();
@@ -112,6 +128,29 @@ public enum AIUIManager {
 		});
 	}
 
+	public void startHardListening() {
+		mIsHardWakeup = true;
+		//唤醒时静音
+		VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
+		if (StarrySky.with().isPlaying()) {
+			mIsMusicPaused = true;
+			StarrySky.with().pauseMusic();
+		}
+		startTTS("在呢。", () -> {
+			//先发送唤醒消息，改变AIUI内部状态，只有唤醒状态才能接收语音输入
+			//默认为oneshot模式，即一次唤醒后就进入休眠。可以修改aiui_phone.cfg中speech参数的interact_mode为continuous以支持持续交互
+			AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
+			mAIUIAgent.sendMessage(wakeupMsg);
+
+			//打开AIUI内部录音机，开始录音。若要使用上传的个性化资源增强识别效果，则在参数中添加pers_param设置
+			//个性化资源使用方法可参见http://doc.xfyun.cn/aiui_mobile/的用户个性化章节
+			//在输入参数中设置tag，则对应结果中也将携带该tag，可用于关联输入输出
+			String params = "sample_rate=16000,data_type=audio,pers_param={\"uid\":\"\"},tag=audio-tag";
+			AIUIMessage startRecord = new AIUIMessage(AIUIConstant.CMD_START_RECORD, 0, 0, params, null);
+			mAIUIAgent.sendMessage(startRecord);
+		});
+	}
+
 	public void stopVoiceNlp() {
 		if (null == mAIUIAgent) {
 			return;
@@ -130,7 +169,7 @@ public enum AIUIManager {
 		mAIUIAgent.sendMessage(new AIUIMessage(AIUIConstant.CMD_TTS, AIUIConstant.PAUSE, 0, null, null));
 		mTTSCallback = onComplete;
 		String tag = "@" + System.currentTimeMillis();
-		StringBuffer params = new StringBuffer();  //构建合成参数
+		StringBuffer params = new StringBuffer();//构建合成参数
 		params.append("vcn=x2_xiaojuan");//合成发音人
 		params.append(",speed=50");//合成速度
 		params.append(",pitch=50");//合成音调
@@ -307,7 +346,7 @@ public enum AIUIManager {
 
 				case AIUIConstant.EVENT_TTS: {
 					if (AIUIConstant.TTS_SPEAK_COMPLETED == aiuiEvent.arg1) {
-						if (mTTSCallback != null) {
+						if (null != mTTSCallback) {
 							mTTSCallback.run();
 							mTTSCallback = null;
 						}
@@ -330,5 +369,13 @@ public enum AIUIManager {
 
 	public void setPlayNewMusicList(boolean playNewMusicList) {
 		mIsPlayNewMusicList = playNewMusicList;
+	}
+
+	public boolean isHardWakeup() {
+		return mIsHardWakeup;
+	}
+
+	public void setHardWakeup(boolean hardWakeup) {
+		mIsHardWakeup = hardWakeup;
 	}
 }
