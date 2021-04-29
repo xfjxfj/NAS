@@ -77,10 +77,7 @@ public enum MscManager {
 		String param = SpeechConstant.APPID + "=" + applicationContext.getString(R.string.app_id) + "," + SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC;
 		SpeechUtility.createUtility(applicationContext, param);
 		Setting.setShowLog(false);
-	}
-
-	public void initVoiceWakeuper(Context context) {
-		mVoiceWakeuper = VoiceWakeuper.createWakeuper(context, i -> Log.i(TAG, "createWakeuper: " + i));
+		mVoiceWakeuper = VoiceWakeuper.createWakeuper(applicationContext, i -> Log.i(TAG, "createWakeuper: " + i));
 		if (null != mVoiceWakeuper) {
 			//清空参数
 			mVoiceWakeuper.setParameter(SpeechConstant.PARAMS, null);
@@ -93,7 +90,7 @@ public enum MscManager {
 			//设置闭环优化网络模式
 			mVoiceWakeuper.setParameter(SpeechConstant.IVW_NET_MODE, IVW_NET_MODE);
 			//设置唤醒资源路径
-			mVoiceWakeuper.setParameter(SpeechConstant.IVW_RES_PATH, getResource(context));
+			mVoiceWakeuper.setParameter(SpeechConstant.IVW_RES_PATH, getResource(applicationContext));
 		}
 	}
 

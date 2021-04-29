@@ -13,13 +13,15 @@ import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.entity.WeatherRootEntity;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import rxhttp.RxHttp;
 
 /**
  * Created by レインマン on 2021/01/12 10:20 with Android Studio.
@@ -42,27 +44,39 @@ public enum AMapLocationManager {
 						LogUtils.e("location Error, ErrCode:" + aMapLocation.getErrorCode() + ", errInfo:" + aMapLocation.getErrorInfo());
 						BusUtils.post(BusConfig.WEATHER, new WeatherEntity());
 					} else {
-						Kalle.post(UrlConfig.Device.GET_WEATHER)
-						     .param("lat", aMapLocation.getLatitude())
-						     .param("lng", aMapLocation.getLongitude())
-						     .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
-						     .perform(new SimpleCallback<WeatherRootEntity>() {
-							     @Override
-							     public void onResponse(SimpleResponse<WeatherRootEntity, String> response) {
-								     if (response.isSucceed()) {
-									     List<WeatherEntity> weatherList = response.succeed().getWeather();
-									     if (!weatherList.isEmpty()) {
-										     for (WeatherEntity weather : weatherList) {
-											     if (TimeUtils.isToday(weather.getDate(), new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()))) {
-												     BusUtils.post(BusConfig.WEATHER, weather);
-												     return;
-											     }
-										     }
-									     }
-								     }
-								     BusUtils.post(BusConfig.WEATHER, new WeatherEntity());
-							     }
-						     });
+						RxHttp.postForm(UrlConfig.Device.GET_WEATHER).setAssemblyEnabled(false)
+						      .add("lat", aMapLocation.getLatitude())
+						      .add("lng", aMapLocation.getLongitude())
+						      .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+						      .asResponse(WeatherRootEntity.class)
+						      .subscribe(new Observer<WeatherRootEntity>() {
+							      @Override
+							      public void onSubscribe(@NonNull Disposable d) {}
+
+							      @Override
+							      public void onNext(@NonNull WeatherRootEntity weatherRootEntity) {
+								      List<WeatherEntity> weatherList = weatherRootEntity.getWeather();
+								      if (!weatherList.isEmpty()) {
+									      for (WeatherEntity weather : weatherList) {
+										      if (TimeUtils.isToday(weather.getDate(),
+										                            new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()))) {
+											      BusUtils.post(BusConfig.WEATHER, weather);
+											      return;
+										      }
+									      }
+								      }
+								      BusUtils.post(BusConfig.WEATHER, new WeatherEntity());
+							      }
+
+							      @Override
+							      public void onError(@NonNull Throwable e) {
+								      e.printStackTrace();
+								      BusUtils.post(BusConfig.WEATHER, new WeatherEntity());
+							      }
+
+							      @Override
+							      public void onComplete() {}
+						      });
 					}
 				}
 			});

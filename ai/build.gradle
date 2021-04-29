@@ -28,7 +28,10 @@ dependencies {
 	implementation 'androidx.appcompat:appcompat:1.2.0'
 	implementation 'com.google.android.material:material:1.2.1'
 	//https://github.com/alibaba/fastjson
+	//noinspection GradleDependency
 	api 'com.alibaba:fastjson:1.1.72.android'
 	//https://github.com/smart-fun/XmlToJson
 	api 'com.github.smart-fun:XmlToJson:1.4.5'
+	//https://github.com/EspoirX/StarrySky
+	api 'com.lzx:StarrySkyX:2.6.3'
 }

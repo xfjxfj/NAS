@@ -3,12 +3,11 @@
 
 	<dbname value="viegre_nas_pad" />
 
-	<version value="11" />
+	<version value="12" />
 
 	<list>
 		<mapping class="com.viegre.nas.pad.entity.DeviceResourceEntity" />
 		<mapping class="com.viegre.nas.pad.entity.GuideResourceEntity" />
-		<mapping class="com.viegre.nas.pad.entity.LoginInfoEntity" />
 		<mapping class="com.viegre.nas.pad.entity.ImageEntity" />
 		<mapping class="com.viegre.nas.pad.entity.AudioEntity" />
 		<mapping class="com.viegre.nas.pad.entity.RecycleBinEntity" />

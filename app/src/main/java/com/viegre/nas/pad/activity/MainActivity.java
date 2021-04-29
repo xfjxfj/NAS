@@ -23,7 +23,6 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.djangoogle.framework.activity.BaseActivity;
-import com.kongzue.dialog.util.DialogSettings;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.audio.AudioActivity;
 import com.viegre.nas.pad.activity.image.ImageActivity;
@@ -61,7 +60,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
 	@Override
 	protected void initialize() {
-		ServiceUtils.startService(MscService.class);
+//		ServiceUtils.startService(MscService.class);
 		openUsbDevice();
 		initClick();
 		initIcon();
@@ -85,35 +84,29 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	 * 初始化用户区域
 	 */
 	private void initUser() {
-		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<LoginInfoEntity>() {
-			@Override
-			public LoginInfoEntity doInBackground() {
-				return LitePal.findFirst(LoginInfoEntity.class);
-			}
-
-			@Override
-			public void onSuccess(LoginInfoEntity result) {
-				if (null == result) {
-					Glide.with(mActivity)
-					     .load(R.mipmap.main_unlogin)
-					     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-					     .into(mViewBinding.acivMainUserIcon);
-					mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
-					mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
-				} else {
-					Glide.with(mActivity)
-					     .load(R.mipmap.main_unlogin)
-					     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-					     .into(mViewBinding.acivMainUserIcon);
-					mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(result.getPhoneNumber()));
-					mViewBinding.llcMainUser.setOnClickListener(null);
-				}
-				mViewBinding.llcMainUser.setVisibility(View.VISIBLE);
-			}
-		});
+		if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
+			Glide.with(mActivity)
+			     .load(R.mipmap.main_unlogin)
+			     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+			     .into(mViewBinding.acivMainUserIcon);
+			mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance()
+			                                                                              .getString(SPConfig.PHONE)));
+			mViewBinding.llcMainUser.setOnClickListener(null);
+		} else {
+			Glide.with(mActivity)
+			     .load(R.mipmap.main_unlogin)
+			     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+			     .into(mViewBinding.acivMainUserIcon);
+			mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
+			mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
+		}
+		mViewBinding.llcMainUser.setVisibility(View.VISIBLE);
 	}
 
 	private void initClick() {
+		if (BuildConfig.DEBUG) {
+			mViewBinding.tcMainTime.setOnClickListener(view -> ActivityUtils.startActivity(PrimitiveFtpdActivity.class));
+		}
 		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
 		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
 	}
@@ -129,8 +122,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		//音频
 		Glide.with(this)
 		     .load(R.mipmap.main_icon_audio)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIconAudio);
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconAudio);
 		mViewBinding.acivMainIconAudio.setOnClickListener(view -> ActivityUtils.startActivity(AudioActivity.class));
 
 		//视频
@@ -140,16 +132,34 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		     .into(mViewBinding.acivMainIconVideo);
 		mViewBinding.acivMainIconVideo.setOnClickListener(view -> ActivityUtils.startActivity(VideoActivity.class));
 
-		Glide.with(this).load(R.mipmap.test_icon_3).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon3);
-		Glide.with(this).load(R.mipmap.test_icon_4).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon4);
-		Glide.with(this).load(R.mipmap.test_icon_5).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon5);
-		Glide.with(this).load(R.mipmap.test_icon_6).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon6);
-		Glide.with(this).load(R.mipmap.test_icon_7).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon7);
-		Glide.with(this).load(R.mipmap.test_icon_8).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon8);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_3)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon3);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_4)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon4);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_5)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon5);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_6)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon6);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_7)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon7);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_8)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon8);
 		mViewBinding.acivMainIcon5.setOnClickListener(view -> {
 			Intent liveIntent = new Intent();
-			liveIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
-			liveIntent.putExtra(APIConstant.HIDE_EXIT_DIAG, true);
+			liveIntent.putExtra(HdpConstant.HIDE_LOADING_DEFAULT, true);
+			liveIntent.putExtra(HdpConstant.HIDE_EXIT_DIAG, true);
 			liveIntent.setAction("com.hdpfans.live.start");
 			liveIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			liveIntent.putExtra("ChannelNum", 1);

@@ -1,6 +1,6 @@
 package hdp.http;
 
-public interface APIConstant {
+public interface HdpConstant {
 
 	/**
 	 * 隐藏启动图片

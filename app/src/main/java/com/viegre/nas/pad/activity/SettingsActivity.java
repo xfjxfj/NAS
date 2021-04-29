@@ -2,11 +2,12 @@ package com.viegre.nas.pad.activity;
 
 import android.view.View;
 
+import androidx.fragment.app.Fragment;
+
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.activity.BaseFragmentActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.SettingsMenuListAdapter;
@@ -14,7 +15,6 @@ import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivitySettingsBinding;
-import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.fragment.settings.AboutViegreFragment;
 import com.viegre.nas.pad.fragment.settings.AutoAnswerFragment;
 import com.viegre.nas.pad.fragment.settings.InstructionsFragment;
@@ -30,16 +30,15 @@ import com.viegre.nas.pad.impl.PopupClickListener;
 import com.viegre.nas.pad.manager.PopupManager;
 import com.viegre.nas.pad.popup.PromptPopup;
 import com.viegre.nas.pad.util.CommonUtils;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
-
-import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.fragment.app.Fragment;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import rxhttp.RxHttp;
 
 /**
  * 设置页
@@ -59,7 +58,6 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	private InstructionsFragment mInstructionsFragment;
 	private AboutViegreFragment mAboutViegreFragment;
 	private final List<Fragment> mMenuFragmentList = new ArrayList<>();
-	private LoginInfoEntity mLoginInfoEntity;
 
 	@Override
 	protected void initialize() {
@@ -88,28 +86,18 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	 * 检查登录状态
 	 */
 	private void checkLoginStatus() {
-		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<LoginInfoEntity>() {
-			@Override
-			public LoginInfoEntity doInBackground() {
-				return LitePal.findFirst(LoginInfoEntity.class);
-			}
-
-			@Override
-			public void onSuccess(LoginInfoEntity result) {
-				mLoginInfoEntity = result;
-				if (null == mLoginInfoEntity) {
-					mViewBinding.acivSettingsLogout.setVisibility(View.GONE);
-					mViewBinding.acivSettingsAvatar.setImageResource(R.mipmap.settings_unlogin);
-					mViewBinding.actvSettingsUsername.setText(R.string.settings_view_after_login);
-					mViewBinding.clSettingsLoginArea.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
-				} else {
-					mViewBinding.acivSettingsLogout.setVisibility(View.VISIBLE);
-					mViewBinding.acivSettingsAvatar.setImageResource(R.mipmap.settings_unlogin);
-					mViewBinding.actvSettingsUsername.setText(CommonUtils.getMarkedPhoneNumber(mLoginInfoEntity.getPhoneNumber()));
-					mViewBinding.clSettingsLoginArea.setOnClickListener(null);
-				}
-			}
-		});
+		if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
+			mViewBinding.acivSettingsLogout.setVisibility(View.VISIBLE);
+			mViewBinding.acivSettingsAvatar.setImageResource(R.mipmap.settings_unlogin);
+			mViewBinding.actvSettingsUsername.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance()
+			                                                                                  .getString(SPConfig.PHONE)));
+			mViewBinding.clSettingsLoginArea.setOnClickListener(null);
+		} else {
+			mViewBinding.acivSettingsLogout.setVisibility(View.GONE);
+			mViewBinding.acivSettingsAvatar.setImageResource(R.mipmap.settings_unlogin);
+			mViewBinding.actvSettingsUsername.setText(R.string.settings_view_after_login);
+			mViewBinding.clSettingsLoginArea.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
+		}
 	}
 
 	private void initMenuList() {
@@ -153,30 +141,30 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	 * 登出接口
 	 */
 	private void logout() {
-		Kalle.post(UrlConfig.User.LOGOUT)
-		     .param("phoneNumber", mLoginInfoEntity.getPhoneNumber())
-		     .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
-		     .perform(new SimpleCallback<String>() {
-			     @Override
-			     public void onResponse(SimpleResponse<String, String> response) {
-				     if (!response.isSucceed()) {
-					     CommonUtils.showErrorToast(response.failed());
-				     } else {
-					     ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
-						     @Override
-						     public Void doInBackground() {
-							     LitePal.deleteAll(LoginInfoEntity.class);
-							     return null;
-						     }
+		RxHttp.postForm(UrlConfig.User.LOGOUT)
+		      .add("phoneNumber", SPUtils.getInstance().getString(SPConfig.PHONE))
+		      .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+		      .asString()
+		      .observeOn(AndroidSchedulers.mainThread())
+		      .subscribe(new Observer<String>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {}
 
-						     @Override
-						     public void onSuccess(Void result) {
-							     checkLoginStatus();
-						     }
-					     });
-				     }
-			     }
-		     });
+			      @Override
+			      public void onNext(@NonNull String s) {
+				      SPUtils.getInstance().remove(SPConfig.PHONE);
+				      RxHttp.setOnParamAssembly(param -> param.removeAllHeader("token"));
+				      checkLoginStatus();
+			      }
+
+			      @Override
+			      public void onError(@NonNull Throwable e) {
+				      CommonUtils.showErrorToast(e.getMessage());
+			      }
+
+			      @Override
+			      public void onComplete() {}
+		      });
 	}
 
 	@BusUtils.Bus(tag = BusConfig.SCREEN_CUSTOM_SHOW, threadMode = BusUtils.ThreadMode.MAIN)

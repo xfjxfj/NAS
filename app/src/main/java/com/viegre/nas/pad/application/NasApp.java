@@ -8,6 +8,7 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.djangoogle.framework.applicaiton.BaseApplication;
+import com.djangoogle.framework.manager.OkHttpManager;
 import com.lzx.starrysky.StarrySky;
 import com.topqizhi.ai.manager.AIUIManager;
 import com.topqizhi.ai.manager.MscManager;
@@ -15,22 +16,18 @@ import com.topqizhi.ai.manager.VolumeManager;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.SPConfig;
-import com.viegre.nas.pad.kalle.converter.JsonConverter;
 import com.viegre.nas.pad.manager.AMapLocationManager;
 import com.viegre.nas.pad.service.AppService;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.KalleConfig;
 
 import org.litepal.LitePal;
 import org.primftpd.log.CsvLoggerFactory;
-
-import java.util.concurrent.TimeUnit;
 
 import cn.wildfire.chat.kit.Config;
 import cn.wildfire.chat.kit.WfcUIKit;
 import cn.wildfire.chat.kit.conversation.message.viewholder.MessageViewHolderManager;
 import cn.wildfire.chat.kit.third.location.viewholder.LocationMessageContentViewHolder;
 import cn.wildfirechat.push.PushService;
+import rxhttp.RxHttp;
 
 /**
  * Created by レインマン on 2020/09/10 10:21 with Android Studio.
@@ -40,15 +37,14 @@ public class NasApp extends BaseApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-//		DoraemonKit.install(this, "6f1d65f538aa1fe2c813e712c95b773d");
 		initUtils();
 		initAndroidId();
 		LitePal.initialize(this);
+		initRxHttp();
 		MscManager.INSTANCE.initialize(this);
 		AIUIManager.INSTANCE.initialize(this);
 		VolumeManager.INSTANCE.initialize(this);
 		CsvLoggerFactory.CONTEXT = this;
-		initKalle();
 		initAMap();
 		initIM();
 		StarrySky.init(this).apply();
@@ -105,17 +101,9 @@ public class NasApp extends BaseApplication {
 		LogUtils.getConfig().setBorderSwitch(false);
 	}
 
-	/**
-	 * 初始化Kalle
-	 */
-	private void initKalle() {
-//		CacheStore cacheStore = DiskCacheStore.newBuilder("/sdcard").password("t0PqIzHI@COM").build();
-		KalleConfig kalleConfig = KalleConfig.newBuilder()
-		                                     .connectionTimeout(15, TimeUnit.SECONDS)
-		                                     .readTimeout(15, TimeUnit.SECONDS)
-		                                     .converter(new JsonConverter())
-		                                     .build();
-		Kalle.setConfig(kalleConfig);
+	private void initRxHttp() {
+		RxHttp.setDebug(BuildConfig.DEBUG);
+		RxHttp.init(OkHttpManager.INSTANCE.getOkHttpClient());
 	}
 
 	/**
@@ -127,7 +115,8 @@ public class NasApp extends BaseApplication {
 
 	private void initAndroidId() {
 		if (!SPUtils.getInstance().contains(SPConfig.ANDROID_ID)) {
-			SPUtils.getInstance().put(SPConfig.ANDROID_ID, Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+			SPUtils.getInstance()
+			       .put(SPConfig.ANDROID_ID, Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
 		}
 	}
 }

@@ -1,23 +1,14 @@
 package com.viegre.nas.pad.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 
-import com.blankj.utilcode.util.SPUtils;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.SPUtils;
+import com.djangoogle.framework.activity.BaseActivity;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.viegre.nas.pad.R;
@@ -34,11 +25,17 @@ import com.viegre.nas.pad.util.CommonUtils;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.simple.SimpleCallback;
 import com.yanzhenjie.kalle.simple.SimpleResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.wildfire.chat.kit.ChatManagerHolder;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import rxhttp.RxHttp;
 
 /**
  * 联系人相关类
@@ -46,10 +43,10 @@ import cn.wildfire.chat.kit.ChatManagerHolder;
 
 public class ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.OnClickListener {
 
-    private RecyclerView contactsRv1;
-    private RecyclerView contactsRv2;
-    private RecyclerView contactsRv3;
-    private ImageView homeImg;
+	private RecyclerView contactsRv1;
+	private RecyclerView contactsRv2;
+	private RecyclerView contactsRv3;
+	private ImageView homeImg;
 
     @Override
     protected void initialize() {
@@ -109,19 +106,19 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         });
     }
 
-    private void initAdapter() {
-        List<String> languages = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            languages.add(i + "");
-        }
+	private void initAdapter() {
+		List<String> languages = new ArrayList<>();
+		for (int i = 0; i < 100; i++) {
+			languages.add(i + "");
+		}
 
-        //初始化数据
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        //设置布局管理器
-        contactsRv1.setLayoutManager(linearLayoutManager);
-        //创建适配器，将数据传递给适配器
-        //设置适配器adapter
-        contactsRv1.setAdapter(new ContactsRvRecordAdapter(this, languages));
+		//初始化数据
+		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+		//设置布局管理器
+		contactsRv1.setLayoutManager(linearLayoutManager);
+		//创建适配器，将数据传递给适配器
+		//设置适配器adapter
+		contactsRv1.setAdapter(new ContactsRvRecordAdapter(this, languages));
 
         //初始化数据
         LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -140,29 +137,20 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         contactsRv3.setAdapter(new ContactsRvDevicesAdapter(this, languages));
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.homeImg:
-                ContactsActivity.this.finish();
-                break;
-        }
-    }
+	private void getContactsDatas() {
+		TipDialog show = WaitDialog.show(this, "请稍候...");
+		RxHttp.postForm(UrlConfig.Device.GET_GETALLFOLLOWS)
+		      .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+		      .asString()
+		      .observeOn(AndroidSchedulers.mainThread())
+		      .subscribe(new Observer<String>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {}
 
-    @SuppressLint("WrongConstant")
-    private void getContactsDatas() {
-        TipDialog show = WaitDialog.show(ContactsActivity.this, "请稍候...");
-        Kalle.post(UrlConfig.Device.GET_GETALLFOLLOWS)
-                .param("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
-                .perform(new SimpleCallback<String>() {
-                    @SuppressLint({"WrongConstant", "ApplySharedPref"})
-                    @Override
-                    public void onResponse(SimpleResponse<String, String> response) {
-                        TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
-                        Log.d("", "");
-//                        List<ContactsBean> contactsBeans = new List<>();
-                        initAdapter();
-                    }
+			      @Override
+			      public void onNext(@NonNull String s) {
+				      TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
+			      }
 
                     @Override
                     public void onEnd() {
@@ -172,6 +160,15 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                     }
                 });
     }
+			      @Override
+			      public void onError(@NonNull Throwable e) {
+				      CommonUtils.showErrorToast(e.getMessage());
+			      }
+
+			      @Override
+			      public void onComplete() {}
+		      });
+	}
 }
 
 

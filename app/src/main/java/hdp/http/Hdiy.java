@@ -5,6 +5,7 @@
 package hdp.http;
 
 public interface Hdiy extends android.os.IInterface {
+
 	/**
 	 * Local-side IPC implementation stub class.
 	 */

@@ -17,6 +17,9 @@ public class SPConfig {
 	//登录验证码sessionId
 	public static final String LOGIN_CODE_SESSION_ID = "login_code_session_id";
 
+	//手机号
+	public static final String PHONE = "phone";
+
 	//自动更新时间
 	public static final String TIME_SYNC = "time_sync";
 
