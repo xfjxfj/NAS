@@ -10,11 +10,13 @@ import android.content.res.TypedArray;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -23,13 +25,16 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.djangoogle.framework.activity.BaseActivity;
+import com.topqizhi.ai.manager.AIUIManager;
+import com.topqizhi.ai.manager.MscManager;
+import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.audio.AudioActivity;
 import com.viegre.nas.pad.activity.image.ImageActivity;
 import com.viegre.nas.pad.activity.video.VideoActivity;
 import com.viegre.nas.pad.config.BusConfig;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.ActivityMainBinding;
-import com.viegre.nas.pad.entity.LoginInfoEntity;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.manager.AMapLocationManager;
 import com.viegre.nas.pad.service.MscService;
@@ -39,7 +44,7 @@ import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
-import org.litepal.LitePal;
+import org.primftpd.PrimitiveFtpdActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,12 +65,28 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
 	@Override
 	protected void initialize() {
-//		ServiceUtils.startService(MscService.class);
+		ServiceUtils.startService(MscService.class);
 		openUsbDevice();
 		initClick();
 		initIcon();
 		initBanner();
 		initWeather();
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_F11:
+				if (!MscManager.INSTANCE.isListenHardWakeup() || AIUIManager.INSTANCE.isHardWakeup()) {
+					break;
+				}
+				AIUIManager.INSTANCE.startHardListening();
+				break;
+
+			default:
+				break;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 	@Override
@@ -89,8 +110,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 			     .load(R.mipmap.main_unlogin)
 			     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
 			     .into(mViewBinding.acivMainUserIcon);
-			mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance()
-			                                                                              .getString(SPConfig.PHONE)));
+			mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE)));
 			mViewBinding.llcMainUser.setOnClickListener(null);
 		} else {
 			Glide.with(mActivity)
@@ -106,6 +126,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	private void initClick() {
 		if (BuildConfig.DEBUG) {
 			mViewBinding.tcMainTime.setOnClickListener(view -> ActivityUtils.startActivity(PrimitiveFtpdActivity.class));
+//			mViewBinding.tcMainTime.setOnClickListener(view -> {
+//				if (!MscManager.INSTANCE.isListenHardWakeup() || AIUIManager.INSTANCE.isHardWakeup()) {
+//					return;
+//				}
+//				AIUIManager.INSTANCE.startHardListening();
+//			});
 		}
 		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
 		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
@@ -122,7 +148,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		//音频
 		Glide.with(this)
 		     .load(R.mipmap.main_icon_audio)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconAudio);
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIconAudio);
 		mViewBinding.acivMainIconAudio.setOnClickListener(view -> ActivityUtils.startActivity(AudioActivity.class));
 
 		//视频
@@ -132,34 +159,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		     .into(mViewBinding.acivMainIconVideo);
 		mViewBinding.acivMainIconVideo.setOnClickListener(view -> ActivityUtils.startActivity(VideoActivity.class));
 
-		Glide.with(this)
-		     .load(R.mipmap.test_icon_3)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIcon3);
-		Glide.with(this)
-		     .load(R.mipmap.test_icon_4)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIcon4);
-		Glide.with(this)
-		     .load(R.mipmap.test_icon_5)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIcon5);
-		Glide.with(this)
-		     .load(R.mipmap.test_icon_6)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIcon6);
-		Glide.with(this)
-		     .load(R.mipmap.test_icon_7)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIcon7);
-		Glide.with(this)
-		     .load(R.mipmap.test_icon_8)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIcon8);
+		Glide.with(this).load(R.mipmap.test_icon_3).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon3);
+		Glide.with(this).load(R.mipmap.test_icon_4).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon4);
+		Glide.with(this).load(R.mipmap.test_icon_5).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon5);
+		Glide.with(this).load(R.mipmap.test_icon_6).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon6);
+		Glide.with(this).load(R.mipmap.test_icon_7).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon7);
+		Glide.with(this).load(R.mipmap.test_icon_8).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon8);
 		mViewBinding.acivMainIcon5.setOnClickListener(view -> {
 			Intent liveIntent = new Intent();
-			liveIntent.putExtra(HdpConstant.HIDE_LOADING_DEFAULT, true);
-			liveIntent.putExtra(HdpConstant.HIDE_EXIT_DIAG, true);
+			liveIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
+			liveIntent.putExtra(APIConstant.HIDE_EXIT_DIAG, true);
 			liveIntent.setAction("com.hdpfans.live.start");
 			liveIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			liveIntent.putExtra("ChannelNum", 1);

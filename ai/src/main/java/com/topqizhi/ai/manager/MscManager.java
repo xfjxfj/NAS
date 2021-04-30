@@ -71,7 +71,9 @@ public enum MscManager {
 	//语音唤醒对象
 	private VoiceWakeuper mVoiceWakeuper;
 	//语音唤醒是否在运行
-	private boolean isVoiceWakeuperRunning = false;
+	private boolean mIsVoiceWakeuperRunning = false;
+	//是否监听硬件唤醒
+	private boolean mIsListenHardWakeup = false;
 
 	public void initialize(Context applicationContext) {
 		String param = SpeechConstant.APPID + "=" + applicationContext.getString(R.string.app_id) + "," + SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC;
@@ -95,11 +97,11 @@ public enum MscManager {
 	}
 
 	public void startListening(WakeuperResultListener wakeuperResultListener) {
-		if (isVoiceWakeuperRunning) {
+		if (mIsVoiceWakeuperRunning) {
 			return;
 		}
 		if (null != mVoiceWakeuper) {
-			isVoiceWakeuperRunning = true;
+			mIsVoiceWakeuperRunning = true;
 			mVoiceWakeuper.startListening(new WakeuperListener() {
 				@Override
 				public void onBeginOfSpeech() {}
@@ -125,7 +127,7 @@ public enum MscManager {
 						wakeuperResultListener.result(wakeuperResultEntity);
 						e.printStackTrace();
 					} finally {
-						isVoiceWakeuperRunning = false;
+						mIsVoiceWakeuperRunning = false;
 					}
 				}
 
@@ -133,7 +135,7 @@ public enum MscManager {
 				public void onError(SpeechError speechError) {
 					WakeuperResultEntity wakeuperResultEntity = new WakeuperResultEntity(false, speechError.getPlainDescription(true));
 					wakeuperResultListener.result(wakeuperResultEntity);
-					isVoiceWakeuperRunning = false;
+					mIsVoiceWakeuperRunning = false;
 				}
 
 				@Override
@@ -143,11 +145,12 @@ public enum MscManager {
 				public void onVolumeChanged(int i) {}
 			});
 		} else {
-			isVoiceWakeuperRunning = false;
+			mIsVoiceWakeuperRunning = false;
 		}
 	}
 
 	public void stopListening() {
+		mIsListenHardWakeup = false;
 		if (null != mVoiceWakeuper) {
 			mVoiceWakeuper.stopListening();
 		}
@@ -162,5 +165,13 @@ public enum MscManager {
 
 	private String getResource(Context context) {
 		return ResourceUtil.generateResourcePath(context, ResourceUtil.RESOURCE_TYPE.assets, "ivw/ivw.jet");
+	}
+
+	public boolean isListenHardWakeup() {
+		return mIsListenHardWakeup;
+	}
+
+	public void setListenHardWakeup(boolean listenHardWakeup) {
+		mIsListenHardWakeup = listenHardWakeup;
 	}
 }

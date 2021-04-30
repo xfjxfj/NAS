@@ -31,7 +31,7 @@ dependencies {
 	//noinspection GradleDependency
 	api 'com.alibaba:fastjson:1.1.72.android'
 	//https://github.com/smart-fun/XmlToJson
-	api 'com.github.smart-fun:XmlToJson:1.4.5'
+	api 'com.github.smart-fun:XmlToJson:1.5.1'
 	//https://github.com/EspoirX/StarrySky
 	api 'com.lzx:StarrySkyX:2.6.3'
 }

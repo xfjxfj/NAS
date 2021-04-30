@@ -11,7 +11,6 @@ import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.MoreAppActivityRvAdapter;
 import com.viegre.nas.pad.databinding.MoreAppActivityRvBinding;
-import com.viegre.nas.pad.util.CommonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,6 @@ public class MoreAppActivity extends BaseActivity<MoreAppActivityRvBinding> {
 
 	@Override
 	protected void initialize() {
-		CommonUtils.hideBottomUIMenu(this);
 		initView();
 		initAdapter();
 	}
@@ -67,7 +65,7 @@ public class MoreAppActivity extends BaseActivity<MoreAppActivityRvBinding> {
 		//获取手机内所有应用
 		List<PackageInfo> paklist = pManager.getInstalledPackages(0);
 		for (int i = 0; i < paklist.size(); i++) {
-			PackageInfo pak = (PackageInfo) paklist.get(i);
+			PackageInfo pak = paklist.get(i);
 			//判断是否为非系统预装的应用程序
 			if ((pak.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) <= 0) {
 				// customs applications

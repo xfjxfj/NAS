@@ -20,6 +20,8 @@ public class UrlConfig {
 		public static final String GET_IMAGE_CODE = USER + "getImageCode";
 		//账号密码登录
 		public static final String LOGIN = USER + "login";
+		//刷新Token，限制有效时间
+		public static final String REFRESH_TOKEN = USER + "refreshToken";
 		//登出接口
 		public static final String LOGOUT = USER + "logout";
 		//刷新Token，限制有效时间

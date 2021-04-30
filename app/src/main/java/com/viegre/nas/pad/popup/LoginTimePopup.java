@@ -3,8 +3,6 @@ package com.viegre.nas.pad.popup;
 import android.content.Context;
 import android.widget.SeekBar;
 
-import androidx.annotation.NonNull;
-
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.lxj.xpopup.core.CenterPopupView;
@@ -18,6 +16,7 @@ import com.viegre.nas.pad.entity.LoginEntity;
 import com.viegre.nas.pad.manager.TextStyleManager;
 import com.viegre.nas.pad.util.CommonUtils;
 
+import androidx.annotation.NonNull;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -82,7 +81,7 @@ public class LoginTimePopup extends CenterPopupView {
 	}
 
 	private void refreshToken() {
-		RxHttp.postForm(UrlConfig.Device.REFRESH_TOKEN)
+		RxHttp.postForm(UrlConfig.User.REFRESH_TOKEN)
 		      .add("hour", mHour)
 		      .asResponse(LoginEntity.class)
 		      .observeOn(AndroidSchedulers.mainThread())
