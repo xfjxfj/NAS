@@ -135,7 +135,7 @@ public class MQTTService extends Service {
 			MemoryPersistence memoryPersistence = new MemoryPersistence();
 			mMqttAndroidClient = new MqttAndroidClient(Utils.getApp(),
 			                                           UrlConfig.MQTT_SERVER,
-			                                           SPUtils.getInstance().getString(SPConfig.ANDROID_ID),
+			                                           "nas/" + SPUtils.getInstance().getString(SPConfig.ANDROID_ID),
 			                                           memoryPersistence);
 			mMqttAndroidClient.setCallback(mMqttCallbackExtended);
 			mMqttAndroidClient.connect(mMqttConnectOptions);

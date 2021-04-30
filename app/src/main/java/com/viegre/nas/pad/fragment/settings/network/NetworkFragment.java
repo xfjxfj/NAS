@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 
 import com.alibaba.fastjson.JSON;
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ColorUtils;
 import com.blankj.utilcode.util.NetworkUtils;
@@ -28,6 +29,7 @@ import com.thanosfisherman.wifiutils.WifiUtils;
 import com.thanosfisherman.wifiutils.wifiConnect.ConnectionErrorCode;
 import com.thanosfisherman.wifiutils.wifiConnect.ConnectionSuccessListener;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.activity.WelcomeActivity;
 import com.viegre.nas.pad.adapter.NetworkListAdapter;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.SPConfig;
@@ -58,9 +60,14 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 	private Animation mNetworkLoadingAnimation;
 	private boolean mIsConnecting = false;
 	private final List<WiFiEntity> mSavedWiFiList = new ArrayList<>();
+	private boolean mIsFirstRun = false;
 
 	@Override
 	protected void initialize() {
+		Bundle bundle = getArguments();
+		if (null != bundle) {
+			mIsFirstRun = bundle.getBoolean(IS_FIRST_RUN, false);
+		}
 		mViewBinding.actvNetworkTitle.setText(R.string.network_settings);
 		NetworkUtils.registerNetworkStatusChangedListener(this);
 		initLoadingAnim();
@@ -145,6 +152,11 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 				SSID = info.getBSSID();
 			}
 			mViewBinding.ilNetworkSelected.actvItemNetworkName.setText(SSID);
+			if (mIsFirstRun) {
+				//引导用户注册
+				ActivityUtils.startActivity(WelcomeActivity.class);
+				BusUtils.post(BusConfig.NETWORK_DETAIL, BusConfig.HIDE_NETWORK);
+			}
 		} else {
 			if (!mIsConnecting) {
 				hideSelectedWiFi();
