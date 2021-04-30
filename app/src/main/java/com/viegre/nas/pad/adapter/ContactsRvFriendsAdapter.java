@@ -2,6 +2,7 @@ package com.viegre.nas.pad.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.PointerIcon;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -14,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.topqizhi.ai.manager.AIUIManager;
 import com.topqizhi.ai.manager.MscManager;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.activity.ContactsActivity;
+import com.viegre.nas.pad.entity.ConstactBean;
 
 import java.util.List;
 
@@ -22,10 +25,10 @@ import cn.wildfire.chat.kit.conversation.ext.VoipExt;
 
 public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFriendsAdapter.MyHolder> {
 
-    private final List<String> languages;
+    private final List<ConstactBean> languages;
     private final Context context1;
 
-    public ContactsRvFriendsAdapter(Context context, List<String> languages) {
+    public ContactsRvFriendsAdapter(Context context, List<ConstactBean> languages) {
         this.languages = languages;
         context1 = context;
 
@@ -44,12 +47,17 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
 
     @Override
     public void onBindViewHolder(@NonNull ContactsRvFriendsAdapter.MyHolder holder, int position) {
-        holder.textfr.setText(languages.get(position));
+//        holder.textfr.setText(languages.get(position).getPhone());
+        if (ContactsActivity.phone.equals("15357906428")) {
+            holder.textfr.setText("13168306428");
+        } else {
+            holder.textfr.setText("15357906428");
+        }
         holder.contactsFr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(context1, position + "", Toast.LENGTH_LONG).show();
-                RunCall();
+                RunCall(languages.get(position).getUserid(), holder.textfr);
             }
         });
     }
@@ -58,14 +66,20 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
     public int getItemCount() {
         return languages.size();
     }
-    private void RunCall() {
+
+    private void RunCall(String userid, TextView textfr) {
+        if (ContactsActivity.phone.equals("15357906428")) {
+            WfcUIKit.singleCall(context1, "VaVvVvii", false);//13168306428
+        } else {
+            WfcUIKit.singleCall(context1, "sws8s888", false);//15357906428
+        }
 //        VoipExt.video
+//        WfcUIKit.singleCall(context1, userid, false);//13168306428
 //        WfcUIKit.singleCall(context1, "TUT9T9LL", false);
-        WfcUIKit.singleCall(context1, "sws8s888", false);
-//        WfcUIKit.singleCall(context1, "VaVvVvii", false);
 //        WfcUIKit.singleCall(context1, "agahahss", false);
 //        WfcUIKit.singleCall(context1, "dzxGhGjj", false);
     }
+
     /**
      * 自定义的ViewHolder
      */

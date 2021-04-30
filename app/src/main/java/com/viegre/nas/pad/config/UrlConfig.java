@@ -26,6 +26,9 @@ public class UrlConfig {
 		public static final String LOGOUT = USER + "logout";
 		//刷新Token，限制有效时间
 		public static final String REFRESH_TOKEN = USER + "refreshToken";
+//		获取手机验证码
+		public static final String GET_PHONENUMBER =  "user/getSmsCode";
+
 	}
 
 	/**
@@ -39,12 +42,19 @@ public class UrlConfig {
 		public static final String GET_RESOURCE = DEVICE + "getResource";
 		//获取设备所有的绑定用户
 		public static final String GET_GETALLFOLLOWS = DEVICE + "getAllFollows";
+
+		//刷新Token，限制有效时间
+		public static final String REFRESH_TOKEN = DEVICE + "refreshToken";
+
 	}
 
 	public static class App {
 		//获取设备型号列表
 		public static final String GET_DEVICETYPELIST = APP_SERVER + "app/getDeviceTypeList";
 //		public static final String GET_DEVICETYPELIST = SERVER + "app/getDeviceTypeList";
+	}
+	public static class Call {
+		public static final String GET_REPORTINFO = APP_SERVER + "call/reportInfo";
 	}
 }
 

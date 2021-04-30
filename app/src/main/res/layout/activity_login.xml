@@ -78,6 +78,7 @@
 				android:layout_height="191px"
 				android:layout_centerInParent="true"
 				android:scaleType="fitXY"
+
 				app:srcCompat="@mipmap/test_login_qr_code" />
 		</RelativeLayout>
 

@@ -1,5 +1,8 @@
 package com.viegre.nas.pad.activity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -19,12 +22,10 @@ import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.databinding.ActivityContactsBinding;
+import com.viegre.nas.pad.entity.ConstactBean;
 import com.viegre.nas.pad.entity.LoginResult;
 import com.viegre.nas.pad.service.AppService;
 import com.viegre.nas.pad.util.CommonUtils;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,17 +42,18 @@ import rxhttp.RxHttp;
  * 联系人相关类
  */
 
-public class ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.OnClickListener {
+public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
 
-	private RecyclerView contactsRv1;
-	private RecyclerView contactsRv2;
-	private RecyclerView contactsRv3;
-	private ImageView homeImg;
+    private RecyclerView contactsRv1;
+    private RecyclerView contactsRv2;
+    private RecyclerView contactsRv3;
+    private ImageView homeImg;
+    private List<ConstactBean> mContactsData = new ArrayList<>();
+    public static String phone = "";
+
 
     @Override
     protected void initialize() {
-        CommonUtils.hideBottomUIMenu(this);
-        CommonUtils.hideStatusBar(this);
         initView();
 //        getContactsDatas();
     }
@@ -61,22 +63,52 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         contactsRv2 = findViewById(R.id.contactsRv2);
         contactsRv3 = findViewById(R.id.contactsRv3);
         homeImg = findViewById(R.id.homeImg);
-        //初始化点击事件
-        homeImg.setOnClickListener(this);
+        mViewBinding.homeImg.setOnClickListener(view -> finish());
         //初始化RecycleViewAdapter
-        initAdapter();
+//        getContactsDatas();
 //        initAdapter();
-        login();
+        callLogin("");
     }
 
-    private void login() {
+
+    private void initAdapter(List<ConstactBean> mContactsData) {
+        List<String> languages = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            languages.add(i + "");
+        }
+
+        //初始化数据
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        //设置布局管理器
+        contactsRv1.setLayoutManager(linearLayoutManager);
+        //创建适配器，将数据传递给适配器
+        //设置适配器adapter
+        contactsRv1.setAdapter(new ContactsRvRecordAdapter(this, languages));
+
+        //初始化数据
+        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        //设置布局管理器
+        contactsRv2.setLayoutManager(linearLayoutManager1);
+        //创建适配器，将数据传递给适配器
+        //设置适配器adapter
+        contactsRv2.setAdapter(new ContactsRvFriendsAdapter(this, mContactsData));
+
+        //初始化数据
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        //设置布局管理器
+        contactsRv3.setLayoutManager(linearLayoutManager2);
+        //创建适配器，将数据传递给适配器
+        //设置适配器adapter
+        contactsRv3.setAdapter(new ContactsRvDevicesAdapter(this, languages));
+    }
+
+    private void callLogin(String phone) {
         //音视频登录
-//        String phoneNumber = "15357906428";
+//        ContactsActivity.phone = "15357906428";
         String phoneNumber = "13168306428";
 //        String phoneNumber = "7dd40314e43596cf";
         String authCode = "66666";
-
-        AppService.Instance().smsLogin(phoneNumber, authCode, new AppService.LoginCallback() {
+        AppService.Instance().smsLogin(ContactsActivity.phone, authCode, new AppService.LoginCallback() {
             @Override
             public void onUiSuccess(LoginResult loginResult) {
                 if (isFinishing()) {
@@ -87,12 +119,11 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                 SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
                 sp.edit()
                         .putString("id", loginResult.getUserId())
-                        .putString("token", loginResult.getToken())
+                        .putString("token", loginResult.getUserId())
                         .apply();
-//                Intent intent = new Intent(ContactsActivity.this, MainActivity.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                startActivity(intent);
-//                finish();
+                ConstactBean constactBean = new ConstactBean(ContactsActivity.phone, loginResult.getUserId());
+                mContactsData.add(constactBean);
+                initAdapter(mContactsData);
             }
 
             @Override
@@ -106,69 +137,35 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         });
     }
 
-	private void initAdapter() {
-		List<String> languages = new ArrayList<>();
-		for (int i = 0; i < 100; i++) {
-			languages.add(i + "");
-		}
-
-		//初始化数据
-		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-		//设置布局管理器
-		contactsRv1.setLayoutManager(linearLayoutManager);
-		//创建适配器，将数据传递给适配器
-		//设置适配器adapter
-		contactsRv1.setAdapter(new ContactsRvRecordAdapter(this, languages));
-
-        //初始化数据
-        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        //设置布局管理器
-        contactsRv2.setLayoutManager(linearLayoutManager1);
-        //创建适配器，将数据传递给适配器
-        //设置适配器adapter
-        contactsRv2.setAdapter(new ContactsRvFriendsAdapter(this, languages));
-
-        //初始化数据
-        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        //设置布局管理器
-        contactsRv3.setLayoutManager(linearLayoutManager2);
-        //创建适配器，将数据传递给适配器
-        //设置适配器adapter
-        contactsRv3.setAdapter(new ContactsRvDevicesAdapter(this, languages));
-    }
-
-	private void getContactsDatas() {
-		TipDialog show = WaitDialog.show(this, "请稍候...");
-		RxHttp.postForm(UrlConfig.Device.GET_GETALLFOLLOWS)
-		      .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
-		      .asString()
-		      .observeOn(AndroidSchedulers.mainThread())
-		      .subscribe(new Observer<String>() {
-			      @Override
-			      public void onSubscribe(@NonNull Disposable d) {}
-
-			      @Override
-			      public void onNext(@NonNull String s) {
-				      TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
-			      }
+    private void getContactsDatas() {
+        TipDialog show = WaitDialog.show(this, "请稍候...");
+        RxHttp.postForm(UrlConfig.Device.GET_GETALLFOLLOWS)
+                .addHeader("token", SPUtils.getInstance().getString("token"))
+                .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+                .asString()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.d("onSubscribe", d.toString());
+                    }
 
                     @Override
-                    public void onEnd() {
-                        super.onEnd();
+                    public void onNext(@NonNull String s) {
+                        TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
+                    }
 
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        CommonUtils.showErrorToast(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
                         Log.d("", "");
                     }
                 });
     }
-			      @Override
-			      public void onError(@NonNull Throwable e) {
-				      CommonUtils.showErrorToast(e.getMessage());
-			      }
-
-			      @Override
-			      public void onComplete() {}
-		      });
-	}
 }
 
 
