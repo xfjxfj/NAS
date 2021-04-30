@@ -77,6 +77,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_F11:
+				if (!AIUIManager.INSTANCE.isHardWakeupInitialize()) {
+					AIUIManager.INSTANCE.setHardWakeupInitialize(true);
+				}
 				if (!MscManager.INSTANCE.isListenHardWakeup() || AIUIManager.INSTANCE.isHardWakeup()) {
 					break;
 				}

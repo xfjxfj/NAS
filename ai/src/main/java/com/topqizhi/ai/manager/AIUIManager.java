@@ -29,7 +29,7 @@ public enum AIUIManager {
 	INSTANCE;
 
 	private static final String TAG = AIUIManager.class.getSimpleName();
-	private static final boolean IS_HARD_WAKEUP = true;
+//	private static final boolean IS_HARD_WAKEUP = true;
 
 	private AIUIAgent mAIUIAgent;
 	private int mAIUIState = AIUIConstant.STATE_IDLE;
@@ -42,6 +42,7 @@ public enum AIUIManager {
 	private volatile boolean mIsMusicPaused = false;
 	private volatile boolean mIsPlayNewMusicList = true;
 	private volatile boolean mIsHardWakeup = false;
+	private volatile boolean mIsHardWakeupInitialize = false;
 
 	public void initialize(Context applicationContext) {
 		mAIUIAgent = AIUIAgent.createAgent(applicationContext, getAIUIParams(applicationContext), mAIUIListener);
@@ -80,7 +81,7 @@ public enum AIUIManager {
 
 	public void startListening() {
 		MscManager.INSTANCE.setListenHardWakeup(true);
-		if (IS_HARD_WAKEUP) {
+		if (mIsHardWakeupInitialize) {
 			mIsHardWakeup = false;
 			if (!mIsPlayNewMusicList && mIsMusicPaused && StarrySky.with().isPaused()) {
 				mIsMusicPaused = false;
@@ -376,5 +377,13 @@ public enum AIUIManager {
 
 	public void setHardWakeup(boolean hardWakeup) {
 		mIsHardWakeup = hardWakeup;
+	}
+
+	public boolean isHardWakeupInitialize() {
+		return mIsHardWakeupInitialize;
+	}
+
+	public void setHardWakeupInitialize(boolean hardWakeupInitialize) {
+		mIsHardWakeupInitialize = hardWakeupInitialize;
 	}
 }
