@@ -2,9 +2,6 @@ package com.viegre.nas.pad.activity;
 
 import android.widget.ImageView;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.blankj.utilcode.util.SPUtils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.kongzue.dialog.v3.TipDialog;
@@ -21,6 +18,8 @@ import com.viegre.nas.pad.util.CommonUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
@@ -40,8 +39,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
 
 	@Override
 	protected void initialize() {
-		CommonUtils.hideBottomUIMenu(this);
-		CommonUtils.hideStatusBar(this);
 		initView();
 		getContactsDatas();
 	}

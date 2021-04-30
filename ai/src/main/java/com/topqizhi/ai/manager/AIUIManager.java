@@ -3,7 +3,6 @@ package com.topqizhi.ai.manager;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.media.AudioManager;
-import android.media.AudioTrack;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -43,7 +42,6 @@ public enum AIUIManager {
 	private volatile boolean mIsMusicPaused = false;
 	private volatile boolean mIsPlayNewMusicList = true;
 	private volatile boolean mIsHardWakeup = false;
-	private AudioTrack mAudioTrack;
 
 	public void initialize(Context applicationContext) {
 		mAIUIAgent = AIUIAgent.createAgent(applicationContext, getAIUIParams(applicationContext), mAIUIListener);
@@ -81,6 +79,7 @@ public enum AIUIManager {
 	}
 
 	public void startListening() {
+		MscManager.INSTANCE.setListenHardWakeup(true);
 		if (IS_HARD_WAKEUP) {
 			mIsHardWakeup = false;
 			if (!mIsPlayNewMusicList && mIsMusicPaused && StarrySky.with().isPaused()) {

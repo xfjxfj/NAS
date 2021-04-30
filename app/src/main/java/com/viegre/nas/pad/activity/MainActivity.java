@@ -26,6 +26,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.topqizhi.ai.manager.AIUIManager;
+import com.topqizhi.ai.manager.MscManager;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.audio.AudioActivity;
@@ -42,6 +43,8 @@ import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
+
+import org.primftpd.PrimitiveFtpdActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,6 +77,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_F11:
+				if (!MscManager.INSTANCE.isListenHardWakeup() || AIUIManager.INSTANCE.isHardWakeup()) {
+					break;
+				}
 				AIUIManager.INSTANCE.startHardListening();
 				break;
 
@@ -119,13 +125,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
 	private void initClick() {
 		if (BuildConfig.DEBUG) {
-//			mViewBinding.tcMainTime.setOnClickListener(view -> ActivityUtils.startActivity(PrimitiveFtpdActivity.class));
-			mViewBinding.tcMainTime.setOnClickListener(view -> {
-				if (AIUIManager.INSTANCE.isHardWakeup()) {
-					return;
-				}
-				AIUIManager.INSTANCE.startHardListening();
-			});
+			mViewBinding.tcMainTime.setOnClickListener(view -> ActivityUtils.startActivity(PrimitiveFtpdActivity.class));
+//			mViewBinding.tcMainTime.setOnClickListener(view -> {
+//				if (!MscManager.INSTANCE.isListenHardWakeup() || AIUIManager.INSTANCE.isHardWakeup()) {
+//					return;
+//				}
+//				AIUIManager.INSTANCE.startHardListening();
+//			});
 		}
 		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
 		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
