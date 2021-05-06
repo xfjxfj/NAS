@@ -29,7 +29,6 @@ public enum AIUIManager {
 	INSTANCE;
 
 	private static final String TAG = AIUIManager.class.getSimpleName();
-//	private static final boolean IS_HARD_WAKEUP = true;
 
 	private AIUIAgent mAIUIAgent;
 	private int mAIUIState = AIUIConstant.STATE_IDLE;
@@ -41,8 +40,6 @@ public enum AIUIManager {
 	private boolean isManualStopVoiceNlp = false;
 	private volatile boolean mIsMusicPaused = false;
 	private volatile boolean mIsPlayNewMusicList = true;
-	private volatile boolean mIsHardWakeup = false;
-	private volatile boolean mIsHardWakeupInitialize = false;
 
 	public void initialize(Context applicationContext) {
 		mAIUIAgent = AIUIAgent.createAgent(applicationContext, getAIUIParams(applicationContext), mAIUIListener);
@@ -81,33 +78,23 @@ public enum AIUIManager {
 
 	public void startListening() {
 		MscManager.INSTANCE.setListenHardWakeup(true);
-		if (mIsHardWakeupInitialize) {
-			mIsHardWakeup = false;
-			if (!mIsPlayNewMusicList && mIsMusicPaused && StarrySky.with().isPaused()) {
-				mIsMusicPaused = false;
-				StarrySky.with().restoreMusic();
-			}
-			//唤醒结束后恢复音量
-			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
-			hasResult = false;
-			return;
-		}
 		if (!mIsPlayNewMusicList && mIsMusicPaused && StarrySky.with().isPaused()) {
 			mIsMusicPaused = false;
 			StarrySky.with().restoreMusic();
 		}
-//		//唤醒结束后恢复音量
-//		if (VolumeManager.INSTANCE.getCurrentVolumel() >= 0) {
-//			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
-//		}
+		//唤醒结束后恢复音量
+		VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
 		if (null == mAIUIAgent) {
 			return;
 		}
 		hasResult = false;
 		MscManager.INSTANCE.startListening(wakeuperResultEntity -> {
+			if (MscManager.IS_HARD_WAKEUP) {
+				return;
+			}
 			Log.i("WakeuperResultListener", wakeuperResultEntity.getRaw());
-//			//唤醒时静音
-//			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
+			//唤醒时静音
+			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
 			if (StarrySky.with().isPlaying()) {
 				mIsMusicPaused = true;
 				StarrySky.with().pauseMusic();
@@ -129,7 +116,6 @@ public enum AIUIManager {
 	}
 
 	public void startHardListening() {
-		mIsHardWakeup = true;
 		//唤醒时静音
 		VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
 		if (StarrySky.with().isPlaying()) {
@@ -369,21 +355,5 @@ public enum AIUIManager {
 
 	public void setPlayNewMusicList(boolean playNewMusicList) {
 		mIsPlayNewMusicList = playNewMusicList;
-	}
-
-	public boolean isHardWakeup() {
-		return mIsHardWakeup;
-	}
-
-	public void setHardWakeup(boolean hardWakeup) {
-		mIsHardWakeup = hardWakeup;
-	}
-
-	public boolean isHardWakeupInitialize() {
-		return mIsHardWakeupInitialize;
-	}
-
-	public void setHardWakeupInitialize(boolean hardWakeupInitialize) {
-		mIsHardWakeupInitialize = hardWakeupInitialize;
 	}
 }
