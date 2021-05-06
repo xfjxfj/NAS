@@ -22,7 +22,7 @@ android {
 			}
 		}
 		ndk {
-			abiFilters "armeabi-v7a", "x86"
+			abiFilters "armeabi-v7a"
 		}
 	}
 
@@ -154,8 +154,6 @@ dependencies {
 	implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
 	implementation 'com.ljx.rxlife3:rxlife-rxjava:3.0.0'
 	implementation 'com.ljx.rxhttp:converter-fastjson:2.5.7'
-	//https://github.com/EspoirX/StarrySky
-	implementation 'com.lzx:StarrySkyX:2.6.3'
 	//https://gitee.com/pandalhhhh/EasyPhotos?_from=gitee_search
 	implementation 'com.github.HuanTanSheng:EasyPhotos:3.1.3'
 }

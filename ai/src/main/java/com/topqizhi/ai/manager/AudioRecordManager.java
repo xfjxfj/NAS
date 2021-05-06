@@ -1,4 +1,4 @@
-package com.viegre.nas.pad.manager;
+package com.topqizhi.ai.manager;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -12,11 +12,20 @@ public enum AudioRecordManager {
 	INSTANCE;
 
 	private AudioRecord mAudioRecord;
+	private volatile long time;
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
 
 	public void initialize() {
-		int recordBufSize = AudioRecord.getMinBufferSize(44100, AudioFormat.CHANNEL_IN_DEFAULT, AudioFormat.ENCODING_PCM_16BIT);
+		int recordBufSize = AudioRecord.getMinBufferSize(16000, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
 		mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
-		                               44100,
+		                               16000,
 		                               AudioFormat.CHANNEL_IN_DEFAULT,
 		                               AudioFormat.ENCODING_PCM_16BIT,
 		                               recordBufSize);
@@ -25,6 +34,12 @@ public enum AudioRecordManager {
 	public void startRecord() {
 		if (null != mAudioRecord) {
 			mAudioRecord.startRecording();
+		}
+	}
+
+	public void stop() {
+		if (null != mAudioRecord) {
+			mAudioRecord.stop();
 		}
 	}
 

@@ -88,10 +88,11 @@ public enum AIUIManager {
 			return;
 		}
 		hasResult = false;
+		if (MscManager.IS_HARD_WAKEUP) {
+			AudioRecordManager.INSTANCE.startRecord();
+			return;
+		}
 		MscManager.INSTANCE.startListening(wakeuperResultEntity -> {
-			if (MscManager.IS_HARD_WAKEUP) {
-				return;
-			}
 			Log.i("WakeuperResultListener", wakeuperResultEntity.getRaw());
 			//唤醒时静音
 			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
@@ -122,6 +123,8 @@ public enum AIUIManager {
 			mIsMusicPaused = true;
 			StarrySky.with().pauseMusic();
 		}
+		Log.i("startHardListening", "唤醒完毕，准备合成: " + (System.currentTimeMillis() - AudioRecordManager.INSTANCE.getTime()) + "ms");
+		AudioRecordManager.INSTANCE.setTime(System.currentTimeMillis());
 		startTTS("在呢。", () -> {
 			//先发送唤醒消息，改变AIUI内部状态，只有唤醒状态才能接收语音输入
 			//默认为oneshot模式，即一次唤醒后就进入休眠。可以修改aiui_phone.cfg中speech参数的interact_mode为continuous以支持持续交互
@@ -331,6 +334,9 @@ public enum AIUIManager {
 				}
 
 				case AIUIConstant.EVENT_TTS: {
+					if (AIUIConstant.TTS_SPEAK_BEGIN == aiuiEvent.arg1) {
+						Log.i("startHardListening", "合成结束，开始播放tts: " + (System.currentTimeMillis() - AudioRecordManager.INSTANCE.getTime()) + "ms");
+					}
 					if (AIUIConstant.TTS_SPEAK_COMPLETED == aiuiEvent.arg1) {
 						if (null != mTTSCallback) {
 							mTTSCallback.run();
