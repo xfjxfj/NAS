@@ -350,7 +350,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		mGuideSkipCountDownTimer = new CountDownTimer(duration, 1000L) {
 			@Override
 			public void onTick(long l) {
-				mViewBinding.actvSplashGuideSkip.setText(StringUtils.getString(R.string.splash_guide_skip) + l / 1000);
+				mViewBinding.actvSplashGuideSkip.setText(StringUtils.getString(R.string.splash_guide_skip, l / 1000));
 			}
 
 			@Override
