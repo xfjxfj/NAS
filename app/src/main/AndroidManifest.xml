@@ -52,8 +52,10 @@
 		android:theme="@style/AppTheme"
 		tools:ignore="UnusedAttribute">
 		<activity
-			android:name=".activity.ContactsActivity"
-			android:screenOrientation="landscape" />
+			android:name=".activity.im.ContactsActivity"
+			android:screenOrientation="landscape" >
+		</activity>
+
 		<activity
 			android:name=".activity.MoreAppActivity"
 			android:screenOrientation="landscape" />
@@ -88,7 +90,12 @@
 		<activity
 			android:name=".activity.MainActivity"
 			android:launchMode="singleTask"
-			android:screenOrientation="landscape" />
+			android:screenOrientation="landscape" >
+			<intent-filter>
+				<action android:name="${applicationId}.main" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
 		<activity
 			android:name=".activity.SettingsActivity"
 			android:screenOrientation="landscape" />

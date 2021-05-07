@@ -2,42 +2,24 @@ package com.viegre.nas.pad.entity;
 
 public class ContactsBean{
 
-    private int deviceId;
-    private int id;
-    private StatusDTO status;
-    private String userName;
+    private String userid;
     private String userimg;
+    private String username;
+    private String userphone;
 
-    public int getDeviceId() {
-        return deviceId;
+    public ContactsBean(String userid, String userimg, String username, String userphone) {
+        this.userid = userid;
+        this.userimg = userimg;
+        this.username = username;
+        this.userphone = userphone;
     }
 
-    public void setDeviceId(int deviceId) {
-        this.deviceId = deviceId;
+    public String getUserid() {
+        return userid;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public StatusDTO getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusDTO status) {
-        this.status = status;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUserid(String userid) {
+        this.userid = userid;
     }
 
     public String getUserimg() {
@@ -48,24 +30,19 @@ public class ContactsBean{
         this.userimg = userimg;
     }
 
-    public static class StatusDTO {
-        private int code;
-        private String desc;
+    public String getUsername() {
+        return username;
+    }
 
-        public int getCode() {
-            return code;
-        }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-        public void setCode(int code) {
-            this.code = code;
-        }
+    public String getUserphone() {
+        return userphone;
+    }
 
-        public String getDesc() {
-            return desc;
-        }
-
-        public void setDesc(String desc) {
-            this.desc = desc;
-        }
+    public void setUserphone(String userphone) {
+        this.userphone = userphone;
     }
 }

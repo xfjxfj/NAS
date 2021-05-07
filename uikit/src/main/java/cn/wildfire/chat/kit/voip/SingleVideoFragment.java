@@ -217,7 +217,7 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
                 getActivity().finish();
                 getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             } else {
-                //xfj加 2021年4月28日
+                //xfj 2021年4月28日
                 if (session != null) {
                     session.endCall();
                 } else {

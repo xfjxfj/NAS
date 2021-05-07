@@ -2,36 +2,31 @@ package com.viegre.nas.pad.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.PointerIcon;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.topqizhi.ai.manager.AIUIManager;
-import com.topqizhi.ai.manager.MscManager;
+import com.bumptech.glide.Glide;
 import com.viegre.nas.pad.R;
-import com.viegre.nas.pad.activity.ContactsActivity;
-import com.viegre.nas.pad.entity.ConstactBean;
+import com.viegre.nas.pad.entity.ContactsBean;
 
 import java.util.List;
 
 import cn.wildfire.chat.kit.WfcUIKit;
-import cn.wildfire.chat.kit.conversation.ext.VoipExt;
 
 public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFriendsAdapter.MyHolder> {
 
-    private final List<ConstactBean> languages;
+    private final List<ContactsBean> languages;
     private final Context context1;
 
-    public ContactsRvFriendsAdapter(Context context, List<ConstactBean> languages) {
+    public ContactsRvFriendsAdapter(Context context, List<ContactsBean> languages) {
         this.languages = languages;
         context1 = context;
-
     }
 
     @NonNull
@@ -47,17 +42,18 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
 
     @Override
     public void onBindViewHolder(@NonNull ContactsRvFriendsAdapter.MyHolder holder, int position) {
-//        holder.textfr.setText(languages.get(position).getPhone());
-        if (ContactsActivity.phone.equals("15357906428")) {
-            holder.textfr.setText("13168306428");
-        } else {
-            holder.textfr.setText("15357906428");
-        }
-        holder.contactsFr.setOnClickListener(new View.OnClickListener() {
+        holder.textfr.setText(languages.get(position).getUsername() + languages.get(position).getUserphone());
+        Glide.with(context1).load(languages.get(position).getUserimg()).into(holder.img_im1);
+        holder.img_im2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context1, position + "", Toast.LENGTH_LONG).show();
-                RunCall(languages.get(position).getUserid(), holder.textfr);
+                RunCall(languages.get(position).getUserid(), true);
+            }
+        });
+        holder.img_im3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RunCall(languages.get(position).getUserid(), false);
             }
         });
     }
@@ -67,14 +63,9 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
         return languages.size();
     }
 
-    private void RunCall(String userid, TextView textfr) {
-        if (ContactsActivity.phone.equals("15357906428")) {
-            WfcUIKit.singleCall(context1, "VaVvVvii", false);//13168306428
-        } else {
-            WfcUIKit.singleCall(context1, "sws8s888", false);//15357906428
-        }
+    private void RunCall(String userid, Boolean isAudioOnly) {
 //        VoipExt.video
-//        WfcUIKit.singleCall(context1, userid, false);//13168306428
+        WfcUIKit.singleCall(context1, userid, isAudioOnly);//13168306428
 //        WfcUIKit.singleCall(context1, "TUT9T9LL", false);
 //        WfcUIKit.singleCall(context1, "agahahss", false);
 //        WfcUIKit.singleCall(context1, "dzxGhGjj", false);
@@ -87,11 +78,18 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
 
         private final TextView textfr;
         private final ConstraintLayout contactsFr;
+        private final ImageView img_im1;
+        private final ImageView img_im2;
+        private final ImageView img_im3;
 
         public MyHolder(View itemView) {
             super(itemView);
             textfr = itemView.findViewById(R.id.textfr);
             contactsFr = itemView.findViewById(R.id.contactsFr);
+            img_im1 = itemView.findViewById(R.id.img_im1);
+            img_im2 = itemView.findViewById(R.id.img_im2);
+            img_im3 = itemView.findViewById(R.id.img_im3);
+
         }
     }
 }

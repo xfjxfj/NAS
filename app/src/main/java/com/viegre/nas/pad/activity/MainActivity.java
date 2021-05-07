@@ -30,6 +30,7 @@ import com.topqizhi.ai.manager.MscManager;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.audio.AudioActivity;
+import com.viegre.nas.pad.activity.im.ContactsActivity;
 import com.viegre.nas.pad.activity.image.ImageActivity;
 import com.viegre.nas.pad.activity.video.VideoActivity;
 import com.viegre.nas.pad.config.BusConfig;

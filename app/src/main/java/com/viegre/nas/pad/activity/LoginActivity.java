@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,13 +20,19 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.bumptech.glide.Glide;
 import com.djangoogle.framework.activity.BaseActivity;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.kongzue.dialog.interfaces.OnDismissListener;
+import com.kongzue.dialog.v3.MessageDialog;
 import com.kongzue.dialog.v3.TipDialog;
+import com.kongzue.dialog.v3.WaitDialog;
 import com.rxjava.rxlife.RxLife;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivityLoginBinding;
 import com.viegre.nas.pad.entity.LoginEntity;
+import com.viegre.nas.pad.entity.LoginPhoneCode;
 import com.viegre.nas.pad.entity.LoginResult;
 import com.viegre.nas.pad.manager.PopupManager;
 import com.viegre.nas.pad.popup.LoginTimePopup;
@@ -46,6 +54,7 @@ import cn.wildfire.chat.kit.ChatManagerHolder;
  */
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements View.OnClickListener {
 
+    private Boolean checkLoginInfo = true;
 
     @Override
     protected void initialize() {
@@ -79,6 +88,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
         mViewBinding.actvLoginAccountBtn.setOnClickListener(this);
         mViewBinding.acivLoginExit.setOnClickListener(this);
         mViewBinding.actvLoginPhoneGetCode.setOnClickListener(this);
+        mViewBinding.actvLoginPhoneBtn.setOnClickListener(this);
     }
 
     @Override
@@ -94,6 +104,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
             mViewBinding.actvLoginTabPhoneCode.setBackgroundResource(0);
             mViewBinding.clLoginPhoneCode.setVisibility(View.GONE);
         } else if (R.id.actvLoginTabAccount == view.getId()) {//点击账号密码登录标签
+            checkLoginInfo = true;
             //如果没有加载验证码则请求获取
             if (!(Boolean) mViewBinding.acivLoginAccountCode.getTag()) {
                 getCodeImage();
@@ -108,6 +119,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
             mViewBinding.actvLoginTabPhoneCode.setBackgroundResource(0);
             mViewBinding.clLoginPhoneCode.setVisibility(View.GONE);
         } else if (R.id.actvLoginTabPhoneCode == view.getId()) {//点击手机验证码登录标签
+            checkLoginInfo = false;
             mViewBinding.actvLoginTabScan.setTextColor(ColorUtils.getColor(R.color.network_password_popup_hint));
             mViewBinding.actvLoginTabScan.setBackgroundResource(0);
             mViewBinding.clLoginScan.setVisibility(View.GONE);
@@ -117,11 +129,12 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
             mViewBinding.actvLoginTabPhoneCode.setTextColor(Color.WHITE);
             mViewBinding.actvLoginTabPhoneCode.setBackgroundResource(R.drawable.login_tab_bg);
             mViewBinding.clLoginPhoneCode.setVisibility(View.VISIBLE);
-
         } else if (R.id.acivLoginAccountCode == view.getId()) {//点击验证码
             getCodeImage();
         } else if (R.id.actvLoginAccountBtn == view.getId()) {//账号密码登录
             loginbyAccount();
+        } else if (R.id.actvLoginPhoneBtn == view.getId()) {//手机验证码登录
+            loginbyPhoneCode();
         } else if (R.id.acivLoginExit == view.getId()) {//点击退出
             finish();
         } else if (R.id.actvLoginPhoneGetCode == view.getId()) {
@@ -129,12 +142,21 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
         }
     }
 
-    private void getPhoneNumber(String phoneString) {
-        phoneString = "15357906428";
-        if (judgePhone(phoneString)) return;
-        RxHttp.postForm(UrlConfig.User.GET_PHONENUMBER)
-                .addHeader("Cookie", SPUtils.getInstance().getString(SPConfig.LOGIN_CODE_SESSION_ID))
-                .add("phoneNumber", phoneString)
+    @SuppressLint("ResourceType")
+    private void loginbyPhoneCode() {
+        if (judgePhone(mViewBinding.acetLoginPhone.getText().toString())) {
+            CommonUtils.showErrorToast(getResources().getString(R.string.login_Phonet_Er_tips));
+            return;
+
+        }
+        if (mViewBinding.acetLoginPhoneCode.getText().toString().equals("")) {
+            CommonUtils.showErrorToast(getResources().getString(R.string.login_PhonetCode_Er_tips));
+            return;
+        }
+        TipDialog mDialog = WaitDialog.show(this, "请稍候...");
+        RxHttp.postForm(UrlConfig.User.GET_LOGINWITHSMS)
+                .add("phoneNumber ", mViewBinding.acetLoginPhone.getText().toString())
+                .add("code", mViewBinding.acetLoginPhoneCode.getText().toString())
                 .asString()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {
@@ -143,9 +165,34 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
                         Log.d("onSubscribe", d.toString());
                     }
 
+                    @SuppressLint("ResourceType")
                     @Override
                     public void onNext(@NonNull String s) {
-                        TipDialog.show(LoginActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
+                        LoginPhoneCode loginPhoneCode = new Gson().fromJson(s, LoginPhoneCode.class);
+                        if (null != loginPhoneCode || loginPhoneCode.getMsg().equals("OK")) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            TipDialog.show(LoginActivity.this, loginPhoneCode.getMsg(), TipDialog.TYPE.SUCCESS).setOnDismissListener(new OnDismissListener() {
+                                                @Override
+                                                public void onDismiss() {
+
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            }, 1000);
+
+                        } else {
+                            CommonUtils.showErrorToast(loginPhoneCode.getMsg());
+                            Log.d("onSubscribe", loginPhoneCode.toString());
+                            mDialog.doDismiss();
+                        }
+                        Log.d("onSubscribe", s.toString());
                     }
 
                     @Override
@@ -158,8 +205,65 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
                         Log.d("", "");
                     }
                 });
-
     }
+
+    private void getPhoneNumber(String phoneString) {
+        TipDialog mDialog = WaitDialog.show(this, "请稍候...");
+        if (judgePhone(phoneString)) return;
+        RxHttp.postForm(UrlConfig.User.GET_PHONENUMBER)
+                .add("phoneNumber", phoneString)
+                .asString()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.d("onSubscribe", d.toString());
+                    }
+
+                    @SuppressLint("ResourceType")
+                    @Override
+                    public void onNext(@NonNull String s) {
+                        LoginPhoneCode loginPhoneCode = new Gson().fromJson(s, LoginPhoneCode.class);
+                        if (null != loginPhoneCode || loginPhoneCode.getMsg().equals("OK")) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            TipDialog.show(LoginActivity.this, getResources().getString(R.string.login_PhonetCode_tips), TipDialog.TYPE.SUCCESS).setOnDismissListener(new OnDismissListener() {
+                                                @Override
+                                                public void onDismiss() {
+
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            }, 1000);
+
+                        } else {
+                            Log.d("onSubscribe", loginPhoneCode.toString());
+                            mDialog.doDismiss();
+                        }
+                        Log.d("onSubscribe", s.toString());
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        CommonUtils.showErrorToast(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("", "");
+                    }
+                });
+    }
+    /**
+     * 验证手机短信登录
+     * */
+
 
     /**
      * 获取图片验证码

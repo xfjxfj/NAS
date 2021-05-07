@@ -3,36 +3,29 @@ package com.viegre.nas.pad.activity.image;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.provider.MediaStore;
-import android.util.Log;
-
-import com.blankj.utilcode.util.ThreadUtils;
-import com.djangoogle.framework.activity.BaseActivity;
-import com.huantansheng.easyphotos.models.album.AlbumModel;
-import com.huantansheng.easyphotos.models.album.entity.Photo;
-import com.viegre.nas.pad.R;
-import com.viegre.nas.pad.adapter.ImageListAdapter;
-import com.viegre.nas.pad.adapter.PhotoAlbumAdapter;
-import com.viegre.nas.pad.config.PathConfig;
-import com.viegre.nas.pad.databinding.ActivityImageBinding;
-import com.viegre.nas.pad.entity.ImageEntity;
-import com.viegre.nas.pad.manager.TextStyleManager;
-import com.viegre.nas.pad.util.MediaScanner;
-import com.viegre.nas.pad.widget.GridSpaceItemDecoration;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.blankj.utilcode.util.ThreadUtils;
+import com.djangoogle.framework.activity.BaseActivity;
+import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.adapter.ImageListAdapter;
+import com.viegre.nas.pad.databinding.ActivityImageBinding;
+import com.viegre.nas.pad.entity.ImageEntity;
+import com.viegre.nas.pad.manager.TextStyleManager;
+import com.viegre.nas.pad.widget.GridSpaceItemDecoration;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by レインマン on 2021/01/18 16:36 with Android Studio.
  */
-public class ImageActivity extends BaseActivity<ActivityImageBinding> {
+public class ImageActivity2 extends BaseActivity<ActivityImageBinding> {
 
     private volatile boolean mIsPublic = true;
-    private List<ImageEntity> imageList;
+
     private ImageListAdapter mImageListAdapter;
 
     @Override
@@ -81,11 +74,9 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> {
     private void getImageList() {
 
         ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<ImageEntity>>() {
-
-
             @Override
             public List<ImageEntity> doInBackground() {
-                imageList = new ArrayList<>();
+                List<ImageEntity> imageList = new ArrayList<>();
                 ContentResolver contentResolver = mActivity.getContentResolver();
                 Cursor cursor = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
                 while (cursor.moveToNext()) {

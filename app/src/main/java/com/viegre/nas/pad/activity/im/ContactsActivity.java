@@ -1,17 +1,22 @@
-package com.viegre.nas.pad.activity;
+package com.viegre.nas.pad.activity.im;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.InputType;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.SPUtils;
-import com.djangoogle.framework.activity.BaseActivity;
+import com.google.gson.Gson;
+import com.kongzue.dialog.interfaces.OnInputDialogButtonClickListener;
+import com.kongzue.dialog.util.BaseDialog;
+import com.kongzue.dialog.util.InputInfo;
+import com.kongzue.dialog.v3.InputDialog;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.viegre.nas.pad.R;
@@ -20,23 +25,25 @@ import com.viegre.nas.pad.adapter.ContactsRvFriendsAdapter;
 import com.viegre.nas.pad.adapter.ContactsRvRecordAdapter;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
-import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.databinding.ActivityContactsBinding;
-import com.viegre.nas.pad.entity.ConstactBean;
+import com.viegre.nas.pad.entity.ContactsBean;
 import com.viegre.nas.pad.entity.LoginResult;
 import com.viegre.nas.pad.service.AppService;
 import com.viegre.nas.pad.util.CommonUtils;
-
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
-
 import cn.wildfire.chat.kit.ChatManagerHolder;
-
+import cn.wildfire.chat.kit.WfcBaseActivity;
+import com.djangoogle.framework.activity.BaseActivity;
+import cn.wildfire.chat.kit.third.location.ui.base.BasePresenter;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import rxhttp.RxHttp;
+
 
 /**
  * 联系人相关类
@@ -48,7 +55,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
     private RecyclerView contactsRv2;
     private RecyclerView contactsRv3;
     private ImageView homeImg;
-    private List<ConstactBean> mContactsData = new ArrayList<>();
+    private List<ContactsBean> mContactsData = new ArrayList<>();
     public static String phone = "";
 
 
@@ -63,20 +70,36 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
         contactsRv2 = findViewById(R.id.contactsRv2);
         contactsRv3 = findViewById(R.id.contactsRv3);
         homeImg = findViewById(R.id.homeImg);
-        mViewBinding.homeImg.setOnClickListener(view -> finish());
+//        mViewBinding.homeImg.setOnClickListener(view -> finish());
         //初始化RecycleViewAdapter
 //        getContactsDatas();
 //        initAdapter();
-        callLogin("");
+        InputDialog.build(this)
+                .setTitle("提示").setMessage("请输入手机号（123456）")
+                .setInputText("15357906428")
+                .setOkButton("确定", new OnInputDialogButtonClickListener() {
+                    @Override
+                    public boolean onClick(BaseDialog baseDialog, View v, String inputStr) {
+                        callLogin(inputStr);
+                        return false;
+                    }
+                })
+                .setCancelButton("取消")
+                .setHintText("请输入密码")
+                .setInputInfo(new InputInfo()
+                        .setMAX_LENGTH(11)
+                        .setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS)
+                )
+                .setCancelable(true)
+                .show();
     }
 
 
-    private void initAdapter(List<ConstactBean> mContactsData) {
+    private void initAdapter(List<ContactsBean> mContactsData) {
         List<String> languages = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             languages.add(i + "");
         }
-
         //初始化数据
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         //设置布局管理器
@@ -103,26 +126,52 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
     }
 
     private void callLogin(String phone) {
-        //音视频登录
+        try {
+            JSONObject json153 = new JSONObject();
+            json153.put("userid", "sws8s888");
+            json153.put("userimg", "http://pics6.baidu.com/feed/32fa828ba61ea8d35f0fc102b0795946251f5806.jpeg?token=7e8e4aa8ff38f2f87cb19d100b003e82");
+            json153.put("username", "张三");
+            json153.put("userphone", "15357906428");
+
+            JSONObject json131 = new JSONObject();
+            json131.put("userid", "VaVvVvii");
+            json131.put("userimg", "http://t12.baidu.com/it/u=531657465,141298675&fm=30&app=106&f=JPEG?w=312&h=208&s=DEA208C41A5079DE5D89553A0300E010");
+            json131.put("username", "李四");
+            json131.put("userphone", "13168306428");
+
+            JSONObject jsonF = new JSONObject();
+            jsonF.put("userid", "y7y7y733");
+            jsonF.put("userimg", "http://t12.baidu.com/it/u=531657465,141298675&fm=30&app=106&f=JPEG?w=312&h=208&s=DEA208C41A5079DE5D89553A0300E010");
+            jsonF.put("username", "风顺");
+            jsonF.put("userphone", "15156021911");
+
+            mContactsData.add(new Gson().fromJson(json153.toString(), ContactsBean.class));
+            mContactsData.add(new Gson().fromJson(json131.toString(), ContactsBean.class));
+            mContactsData.add(new Gson().fromJson(jsonF.toString(), ContactsBean.class));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+//        音视频登录
 //        ContactsActivity.phone = "15357906428";
-        String phoneNumber = "13168306428";
+//        String phoneNumber = "13168306428";
 //        String phoneNumber = "7dd40314e43596cf";
         String authCode = "66666";
-        AppService.Instance().smsLogin(ContactsActivity.phone, authCode, new AppService.LoginCallback() {
+        AppService.Instance().smsLogin(phone, authCode, new AppService.LoginCallback() {
             @Override
             public void onUiSuccess(LoginResult loginResult) {
                 if (isFinishing()) {
                     return;
                 }
                 //需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
+
                 ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
                 SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
+
                 sp.edit()
                         .putString("id", loginResult.getUserId())
                         .putString("token", loginResult.getUserId())
                         .apply();
-                ConstactBean constactBean = new ConstactBean(ContactsActivity.phone, loginResult.getUserId());
-                mContactsData.add(constactBean);
+//                ConstactBean constactBean = new ConstactBean(ContactsActivity.phone, loginResult.getUserId());
                 initAdapter(mContactsData);
             }
 
@@ -167,10 +216,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
                 });
     }
 }
-
-
-
-
 
 
 

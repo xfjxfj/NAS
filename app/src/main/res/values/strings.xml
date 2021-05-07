@@ -34,6 +34,9 @@
 	<string name="login_login_time_custom">自定义</string>
 	<string name="login_login_time_custom_time">自定义时间</string>
 	<string name="login_login_time_hour">小时</string>
+	<string name="login_PhonetCode_tips">验证码成功下发到手机，请注意查收</string>
+	<string name="login_PhonetCode_Er_tips">请输入验证码</string>
+	<string name="login_Phonet_Er_tips">请输入手机号</string>
 
 	<!--首页-->
 	<string name="main_click_to_login">未登录请点击登录</string>

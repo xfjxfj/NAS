@@ -22,6 +22,8 @@ import com.viegre.nas.pad.service.AppService;
 import org.litepal.LitePal;
 import org.primftpd.log.CsvLoggerFactory;
 
+import java.io.File;
+
 import cn.wildfire.chat.kit.Config;
 import cn.wildfire.chat.kit.WfcUIKit;
 import cn.wildfire.chat.kit.conversation.message.viewholder.MessageViewHolderManager;
@@ -48,12 +50,15 @@ public class NasApp extends BaseApplication {
 		initAMap();
 		initIM();
 		StarrySky.init(this).apply();
+		MscManager.INSTANCE.stopListening();
 	}
 
 	/**
 	 * 音视频初始化
 	 */
 	private void initIM() {
+		AppService.validateConfig(this);
+		// bugly，务必替换为你自己的!!!
 		if (getCurProcessName(this).equals(BuildConfig.APPLICATION_ID)) {
 			// 如果uikit是以aar的方式引入 ，那么需要在此对Config里面的属性进行配置，如：
 			// Config.IM_SERVER_HOST = "im.example.com";
@@ -70,10 +75,26 @@ public class NasApp extends BaseApplication {
 	}
 
 	private void setupWFCDirs() {
-		FileUtils.createOrExistsDir(Config.VIDEO_SAVE_DIR);
-		FileUtils.createOrExistsDir(Config.AUDIO_SAVE_DIR);
-		FileUtils.createOrExistsDir(Config.FILE_SAVE_DIR);
-		FileUtils.createOrExistsDir(Config.PHOTO_SAVE_DIR);
+		File file = new File(Config.VIDEO_SAVE_DIR);
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+		file = new File(Config.AUDIO_SAVE_DIR);
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+		file = new File(Config.FILE_SAVE_DIR);
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+		file = new File(Config.PHOTO_SAVE_DIR);
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+//		FileUtils.createOrExistsDir(Config.VIDEO_SAVE_DIR);
+//		FileUtils.createOrExistsDir(Config.AUDIO_SAVE_DIR);
+//		FileUtils.createOrExistsDir(Config.FILE_SAVE_DIR);
+//		FileUtils.createOrExistsDir(Config.PHOTO_SAVE_DIR);
 	}
 
 	public static String getCurProcessName(Context context) {

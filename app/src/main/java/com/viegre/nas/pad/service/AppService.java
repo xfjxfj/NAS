@@ -107,7 +107,6 @@ public class AppService implements AppServiceProvider {
         //Platform_WEB = 5,
         //Platform_WX = 6,
         params.put("platform", new Integer(2));
-
         try {
             params.put("clientId", ChatManagerHolder.gChatManager.getClientId());
         } catch (Exception e) {

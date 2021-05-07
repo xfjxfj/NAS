@@ -72,6 +72,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
     private boolean isSupportMoment = false;
 
     private WfcUIKit() {
+
     }
 
     public static WfcUIKit getWfcUIKit() {
@@ -112,7 +113,6 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
         ViewModelProvider.Factory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application);
         viewModelProvider = new ViewModelProvider(viewModelStore, factory);
         OKHttpHelper.init(application.getApplicationContext());
-
         Log.d("WfcUIKit", "init end");
     }
 
@@ -283,13 +283,13 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
 
     public static void startActivity(Context context, Intent intent) {
 //        xfj 2021年4月28日
-        MscManager.INSTANCE.stopListening();
+         MscManager.INSTANCE.stopListening();
         if (context instanceof Activity) {
             context.startActivity(intent);
             ((Activity) context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } else {
-//            Intent main = new Intent(context.getPackageName() + ".main");
-            Intent main = new Intent(context,SingleCallActivity.class);
+            Intent main = new Intent(context.getPackageName() + ".main");
+//            Intent main = new Intent(context,SingleCallActivity.class);
 
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivities(context, 100, new Intent[]{main, intent}, PendingIntent.FLAG_UPDATE_CURRENT);
