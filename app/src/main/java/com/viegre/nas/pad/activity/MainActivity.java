@@ -10,7 +10,6 @@ import android.content.res.TypedArray;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -25,8 +24,6 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.djangoogle.framework.activity.BaseActivity;
-import com.topqizhi.ai.manager.AIUIManager;
-import com.topqizhi.ai.manager.MscManager;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.audio.AudioActivity;
@@ -74,21 +71,22 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		initWeather();
 	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-			case KeyEvent.KEYCODE_F11:
-				if (!MscManager.INSTANCE.isListenHardWakeup() || AIUIManager.INSTANCE.isHardWakeup()) {
-					break;
-				}
-				AIUIManager.INSTANCE.startHardListening();
-				break;
-
-			default:
-				break;
-		}
-		return super.onKeyDown(keyCode, event);
-	}
+//	@Override
+//	public boolean onKeyDown(int keyCode, KeyEvent event) {
+//		switch (keyCode) {
+//			case KeyEvent.KEYCODE_F11:
+//				if (!MscManager.INSTANCE.isListenHardWakeup()) {
+//					break;
+//				}
+//				AudioRecordManager.INSTANCE.stop();
+//				AIUIManager.INSTANCE.startHardListening();
+//				break;
+//
+//			default:
+//				break;
+//		}
+//		return super.onKeyDown(keyCode, event);
+//	}
 
 	@Override
 	protected void onResume() {
@@ -149,8 +147,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		//音频
 		Glide.with(this)
 		     .load(R.mipmap.main_icon_audio)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIconAudio);
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconAudio);
 		mViewBinding.acivMainIconAudio.setOnClickListener(view -> ActivityUtils.startActivity(AudioActivity.class));
 
 		//视频

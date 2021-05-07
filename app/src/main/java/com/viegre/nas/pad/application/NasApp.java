@@ -11,6 +11,7 @@ import com.djangoogle.framework.applicaiton.BaseApplication;
 import com.djangoogle.framework.manager.OkHttpManager;
 import com.lzx.starrysky.StarrySky;
 import com.topqizhi.ai.manager.AIUIManager;
+import com.topqizhi.ai.manager.AudioRecordManager;
 import com.topqizhi.ai.manager.MscManager;
 import com.topqizhi.ai.manager.VolumeManager;
 import com.viegre.nas.pad.BuildConfig;
@@ -46,6 +47,7 @@ public class NasApp extends BaseApplication {
 		MscManager.INSTANCE.initialize(this);
 		AIUIManager.INSTANCE.initialize(this);
 		VolumeManager.INSTANCE.initialize(this);
+		AudioRecordManager.INSTANCE.initialize();
 		CsvLoggerFactory.CONTEXT = this;
 		initAMap();
 		initIM();
@@ -136,8 +138,7 @@ public class NasApp extends BaseApplication {
 
 	private void initAndroidId() {
 		if (!SPUtils.getInstance().contains(SPConfig.ANDROID_ID)) {
-			SPUtils.getInstance()
-			       .put(SPConfig.ANDROID_ID, Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+			SPUtils.getInstance().put(SPConfig.ANDROID_ID, Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
 		}
 	}
 }

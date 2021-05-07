@@ -29,7 +29,6 @@ public enum AIUIManager {
 	INSTANCE;
 
 	private static final String TAG = AIUIManager.class.getSimpleName();
-	private static final boolean IS_HARD_WAKEUP = true;
 
 	private AIUIAgent mAIUIAgent;
 	private int mAIUIState = AIUIConstant.STATE_IDLE;
@@ -41,7 +40,6 @@ public enum AIUIManager {
 	private boolean isManualStopVoiceNlp = false;
 	private volatile boolean mIsMusicPaused = false;
 	private volatile boolean mIsPlayNewMusicList = true;
-	private volatile boolean mIsHardWakeup = false;
 
 	public void initialize(Context applicationContext) {
 		mAIUIAgent = AIUIAgent.createAgent(applicationContext, getAIUIParams(applicationContext), mAIUIListener);
@@ -80,33 +78,24 @@ public enum AIUIManager {
 
 	public void startListening() {
 		MscManager.INSTANCE.setListenHardWakeup(true);
-		if (IS_HARD_WAKEUP) {
-			mIsHardWakeup = false;
-			if (!mIsPlayNewMusicList && mIsMusicPaused && StarrySky.with().isPaused()) {
-				mIsMusicPaused = false;
-				StarrySky.with().restoreMusic();
-			}
-			//唤醒结束后恢复音量
-			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
-			hasResult = false;
-			return;
-		}
 		if (!mIsPlayNewMusicList && mIsMusicPaused && StarrySky.with().isPaused()) {
 			mIsMusicPaused = false;
 			StarrySky.with().restoreMusic();
 		}
-//		//唤醒结束后恢复音量
-//		if (VolumeManager.INSTANCE.getCurrentVolumel() >= 0) {
-//			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
-//		}
+		//唤醒结束后恢复音量
+		VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
 		if (null == mAIUIAgent) {
 			return;
 		}
 		hasResult = false;
+		if (MscManager.IS_HARD_WAKEUP) {
+			AudioRecordManager.INSTANCE.startRecord();
+			return;
+		}
 		MscManager.INSTANCE.startListening(wakeuperResultEntity -> {
 			Log.i("WakeuperResultListener", wakeuperResultEntity.getRaw());
-//			//唤醒时静音
-//			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
+			//唤醒时静音
+			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
 			if (StarrySky.with().isPlaying()) {
 				mIsMusicPaused = true;
 				StarrySky.with().pauseMusic();
@@ -128,13 +117,14 @@ public enum AIUIManager {
 	}
 
 	public void startHardListening() {
-		mIsHardWakeup = true;
 		//唤醒时静音
 		VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
 		if (StarrySky.with().isPlaying()) {
 			mIsMusicPaused = true;
 			StarrySky.with().pauseMusic();
 		}
+		Log.i("startHardListening", "唤醒完毕，准备合成: " + (System.currentTimeMillis() - AudioRecordManager.INSTANCE.getTime()) + "ms");
+		AudioRecordManager.INSTANCE.setTime(System.currentTimeMillis());
 		startTTS("在呢。", () -> {
 			//先发送唤醒消息，改变AIUI内部状态，只有唤醒状态才能接收语音输入
 			//默认为oneshot模式，即一次唤醒后就进入休眠。可以修改aiui_phone.cfg中speech参数的interact_mode为continuous以支持持续交互
@@ -344,6 +334,9 @@ public enum AIUIManager {
 				}
 
 				case AIUIConstant.EVENT_TTS: {
+					if (AIUIConstant.TTS_SPEAK_BEGIN == aiuiEvent.arg1) {
+						Log.i("startHardListening", "合成结束，开始播放tts: " + (System.currentTimeMillis() - AudioRecordManager.INSTANCE.getTime()) + "ms");
+					}
 					if (AIUIConstant.TTS_SPEAK_COMPLETED == aiuiEvent.arg1) {
 						if (null != mTTSCallback) {
 							mTTSCallback.run();
@@ -368,13 +361,5 @@ public enum AIUIManager {
 
 	public void setPlayNewMusicList(boolean playNewMusicList) {
 		mIsPlayNewMusicList = playNewMusicList;
-	}
-
-	public boolean isHardWakeup() {
-		return mIsHardWakeup;
-	}
-
-	public void setHardWakeup(boolean hardWakeup) {
-		mIsHardWakeup = hardWakeup;
 	}
 }

@@ -32,6 +32,7 @@ public class MQTTMsgEntity implements Serializable {
 	public final static String MSG_FTP_ERASE = "ftpErase";//ftp文件清除
 	public final static String MSG_FTP_FAVORITES = "ftpFavorites";//ftp文件收藏
 	public final static String MSG_FTP_FAVORITES_LIST = "ftpFavoritesList";//ftp收藏列表
+	public final static String MSG_FTP_QUERY_LIST = "ftpQueryList";//ftp文件查询
 
 	private String msgType;
 	private String action;

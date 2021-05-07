@@ -12,6 +12,7 @@ public class BusConfig {
 	public static final String NETWORK_DETAIL = "open_network_detail";
 	public static final String SHOW_NETWORK_DETAIL = "show_network_detail";
 	public static final String HIDE_NETWORK_DETAIL = "hide_network_detail";
+	public static final String HIDE_NETWORK = "hide_network";
 
 	/**
 	 * 天气

@@ -26,6 +26,8 @@ public enum MscManager {
 
 	INSTANCE;
 
+	public static final boolean IS_HARD_WAKEUP = true;
+
 	private static final String TAG = MscManager.class.getSimpleName();
 
 	/**
@@ -84,7 +86,7 @@ public enum MscManager {
 			//清空参数
 			mVoiceWakeuper.setParameter(SpeechConstant.PARAMS, null);
 			//唤醒门限值，根据资源携带的唤醒词个数按照“id:门限;id:门限”的格式传入
-			mVoiceWakeuper.setParameter(SpeechConstant.IVW_THRESHOLD, "0:" + IVW_THRESHOLD);
+			mVoiceWakeuper.setParameter(SpeechConstant.IVW_THRESHOLD, "0:" + (IS_HARD_WAKEUP ? 3000 : IVW_THRESHOLD));
 			//设置唤醒模式
 			mVoiceWakeuper.setParameter(SpeechConstant.IVW_SST, IVW_SST);
 			//设置持续进行唤醒
@@ -133,7 +135,8 @@ public enum MscManager {
 
 				@Override
 				public void onError(SpeechError speechError) {
-					WakeuperResultEntity wakeuperResultEntity = new WakeuperResultEntity(false, speechError.getPlainDescription(true));
+					WakeuperResultEntity wakeuperResultEntity = new WakeuperResultEntity(false,
+					                                                                     speechError.getPlainDescription(true));
 					wakeuperResultListener.result(wakeuperResultEntity);
 					mIsVoiceWakeuperRunning = false;
 				}

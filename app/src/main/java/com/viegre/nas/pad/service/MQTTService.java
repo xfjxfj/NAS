@@ -5,11 +5,14 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.provider.MediaStore;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -26,6 +29,7 @@ import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.blankj.utilcode.util.ViewUtils;
+import com.google.common.collect.Lists;
 import com.viegre.nas.pad.activity.WelcomeActivity;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
@@ -34,6 +38,8 @@ import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.entity.ExternalDriveEntity;
 import com.viegre.nas.pad.entity.FtpCmdEntity;
 import com.viegre.nas.pad.entity.FtpFavoritesEntity;
+import com.viegre.nas.pad.entity.FtpFileQueryEntity;
+import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
 import com.viegre.nas.pad.entity.RecycleBinEntity;
 
@@ -135,7 +141,7 @@ public class MQTTService extends Service {
 			MemoryPersistence memoryPersistence = new MemoryPersistence();
 			mMqttAndroidClient = new MqttAndroidClient(Utils.getApp(),
 			                                           UrlConfig.MQTT_SERVER,
-			                                           SPUtils.getInstance().getString(SPConfig.ANDROID_ID),
+			                                           "nas/" + SPUtils.getInstance().getString(SPConfig.ANDROID_ID),
 			                                           memoryPersistence);
 			mMqttAndroidClient.setCallback(mMqttCallbackExtended);
 			mMqttAndroidClient.connect(mMqttConnectOptions);
@@ -593,6 +599,75 @@ public class MQTTService extends Service {
 						});
 						break;
 
+					//ftp文件查询
+					case MQTTMsgEntity.MSG_FTP_QUERY_LIST:
+						String name = JSON.parseObject(mqttMsgEntity.getParam()).getString("name");
+						int page = JSON.parseObject(mqttMsgEntity.getParam()).getInteger("page");
+						int size = JSON.parseObject(mqttMsgEntity.getParam()).getInteger("size");
+						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<FtpFileQueryPaginationEntity>() {
+							@Override
+							public FtpFileQueryPaginationEntity doInBackground() {
+								String searchTxt = sqliteEscape(name);
+								String selection = MediaStore.Files.FileColumns.TITLE + " LIKE ? escape '/' ";
+								String searchStr = "%" + searchTxt + "%";
+								String[] selectionArgs = new String[]{searchStr};
+								List<FtpFileQueryEntity> ftpFileList = new ArrayList<>();
+								ContentResolver contentResolver = getContentResolver();
+								Cursor cursor = contentResolver.query(MediaStore.Files.getContentUri("external"),
+								                                      new String[]{MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.DATE_MODIFIED, MediaStore.Files.FileColumns.TITLE},
+								                                      selection,
+								                                      selectionArgs,
+								                                      MediaStore.Files.FileColumns.DATE_MODIFIED + " desc");
+								if (null != cursor) {
+									while (cursor.moveToNext()) {
+										String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
+										if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
+											continue;
+										}
+										FtpFileQueryEntity ftpFileQueryEntity = new FtpFileQueryEntity();
+										ftpFileQueryEntity.setName(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE)));
+										ftpFileQueryEntity.setPath(path);
+										ftpFileQueryEntity.setType(FileUtils.isDir(path) ? "dir" : "file");
+										long time = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED));
+										TimeUtils.millis2String(time, new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()));
+										ftpFileQueryEntity.setCreateTime(TimeUtils.millis2String(time,
+										                                                         new SimpleDateFormat("yyyy-MM-dd HH:mm",
+										                                                                              Locale.getDefault())));
+										ftpFileQueryEntity.setSrc(path.startsWith(PathConfig.PUBLIC) ? "public" : "private");
+										ftpFileList.add(ftpFileQueryEntity);
+									}
+									cursor.close();
+								}
+								FtpFileQueryPaginationEntity ftpFileQueryPaginationEntity = new FtpFileQueryPaginationEntity();
+								ftpFileQueryPaginationEntity.setPage(page);
+								ftpFileQueryPaginationEntity.setSize(size);
+								ftpFileQueryPaginationEntity.setTotal(ftpFileList.size());
+								if (!ftpFileList.isEmpty()) {
+									if (ftpFileList.size() <= size) {//若查询列表条数小于单页最大条数，则返回全部列表
+										ftpFileQueryPaginationEntity.setPage(1);
+										ftpFileQueryPaginationEntity.getQueryList().addAll(ftpFileList);
+									} else {//开始分页
+										List<List<FtpFileQueryEntity>> partitionList = Lists.partition(ftpFileList, size);
+										if (page <= partitionList.size()) {
+											ftpFileQueryPaginationEntity.getQueryList().addAll(partitionList.get(page - 1));
+										} else {
+											ftpFileQueryPaginationEntity.setPage(1);
+											ftpFileQueryPaginationEntity.getQueryList().addAll(partitionList.get(0));
+										}
+									}
+								}
+								return ftpFileQueryPaginationEntity;
+							}
+
+							@Override
+							public void onSuccess(FtpFileQueryPaginationEntity result) {
+								MQTTMsgEntity ftpQueryListMsg = ftpQueryList(mqttMsgEntity.getFromId());
+								ftpQueryListMsg.setParam(JSON.toJSONString(result));
+								sendMQTTMsg(ftpQueryListMsg);
+							}
+						});
+						break;
+
 					default:
 						break;
 				}
@@ -814,6 +889,16 @@ public class MQTTService extends Service {
 	}
 
 	/**
+	 * ftp文件查询
+	 *
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
+	 */
+	private MQTTMsgEntity ftpQueryList(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_QUERY_LIST, toId);
+	}
+
+	/**
 	 * 生成一个startNum 到 endNum之间的随机数(不包含endNum的随机数)
 	 *
 	 * @param startNum
@@ -841,5 +926,18 @@ public class MQTTService extends Service {
 			}
 		}
 		return len;
+	}
+
+	private String sqliteEscape(String keyWord) {
+		keyWord = keyWord.replace("/", "//");
+		keyWord = keyWord.replace("'", "''");
+		keyWord = keyWord.replace("[", "/[");
+		keyWord = keyWord.replace("]", "/]");
+		keyWord = keyWord.replace("%", "/%");
+		keyWord = keyWord.replace("&", "/&");
+		keyWord = keyWord.replace("_", "/_");
+		keyWord = keyWord.replace("(", "/(");
+		keyWord = keyWord.replace(")", "/)");
+		return keyWord;
 	}
 }
