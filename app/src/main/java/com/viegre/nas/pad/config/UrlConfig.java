@@ -24,8 +24,6 @@ public class UrlConfig {
 		public static final String REFRESH_TOKEN = USER + "refreshToken";
 		//登出接口
 		public static final String LOGOUT = USER + "logout";
-		//刷新Token，限制有效时间
-		public static final String REFRESH_TOKEN = USER + "refreshToken";
 //		获取手机验证码
 		public static final String GET_PHONENUMBER =  "user/getSmsCode";
 

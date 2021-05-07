@@ -20,6 +20,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by レインマン on 2021/04/13 18:00 with Android Studio.
@@ -27,6 +30,8 @@ import java.nio.charset.StandardCharsets;
 public enum AIUIManager {
 
 	INSTANCE;
+
+	public static final boolean IS_HARD_WAKEUP = false;
 
 	private static final String TAG = AIUIManager.class.getSimpleName();
 
@@ -40,9 +45,14 @@ public enum AIUIManager {
 	private boolean isManualStopVoiceNlp = false;
 	private volatile boolean mIsMusicPaused = false;
 	private volatile boolean mIsPlayNewMusicList = true;
+	private final List<String> mInitialResponseList = new ArrayList<>();
 
 	public void initialize(Context applicationContext) {
 		mAIUIAgent = AIUIAgent.createAgent(applicationContext, getAIUIParams(applicationContext), mAIUIListener);
+		mInitialResponseList.add("好的。");
+		mInitialResponseList.add("你说。");
+		mInitialResponseList.add("请说。");
+		mInitialResponseList.add("在呢。");
 	}
 
 	private String getAIUIParams(Context context) {
@@ -88,7 +98,7 @@ public enum AIUIManager {
 			return;
 		}
 		hasResult = false;
-		if (MscManager.IS_HARD_WAKEUP) {
+		if (IS_HARD_WAKEUP) {
 			AudioRecordManager.INSTANCE.startRecord();
 			return;
 		}
@@ -100,7 +110,9 @@ public enum AIUIManager {
 				mIsMusicPaused = true;
 				StarrySky.with().pauseMusic();
 			}
-			startTTS("在呢。", () -> {
+			Random random = new Random();
+			int index = random.nextInt(mInitialResponseList.size());
+			startTTS(mInitialResponseList.get(index), () -> {
 				//先发送唤醒消息，改变AIUI内部状态，只有唤醒状态才能接收语音输入
 				//默认为oneshot模式，即一次唤醒后就进入休眠。可以修改aiui_phone.cfg中speech参数的interact_mode为continuous以支持持续交互
 				AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
@@ -123,9 +135,9 @@ public enum AIUIManager {
 			mIsMusicPaused = true;
 			StarrySky.with().pauseMusic();
 		}
-		Log.i("startHardListening", "唤醒完毕，准备合成: " + (System.currentTimeMillis() - AudioRecordManager.INSTANCE.getTime()) + "ms");
-		AudioRecordManager.INSTANCE.setTime(System.currentTimeMillis());
-		startTTS("在呢。", () -> {
+		Random random = new Random();
+		int index = random.nextInt(mInitialResponseList.size());
+		startTTS(mInitialResponseList.get(index), () -> {
 			//先发送唤醒消息，改变AIUI内部状态，只有唤醒状态才能接收语音输入
 			//默认为oneshot模式，即一次唤醒后就进入休眠。可以修改aiui_phone.cfg中speech参数的interact_mode为continuous以支持持续交互
 			AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
@@ -165,7 +177,6 @@ public enum AIUIManager {
 		params.append(",volume=50");//合成音量
 		params.append(",ent=x_tts");//合成音量
 		params.append(",tag=" + tag);//合成tag，方便追踪合成结束，暂未实现
-
 		AIUIMessage startTts = new AIUIMessage(AIUIConstant.CMD_TTS, AIUIConstant.START, 0, params.toString(), text.getBytes());
 		mAIUIAgent.sendMessage(startTts);
 	}
@@ -222,11 +233,9 @@ public enum AIUIManager {
 							if ("nlp".equals(sub)) {
 								//解析得到语义结果
 								String resultStr = cntJson.optString("intent");
-								startTTS("好的，马上执行。", () -> {
-									if (null != mAIUIResultListener) {
-										mAIUIResultListener.result(resultStr);
-									}
-								});
+								if (null != mAIUIResultListener) {
+									mAIUIResultListener.result(resultStr);
+								}
 							}
 						}
 					} catch (Throwable e) {
@@ -334,9 +343,6 @@ public enum AIUIManager {
 				}
 
 				case AIUIConstant.EVENT_TTS: {
-					if (AIUIConstant.TTS_SPEAK_BEGIN == aiuiEvent.arg1) {
-						Log.i("startHardListening", "合成结束，开始播放tts: " + (System.currentTimeMillis() - AudioRecordManager.INSTANCE.getTime()) + "ms");
-					}
 					if (AIUIConstant.TTS_SPEAK_COMPLETED == aiuiEvent.arg1) {
 						if (null != mTTSCallback) {
 							mTTSCallback.run();

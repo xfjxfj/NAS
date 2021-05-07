@@ -12,11 +12,15 @@ public class SkillEntity implements Serializable {
 	public static final String VIDEO = "video";
 	public static final String APP = "app";
 	public static final String MUSIC_PRO = "musicPro";
+	public static final String JOKE = "joke";
+	public static final String WEATHER = "weather";
+	public static final String STORY = "story";
 
 	private AnswerEntity answer;
 	private String service;
 	private String operation;
 	private String text;
+	private SkillDataEntity data;
 
 	public SkillEntity() {}
 
@@ -50,5 +54,13 @@ public class SkillEntity implements Serializable {
 
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public SkillDataEntity getData() {
+		return data;
+	}
+
+	public void setData(SkillDataEntity data) {
+		this.data = data;
 	}
 }

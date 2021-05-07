@@ -22,7 +22,6 @@ public class WakeupService extends AccessibilityService {
 	@Override
 	protected boolean onKeyEvent(KeyEvent event) {
 		if (KeyEvent.ACTION_DOWN == event.getAction() && KeyEvent.KEYCODE_F11 == event.getKeyCode()) {
-			AudioRecordManager.INSTANCE.setTime(System.currentTimeMillis());
 			if (MscManager.INSTANCE.isListenHardWakeup()) {
 				AudioRecordManager.INSTANCE.stop();
 				AIUIManager.INSTANCE.startHardListening();

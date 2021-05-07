@@ -59,7 +59,7 @@ public class NasApp extends BaseApplication {
 	private void initIM() {
 		AppService.validateConfig(this);
 		// bugly，务必替换为你自己的!!!
-		if (getCurProcessName(this).equals(BuildConfig.APPLICATION_ID)) {
+		if (BuildConfig.APPLICATION_ID.equals(getCurProcessName(this))) {
 			// 如果uikit是以aar的方式引入 ，那么需要在此对Config里面的属性进行配置，如：
 			// Config.IM_SERVER_HOST = "im.example.com";
 			WfcUIKit wfcUIKit = WfcUIKit.getWfcUIKit();

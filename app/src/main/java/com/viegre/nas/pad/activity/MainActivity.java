@@ -108,12 +108,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	private void initClick() {
 		if (BuildConfig.DEBUG) {
 			mViewBinding.tcMainTime.setOnClickListener(view -> ActivityUtils.startActivity(PrimitiveFtpdActivity.class));
-//			mViewBinding.tcMainTime.setOnClickListener(view -> {
-//				if (!MscManager.INSTANCE.isListenHardWakeup() || AIUIManager.INSTANCE.isHardWakeup()) {
-//					return;
-//				}
-//				AIUIManager.INSTANCE.startHardListening();
-//			});
 		}
 		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
 		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
