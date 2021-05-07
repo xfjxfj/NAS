@@ -4,7 +4,6 @@
 
 package cn.wildfire.chat.kit;
 
-
 import android.app.Activity;
 import android.app.Application;
 import android.app.PendingIntent;
@@ -20,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.lqr.emoji.LQREmotionKit;
+import com.topqizhi.ai.manager.AIUIManager;
 import com.topqizhi.ai.manager.MscManager;
 
 import java.lang.reflect.Constructor;
@@ -38,7 +38,6 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
-
 import cn.wildfire.chat.kit.common.AppScopeViewModel;
 import cn.wildfire.chat.kit.net.OKHttpHelper;
 import cn.wildfire.chat.kit.third.utils.UIUtils;
@@ -283,7 +282,8 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
 
     public static void startActivity(Context context, Intent intent) {
 //        xfj 2021年4月28日
-         MscManager.INSTANCE.stopListening();
+        MscManager.INSTANCE.stopListening();
+        AIUIManager.INSTANCE.stopVoiceNlp();
         if (context instanceof Activity) {
             context.startActivity(intent);
             ((Activity) context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

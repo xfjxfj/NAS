@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.provider.Settings;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.djangoogle.framework.applicaiton.BaseApplication;
@@ -52,7 +51,6 @@ public class NasApp extends BaseApplication {
 		initAMap();
 		initIM();
 		StarrySky.init(this).apply();
-		MscManager.INSTANCE.stopListening();
 	}
 
 	/**

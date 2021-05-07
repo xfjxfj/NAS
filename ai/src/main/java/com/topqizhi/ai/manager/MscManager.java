@@ -73,9 +73,9 @@ public enum MscManager {
 	//语音唤醒对象
 	private VoiceWakeuper mVoiceWakeuper;
 	//语音唤醒是否在运行
-	private boolean mIsVoiceWakeuperRunning = false;
+	private volatile boolean mIsVoiceWakeuperRunning = false;
 	//是否监听硬件唤醒
-	private boolean mIsListenHardWakeup = false;
+	private volatile boolean mIsListenHardWakeup = false;
 
 	public void initialize(Context applicationContext) {
 		String param = SpeechConstant.APPID + "=" + applicationContext.getString(R.string.app_id) + "," + SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC;
@@ -135,8 +135,7 @@ public enum MscManager {
 
 				@Override
 				public void onError(SpeechError speechError) {
-					WakeuperResultEntity wakeuperResultEntity = new WakeuperResultEntity(false,
-					                                                                     speechError.getPlainDescription(true));
+					WakeuperResultEntity wakeuperResultEntity = new WakeuperResultEntity(false, speechError.getPlainDescription(true));
 					wakeuperResultListener.result(wakeuperResultEntity);
 					mIsVoiceWakeuperRunning = false;
 				}
