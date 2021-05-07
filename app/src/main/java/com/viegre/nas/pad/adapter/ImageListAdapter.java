@@ -31,10 +31,10 @@ import static android.widget.Toast.*;
  */
 public class ImageListAdapter extends BaseQuickAdapter<ImageEntity, BaseViewHolder> {
 
-    private List<ImageEntity>  imageList = new ArrayList<>();
-    public
+    private List<ImageEntity> imageList = new ArrayList<>();
+    private List<String> iList = new ArrayList<>();
 
-     ImageListAdapter() {
+    public ImageListAdapter() {
         super(R.layout.item_image_list);
     }
 
@@ -42,18 +42,17 @@ public class ImageListAdapter extends BaseQuickAdapter<ImageEntity, BaseViewHold
     protected void convert(@NotNull BaseViewHolder baseViewHolder, ImageEntity imageEntity) {
         AppCompatImageView acivItemImageRoot = baseViewHolder.getView(R.id.acivItemImageRoot);
         Glide.with(getContext()).load(imageEntity.getPath()).centerCrop().into(acivItemImageRoot);
-        imageList = getImageList();
+        imageList = getData();
+        if (iList.isEmpty()) {
+            for (ImageEntity entity : imageList) {
+                iList.add(entity.getPath().toString());
+            }
+        }
         baseViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                ImageViewerHelper.showImages(this, listOf(mImagesIv1, mImagesIv2, mImagesIv3), imags, index)
-//                new ImageViewerHelper();
-                CommonUtils.showErrorToast(imageEntity.getPath());
+                ImageViewerHelper.INSTANCE.showImages(getContext(), iList, getItemPosition(imageEntity), true);
             }
         });
-    }
-
-    public List<ImageEntity> getImageList() {
-        return imageList;
     }
 }

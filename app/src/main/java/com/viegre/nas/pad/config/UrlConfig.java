@@ -40,7 +40,6 @@ public class UrlConfig {
 		public static final String GET_RESOURCE = DEVICE + "getResource";
 		//获取设备所有的绑定用户
 		public static final String GET_GETALLFOLLOWS = DEVICE + "getAllFollows";
-
 		//刷新Token，限制有效时间
 		public static final String REFRESH_TOKEN = DEVICE + "refreshToken";
 
