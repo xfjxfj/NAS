@@ -74,15 +74,13 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> {
 
     private void scanMedia() {
         getImageList();
-//		MediaScanner mediaScanner = new MediaScanner(this, this::getImageList);
-//		mediaScanner.scanFile(new File(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE));
+        MediaScanner mediaScanner = new MediaScanner(this, this::getImageList);
+        mediaScanner.scanFile(new File(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE));
     }
 
     private void getImageList() {
 
         ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<ImageEntity>>() {
-
-
             @Override
             public List<ImageEntity> doInBackground() {
                 imageList = new ArrayList<>();
@@ -95,7 +93,13 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> {
                     imageList.add(new ImageEntity(dataPath));
                 }
                 cursor.close();
-                mImageListAdapter.setList(imageList);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mImageListAdapter.setList(imageList);
+                        mViewBinding.srlImageRefresh.setRefreshing(true);
+                    }
+                });
                 return imageList;
             }
 
