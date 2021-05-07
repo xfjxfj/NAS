@@ -71,23 +71,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		initWeather();
 	}
 
-//	@Override
-//	public boolean onKeyDown(int keyCode, KeyEvent event) {
-//		switch (keyCode) {
-//			case KeyEvent.KEYCODE_F11:
-//				if (!MscManager.INSTANCE.isListenHardWakeup()) {
-//					break;
-//				}
-//				AudioRecordManager.INSTANCE.stop();
-//				AIUIManager.INSTANCE.startHardListening();
-//				break;
-//
-//			default:
-//				break;
-//		}
-//		return super.onKeyDown(keyCode, event);
-//	}
-
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -147,7 +130,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		//音频
 		Glide.with(this)
 		     .load(R.mipmap.main_icon_audio)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconAudio);
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIconAudio);
 		mViewBinding.acivMainIconAudio.setOnClickListener(view -> ActivityUtils.startActivity(AudioActivity.class));
 
 		//视频
