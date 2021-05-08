@@ -17,7 +17,7 @@ public enum AudioRecordManager {
 		int recordBufSize = AudioRecord.getMinBufferSize(16000, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
 		mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
 		                               16000,
-		                               AudioFormat.CHANNEL_IN_DEFAULT,
+		                               AudioFormat.CHANNEL_IN_MONO,
 		                               AudioFormat.ENCODING_PCM_16BIT,
 		                               recordBufSize);
 	}

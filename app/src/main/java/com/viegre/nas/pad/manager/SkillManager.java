@@ -56,6 +56,7 @@ public enum SkillManager {
 	public static final String MUSIC_PLAY_URL = "http://music.163.com/song/media/outer/url?id=";
 
 	private final Set<TvChannelInfoEntity> mTvChannelInfoSet = new HashSet<>();
+	private volatile boolean mIsQueryMusicTtsPlayEnd = true;
 
 	public void parseSkillMsg(String message) {
 		ThreadUtils.executeByCached(new VoidTask() {
@@ -64,7 +65,7 @@ public enum SkillManager {
 				Log.i(TAG, message);
 				JSONObject json = JSON.parseObject(message);
 				if (!json.containsKey("service")) {
-					AIUIManager.INSTANCE.startListening();
+					AIUIManager.INSTANCE.startTTS("对不起，我没明白你的意思，请再说一遍。", AIUIManager.INSTANCE::startListening);
 					return null;
 				}
 				switch (json.getString("service")) {
@@ -118,7 +119,7 @@ public enum SkillManager {
 						break;
 
 					default:
-						AIUIManager.INSTANCE.startListening();
+						AIUIManager.INSTANCE.startTTS("对不起，我没明白你的意思，请再说一遍。", AIUIManager.INSTANCE::startListening);
 						break;
 				}
 				return null;
@@ -290,84 +291,122 @@ public enum SkillManager {
 			}
 		}
 
+		mIsQueryMusicTtsPlayEnd = false;
+		AIUIManager.INSTANCE.startTTS("正在查询，请稍候。", () -> mIsQueryMusicTtsPlayEnd = true);
 		//查询歌曲
-		RxHttp.get(MUSIC_SERVER + "search").setAssemblyEnabled(false).add("limit", 5).add("keywords", keywords.toString()).asString().subscribe(new Observer<String>() {
-			@Override
-			public void onSubscribe(@NonNull Disposable d) {}
+		RxHttp.get(MUSIC_SERVER + "search")
+		      .setAssemblyEnabled(false)
+		      .add("limit", 5)
+		      .add("keywords", keywords.toString())
+		      .asString()
+		      .subscribe(new Observer<String>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {}
 
-			@Override
-			public void onNext(@NonNull String s) {
-				LogUtils.iTag("parseMusicPro", "查询歌曲");
-				JSONObject resultObj = JSON.parseObject(s);
-				List<JSONObject> musicObjList = JSONObject.parseArray(resultObj.getJSONObject("result").getJSONArray("songs").toJSONString(),
-				                                                      JSONObject.class);
-				//乱序排列
-				Collections.shuffle(musicObjList);
-				List<SongInfo> playList = new ArrayList<>();
-				//遍历检查歌曲是否能播放
-				for (JSONObject musicObj : musicObjList) {
-					String id = musicObj.getString("id");
-					String name = musicObj.getString("name");
-					//同步请求
-					RxHttp.get(MUSIC_SERVER + "check/music")
-					      .setAssemblyEnabled(false)
-					      .add("id", id)
-					      .setSync()
-					      .asString()
-					      .subscribe(new Observer<String>() {
-						      @Override
-						      public void onSubscribe(@NonNull Disposable d) {}
+			      @Override
+			      public void onNext(@NonNull String s) {
+				      LogUtils.iTag("parseMusicPro", "查询歌曲");
+				      JSONObject resultObj = JSON.parseObject(s);
+				      List<JSONObject> musicObjList = JSONObject.parseArray(resultObj.getJSONObject("result").getJSONArray("songs").toJSONString(),
+				                                                            JSONObject.class);
+				      //乱序排列
+				      Collections.shuffle(musicObjList);
+				      List<SongInfo> playList = new ArrayList<>();
+				      //遍历检查歌曲是否能播放
+				      for (JSONObject musicObj : musicObjList) {
+					      String id = musicObj.getString("id");
+					      String name = musicObj.getString("name");
+					      //同步请求
+					      RxHttp.get(MUSIC_SERVER + "check/music")
+					            .setAssemblyEnabled(false)
+					            .add("id", id)
+					            .setSync()
+					            .asString()
+					            .subscribe(new Observer<String>() {
+						            @Override
+						            public void onSubscribe(@NonNull Disposable d) {}
 
-						      @Override
-						      public void onNext(@NonNull String s) {
-							      LogUtils.iTag("parseMusicPro", "遍历检查歌曲是否能播放");
-							      JSONObject checkJson = JSON.parseObject(s);
-							      if (checkJson.getBoolean("success")) {
-								      SongInfo songInfo = new SongInfo();
-								      String url = MUSIC_PLAY_URL + id + ".mp3";
-								      songInfo.setSongId(CommExtKt.md5(url));
-								      songInfo.setSongName(name);
-								      songInfo.setSongUrl(url);
-								      playList.add(songInfo);
+						            @Override
+						            public void onNext(@NonNull String s) {
+							            LogUtils.iTag("parseMusicPro", "遍历检查歌曲是否能播放");
+							            JSONObject checkJson = JSON.parseObject(s);
+							            if (checkJson.getBoolean("success")) {
+								            SongInfo songInfo = new SongInfo();
+								            String url = MUSIC_PLAY_URL + id + ".mp3";
+								            songInfo.setSongId(CommExtKt.md5(url));
+								            songInfo.setSongName(name);
+								            songInfo.setSongUrl(url);
+								            playList.add(songInfo);
+							            }
+						            }
+
+						            @Override
+						            public void onError(@NonNull Throwable e) {
+							            e.printStackTrace();
+							            LogUtils.iTag("parseMusicPro", "遍历歌曲报错", e);
+						            }
+
+						            @Override
+						            public void onComplete() {
+							            LogUtils.iTag("parseMusicPro", "遍历完毕");
+						            }
+					            });
+				      }
+
+				      if (!playList.isEmpty()) {
+					      AIUIManager.INSTANCE.setPlayNewMusicList(true);
+					      if (mIsQueryMusicTtsPlayEnd) {
+						      AIUIManager.INSTANCE.startTTS("即将为您播放" + playList.get(0).getSongName(),
+						                                    () -> StarrySky.with().playMusic(playList, 0),
+						                                    200L);
+					      } else {
+						      while (true) {
+							      if (mIsQueryMusicTtsPlayEnd) {
+								      AIUIManager.INSTANCE.startTTS("即将为您播放" + playList.get(0).getSongName(),
+								                                    () -> StarrySky.with().playMusic(playList, 0),
+								                                    200L);
+								      break;
 							      }
 						      }
-
-						      @Override
-						      public void onError(@NonNull Throwable e) {
-							      e.printStackTrace();
-							      LogUtils.iTag("parseMusicPro", "遍历歌曲报错", e);
+					      }
+				      } else {
+					      AIUIManager.INSTANCE.setPlayNewMusicList(false);
+					      if (mIsQueryMusicTtsPlayEnd) {
+						      AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。", null, 200L);
+					      } else {
+						      while (true) {
+							      if (mIsQueryMusicTtsPlayEnd) {
+								      AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。", null, 200L);
+								      break;
+							      }
 						      }
+					      }
+				      }
+			      }
 
-						      @Override
-						      public void onComplete() {
-							      LogUtils.iTag("parseMusicPro", "遍历完毕");
+			      @Override
+			      public void onError(@NonNull Throwable e) {
+				      e.printStackTrace();
+				      AIUIManager.INSTANCE.setPlayNewMusicList(true);
+				      LogUtils.iTag("parseMusicPro", "查询歌曲报错", e);
+				      if (mIsQueryMusicTtsPlayEnd) {
+					      AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。", null, 200L);
+				      } else {
+					      while (true) {
+						      if (mIsQueryMusicTtsPlayEnd) {
+							      AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。", null, 200L);
+							      break;
 						      }
-					      });
-				}
+					      }
+				      }
+			      }
 
-				if (!playList.isEmpty()) {
-					AIUIManager.INSTANCE.setPlayNewMusicList(true);
-					AIUIManager.INSTANCE.startTTS("即将为您播放" + playList.get(0).getSongName(), () -> StarrySky.with().playMusic(playList, 0));
-				} else {
-					AIUIManager.INSTANCE.setPlayNewMusicList(false);
-					AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。", null);
-				}
-			}
-
-			@Override
-			public void onError(@NonNull Throwable e) {
-				e.printStackTrace();
-				AIUIManager.INSTANCE.setPlayNewMusicList(true);
-				LogUtils.iTag("parseMusicPro", "查询歌曲报错", e);
-				AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。", null);
-			}
-
-			@Override
-			public void onComplete() {
-				LogUtils.iTag("parseMusicPro", "查询完毕");
-				AIUIManager.INSTANCE.startListening();
-			}
-		});
+			      @Override
+			      public void onComplete() {
+				      LogUtils.iTag("parseMusicPro", "查询完毕");
+				      AIUIManager.INSTANCE.startListening();
+			      }
+		      });
 	}
 
 	private void parseJoke(String text) {

@@ -9,10 +9,8 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
@@ -140,14 +138,14 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
             for (String[] server : Config.ICE_SERVERS) {
                 ChatManagerHolder.gAVEngine.addIceServer(server[0], server[1], server[2]);//初始化音视频
             }
-            SharedPreferences sp = application.getSharedPreferences("config", Context.MODE_PRIVATE);
-            String id = sp.getString("id", null);
-            String token = sp.getString("token", null);
-            if (!TextUtils.isEmpty(id) && !TextUtils.isEmpty(token)) {
-                //需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
-                //另外不能多次connect，如果需要切换用户请先disconnect，然后3秒钟之后再connect（如果是用户手动登录可以不用等，因为用户操作很难3秒完成，如果程序自动切换请等3秒）
-                ChatManagerHolder.gChatManager.connect(id, token);
-            }
+//            SharedPreferences sp = application.getSharedPreferences("config", Context.MODE_PRIVATE);
+//            String id = sp.getString("id", null);
+//            String token = sp.getString("token", null);
+//            if (!TextUtils.isEmpty(id) && !TextUtils.isEmpty(token)) {
+//                //需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
+//                //另外不能多次connect，如果需要切换用户请先disconnect，然后3秒钟之后再connect（如果是用户手动登录可以不用等，因为用户操作很难3秒完成，如果程序自动切换请等3秒）
+//                ChatManagerHolder.gChatManager.connect(id, token);
+//            }
         } catch (NotInitializedExecption notInitializedExecption) {
             notInitializedExecption.printStackTrace();
         }

@@ -173,9 +173,9 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 						PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
 						keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
 						ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
-						ActivityUtils.startActivity(MainActivity.class);
+//						ActivityUtils.startActivity(MainActivity.class);
 //						ActivityUtils.startActivity(WelcomeActivity.class);
-//						getDeviceBoundstatus();
+						getDeviceBoundstatus();
 					}
 				});
 			}
@@ -200,7 +200,6 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				FragmentUtils.show(mNetworkFragment);
 			} else {//引导用户注册
 				ActivityUtils.startActivity(WelcomeActivity.class);
-//				ActivityUtils.startActivity(MainActivity.class);
 			}
 		} else {//已绑定
 			//判断网络是否可用

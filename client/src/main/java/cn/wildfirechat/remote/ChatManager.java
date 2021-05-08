@@ -145,6 +145,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
  */
 
 public class ChatManager {
+
     private static final String TAG = ChatManager.class.getName();
 
     private final String SERVER_HOST;

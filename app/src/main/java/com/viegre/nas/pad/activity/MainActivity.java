@@ -42,8 +42,11 @@ import com.viegre.nas.pad.entity.LoginResult;
 import com.viegre.nas.pad.entity.LoglinCodeEntity;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.manager.AMapLocationManager;
+import com.viegre.nas.pad.manager.AccessibilityServiceManager;
 import com.viegre.nas.pad.service.AppService;
 import com.viegre.nas.pad.service.MscService;
+import com.viegre.nas.pad.service.WakeupService;
+import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerImageAdapter;
@@ -56,6 +59,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import cn.wildfire.chat.kit.ChatManagerHolder;
 import hdp.http.APIConstant;
@@ -64,8 +68,6 @@ import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import rxhttp.RxHttp;
-
-import static com.viegre.nas.pad.activity.im.ContactsActivity.phone;
 
 /**
  * Created by レインマン on 2020/12/15 09:29 with Android Studio.
@@ -77,136 +79,142 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	private final Map<String, Integer> mWeatherMap = new HashMap<>();
 	private UsbManager mUsbManager;
 
-    @Override
-    protected void initialize() {
-        ServiceUtils.startService(MscService.class);
-        openUsbDevice();
-        initClick();
-        initIcon();
-        initBanner();
-        initWeather();
-        loginIM();
-    }
+	@Override
+	protected void initialize() {
+		ServiceUtils.startService(MscService.class);
+		openUsbDevice();
+		initClick();
+		initIcon();
+		initBanner();
+		initWeather();
+		loginIM();
+	}
 
-    //登录音视频通话服务器
-    private void loginIM() {
-        //音视频登录
-        String ANDROID_ID = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
-        String authCode = "66666";
-        AppService.Instance().smsLogin(ANDROID_ID, authCode, new AppService.LoginCallback() {
-            @Override
-            public void onUiSuccess(LoginResult loginResult) {
-                if (isFinishing()) {
-                    return;
-                }
-                //需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
-                ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
-                SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
-                sp.edit()
-                        .putString("id", loginResult.getUserId())
-                        .putString("token", loginResult.getUserId())
-                        .putString("mToken", loginResult.getToken())
-                        .apply();
-                getDevicesToken(ANDROID_ID,loginResult.getUserId());
-            }
+	//登录音视频通话服务器
+	private void loginIM() {
+		//音视频登录
+		String ANDROID_ID = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
+		String authCode = "66666";
+		AppService.Instance().smsLogin(ANDROID_ID, authCode, new AppService.LoginCallback() {
+			@Override
+			public void onUiSuccess(LoginResult loginResult) {
+				if (isFinishing()) {
+					return;
+				}
+				//需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
+				ChatManagerHolder.gChatManager.disconnect(true, true);
+				ThreadUtils.executeByCachedWithDelay(new VoidTask() {
+					@Override
+					public Void doInBackground() {
+						ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
+						SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
+						sp.edit()
+						  .putString("id", loginResult.getUserId())
+						  .putString("token", loginResult.getUserId())
+						  .putString("mToken", loginResult.getToken())
+						  .apply();
+						getDevicesToken(ANDROID_ID, loginResult.getUserId());
+						return null;
+					}
+				}, 3L, TimeUnit.SECONDS);
+			}
 
-            @Override
-            public void onUiFailure(int code, String msg) {
-                if (isFinishing()) {
-                    return;
-                }
-                Toast.makeText(MainActivity.this, "登录失败：" + code + " " + msg, Toast.LENGTH_SHORT).show();
+			@Override
+			public void onUiFailure(int code, String msg) {
+				if (isFinishing()) {
+					return;
+				}
+				Toast.makeText(MainActivity.this, "登录失败：" + code + " " + msg, Toast.LENGTH_SHORT).show();
 //                loginButton.setEnabled(true);
-            }
-        });
-    }
+			}
+		});
+	}
 
-    private void getDevicesToken(String android_id, String userid) {
-        String url = UrlConfig.Device.GET_DEVICESTOKEN;
-        RxHttp.postForm(url)
-                .add("sn", android_id)
-                .asString()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                        Log.d("", "");
-                    }
+	private void getDevicesToken(String android_id, String userid) {
+		String url = UrlConfig.Device.GET_DEVICESTOKEN;
+		RxHttp.postForm(url).add("sn", android_id).asString().observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<String>() {
+			@Override
+			public void onSubscribe(@NonNull Disposable d) {
+				Log.d("", "");
+			}
 
-                    @Override
-                    public void onNext(@NonNull String s) {
-                        //添加公共请求头
+			@Override
+			public void onNext(@NonNull String s) {
+				//添加公共请求头
 //                        {"code":0,"msg":"OK","data":{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpdGVtIjp7Iml0ZW1JZCI6ImY2ZmUyNTkyMmZhMjAyOGEiLCJpdGVtVHlwZSI6IjIifSwiaXNzIjoiYXV0aDAiLCJleHAiOjE2MjA0MjA4ODh9.DJk9tVcaIK62PQbR_c8zwkyHxDB0zP3Mvc_In7pcrac"}}
 //                        {"code":0,"msg":"OK","data":null}
-                        Gson gson = new Gson();
-                        DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
-                        String token = loglinCodeEntity.getData().getToken();
-                        SPUtils.getInstance().put("token",token);
-                        postCallId(token,android_id,userid);
-                        Log.d("", "");
-                    }
+				Gson gson = new Gson();
+				DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
+				String token = loglinCodeEntity.getData().getToken();
+				SPUtils.getInstance().put("token", token);
+				postCallId(token, android_id, userid);
+				Log.d("", "");
+			}
 
-                    @Override
-                    public void onError(@NonNull Throwable e) {
+			@Override
+			public void onError(@NonNull Throwable e) {
 //                        CommonUtils.showErrorToast(e.getMessage());
-                        Log.d("", "");
-                    }
+				Log.d("", "");
+			}
 
-                    @Override
-                    public void onComplete() {
-                        Log.d("", "");
+			@Override
+			public void onComplete() {
+				Log.d("", "");
 //                        SPUtils.getInstance().remove(SPConfig.LOGIN_CODE_SESSION_ID);
 ////                        mViewBinding.actvLoginAccountBtn.setClickable(true);
-                    }
-                });
+			}
+		});
 
 //        postCallId(android_id,android_id);
-    }
+	}
 
-    private void postCallId(String token, String Callid, String sn) {
-        RxHttp.postForm(UrlConfig.Call.GET_REPORTINFO)
-                .addHeader("token",token)
-                .add("itemId", Callid)
-                .add("callId", sn)
-                .add("itemType",2)
-                .asString()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                        Log.d("", "");
-                    }
+	private void postCallId(String token, String Callid, String sn) {
+		RxHttp.postForm(UrlConfig.Call.GET_REPORTINFO)
+		      .addHeader("token", token)
+		      .add("itemId", Callid)
+		      .add("callId", sn)
+		      .add("itemType", 2)
+		      .asString()
+		      .observeOn(AndroidSchedulers.mainThread())
+		      .subscribe(new Observer<String>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {
+				      Log.d("", "");
+			      }
 
-                    @Override
-                    public void onNext(@NonNull String s) {
-                        //添加公共请求头
+			      @Override
+			      public void onNext(@NonNull String s) {
+				      //添加公共请求头
 //                        {"code":0,"msg":"OK","data":null}
-                        Gson gson = new Gson();
-                        LoglinCodeEntity loglinCodeEntity = gson.fromJson(s, LoglinCodeEntity.class);
-                        String msg = loglinCodeEntity.getMsg();
-                        Log.d("postCallId：", msg);
+				      Gson gson = new Gson();
+				      LoglinCodeEntity loglinCodeEntity = gson.fromJson(s, LoglinCodeEntity.class);
+				      String msg = loglinCodeEntity.getMsg();
+				      Log.d("postCallId：", msg);
 //                        CommonUtils.showErrorToast(msg);
 //                        {"code":500,"msg":"服务器内部异常","data":null}
-                    }
+			      }
 
-                    @Override
-                    public void onError(@NonNull Throwable e) {
+			      @Override
+			      public void onError(@NonNull Throwable e) {
 //                        CommonUtils.showErrorToast(e.getMessage());
-                        Log.d("", "");
-                    }
+				      Log.d("", "");
+			      }
 
-                    @Override
-                    public void onComplete() {
-                        Log.d("", "");
+			      @Override
+			      public void onComplete() {
+				      Log.d("", "");
 //                        SPUtils.getInstance().remove(SPConfig.LOGIN_CODE_SESSION_ID);
 ////                        mViewBinding.actvLoginAccountBtn.setClickable(true);
-                    }
-                });
-    }
+			      }
+		      });
+	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if (!AccessibilityServiceManager.INSTANCE.isOn(this, WakeupService.class.getName())) {
+			AccessibilityServiceManager.INSTANCE.gotoSettings(this);
+		}
 		initUser();
 		AMapLocationManager.INSTANCE.getLocation();
 	}
@@ -295,13 +303,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
 	private void initBanner() {
 		List<String> bannerList = new ArrayList<>();
-		bannerList.add("https://pic1.zhimg.com/c7ad985268e7144b588d7bf94eedb487_r.jpg?source=1940ef5c");
-		bannerList.add("https://pic1.zhimg.com/v2-3ff3d6a85edb2f19d343668d24ed9269_r.jpg?source=1940ef5c");
-		bannerList.add("https://pic3.zhimg.com/v2-3fcdfeacc10696e3f71d66a9ba6e9cc4_r.jpg?source=1940ef5c");
-		bannerList.add("https://pic2.zhimg.com/v2-73b8307b2db44c617f4e8515ce67dd39_r.jpg?source=1940ef5c");
-		bannerList.add("https://pic2.zhimg.com/v2-f85f658e4f785d48cf04dd8f47acc6fa_r.jpg?source=1940ef5c");
-		bannerList.add("https://pic4.zhimg.com/v2-e5427c1e9ad8aaad99d643e7bd7e927b_r.jpg?source=1940ef5c");
-		bannerList.add("https://pic2.zhimg.com/v2-d024c6ad6851b266e8509d1aa0948ceb_r.jpg?source=1940ef5c");
+		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/30/s608b78aaea651.jpg");
+		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/30/s608b77ae271cb.jpg");
+		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/30/s608b768f32fd9.jpg");
+		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/30/s608b75e282420.jpg");
+		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/30/s608b744114525.jpg");
+		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/09/s607004e9597f9.jpg");
+		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/06/s606c1b321897c.jpg");
 		Banner<String, BannerImageAdapter<String>> bMainBanner = findViewById(R.id.bMainBanner);
 		bMainBanner.setAdapter(new BannerImageAdapter<String>(bannerList) {
 			@Override

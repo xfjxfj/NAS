@@ -76,7 +76,7 @@
             android:background="@drawable/splash_guide_skip_bg"
             android:gravity="center"
             android:includeFontPadding="false"
-            android:text="@string/splash_guide_skip"
+            android:text="@string/welcome_skip"
             android:textColor="@android:color/black"
             android:textSize="21px"
             app:layout_constraintEnd_toEndOf="parent"
