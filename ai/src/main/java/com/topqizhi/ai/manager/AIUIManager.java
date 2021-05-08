@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.blankj.utilcode.util.ThreadUtils;
 import com.iflytek.aiui.AIUIAgent;
 import com.iflytek.aiui.AIUIConstant;
 import com.iflytek.aiui.AIUIEvent;
@@ -23,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by レインマン on 2021/04/13 18:00 with Android Studio.
@@ -31,7 +33,7 @@ public enum AIUIManager {
 
 	INSTANCE;
 
-	public static final boolean IS_HARD_WAKEUP = false;
+	public static final boolean IS_HARD_WAKEUP = true;
 
 	private static final String TAG = AIUIManager.class.getSimpleName();
 
@@ -49,10 +51,11 @@ public enum AIUIManager {
 
 	public void initialize(Context applicationContext) {
 		mAIUIAgent = AIUIAgent.createAgent(applicationContext, getAIUIParams(applicationContext), mAIUIListener);
-		mInitialResponseList.add("好的。");
+		mInitialResponseList.add("我在。");
 		mInitialResponseList.add("你说。");
 		mInitialResponseList.add("请说。");
 		mInitialResponseList.add("在呢。");
+		mInitialResponseList.add("怎么了。");
 	}
 
 	private String getAIUIParams(Context context) {
@@ -181,6 +184,19 @@ public enum AIUIManager {
 		mAIUIAgent.sendMessage(startTts);
 	}
 
+	public void startTTS(String text, Runnable onComplete, long delay) {
+		ThreadUtils.executeByCachedWithDelay(new ThreadUtils.SimpleTask<Void>() {
+			@Override
+			public Void doInBackground() {
+				startTTS(text, onComplete);
+				return null;
+			}
+
+			@Override
+			public void onSuccess(Void result) {}
+		}, delay, TimeUnit.MILLISECONDS);
+	}
+
 	private final AIUIListener mAIUIListener = new AIUIListener() {
 		@Override
 		public void onEvent(AIUIEvent aiuiEvent) {
@@ -240,7 +256,7 @@ public enum AIUIManager {
 						}
 					} catch (Throwable e) {
 						e.printStackTrace();
-						startTTS("对不起，我没有理解你的意思，我可能还需要学习。", () -> startListening());
+						startTTS("对不起，我没明白你的意思，请再说一遍。", () -> startListening());
 					}
 				}
 				break;

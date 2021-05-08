@@ -2,21 +2,13 @@ package com.viegre.nas.pad.activity.im;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.text.InputType;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.blankj.utilcode.util.SPUtils;
+import com.djangoogle.framework.activity.BaseActivity;
 import com.google.gson.Gson;
-import com.kongzue.dialog.interfaces.OnInputDialogButtonClickListener;
-import com.kongzue.dialog.util.BaseDialog;
-import com.kongzue.dialog.util.InputInfo;
-import com.kongzue.dialog.v3.InputDialog;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.viegre.nas.pad.R;
@@ -31,14 +23,16 @@ import com.viegre.nas.pad.entity.DevicesFollowEntity;
 import com.viegre.nas.pad.entity.LoginResult;
 import com.viegre.nas.pad.service.AppService;
 import com.viegre.nas.pad.util.CommonUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import cn.wildfire.chat.kit.ChatManagerHolder;
-import cn.wildfire.chat.kit.WfcBaseActivity;
-import com.djangoogle.framework.activity.BaseActivity;
-import cn.wildfire.chat.kit.third.location.ui.base.BasePresenter;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
@@ -56,7 +50,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
     private RecyclerView contactsRv2;
     private RecyclerView contactsRv3;
     private ImageView homeImg;
-    private List<ContactsBean> mContactsData = new ArrayList<>();
+    private final List<ContactsBean> mContactsData = new ArrayList<>();
     public static String phone = "";
 
 
@@ -147,7 +141,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
                     return;
                 }
                 //需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
-
                 ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
                 SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
 
