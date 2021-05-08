@@ -16,6 +16,7 @@ package cn.wildfire.chat.kit.voip;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import org.webrtc.StatsReport;
 
@@ -166,11 +167,16 @@ public class SingleCallActivity extends VoipBaseActivity {
         currentCallback = fragment;
 
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();
+        Log.d("**sessionSingCall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
         if (session != null) {
             if (session.getState() == AVEngineKit.CallState.Incoming) {
+                Log.d("**sessionSingCall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
                 session.answerCall(true);
+                Log.d("**sessionSingCall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
             } else if (session.getState() == AVEngineKit.CallState.Connected) {
+                Log.d("**sessionSingCall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
                 session.setAudioOnly(true);
+                Log.d("**sessionSingCall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
             }
         } else {
             finishFadeout();

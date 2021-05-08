@@ -4,6 +4,7 @@
 
 package cn.wildfire.chat.kit.voip;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -181,9 +182,11 @@ public class SingleAudioFragment extends Fragment implements AVEngineKit.CallSes
         }
     }
 
+    @SuppressLint("LongLogTag")
     @OnClick(R2.id.acceptImageView)
     public void onCallConnect() {
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();
+        Log.d("**sessionSingleAudioFragment**","session-status:"+session.getState().toString()+"*************************************************");
         if (session == null) {
             if (getActivity() != null && !getActivity().isFinishing()) {
                 getActivity().finish();
@@ -192,7 +195,9 @@ public class SingleAudioFragment extends Fragment implements AVEngineKit.CallSes
             return;
         }
         if (session.getState() == AVEngineKit.CallState.Incoming) {
+            Log.d("**sessionSingleAudioFragment**","session-status:"+session.getState().toString()+"*************************************************");
             session.answerCall(false);
+            Log.d("**sessionSingleAudioFragment**","session-status:"+session.getState().toString()+"*************************************************");
         }
     }
 

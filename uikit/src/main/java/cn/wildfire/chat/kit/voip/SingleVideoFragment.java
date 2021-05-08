@@ -211,16 +211,22 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
     @SuppressLint("LongLogTag")
     @OnClick(R2.id.acceptImageView)
     public void accept() {
+//        Log.d("acceptImageView-accept:", "accept"+gEngineKit.getCurren+"*************************************************");
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();
         if (session == null) {
+            Log.d("acceptImageView-accept:", "accept-if*************************************************");
             if (getActivity() != null && !getActivity().isFinishing()) {
+                Log.d("acceptImageView-accept:", "accept-if-if*************************************************");
                 getActivity().finish();
                 getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             } else {
                 //xfj 2021年4月28日
+                Log.d("acceptImageView-accept:", "accept-if-if-else*************************************************");
                 if (session != null) {
+                    Log.d("acceptImageView-accept:", "accept-if-if-if*************************************************");
                     session.endCall();
                 } else {
+                    Log.d("acceptImageView-accept:", "accept-if-if-if-else*************************************************");
                     getActivity().finish();
                     getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
@@ -229,22 +235,32 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
         }
         Log.d("session.getState()", session.getState().toString());
         Log.d("AVEngineKit.CallState.Incoming", AVEngineKit.CallState.Incoming.toString());
+        Log.d("acceptImageView-accept:", "accept-session.getState()*"+session.getState().toString()+"************************************************");
         AVEngineKit.CallState state = session.getState();
+        Log.d("acceptImageView-accept:", "accept-AVEngineKit.CallState.Incoming"+AVEngineKit.CallState.Incoming.toString()+"*************************************************");
         AVEngineKit.CallState state2 = AVEngineKit.CallState.Incoming;
-        boolean  is_stat = state == state2;
+        Log.d("acceptImageView-accept:", "accept-boolean is_stat = state == state2;"+ String.valueOf(state == state2)+"*************************************************");
+        boolean is_stat = state == state2;
+        Log.d("acceptImageView-accept:", "accept-2-if*************************************************");
         if (is_stat) {
+            Log.d("acceptImageView-accept:", "accept-2-if*************************************************");
+//            到这里可以接通
             session.answerCall(false);
             AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
             audioManager.setMode(AudioManager.MODE_NORMAL);
             audioManager.setSpeakerphoneOn(true);
         } else {
+            Log.d("acceptImageView-accept:", "accept-2-if-else*************************************************");
             if (session != null) {
+                Log.d("acceptImageView-accept:", "accept-2-if-if-session.endCall()*************************************************");
                 session.endCall();
             } else {
+                Log.d("acceptImageView-accept:", "accept-2-if-if-else*************************************************");
                 getActivity().finish();
                 getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
         }
+        Log.d("acceptImageView-accept:", "accept*************************************************");
     }
 
     //音频接受
@@ -269,7 +285,8 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
         if (session != null) {
             session.endCall();
         } else {
-            getActivity().finish();getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            getActivity().finish();
+            getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
     }
 

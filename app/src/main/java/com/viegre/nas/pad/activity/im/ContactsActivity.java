@@ -71,7 +71,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
         contactsRv2 = findViewById(R.id.contactsRv2);
         contactsRv3 = findViewById(R.id.contactsRv3);
         homeImg = findViewById(R.id.homeImg);
-//        mViewBinding.homeImg.setOnClickListener(view -> finish());
+        mViewBinding.homeImg.setOnClickListener(view -> finish());
         //初始化RecycleViewAdapter
 //        getContactsDatas();
 //        initAdapter();
@@ -200,6 +200,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
                                 }
                                 mContactsData.add(new ContactsBean(userid,"",nickName,phone));
                             }
+                                mContactsData.add(new ContactsBean("ceciciJJ","","郑飞","138"));
                         }
                         TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
                         initAdapter(mContactsData);

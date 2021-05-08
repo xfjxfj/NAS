@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -85,7 +86,9 @@ public class VoipCallService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
+        Log.d("**sessionVoipCall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
         boolean screenShare = intent.getBooleanExtra("screenShare", false);
         if (screenShare) {
             if (session != null) {
@@ -117,17 +120,21 @@ public class VoipCallService extends Service {
                 hideFloatBox();
             }
         }
+        Log.d("**sessionVoipCall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
         return START_NOT_STICKY;
     }
 
     private void checkCallState() {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
+        Log.d("**sessionVoipCall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
         if (session == null || AVEngineKit.CallState.Idle == session.getState()) {
 //            xfj 2021年4月28日
             AIUIManager.INSTANCE.startListening();
 //            ************
             stopSelf();
+            Log.d("**sessionVoipCall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
         } else {
+            Log.d("**sessionVoipCall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
             updateNotification(session);
             if (showFloatingWindow && session.getState() == AVEngineKit.CallState.Connected) {
                 if (session.isAudioOnly()) {
@@ -137,6 +144,7 @@ public class VoipCallService extends Service {
                 }
             }
             handler.postDelayed(this::checkCallState, 1000);
+            Log.d("**sessionVoipCall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
         }
     }
 
