@@ -5,6 +5,7 @@
 	<string name="confirm">确定</string>
 	<string name="cancel">取消</string>
 	<string name="unknown">未知</string>
+	<string name="initial_response">好的，马上执行。</string>
 
 	<!--启动页-->
 	<string name="splash_guide_skip">跳过 %d</string>

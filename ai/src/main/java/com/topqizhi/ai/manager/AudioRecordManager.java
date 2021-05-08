@@ -12,15 +12,6 @@ public enum AudioRecordManager {
 	INSTANCE;
 
 	private AudioRecord mAudioRecord;
-	private volatile long time;
-
-	public long getTime() {
-		return time;
-	}
-
-	public void setTime(long time) {
-		this.time = time;
-	}
 
 	public void initialize() {
 		int recordBufSize = AudioRecord.getMinBufferSize(16000, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
