@@ -3,11 +3,12 @@ package com.viegre.nas.pad.config;
 /**
  * Created by レインマン on 2021/01/04 17:44 with Android Studio.
  */
+
 public class UrlConfig {
 
 	//服务器地址
-	public static final String APP_SERVER = "http://39.108.98.92:8708/";
-//	public static final String APP_SERVER = "http://192.168.10.11:8080/";
+//	public static final String APP_SERVER = "http://39.108.98.92:8708/";
+	public static final String APP_SERVER = "http://192.168.10.15:8080/";
 
 	public static final String MQTT_SERVER = "tcp://39.108.236.191:1883";
 
@@ -25,7 +26,9 @@ public class UrlConfig {
 		//登出接口
 		public static final String LOGOUT = USER + "logout";
 //		获取手机验证码
-		public static final String GET_PHONENUMBER =  "user/getSmsCode";
+		public static final String GET_PHONENUMBER =  APP_SERVER+"user/getSmsCode";
+		//验证码登录接口
+		public static final String GET_loginWithSms =  APP_SERVER+"user/loginWithSms";
 
 	}
 
@@ -42,6 +45,8 @@ public class UrlConfig {
 		public static final String GET_GETALLFOLLOWS = DEVICE + "getAllFollows";
 		//刷新Token，限制有效时间
 		public static final String REFRESH_TOKEN = DEVICE + "refreshToken";
+//		获取设备token
+		public static final String GET_DEVICESTOKEN = DEVICE + "token";
 
 	}
 

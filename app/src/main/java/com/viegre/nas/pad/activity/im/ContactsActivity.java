@@ -27,6 +27,7 @@ import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivityContactsBinding;
 import com.viegre.nas.pad.entity.ContactsBean;
+import com.viegre.nas.pad.entity.DevicesFollowEntity;
 import com.viegre.nas.pad.entity.LoginResult;
 import com.viegre.nas.pad.service.AppService;
 import com.viegre.nas.pad.util.CommonUtils;
@@ -62,7 +63,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
     @Override
     protected void initialize() {
         initView();
-//        getContactsDatas();
+        getContactsDatas();
     }
 
     private void initView() {
@@ -74,24 +75,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
         //初始化RecycleViewAdapter
 //        getContactsDatas();
 //        initAdapter();
-        InputDialog.build(this)
-                .setTitle("提示").setMessage("请输入手机号（123456）")
-                .setInputText("15357906428")
-                .setOkButton("确定", new OnInputDialogButtonClickListener() {
-                    @Override
-                    public boolean onClick(BaseDialog baseDialog, View v, String inputStr) {
-                        callLogin(inputStr);
-                        return false;
-                    }
-                })
-                .setCancelButton("取消")
-                .setHintText("请输入密码")
-                .setInputInfo(new InputInfo()
-                        .setMAX_LENGTH(11)
-                        .setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS)
-                )
-                .setCancelable(true)
-                .show();
     }
 
 
@@ -148,6 +131,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
             mContactsData.add(new Gson().fromJson(json153.toString(), ContactsBean.class));
             mContactsData.add(new Gson().fromJson(json131.toString(), ContactsBean.class));
             mContactsData.add(new Gson().fromJson(jsonF.toString(), ContactsBean.class));
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -201,7 +185,24 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
 
                     @Override
                     public void onNext(@NonNull String s) {
+                        Gson gson = new Gson();
+                        DevicesFollowEntity devicesFollowEntity = gson.fromJson(s, DevicesFollowEntity.class);
+                        List<DevicesFollowEntity.DataDTO> data = devicesFollowEntity.getData();
+                        if (!data.isEmpty()) {
+                            for (DevicesFollowEntity.DataDTO datum : data) {
+                                String userid = datum.getCallId();
+                                String phone = datum.getPhone();
+                                    String nickName = "";
+                                if (datum.getNickName() == null) {
+                                    nickName = "";
+                                } else {
+                                    nickName = (String) datum.getNickName();
+                                }
+                                mContactsData.add(new ContactsBean(userid,"",nickName,phone));
+                            }
+                        }
                         TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
+                        initAdapter(mContactsData);
                     }
 
                     @Override
@@ -216,14 +217,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
                 });
     }
 }
-
-
-
-
-
-
-
-
 
 
 
