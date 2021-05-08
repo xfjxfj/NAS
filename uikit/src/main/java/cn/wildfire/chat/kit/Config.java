@@ -41,7 +41,7 @@ public class Config {
         // 如果是高级版，请删除掉下面的配置项目，保持ICE_SERVERS为空数组就行。
         // 数组元素定义
         /*{"turn server uri", "userName", "password"}*/
-//        {"turn:turn.wildfirechat.net:3478", "wfchat", "wfchat"}
+//        {"turn:turn.wildfirechat.net:3478","wfchat", "wfchat"}
         {"turn:turn.topqizhi.com:3478", "topqizhi", "topqizhi2020"}
     };
 
