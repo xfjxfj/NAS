@@ -154,6 +154,7 @@ public enum MscManager {
 		if (null != mVoiceWakeuper) {
 			mVoiceWakeuper.stopListening();
 		}
+		AudioRecordManager.INSTANCE.stop();
 	}
 
 	public void release() {
