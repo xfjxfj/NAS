@@ -184,7 +184,7 @@ public enum SkillManager {
 				break;
 
 			case "iot_model_sleep":
-				iotSwitchModel("睡觉", "on");
+				iotSwitchModel("睡眠", "on");
 				break;
 
 			case "iot_mode_rise":
