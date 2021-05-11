@@ -290,6 +290,7 @@ public class IotGateway {
 		if (itemName == null) {
 			return false;
 		}
+
 		//执行设备操作
 		try {
 			String url = GATEWAY_BASE_URL + "items/" + itemName;
