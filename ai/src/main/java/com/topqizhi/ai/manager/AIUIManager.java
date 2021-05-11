@@ -380,4 +380,8 @@ public enum AIUIManager {
 	public void setPauseMusicManually(boolean pauseMusicManually) {
 		mIsPauseMusicManually = pauseMusicManually;
 	}
+
+	public AIUIAgent getAIUIAgent() {
+		return mAIUIAgent;
+	}
 }
