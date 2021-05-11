@@ -193,7 +193,8 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
                                 }
                                 mContactsData.add(new ContactsBean(userid,"",nickName,phone));
                             }
-                                mContactsData.add(new ContactsBean("ceciciJJ","","郑飞","138"));
+                                mContactsData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
+                            mContactsData.add(new ContactsBean("ISIFIF99", "", "OPPO Pad", "138"));
                         }
                         TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
                         initAdapter(mContactsData);
