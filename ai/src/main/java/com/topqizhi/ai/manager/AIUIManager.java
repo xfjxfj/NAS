@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.iflytek.aiui.AIUIAgent;
 import com.iflytek.aiui.AIUIConstant;
@@ -199,23 +200,8 @@ public enum AIUIManager {
 //			Log.i(TAG, "on event: " + aiuiEvent.eventType);
 			switch (aiuiEvent.eventType) {
 				case AIUIConstant.EVENT_CONNECTED_TO_SERVER:
-					//智能家居控制个性化数据同步
-//					new Thread(new Runnable() {
-//						@Override
-//						public void run() {
-//							try {
-//								IotGateway.getAllModel();
-//								IotGateway.getAllDevice();
-//								IotGateway.getAllArea();
-//
-//								IotGateway.uploadAreaEntity(mAIUIAgent);
-//								IotGateway.uploadDeviceEntity(mAIUIAgent);
-//							} catch (Exception e) {
-//								e.printStackTrace();
-//							}
-//						}
-//					}).start();
 					Log.i(TAG, "已连接服务器");
+					BusUtils.postSticky("AIUI_CONNECTED_TO_SERVER");
 					break;
 
 				case AIUIConstant.EVENT_SERVER_DISCONNECTED:

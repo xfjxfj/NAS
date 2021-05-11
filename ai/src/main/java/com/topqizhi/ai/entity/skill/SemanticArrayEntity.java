@@ -27,9 +27,10 @@ public class SemanticArrayEntity implements Serializable {
 	}
 
 	public String findSlotValue(String slotName) {
-		for (SemanticArraySlotsEntity slot:slots) {
-			if(slot.getName().equalsIgnoreCase(slotName))
-				return slot.getValue();
+		for (SemanticArraySlotsEntity slot : slots) {
+			if (slot.getName().equalsIgnoreCase(slotName)) {
+				return slot.getNormValue();
+			}
 		}
 		return null;
 	}

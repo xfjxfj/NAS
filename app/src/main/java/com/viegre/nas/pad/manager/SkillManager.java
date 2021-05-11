@@ -14,8 +14,6 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
-import com.iflytek.aiui.AIUIAgent;
-import com.iflytek.aiui.jni.AIUI;
 import com.lzx.starrysky.SongInfo;
 import com.lzx.starrysky.StarrySky;
 import com.lzx.starrysky.utils.CommExtKt;
@@ -149,9 +147,12 @@ public enum SkillManager {
 						SkillSemanticArrayEntity urlEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
 						parseUrl(urlEntity.getAnswer().getText(), urlEntity.getData().getResult());
 						break;
+
 					case "TOPQIZHI.eyecare":
-						parseIotControl(JSON.parseObject(message, SkillSemanticArrayEntity.class));
+						SkillSemanticArrayEntity iotControlEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
+						AIUIManager.INSTANCE.startTTS(iotControlEntity.getAnswer().getText(), () -> parseIotControl(iotControlEntity));
 						break;
+
 					default:
 						AIUIManager.INSTANCE.startTTS("对不起，我没明白你的意思，请再说一遍。", AIUIManager.INSTANCE::startListening);
 						break;
@@ -162,92 +163,83 @@ public enum SkillManager {
 	}
 
 	private void parseIotControl(SkillSemanticArrayEntity semanticArr) {
+		StarrySkyManager.INSTANCE.stop();
 		SemanticArrayEntity semantic = semanticArr.getSemantic().get(0);
 		switch (semantic.getIntent()) {
 			case "iot_model":
 				String modelName = semantic.findSlotValue("name");
 				String modelSwitch = semantic.findSlotValue("switch");
-				iotSwitchModel(modelName,modelSwitch);
+				iotSwitchModel(modelName, modelSwitch);
 				break;
+
 			case "iot_model_backhome":
-				iotSwitchModel("回家","on");
+				iotSwitchModel("回家", "on");
 				break;
+
 			case "iot_model_leavehome":
-				iotSwitchModel("离家","on");
+				iotSwitchModel("离家", "on");
 				break;
 			case "iot_model_reading":
-				iotSwitchModel("读书","on");
+				iotSwitchModel("读书", "on");
 				break;
+
 			case "iot_model_sleep":
-				iotSwitchModel("睡觉","on");
+				iotSwitchModel("睡觉", "on");
 				break;
+
 			case "iot_mode_rise":
-				iotSwitchModel("起床","on");
+				iotSwitchModel("起床", "on");
 				break;
+
 			case "iot_device":
 				String deviceName = semantic.findSlotValue("name");
 				String deviceSwitch = semantic.findSlotValue("switch");
 				String deviceRegion = semantic.findSlotValue("region");
 				String deviceClPercent = semantic.findSlotValue("cl_percent");
-				if(deviceClPercent != null)
+				if (null != deviceClPercent) {
 					deviceName = "窗帘";
-				iotSwitchDevice(deviceName,deviceSwitch,deviceRegion,deviceClPercent);
+				}
+				iotSwitchDevice(deviceName, deviceSwitch, deviceRegion, deviceClPercent);
 				break;
+
 			default:
-				AIUIManager.INSTANCE.startTTS("不明白你的意思", AIUIManager.INSTANCE::startListening);
+				AIUIManager.INSTANCE.startTTS("对不起，我没明白你的意思，请再说一遍。", AIUIManager.INSTANCE::startListening);
 				break;
 		}
 	}
 
 	private void iotSwitchModel(String modelName, String modelSwitch) {
-		new Thread(new Runnable() {
+		ThreadUtils.executeByCached(new VoidTask() {
 			@Override
-			public void run() {
-				long startTime = System.currentTimeMillis();
+			public Void doInBackground() {
 				boolean isSuccess = IotGateway.executeModel(modelName);
-				if(System.currentTimeMillis() - startTime < 1000) {
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				if(isSuccess)
+				if (isSuccess) {
 					AIUIManager.INSTANCE.startTTS("执行成功", AIUIManager.INSTANCE::startListening);
-				else
+				} else {
 					AIUIManager.INSTANCE.startTTS("执行失败", AIUIManager.INSTANCE::startListening);
+				}
+				return null;
 			}
-		}).start();
-		Log.e(TAG,"iot model switch, " + modelName + " " + modelSwitch);
+		});
+		LogUtils.iTag(TAG, "iot model switch, " + modelName + " " + modelSwitch);
 	}
 
 	private void iotSwitchDevice(String deviceName, String deviceSwitch, String deviceRegion, String deviceClPercent) {
-		new Thread(new Runnable() {
+		ThreadUtils.executeByCached(new VoidTask() {
 			@Override
-			public void run() {
-				long startTime = System.currentTimeMillis();
-				boolean isSuccess = IotGateway.executeDevice(deviceName,deviceRegion,deviceSwitch.toUpperCase());
-				if(System.currentTimeMillis() - startTime < 1000) {
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				if(isSuccess)
+			public Void doInBackground() throws UnsupportedEncodingException {
+				boolean isSuccess = IotGateway.executeDevice(deviceName, deviceRegion, deviceSwitch.toUpperCase());
+				if (isSuccess) {
 					AIUIManager.INSTANCE.startTTS("执行成功", AIUIManager.INSTANCE::startListening);
-				else {
+				} else {
 					AIUIManager.INSTANCE.startTTS("执行失败", AIUIManager.INSTANCE::startListening);
-					try {
-						IotGateway.uploadAreaEntity(AIUIManager.INSTANCE.getAIUIAgent());
-						IotGateway.uploadDeviceEntity(AIUIManager.INSTANCE.getAIUIAgent());
-					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
-					}
+					IotGateway.uploadAreaEntity(AIUIManager.INSTANCE.getAIUIAgent());
+					IotGateway.uploadDeviceEntity(AIUIManager.INSTANCE.getAIUIAgent());
 				}
+				return null;
 			}
-		}).start();
-		Log.e(TAG,"iot device switch, " + deviceRegion + " " + deviceName + " " + deviceSwitch);
+		});
+		LogUtils.iTag(TAG, "iot device switch, " + deviceRegion + " " + deviceName + " " + deviceSwitch);
 	}
 
 	private void parseTvchannel(SkillSemanticArrayEntity tvchannelEntity) {
