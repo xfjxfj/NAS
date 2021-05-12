@@ -12,6 +12,7 @@ public class SkillDataResultEntity implements Serializable {
 	private String id;
 	private String title;
 	private String playUrl;
+	private String url;
 
 	public SkillDataResultEntity() {}
 
@@ -53,5 +54,13 @@ public class SkillDataResultEntity implements Serializable {
 
 	public void setPlayUrl(String playUrl) {
 		this.playUrl = playUrl;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 }

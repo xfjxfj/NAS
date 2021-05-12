@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
 
+import com.blankj.utilcode.util.BusUtils;
 import com.topqizhi.ai.manager.AIUIManager;
 import com.topqizhi.ai.manager.MscManager;
 import com.viegre.nas.pad.manager.SkillManager;
+import com.viegre.nas.pad.util.IotGateway;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -30,6 +32,7 @@ public class MscService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		BusUtils.register(this);
 		initNotificationChannel();
 		AIUIManager.INSTANCE.addAIUIResultListener(SkillManager.INSTANCE::parseSkillMsg);
 		AIUIManager.INSTANCE.startListening();
@@ -46,6 +49,23 @@ public class MscService extends Service {
 		MscManager.INSTANCE.stopListening();
 		MscManager.INSTANCE.release();
 		AIUIManager.INSTANCE.release();
+		BusUtils.unregister(this);
+	}
+
+	/**
+	 * 智能家居控制个性化数据同步
+	 */
+	@BusUtils.Bus(tag = "AIUI_CONNECTED_TO_SERVER", sticky = true, threadMode = BusUtils.ThreadMode.CACHED)
+	public void iotControl() {
+		try {
+			IotGateway.getAllModel();
+			IotGateway.getAllDevice();
+			IotGateway.getAllArea();
+			IotGateway.uploadAreaEntity(AIUIManager.INSTANCE.getAIUIAgent());
+			IotGateway.uploadDeviceEntity(AIUIManager.INSTANCE.getAIUIAgent());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void initNotificationChannel() {

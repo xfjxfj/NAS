@@ -17,6 +17,7 @@ import com.blankj.utilcode.util.Utils;
 import com.lzx.starrysky.SongInfo;
 import com.lzx.starrysky.StarrySky;
 import com.lzx.starrysky.utils.CommExtKt;
+import com.topqizhi.ai.entity.skill.SemanticArrayEntity;
 import com.topqizhi.ai.entity.skill.SkillDataResultEntity;
 import com.topqizhi.ai.entity.skill.SkillEntity;
 import com.topqizhi.ai.entity.skill.SkillMusicProSemanticEntity;
@@ -27,9 +28,11 @@ import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.entity.TvChannelInfoEntity;
 import com.viegre.nas.pad.entity.TvChannelInfoEntityClassEntity;
 import com.viegre.nas.pad.task.VoidTask;
+import com.viegre.nas.pad.util.IotGateway;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -70,17 +73,14 @@ public enum SkillManager {
 				}
 				switch (json.getString("service")) {
 					case SkillEntity.TVCHANNEL:
-						AIUIManager.INSTANCE.setPlayNewMusicList(true);
 						parseTvchannel(JSON.parseObject(message, SkillSemanticArrayEntity.class));
 						break;
 
 					case SkillEntity.TV_SMART_HOME:
-						AIUIManager.INSTANCE.setPlayNewMusicList(true);
 						parseTvSmartHome(JSON.parseObject(message, SkillSemanticObjectEntity.class));
 						break;
 
 					case SkillEntity.VIDEO:
-						AIUIManager.INSTANCE.setPlayNewMusicList(true);
 						parseVideo(JSON.parseObject(message, SkillSemanticArrayEntity.class));
 						break;
 
@@ -101,21 +101,56 @@ public enum SkillManager {
 						break;
 
 					case SkillEntity.JOKE:
-						AIUIManager.INSTANCE.setPlayNewMusicList(true);
-						SkillSemanticArrayEntity jokeEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
-						parseJoke(jokeEntity.getAnswer().getText());
-						break;
-
 					case SkillEntity.WEATHER:
-						AIUIManager.INSTANCE.setPlayNewMusicList(true);
-						SkillSemanticArrayEntity weatherEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
-						parseWeather(weatherEntity.getAnswer().getText());
+					case SkillEntity.AIUI_BRAINTEASER:
+					case SkillEntity.AIUI_FOREX:
+					case SkillEntity.LEIQIAO_HISTORYTODAY:
+					case SkillEntity.LEIQIAO_RELATIONSHIP:
+					case SkillEntity.KLLI3_AREASCALER:
+					case SkillEntity.KLLI3_VOLUMESCALER:
+					case SkillEntity.KLLI3_NUMBERSCALER:
+					case SkillEntity.KLLI3_POWERSCALER:
+					case SkillEntity.KLLI3_WEIGHTSCALER:
+					case SkillEntity.ZUOMX_QUERYCAPITAL:
+					case SkillEntity.LEIQIAO_CITYOFPRO:
+					case SkillEntity.LEIQIAO_LENGTH:
+					case SkillEntity.LEIQIAO_TEMPERATURE:
+					case SkillEntity.EGO_FOODSCALORIE:
+					case SkillEntity.KLLI3_CAPTIALINFO:
+					case SkillEntity.AIUI_IDIOMSDICT:
+					case SkillEntity.AIUI_CALC:
+					case SkillEntity.CALENDAR:
+					case SkillEntity.STOCK:
+					case SkillEntity.AIUI_GARBAGECLASSIFY:
+					case SkillEntity.HOLIDAY:
+					case SkillEntity.CONSTELLATION:
+					case SkillEntity.DATETIMEX:
+					case SkillEntity.CHINESEZODIAC:
+					case SkillEntity.CARNUMBER:
+					case SkillEntity.TRANSLATION:
+					case SkillEntity.AIUI_VIRUSSEARCH:
+					case SkillEntity.BAIKE:
+					case SkillEntity.PETROLPRICE:
+					case SkillEntity.DREAM:
+						SkillSemanticArrayEntity answerTextEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
+						parseAnswerText(answerTextEntity.getAnswer().getText());
 						break;
 
 					case SkillEntity.STORY:
-						AIUIManager.INSTANCE.setPlayNewMusicList(true);
-						SkillSemanticArrayEntity storyEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
-						parseStory(storyEntity.getAnswer().getText(), storyEntity.getData().getResult());
+						SkillSemanticArrayEntity playUrlEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
+						parsePlayUrl(playUrlEntity.getAnswer().getText(), playUrlEntity.getData().getResult());
+						break;
+
+					case SkillEntity.ANIMALCRIES:
+					case SkillEntity.CROSSTALK:
+					case SkillEntity.DRAMA:
+						SkillSemanticArrayEntity urlEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
+						parseUrl(urlEntity.getAnswer().getText(), urlEntity.getData().getResult());
+						break;
+
+					case "TOPQIZHI.eyecare":
+						SkillSemanticArrayEntity iotControlEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
+						AIUIManager.INSTANCE.startTTS(iotControlEntity.getAnswer().getText(), () -> parseIotControl(iotControlEntity));
 						break;
 
 					default:
@@ -127,12 +162,93 @@ public enum SkillManager {
 		});
 	}
 
+	private void parseIotControl(SkillSemanticArrayEntity semanticArr) {
+		StarrySkyManager.INSTANCE.stop();
+		SemanticArrayEntity semantic = semanticArr.getSemantic().get(0);
+		switch (semantic.getIntent()) {
+			case "iot_model":
+				String modelName = semantic.findSlotValue("name");
+				String modelSwitch = semantic.findSlotValue("switch");
+				iotSwitchModel(modelName, modelSwitch);
+				break;
+
+			case "iot_model_backhome":
+				iotSwitchModel("回家", "on");
+				break;
+
+			case "iot_model_leavehome":
+				iotSwitchModel("离家", "on");
+				break;
+			case "iot_model_reading":
+				iotSwitchModel("读书", "on");
+				break;
+
+			case "iot_model_sleep":
+				iotSwitchModel("睡眠", "on");
+				break;
+
+			case "iot_mode_rise":
+				iotSwitchModel("起床", "on");
+				break;
+
+			case "iot_device":
+				String deviceName = semantic.findSlotValue("name");
+				String deviceSwitch = semantic.findSlotValue("switch");
+				String deviceRegion = semantic.findSlotValue("region");
+				String deviceClPercent = semantic.findSlotValue("cl_percent");
+				if (null != deviceClPercent) {
+					deviceName = "窗帘";
+				}
+				iotSwitchDevice(deviceName, deviceSwitch, deviceRegion, deviceClPercent);
+				break;
+
+			default:
+				AIUIManager.INSTANCE.startTTS("对不起，我没明白你的意思，请再说一遍。", AIUIManager.INSTANCE::startListening);
+				break;
+		}
+	}
+
+	private void iotSwitchModel(String modelName, String modelSwitch) {
+		ThreadUtils.executeByCached(new VoidTask() {
+			@Override
+			public Void doInBackground() {
+				boolean isSuccess = IotGateway.executeModel(modelName);
+				if (isSuccess) {
+					AIUIManager.INSTANCE.startTTS("执行成功", AIUIManager.INSTANCE::startListening);
+				} else {
+					AIUIManager.INSTANCE.startTTS("执行失败", AIUIManager.INSTANCE::startListening);
+				}
+				return null;
+			}
+		});
+		LogUtils.iTag(TAG, "iot model switch, " + modelName + " " + modelSwitch);
+	}
+
+	private void iotSwitchDevice(String deviceName, String deviceSwitch, String deviceRegion, String deviceClPercent) {
+		ThreadUtils.executeByCached(new VoidTask() {
+			@Override
+			public Void doInBackground() throws UnsupportedEncodingException {
+				boolean isSuccess = IotGateway.executeDevice(deviceName, deviceRegion, deviceSwitch.toUpperCase());
+				if (isSuccess) {
+					AIUIManager.INSTANCE.startTTS("执行成功", AIUIManager.INSTANCE::startListening);
+				} else {
+					AIUIManager.INSTANCE.startTTS("执行失败", AIUIManager.INSTANCE::startListening);
+					IotGateway.uploadAreaEntity(AIUIManager.INSTANCE.getAIUIAgent());
+					IotGateway.uploadDeviceEntity(AIUIManager.INSTANCE.getAIUIAgent());
+				}
+				return null;
+			}
+		});
+		LogUtils.iTag(TAG, "iot device switch, " + deviceRegion + " " + deviceName + " " + deviceSwitch);
+	}
+
 	private void parseTvchannel(SkillSemanticArrayEntity tvchannelEntity) {
 		switch (tvchannelEntity.getSemantic().get(0).getIntent()) {
 			case "INSTRUCTION":
 				switch (tvchannelEntity.getSemantic().get(0).getSlots().get(0).getValue()) {
 					//打开电视
 					case "live":
+						StarrySkyManager.INSTANCE.stop();
 						AIUIManager.INSTANCE.startTTS(StringUtils.getString(R.string.initial_response), () -> ThreadUtils.runOnUiThread(() -> {
 							Intent liveIntent = new Intent();
 							liveIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
@@ -247,6 +363,7 @@ public enum SkillManager {
 	private void parseVideo(SkillSemanticArrayEntity videoEntity) {
 		switch (videoEntity.getSemantic().get(0).getIntent()) {
 			case "QUERY":
+				StarrySkyManager.INSTANCE.stop();
 				AIUIManager.INSTANCE.startTTS("以下是" + videoEntity.getText() + "的搜索结果。", () -> ThreadUtils.runOnUiThread(() -> {
 					Intent searchIntent = new Intent("myvst.intent.action.SearchActivity");
 					searchIntent.putExtra("search_word", videoEntity.getSemantic().get(0).getSlots().get(0).getValue());
@@ -273,8 +390,25 @@ public enum SkillManager {
 		String intent = sematicJSON.getString("intent");
 
 		if ("INSTRUCTION".equals(intent)) {
-			AIUIManager.INSTANCE.setPlayNewMusicList(true);
-			AIUIManager.INSTANCE.startTTS(musicProEntity.getText(), AIUIManager.INSTANCE::startListening);
+			if (slots == null || slots.size() == 0) {
+				AIUIManager.INSTANCE.startTTS("对不起，我没明白你的意思，请再说一遍。", AIUIManager.INSTANCE::startListening);
+			} else {
+				switch (slots.getJSONObject(0).getString("value")) {
+					case "pause":
+						AIUIManager.INSTANCE.setPauseMusicManually(true);
+						AIUIManager.INSTANCE.startTTS("好的。", AIUIManager.INSTANCE::startListening);
+						break;
+
+					case "replay":
+						AIUIManager.INSTANCE.setPauseMusicManually(false);
+						AIUIManager.INSTANCE.startTTS("好的。", AIUIManager.INSTANCE::startListening);
+						break;
+
+					default:
+						AIUIManager.INSTANCE.startTTS("对不起，我没明白你的意思，请再说一遍。", AIUIManager.INSTANCE::startListening);
+						break;
+				}
+			}
 			return;
 		}
 
@@ -354,7 +488,6 @@ public enum SkillManager {
 				      }
 
 				      if (!playList.isEmpty()) {
-					      AIUIManager.INSTANCE.setPlayNewMusicList(true);
 					      if (mIsQueryMusicTtsPlayEnd) {
 						      AIUIManager.INSTANCE.startTTS("即将为您播放" + playList.get(0).getSongName(),
 						                                    () -> StarrySky.with().playMusic(playList, 0),
@@ -370,7 +503,7 @@ public enum SkillManager {
 						      }
 					      }
 				      } else {
-					      AIUIManager.INSTANCE.setPlayNewMusicList(false);
+					      StarrySkyManager.INSTANCE.stop();
 					      if (mIsQueryMusicTtsPlayEnd) {
 						      AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。", null, 200L);
 					      } else {
@@ -387,7 +520,7 @@ public enum SkillManager {
 			      @Override
 			      public void onError(@NonNull Throwable e) {
 				      e.printStackTrace();
-				      AIUIManager.INSTANCE.setPlayNewMusicList(true);
+				      StarrySkyManager.INSTANCE.stop();
 				      LogUtils.iTag("parseMusicPro", "查询歌曲报错", e);
 				      if (mIsQueryMusicTtsPlayEnd) {
 					      AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。", null, 200L);
@@ -409,22 +542,31 @@ public enum SkillManager {
 		      });
 	}
 
-	private void parseJoke(String text) {
-		AIUIManager.INSTANCE.startTTS(text, null);
+	private void parseAnswerText(String answer) {
+		StarrySkyManager.INSTANCE.stop();
+		AIUIManager.INSTANCE.startTTS(answer, null);
 		AIUIManager.INSTANCE.startListening();
 	}
 
-	private void parseWeather(String text) {
-		AIUIManager.INSTANCE.startTTS(text, null);
-		AIUIManager.INSTANCE.startListening();
-	}
-
-	private void parseStory(String text, List<SkillDataResultEntity> result) {
+	private void parsePlayUrl(String text, List<SkillDataResultEntity> result) {
 		if (result.isEmpty()) {
 			AIUIManager.INSTANCE.startTTS(text, AIUIManager.INSTANCE::startListening);
 		} else {
+			StarrySkyManager.INSTANCE.stop();
 			AIUIManager.INSTANCE.startTTS(text, () -> {
 				StarrySky.with().playMusicByUrl(result.get(0).getPlayUrl());
+				AIUIManager.INSTANCE.startListening();
+			});
+		}
+	}
+
+	private void parseUrl(String text, List<SkillDataResultEntity> result) {
+		if (result.isEmpty()) {
+			AIUIManager.INSTANCE.startTTS(text, AIUIManager.INSTANCE::startListening);
+		} else {
+			StarrySkyManager.INSTANCE.stop();
+			AIUIManager.INSTANCE.startTTS(text, () -> {
+				StarrySky.with().playMusicByUrl(result.get(0).getUrl());
 				AIUIManager.INSTANCE.startListening();
 			});
 		}

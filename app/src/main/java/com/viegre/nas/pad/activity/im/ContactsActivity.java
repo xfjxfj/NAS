@@ -55,6 +55,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
     private final List<ContactsBean> mContactsData = new ArrayList<>();
     public static String phone = "";
 
+
     @Override
     protected void initialize() {
         initView();

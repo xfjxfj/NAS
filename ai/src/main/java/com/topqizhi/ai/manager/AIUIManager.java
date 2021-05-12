@@ -45,9 +45,8 @@ public enum AIUIManager {
 	private AIUIResultListener mAIUIResultListener;
 	private boolean hasResult = false;
 	private boolean isManualStopVoiceNlp = false;
-	private volatile boolean mIsMusicPaused = false;
-	private volatile boolean mIsPlayNewMusicList = true;
 	private final List<String> mInitialResponseList = new ArrayList<>();
+	private volatile boolean mIsPauseMusicManually;
 
 	public void initialize(Context applicationContext) {
 		mAIUIAgent = AIUIAgent.createAgent(applicationContext, getAIUIParams(applicationContext), mAIUIListener);
@@ -91,8 +90,7 @@ public enum AIUIManager {
 
 	public void startListening() {
 		MscManager.INSTANCE.setListenHardWakeup(true);
-		if (!mIsPlayNewMusicList && mIsMusicPaused && StarrySky.with().isPaused()) {
-			mIsMusicPaused = false;
+		if (!mIsPauseMusicManually && StarrySky.with().isPaused()) {
 			StarrySky.with().restoreMusic();
 		}
 		//唤醒结束后恢复音量
@@ -110,7 +108,6 @@ public enum AIUIManager {
 			//唤醒时静音
 			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
 			if (StarrySky.with().isPlaying()) {
-				mIsMusicPaused = true;
 				StarrySky.with().pauseMusic();
 			}
 			Random random = new Random();
@@ -135,7 +132,6 @@ public enum AIUIManager {
 		//唤醒时静音
 		VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
 		if (StarrySky.with().isPlaying()) {
-			mIsMusicPaused = true;
 			StarrySky.with().pauseMusic();
 		}
 		Random random = new Random();
@@ -204,6 +200,7 @@ public enum AIUIManager {
 			switch (aiuiEvent.eventType) {
 				case AIUIConstant.EVENT_CONNECTED_TO_SERVER:
 					Log.i(TAG, "已连接服务器");
+//					BusUtils.postSticky("AIUI_CONNECTED_TO_SERVER");
 					break;
 
 				case AIUIConstant.EVENT_SERVER_DISCONNECTED:
@@ -381,7 +378,11 @@ public enum AIUIManager {
 		}
 	}
 
-	public void setPlayNewMusicList(boolean playNewMusicList) {
-		mIsPlayNewMusicList = playNewMusicList;
+	public void setPauseMusicManually(boolean pauseMusicManually) {
+		mIsPauseMusicManually = pauseMusicManually;
+	}
+
+	public AIUIAgent getAIUIAgent() {
+		return mAIUIAgent;
 	}
 }
