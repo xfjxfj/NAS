@@ -89,7 +89,7 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 				                                           new String[]{MediaStore.Video.VideoColumns.DATA, MediaStore.Video.VideoColumns.DISPLAY_NAME, MediaStore.Video.VideoColumns.DURATION, MediaStore.Video.VideoColumns.DATE_ADDED},
 				                                           MediaStore.Video.Media.DATA + " like ?",
 				                                           new String[]{(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE) + "%"},
-				                                           MediaStore.Images.Media.DATE_MODIFIED + " desc");
+				                                           MediaStore.Video.Media.DATE_MODIFIED + " desc");
 
 				if (null != cursor) {
 					while (cursor.moveToNext()) {

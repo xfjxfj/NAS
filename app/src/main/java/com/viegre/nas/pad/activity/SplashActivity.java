@@ -151,33 +151,23 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				//创建文件夹
 				FileUtils.createOrExistsDir(PathConfig.GUIDE_RESOURCE);
 				FileUtils.createOrExistsDir(PathConfig.RECYCLE_BIN);
+				List<String> commands = new ArrayList<>();
+				commands.add("cd /data/data/com.viegre.nas.pad/files/frp/");
+				commands.add("./frpc -c ./frpc.ini > frpc.log  2>&1  &");
+				ShellUtils.execCmd(commands, false);
 				return null;
 			}
 
 			@Override
 			public void onSuccess(Void v) {
 				super.onSuccess(v);
-				ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
-					@Override
-					public Void doInBackground() {
-						List<String> commands = new ArrayList<>();
-						commands.add("cd /data/data/com.viegre.nas.pad/files/frp/");
-						commands.add("./frpc -c ./frpc.ini > frpc.log  2>&1  &");
-						ShellUtils.execCmd(commands, false);
-						return null;
-					}
-
-					@Override
-					public void onSuccess(Void result) {
-						SharedPreferences prefs = LoadPrefsUtil.getPrefs(mActivity);
-						PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
-						keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
-						ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
-//						ActivityUtils.startActivity(MainActivity.class);
-//						ActivityUtils.startActivity(WelcomeActivity.class);
-						getDeviceBoundstatus();
-					}
-				});
+				SharedPreferences prefs = LoadPrefsUtil.getPrefs(mActivity);
+				PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
+				keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
+				ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
+//				ActivityUtils.startActivity(MainActivity.class);
+//				ActivityUtils.startActivity(WelcomeActivity.class);
+				getDeviceBoundstatus();
 			}
 		});
 	}

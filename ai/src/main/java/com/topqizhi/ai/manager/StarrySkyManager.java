@@ -1,4 +1,4 @@
-package com.viegre.nas.pad.manager;
+package com.topqizhi.ai.manager;
 
 import com.blankj.utilcode.util.ThreadUtils;
 import com.lzx.starrysky.StarrySky;
@@ -12,5 +12,9 @@ public enum StarrySkyManager {
 
 	public void stop() {
 		ThreadUtils.runOnUiThread(() -> StarrySky.with().stopMusic());
+	}
+
+	public void restore() {
+		ThreadUtils.runOnUiThread(() -> StarrySky.with().restoreMusic());
 	}
 }

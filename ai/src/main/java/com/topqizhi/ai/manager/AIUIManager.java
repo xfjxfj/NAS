@@ -91,7 +91,7 @@ public enum AIUIManager {
 	public void startListening() {
 		MscManager.INSTANCE.setListenHardWakeup(true);
 		if (!mIsPauseMusicManually && StarrySky.with().isPaused()) {
-			StarrySky.with().restoreMusic();
+			StarrySkyManager.INSTANCE.restore();
 		}
 		//唤醒结束后恢复音量
 		VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);

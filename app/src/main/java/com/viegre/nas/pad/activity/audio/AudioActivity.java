@@ -152,7 +152,7 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 				                                           new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID, MediaStore.Audio.Media.DURATION},
 				                                           MediaStore.Audio.Media.DATA + " like ?",
 				                                           new String[]{(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE) + "%"},
-				                                           MediaStore.Images.Media.DISPLAY_NAME + " desc");
+				                                           MediaStore.Audio.Media.DISPLAY_NAME + " desc");
 				if (null != cursor) {
 					while (cursor.moveToNext()) {
 						String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));

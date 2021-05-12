@@ -66,8 +66,9 @@ public class LoadPrefsUtil {
 	}
 
 	public static File startDir(SharedPreferences prefs) {
-		String prefStr = prefs.getString(LoadPrefsUtil.PREF_KEY_START_DIR, "/sdcard/nas/");
-		return prefStr != null ? new File(prefStr) : Defaults.HOME_DIR;
+//		String prefStr = prefs.getString(LoadPrefsUtil.PREF_KEY_START_DIR, "/storage/emulated/0/nas/");
+//		return prefStr != null ? new File(prefStr) : Defaults.HOME_DIR;
+		return Defaults.HOME_DIR;
 	}
 
 	public static Boolean announce(SharedPreferences prefs) {

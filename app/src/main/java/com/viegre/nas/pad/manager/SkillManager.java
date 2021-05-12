@@ -4,12 +4,15 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -24,9 +27,13 @@ import com.topqizhi.ai.entity.skill.SkillMusicProSemanticEntity;
 import com.topqizhi.ai.entity.skill.SkillSemanticArrayEntity;
 import com.topqizhi.ai.entity.skill.SkillSemanticObjectEntity;
 import com.topqizhi.ai.manager.AIUIManager;
+import com.topqizhi.ai.manager.StarrySkyManager;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.activity.video.VideoPlayerActivity;
+import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.entity.TvChannelInfoEntity;
 import com.viegre.nas.pad.entity.TvChannelInfoEntityClassEntity;
+import com.viegre.nas.pad.entity.VideoEntity;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.IotGateway;
 
@@ -364,13 +371,7 @@ public enum SkillManager {
 		switch (videoEntity.getSemantic().get(0).getIntent()) {
 			case "QUERY":
 				StarrySkyManager.INSTANCE.stop();
-				AIUIManager.INSTANCE.startTTS("以下是" + videoEntity.getText() + "的搜索结果。", () -> ThreadUtils.runOnUiThread(() -> {
-					Intent searchIntent = new Intent("myvst.intent.action.SearchActivity");
-					searchIntent.putExtra("search_word", videoEntity.getSemantic().get(0).getSlots().get(0).getValue());
-					searchIntent.putExtra("check_back_home", false);
-					ActivityUtils.startActivity(searchIntent);
-					AIUIManager.INSTANCE.startListening();
-				}));
+				queryVideo(videoEntity);
 				break;
 
 			default:
@@ -412,6 +413,9 @@ public enum SkillManager {
 			return;
 		}
 
+		mIsQueryMusicTtsPlayEnd = false;
+		AIUIManager.INSTANCE.startTTS("正在查询，请稍候。", () -> mIsQueryMusicTtsPlayEnd = true);
+
 		StringBuilder keywords = new StringBuilder();
 		if (slots == null || slots.size() == 0) {
 			keywords = new StringBuilder(musicProEntity.getText());
@@ -420,14 +424,69 @@ public enum SkillManager {
 			}
 		} else {
 			for (int i = 0; i < slots.size(); i++) {
+				//本地查询歌曲
+				if ("song".equals(slots.getJSONObject(i).getString("name"))) {
+					String value = slots.getJSONObject(i).getString("value");
+					Cursor cursor = Utils.getApp()
+					                     .getContentResolver()
+					                     .query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+					                            new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media._ID, MediaStore.Audio.Media.DATE_MODIFIED},
+					                            MediaStore.Audio.Media.TITLE + " LIKE ?",
+					                            new String[]{"%" + value + "%"},
+					                            MediaStore.Audio.Media.DATE_MODIFIED + " desc");
+					if (null != cursor) {
+						List<SongInfo> audioList = new ArrayList<>();
+						while (cursor.moveToNext()) {
+							String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+							if (null == path) {
+								continue;
+							}
+							if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
+								continue;
+							}
+							String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
+							if (null == name) {
+								continue;
+							}
+							int _id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
+							SongInfo songInfo = new SongInfo();
+							songInfo.setSongId(String.valueOf(_id));
+							songInfo.setSongName(name);
+							songInfo.setSongUrl(path);
+							audioList.add(songInfo);
+						}
+						cursor.close();
+						if (!audioList.isEmpty()) {
+							if (mIsQueryMusicTtsPlayEnd) {
+								AIUIManager.INSTANCE.startTTS("即将为您播放" + audioList.get(0).getSongName(), () -> {
+									StarrySky.with().playMusic(audioList, 0);
+									AIUIManager.INSTANCE.startListening();
+								}, 200L);
+							} else {
+								while (true) {
+									if (mIsQueryMusicTtsPlayEnd) {
+										AIUIManager.INSTANCE.startTTS("即将为您播放" + audioList.get(0).getSongName(), () -> {
+											StarrySky.with().playMusic(audioList, 0);
+											AIUIManager.INSTANCE.startListening();
+										}, 200L);
+										break;
+									}
+								}
+							}
+							return;
+						}
+					}
+					break;
+				}
+			}
+
+			for (int i = 0; i < slots.size(); i++) {
 				String value = slots.getJSONObject(i).getString("value");
 				keywords.append(value);
 			}
 		}
 
-		mIsQueryMusicTtsPlayEnd = false;
-		AIUIManager.INSTANCE.startTTS("正在查询，请稍候。", () -> mIsQueryMusicTtsPlayEnd = true);
-		//查询歌曲
+		//网络查询歌曲
 		RxHttp.get(MUSIC_SERVER + "search")
 		      .setAssemblyEnabled(false)
 		      .add("limit", 5)
@@ -593,5 +652,68 @@ public enum SkillManager {
 				mTvChannelInfoSet.addAll(tvInfoClass.getChannel());
 			}
 		}
+	}
+
+	private void queryVideo(SkillSemanticArrayEntity videoEntity) {
+		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<VideoEntity>>() {
+			@Override
+			public List<VideoEntity> doInBackground() {
+				List<VideoEntity> videoList = new ArrayList<>();
+				Cursor cursor = Utils.getApp()
+				                     .getContentResolver()
+				                     .query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+				                            new String[]{MediaStore.Video.VideoColumns.DATA, MediaStore.Video.VideoColumns.DISPLAY_NAME, MediaStore.Video.VideoColumns.DATE_MODIFIED},
+				                            MediaStore.Video.Media.DISPLAY_NAME + " LIKE ? ",
+				                            new String[]{"%" + videoEntity.getSemantic().get(0).getSlots().get(0).getValue() + "%"},
+				                            MediaStore.Video.Media.DATE_MODIFIED + " desc");
+
+				if (null != cursor) {
+					while (cursor.moveToNext()) {
+						String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
+						if (null == path) {
+							continue;
+						}
+						if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
+							continue;
+						}
+						String name;
+						String suffix;
+						String displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME));
+						if (null == displayName) {
+							continue;
+						}
+						name = FileUtils.getFileNameNoExtension(displayName);
+						suffix = FileUtils.getFileExtension(displayName);
+						videoList.add(new VideoEntity(name, suffix, path));
+					}
+					cursor.close();
+				}
+				return videoList;
+			}
+
+			@Override
+			public void onSuccess(List<VideoEntity> result) {
+				if (result.isEmpty()) {
+					AIUIManager.INSTANCE.startTTS("以下是" + videoEntity.getSemantic().get(0).getSlots().get(0).getValue() + "的搜索结果。",
+					                              () -> ThreadUtils.runOnUiThread(() -> {
+						                              Intent searchIntent = new Intent("myvst.intent.action.SearchActivity");
+						                              searchIntent.putExtra("search_word",
+						                                                    videoEntity.getSemantic().get(0).getSlots().get(0).getValue());
+						                              searchIntent.putExtra("check_back_home", false);
+						                              ActivityUtils.startActivity(searchIntent);
+						                              AIUIManager.INSTANCE.startListening();
+					                              }));
+				} else {
+					Intent intent = new Intent(Utils.getApp(), VideoPlayerActivity.class);
+					intent.putExtra("video", result.get(0));
+					ActivityUtils.startActivity(intent);
+					AIUIManager.INSTANCE.startListening();
+				}
+			}
+		});
+	}
+
+	private void queryMusic(SkillMusicProSemanticEntity musicProEntity) {
+
 	}
 }
