@@ -263,6 +263,9 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
         Log.d("acceptImageView-accept:", "accept*************************************************");
     }
 
+
+
+
     //音频接受
     @OnClick({R2.id.incomingAudioOnlyImageView})
     public void audioAccept() {

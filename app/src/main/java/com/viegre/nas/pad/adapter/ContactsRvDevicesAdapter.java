@@ -29,7 +29,6 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
     public ContactsRvDevicesAdapter(Context context, List<String> languages) {
         this.languages = languages;
         this.mContext = context;
-
     }
 
     @NonNull
@@ -64,8 +63,6 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                         });
                     }
                 }).setFullScreen(true).show();
-
-
             }
         });
     }

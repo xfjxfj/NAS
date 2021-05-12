@@ -23,6 +23,7 @@ import com.viegre.nas.pad.entity.DevicesFollowEntity;
 import com.viegre.nas.pad.entity.LoginResult;
 import com.viegre.nas.pad.service.AppService;
 import com.viegre.nas.pad.util.CommonUtils;
+import com.viegre.nas.pad.util.ExpandableViewHoldersUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +33,7 @@ import java.util.List;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import cn.wildfire.chat.kit.ChatManagerHolder;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -53,7 +55,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
     private final List<ContactsBean> mContactsData = new ArrayList<>();
     public static String phone = "";
 
-
     @Override
     protected void initialize() {
         initView();
@@ -66,6 +67,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
         contactsRv3 = findViewById(R.id.contactsRv3);
         homeImg = findViewById(R.id.homeImg);
         mViewBinding.homeImg.setOnClickListener(view -> finish());
+        ExpandableViewHoldersUtil.getInstance().init().setNeedExplanedOnlyOne(false);
         //初始化RecycleViewAdapter
 //        getContactsDatas();
 //        initAdapter();
@@ -73,9 +75,14 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
 
 
     private void initAdapter(List<ContactsBean> mContactsData) {
-        List<String> languages = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            languages.add(i + "");
+        ExpandableViewHoldersUtil.getInstance().resetExpanedList();
+        List<String> qqqqq = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            qqqqq.add(i + "");
+        }
+        List<String> wwwww = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            wwwww.add(i + "");
         }
         //初始化数据
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -83,7 +90,8 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
         contactsRv1.setLayoutManager(linearLayoutManager);
         //创建适配器，将数据传递给适配器
         //设置适配器adapter
-        contactsRv1.setAdapter(new ContactsRvRecordAdapter(this, languages));
+        contactsRv1.setAdapter(new ContactsRvRecordAdapter(this, qqqqq));
+//        contactsRv1.setAdapter(new ContactsRvRecordAdapter(this));
 
         //初始化数据
         LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -99,68 +107,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
         contactsRv3.setLayoutManager(linearLayoutManager2);
         //创建适配器，将数据传递给适配器
         //设置适配器adapter
-        contactsRv3.setAdapter(new ContactsRvDevicesAdapter(this, languages));
-    }
-
-    private void callLogin(String phone) {
-        try {
-            JSONObject json153 = new JSONObject();
-            json153.put("userid", "sws8s888");
-            json153.put("userimg", "http://pics6.baidu.com/feed/32fa828ba61ea8d35f0fc102b0795946251f5806.jpeg?token=7e8e4aa8ff38f2f87cb19d100b003e82");
-            json153.put("username", "张三");
-            json153.put("userphone", "15357906428");
-
-            JSONObject json131 = new JSONObject();
-            json131.put("userid", "VaVvVvii");
-            json131.put("userimg", "http://t12.baidu.com/it/u=531657465,141298675&fm=30&app=106&f=JPEG?w=312&h=208&s=DEA208C41A5079DE5D89553A0300E010");
-            json131.put("username", "李四");
-            json131.put("userphone", "13168306428");
-
-            JSONObject jsonF = new JSONObject();
-            jsonF.put("userid", "y7y7y733");
-            jsonF.put("userimg", "http://t12.baidu.com/it/u=531657465,141298675&fm=30&app=106&f=JPEG?w=312&h=208&s=DEA208C41A5079DE5D89553A0300E010");
-            jsonF.put("username", "风顺");
-            jsonF.put("userphone", "15156021911");
-
-            mContactsData.add(new Gson().fromJson(json153.toString(), ContactsBean.class));
-            mContactsData.add(new Gson().fromJson(json131.toString(), ContactsBean.class));
-            mContactsData.add(new Gson().fromJson(jsonF.toString(), ContactsBean.class));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-//        音视频登录
-//        ContactsActivity.phone = "15357906428";
-//        String phoneNumber = "13168306428";
-//        String phoneNumber = "7dd40314e43596cf";
-        String authCode = "66666";
-        AppService.Instance().smsLogin(phone, authCode, new AppService.LoginCallback() {
-            @Override
-            public void onUiSuccess(LoginResult loginResult) {
-                if (isFinishing()) {
-                    return;
-                }
-                //需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
-                ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
-                SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
-
-                sp.edit()
-                        .putString("id", loginResult.getUserId())
-                        .putString("token", loginResult.getUserId())
-                        .apply();
-//                ConstactBean constactBean = new ConstactBean(ContactsActivity.phone, loginResult.getUserId());
-                initAdapter(mContactsData);
-            }
-
-            @Override
-            public void onUiFailure(int code, String msg) {
-                if (isFinishing()) {
-                    return;
-                }
-                Toast.makeText(ContactsActivity.this, "登录失败：" + code + " " + msg, Toast.LENGTH_SHORT).show();
-//                loginButton.setEnabled(true);
-            }
-        });
+        contactsRv3.setAdapter(new ContactsRvDevicesAdapter(this, wwwww));
     }
 
     private void getContactsDatas() {
@@ -178,23 +125,26 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> {
 
                     @Override
                     public void onNext(@NonNull String s) {
-                        Gson gson = new Gson();
-                        DevicesFollowEntity devicesFollowEntity = gson.fromJson(s, DevicesFollowEntity.class);
-                        List<DevicesFollowEntity.DataDTO> data = devicesFollowEntity.getData();
-                        if (!data.isEmpty()) {
-                            for (DevicesFollowEntity.DataDTO datum : data) {
-                                String userid = datum.getCallId();
-                                String phone = datum.getPhone();
-                                    String nickName = "";
-                                if (datum.getNickName() == null) {
-                                    nickName = "";
-                                } else {
-                                    nickName = (String) datum.getNickName();
-                                }
-                                mContactsData.add(new ContactsBean(userid,"",nickName,phone));
-                            }
-                                mContactsData.add(new ContactsBean("ceciciJJ","","郑飞","138"));
-                        }
+//                        Gson gson = new Gson();
+//                        DevicesFollowEntity devicesFollowEntity = gson.fromJson(s, DevicesFollowEntity.class);
+//                        List<DevicesFollowEntity.DataDTO> data = devicesFollowEntity.getData();
+//                        if (!data.isEmpty()) {
+//                            for (DevicesFollowEntity.DataDTO datum : data) {
+//                                String userid = datum.getCallId();
+//                                String phone = datum.getPhone();
+//                                    String nickName = "";
+//                                if (datum.getNickName() == null) {
+//                                    nickName = "";
+//                                } else {
+//                                    nickName = (String) datum.getNickName();
+//                                }
+//                                mContactsData.add(new ContactsBean(userid,"",nickName,phone));
+//                            }
+//                                mContactsData.add(new ContactsBean("ceciciJJ","","郑飞","138"));
+//                                mContactsData.add(new ContactsBean("anaOaOjj","","设备pad","191"));
+//                                mContactsData.add(new ContactsBean("ISIFIF99","","oppo-pad","191"));
+//                                mContactsData.add(new ContactsBean("agahahss","","华为AL00-pad","456"));
+//                        }
                         TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
                         initAdapter(mContactsData);
                     }

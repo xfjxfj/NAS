@@ -1,58 +1,151 @@
 package com.viegre.nas.pad.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.util.ExpandableViewHoldersUtil;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvRecordAdapter.MyHolder> {
-
-    private final List<String> languages;
+public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvRecordAdapter.ViewHolder> {
+    private ExpandableViewHoldersUtil.KeepOneHolder<ViewHolder> keepOne;
+    private final Context mcontext;
+    boolean isClick = false;
+    private final List<String> mData;
 
     public ContactsRvRecordAdapter(Context context, List<String> languages) {
-        this.languages = languages;
-    }
-
-    @NonNull
-    @Override
-    public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        //将我们自定义的item布局R.layout.item_one转换为View
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contacts_record_rv_item, parent, false);
-        //将view传递给我们自定义的ViewHolder
-        ContactsRvRecordAdapter.MyHolder holder = new ContactsRvRecordAdapter.MyHolder(view);
-        //返回这个MyHolder实体
-        return holder;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull MyHolder holder, int position) {
-        holder.textView123.setText(languages.get(position));
+        mcontext = context;
+        mData = languages;
     }
 
     @Override
     public int getItemCount() {
-        return languages.size();
+        return mData.size();
     }
 
-    /**
-     * 自定义的ViewHolder
-     */
-    class MyHolder extends RecyclerView.ViewHolder {
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+        View view = LayoutInflater.from(mcontext).inflate(R.layout.item_user_concern_layout, viewGroup, false);
+        return new ViewHolder(view);
+    }
 
-        private final TextView textView123;
 
-        public MyHolder(View itemView) {
+    @Override
+    public void onBindViewHolder(@NonNull @NotNull ViewHolder holder, int position) {
+        holder.tvTitle.setText("张三" + mData.get(position));
+
+        keepOne.bind(holder, position);
+        holder.tvTitle.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                keepOne.toggle(holder);
+                isClick = true;
+                return true;
+            }
+        });
+        holder.tvTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isClick) {
+                    keepOne.toggle(holder);
+                    isClick = false;
+                }
+            }
+        });
+        holder.delete_text_1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mData.remove(position);
+                notifyItemRemoved(position);
+//                notifyItemRangeChanged(position,getItemCount()-position);
+                notifyDataSetChanged();
+            }
+        });
+        holder.delete_text_2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mData.remove(position);
+                notifyItemRemoved(position);
+//                notifyItemRangeChanged(position,getItemCount()-position);
+                notifyDataSetChanged();
+            }
+        });
+//        holder.tvTitle.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                    if(ExpandableViewHoldersUtil.isExpaned(position)){
+////                        holder.contentTv.setMaxLines(3);
+////                    }else {
+////                        holder.contentTv.setMaxLines(100);
+////                    }
+//                keepOne.toggle((ViewHolder) holder);
+//            }
+//        });
+
+//        holder.lvArrorwBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                keepOne.toggle(holder);
+//            }
+//        });
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder implements ExpandableViewHoldersUtil.Expandable {
+        TextView tvTitle;
+        //        ImageView arrowImage;
+//        LinearLayout lvArrorwBtn;
+        LinearLayout lvLinearlayout;
+        ImageView contentTv;
+        private final TextView delete_text_1;
+        private final TextView delete_text_2;
+
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView123 = itemView.findViewById(R.id.text_rv1);
+
+            tvTitle = itemView.findViewById(R.id.item_user_concern_title);
+            lvLinearlayout = itemView.findViewById(R.id.item_user_concern_link_layout);
+//            lvArrorwBtn = itemView.findViewById(R.id.item_user_concern_arrow);
+//            arrowImage = itemView.findViewById(R.id.item_user_concern_arrow_image);
+            delete_text_1 = itemView.findViewById(R.id.delete_text_1);
+            delete_text_2 = itemView.findViewById(R.id.delete_text_2);
+            contentTv = itemView.findViewById(R.id.delete_image_3);
+
+            keepOne = ExpandableViewHoldersUtil.getInstance().getKeepOneHolder();
+
+            lvLinearlayout.setVisibility(View.GONE);
+            lvLinearlayout.setAlpha(0);
         }
+
+        @Override
+        public View getExpandView() {
+            return lvLinearlayout;
+        }
+
+        @Override
+        public void doCustomAnim(boolean isOpen) {
+            if (isOpen) {
+//                ExpandableViewHoldersUtil.getInstance().rotateExpandIcon(arrowImage, 180, 0);
+            } else {
+//                ExpandableViewHoldersUtil.getInstance().rotateExpandIcon(arrowImage, 0, 180);
+            }
+        }
+
+//    public static void showActivity(Context context) {
+//        Intent intent = new Intent(context, ExPandableViewActivity.class);
+//        context.startActivity(intent);
+//    }
     }
 }

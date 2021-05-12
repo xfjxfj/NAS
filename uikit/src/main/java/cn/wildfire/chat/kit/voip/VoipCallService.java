@@ -174,6 +174,7 @@ public class VoipCallService extends Service {
 
         String title;
         switch (session.getState()) {
+
             case Outgoing:
                 title = "等待对方接听...";
                 break;

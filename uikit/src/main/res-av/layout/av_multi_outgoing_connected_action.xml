@@ -52,12 +52,14 @@
                 android:id="@+id/switchCameraImageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:src="@drawable/av_switch_camera_selector" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:visibility="gone"
                 android:text="旋转摄像头"
                 android:textColor="@color/white" />
 
