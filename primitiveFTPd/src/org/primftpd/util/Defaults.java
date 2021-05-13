@@ -10,6 +10,7 @@ import org.primftpd.filepicker.nononsenseapps.FilePickerActivity;
 import java.io.File;
 
 public final class Defaults {
+
 	private Defaults() {}
 
 	public static final String PUBLICKEY_FILENAME = "pftpd-pub.bin";

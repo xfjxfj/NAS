@@ -10,6 +10,8 @@ import com.blankj.utilcode.util.SPUtils;
 import com.djangoogle.framework.applicaiton.BaseApplication;
 import com.djangoogle.framework.manager.OkHttpManager;
 import com.lzx.starrysky.StarrySky;
+import com.shuyu.gsyvideoplayer.player.IjkPlayerManager;
+import com.shuyu.gsyvideoplayer.player.PlayerFactory;
 import com.topqizhi.ai.manager.AIUIManager;
 import com.topqizhi.ai.manager.AudioRecordManager;
 import com.topqizhi.ai.manager.MscManager;
@@ -23,6 +25,7 @@ import com.viegre.nas.pad.service.AppService;
 import org.litepal.LitePal;
 import org.primftpd.log.CsvLoggerFactory;
 
+import androidx.multidex.MultiDex;
 import cn.wildfire.chat.kit.Config;
 import cn.wildfire.chat.kit.WfcUIKit;
 import cn.wildfire.chat.kit.conversation.message.viewholder.MessageViewHolderManager;
@@ -36,6 +39,12 @@ import rxhttp.RxHttp;
 public class NasApp extends BaseApplication {
 
 	@Override
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(base);
+		MultiDex.install(this);
+	}
+
+	@Override
 	public void onCreate() {
 		super.onCreate();
 		initUtils();
@@ -45,6 +54,8 @@ public class NasApp extends BaseApplication {
 		MscManager.INSTANCE.initialize(this);
 		AIUIManager.INSTANCE.initialize(this);
 		VolumeManager.INSTANCE.initialize(this);
+//		PlayerFactory.setPlayManager(Exo2PlayerManager.class);
+		PlayerFactory.setPlayManager(IjkPlayerManager.class);
 		AudioRecordManager.INSTANCE.initialize();
 		CsvLoggerFactory.CONTEXT = this;
 		initAMap();

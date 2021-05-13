@@ -458,17 +458,19 @@ public enum SkillManager {
 						cursor.close();
 						if (!audioList.isEmpty()) {
 							if (mIsQueryMusicTtsPlayEnd) {
-								AIUIManager.INSTANCE.startTTS("即将为您播放" + audioList.get(0).getSongName(), () -> {
+								AIUIManager.INSTANCE.startTTS("即将为您播放" + audioList.get(0).getSongName(), () -> ThreadUtils.runOnUiThread(() -> {
 									StarrySky.with().playMusic(audioList, 0);
 									AIUIManager.INSTANCE.startListening();
-								}, 200L);
+								}), 200L);
 							} else {
 								while (true) {
 									if (mIsQueryMusicTtsPlayEnd) {
-										AIUIManager.INSTANCE.startTTS("即将为您播放" + audioList.get(0).getSongName(), () -> {
-											StarrySky.with().playMusic(audioList, 0);
-											AIUIManager.INSTANCE.startListening();
-										}, 200L);
+										AIUIManager.INSTANCE.startTTS("即将为您播放" + audioList.get(0).getSongName(),
+										                              () -> ThreadUtils.runOnUiThread(() -> {
+											                              StarrySky.with().playMusic(audioList, 0);
+											                              AIUIManager.INSTANCE.startListening();
+										                              }),
+										                              200L);
 										break;
 									}
 								}
@@ -549,13 +551,13 @@ public enum SkillManager {
 				      if (!playList.isEmpty()) {
 					      if (mIsQueryMusicTtsPlayEnd) {
 						      AIUIManager.INSTANCE.startTTS("即将为您播放" + playList.get(0).getSongName(),
-						                                    () -> StarrySky.with().playMusic(playList, 0),
+						                                    () -> ThreadUtils.runOnUiThread(() -> StarrySky.with().playMusic(playList, 0)),
 						                                    200L);
 					      } else {
 						      while (true) {
 							      if (mIsQueryMusicTtsPlayEnd) {
 								      AIUIManager.INSTANCE.startTTS("即将为您播放" + playList.get(0).getSongName(),
-								                                    () -> StarrySky.with().playMusic(playList, 0),
+								                                    () -> ThreadUtils.runOnUiThread(() -> StarrySky.with().playMusic(playList, 0)),
 								                                    200L);
 								      break;
 							      }

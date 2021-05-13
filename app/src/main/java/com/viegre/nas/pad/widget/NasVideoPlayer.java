@@ -2,6 +2,7 @@ package com.viegre.nas.pad.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 import com.viegre.nas.pad.R;
@@ -29,12 +30,12 @@ public class NasVideoPlayer extends StandardGSYVideoPlayer {
 	}
 
 	@Override
-	protected void onClickUiToggle() {
-		super.onClickUiToggle();
+	protected void onClickUiToggle(MotionEvent e) {
+		super.onClickUiToggle(e);
 	}
 
 	@Override
-	protected void touchDoubleUp() {}
+	protected void touchDoubleUp(MotionEvent e) {}
 
 	@Override
 	protected void touchSurfaceMove(float deltaX, float deltaY, float y) {}
