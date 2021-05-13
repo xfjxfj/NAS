@@ -1,7 +1,6 @@
 package com.viegre.nas.pad.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.util.ExpandableViewHoldersUtil;
 
@@ -38,7 +38,7 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(mcontext).inflate(R.layout.item_user_concern_layout, viewGroup, false);
+        View view = LayoutInflater.from(mcontext).inflate(R.layout.contacts_record_rv_item, viewGroup, false);
         return new ViewHolder(view);
     }
 
@@ -46,6 +46,10 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
     @Override
     public void onBindViewHolder(@NonNull @NotNull ViewHolder holder, int position) {
         holder.tvTitle.setText("张三" + mData.get(position));
+        Glide.with(mcontext)
+                .load("https://image.baidu.com/search/albumsdetail?tn=albumsdetail&word=%E6%B8%90%E5%8F%98%E9%A3%8E%E6%A0%BC%E6%8F%92%E7%94%BB&fr=albumslist&album_tab=%E8%AE%BE%E8%AE%A1%E7%B4%A0%E6%9D%90&album_id=409&rn=30")
+                .placeholder(R.mipmap.ic_launcher)
+                .into(holder.userImage);
 
         keepOne.bind(holder, position);
         holder.tvTitle.setOnLongClickListener(new View.OnLongClickListener() {
@@ -111,6 +115,7 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
         ImageView contentTv;
         private final TextView delete_text_1;
         private final TextView delete_text_2;
+        private final ImageView userImage;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -122,6 +127,7 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
             delete_text_1 = itemView.findViewById(R.id.delete_text_1);
             delete_text_2 = itemView.findViewById(R.id.delete_text_2);
             contentTv = itemView.findViewById(R.id.delete_image_3);
+            userImage = itemView.findViewById(R.id.userImage);
 
             keepOne = ExpandableViewHoldersUtil.getInstance().getKeepOneHolder();
 

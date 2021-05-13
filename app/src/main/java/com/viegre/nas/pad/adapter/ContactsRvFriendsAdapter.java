@@ -43,7 +43,10 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
     @Override
     public void onBindViewHolder(@NonNull ContactsRvFriendsAdapter.MyHolder holder, int position) {
         holder.textfr.setText(languages.get(position).getUsername() + languages.get(position).getUserphone());
-        Glide.with(context1).load(languages.get(position).getUserimg()).into(holder.img_im1);
+//        Glide.with(context1).load(languages.get(position).getUserimg()).placeholder(R.mipmap.ic_launcher).into(holder.img_im1);
+        Glide.with(context1)
+                .load("https://image.baidu.com/search/albumsdetail?tn=albumsdetail&word=%E6%B8%90%E5%8F%98%E9%A3%8E%E6%A0%BC%E6%8F%92%E7%94%BB&fr=albumslist&album_tab=%E8%AE%BE%E8%AE%A1%E7%B4%A0%E6%9D%90&album_id=409&rn=30")
+                .placeholder(R.mipmap.ic_launcher).into(holder.img_im1);
         holder.img_im2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

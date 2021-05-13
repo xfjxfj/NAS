@@ -1,10 +1,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     android:id="@+id/contactsFr"
-    android:background="@color/widgetTextColorEnabled"
+    android:layout_width="match_parent"
+    android:layout_height="68px"
+    android:background="@color/black1"
     android:gravity="center_horizontal"
     android:orientation="horizontal">
 
@@ -22,11 +22,11 @@
 
     <ImageView
         android:id="@+id/img_im2"
-        android:layout_width="100px"
-        android:layout_height="100px"
+        android:layout_width="24px"
+        android:layout_height="24px"
+        android:layout_marginRight="20dp"
         android:src="@mipmap/callimg"
         android:textColor="@color/white"
-        android:layout_marginRight="20dp"
         app:layout_constraintBottom_toBottomOf="@+id/img_im3"
         app:layout_constraintEnd_toStartOf="@+id/img_im3"
         app:layout_constraintTop_toTopOf="@+id/img_im3"
@@ -39,6 +39,7 @@
         android:layout_marginLeft="16px"
         android:text="123222222"
         android:textColor="#E5E5EB"
+        android:textSize="24px"
         app:layout_constraintBottom_toBottomOf="@+id/img_im1"
         app:layout_constraintStart_toEndOf="@+id/img_im1"
         app:layout_constraintTop_toTopOf="@+id/img_im1"
@@ -46,13 +47,24 @@
 
     <ImageView
         android:id="@+id/img_im3"
-        android:layout_width="100px"
-        android:layout_height="100px"
+        android:layout_width="32px"
+        android:layout_height="32px"
         android:layout_marginRight="30dp"
         android:src="@mipmap/callvidoimg"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/black11"
+        android:layout_marginLeft="24px"
+        android:layout_marginRight="24px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>

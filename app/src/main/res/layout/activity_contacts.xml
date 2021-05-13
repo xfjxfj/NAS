@@ -25,6 +25,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/contacts_record"
                 android:textColor="@color/white"
+                android:textSize="24px"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +36,7 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="17px"
+                android:layout_marginRight="18px"
                 android:text="@string/contacts_clean"
                 android:textColor="@color/blue4"
                 app:layout_constraintBottom_toBottomOf="@+id/textView3"
@@ -82,6 +83,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/contacts_record_text"
+                    android:textSize="24px"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -91,8 +93,8 @@
 
                 <ImageView
                     android:id="@+id/homeImg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="40px"
+                    android:layout_height="33px"
                     android:layout_margin="20px"
                     android:layout_marginRight="17px"
                     android:background="@mipmap/settings_home"
@@ -115,12 +117,14 @@
                     android:layout_weight="8"
                     android:gravity="center_vertical"
                     android:text="@string/contacts_record_tips2"
-                    android:textColor="@color/black1"
+                    android:textColor="@color/black9"
                     android:textSize="18px" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/contactsRv2"
                     android:layout_width="match_parent"
+                    android:layout_marginLeft="31px"
+                    android:layout_marginRight="31px"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
 
@@ -140,11 +144,12 @@
                 android:layout_weight="8"
                 android:gravity="center_vertical"
                 android:text="@string/contacts_record_tips"
-                android:textColor="@color/black1"
+                android:textColor="@color/black9"
                 android:textSize="18px" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/contactsRv3"
+                android:layout_marginLeft="31px"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />

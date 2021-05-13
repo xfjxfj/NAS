@@ -181,7 +181,7 @@
 	<string name="more_app_text">更多应用</string>
 	<!--    联系人界面-->
 	<string name="contacts_clean">清除</string>
-	<string name="contacts_record">更多记录</string>
+	<string name="contacts_record">通话记录</string>
 	<string name="contacts_record_tips">更多NAS设备（添加本品牌其他NAS设备后，即可进行通话）</string>
 	<string name="contacts_record_text">联系人</string>
 	<string name="contacts_record_tips2">已绑定本设备用户</string>

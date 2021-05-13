@@ -1,0 +1,88 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="1px"
+    android:paddingLeft="2px"
+    android:paddingRight="2px"
+    android:background="#252529"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="66px"
+        android:background="#131314"
+        android:id="@+id/recoritem"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        tools:ignore="MissingConstraints,RedundantNamespace">
+
+        <ImageView
+            android:id="@+id/img_rv1"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:src="@mipmap/weather_sleet"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/text_rv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20px"
+            android:text="张三"
+            android:textColor="@color/white"
+            android:textSize="18px"
+            app:layout_constraintLeft_toRightOf="@+id/img_rv1"
+            app:layout_constraintTop_toTopOf="@+id/img_rv1"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/text_rv2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20px"
+            android:text="18：32  响铃8下"
+            android:textColor="@color/white"
+            android:textSize="14px"
+            app:layout_constraintBottom_toBottomOf="@+id/img_rv1"
+            app:layout_constraintStart_toStartOf="@+id/text_rv1"
+            app:layout_constraintTop_toBottomOf="@+id/text_rv1"
+            tools:ignore="MissingConstraints" />
+
+        <ImageView
+            android:id="@+id/img_rv2"
+            android:layout_width="17px"
+            android:layout_height="16px"
+            android:layout_marginLeft="11px"
+            android:src="@mipmap/weather_sleet"
+            app:layout_constraintBottom_toBottomOf="@+id/text_rv1"
+            app:layout_constraintStart_toEndOf="@+id/text_rv1"
+            app:layout_constraintTop_toTopOf="@+id/text_rv1"
+            tools:ignore="MissingConstraints" />
+
+
+        <TextView
+            android:id="@+id/text_rv3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20px"
+            android:text="未接"
+            android:textColor="@color/white"
+            android:textSize="14px"
+            app:layout_constraintBottom_toBottomOf="@+id/img_rv1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/img_rv1"
+            tools:ignore="MissingConstraints" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/item_delete"
+        android:layout_width="match_parent"
+        android:text="删除"
+        android:layout_height="match_parent" />
+</LinearLayout>

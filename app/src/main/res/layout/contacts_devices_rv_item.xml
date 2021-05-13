@@ -10,11 +10,12 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/de_laytou"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="144px"
+        android:layout_height="180px"
         android:background="@color/black1"
         android:gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:ignore="MissingConstraints">
 
         <ImageView
             android:id="@+id/image_dv"
@@ -35,7 +36,7 @@
             android:layout_marginTop="33px"
             android:layout_marginBottom="19px"
             android:text="@string/exo_controls_hide"
-            android:textColor="@color/white"
+            android:textColor="@color/black10"
             app:layout_constraintEnd_toEndOf="@+id/image_dv"
             app:layout_constraintStart_toStartOf="@+id/image_dv"
             app:layout_constraintTop_toBottomOf="@+id/image_dv"
