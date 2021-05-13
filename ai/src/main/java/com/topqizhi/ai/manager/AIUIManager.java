@@ -12,8 +12,8 @@ import com.iflytek.aiui.AIUIConstant;
 import com.iflytek.aiui.AIUIEvent;
 import com.iflytek.aiui.AIUIListener;
 import com.iflytek.aiui.AIUIMessage;
-import com.lzx.starrysky.StarrySky;
 import com.topqizhi.ai.impl.AIUIResultListener;
+import com.ywl5320.libmusic.WlMusic;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,8 +90,8 @@ public enum AIUIManager {
 
 	public void startListening() {
 		MscManager.INSTANCE.setListenHardWakeup(true);
-		if (!mIsPauseMusicManually && StarrySky.with().isPaused()) {
-			StarrySkyManager.INSTANCE.restore();
+		if (!mIsPauseMusicManually && !WlMusic.getInstance().isPlaying()) {
+			WlMusic.getInstance().resume();
 		}
 		//唤醒结束后恢复音量
 		VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
@@ -107,8 +107,8 @@ public enum AIUIManager {
 			Log.i("WakeuperResultListener", wakeuperResultEntity.getRaw());
 			//唤醒时静音
 			VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
-			if (StarrySky.with().isPlaying()) {
-				StarrySky.with().pauseMusic();
+			if (WlMusic.getInstance().isPlaying()) {
+				WlMusic.getInstance().pause();
 			}
 			Random random = new Random();
 			int index = random.nextInt(mInitialResponseList.size());
@@ -131,8 +131,8 @@ public enum AIUIManager {
 	public void startHardListening() {
 		//唤醒时静音
 		VolumeManager.INSTANCE.getAudioManager().adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
-		if (StarrySky.with().isPlaying()) {
-			StarrySky.with().pauseMusic();
+		if (WlMusic.getInstance().isPlaying()) {
+			WlMusic.getInstance().pause();
 		}
 		Random random = new Random();
 		int index = random.nextInt(mInitialResponseList.size());
