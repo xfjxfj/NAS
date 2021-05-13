@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 import android.view.View;
@@ -17,15 +16,20 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BusUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.ToastUtils;
+import com.blankj.utilcode.util.Utils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.djangoogle.framework.activity.BaseActivity;
+import com.github.mjdev.libaums.UsbMassStorageDevice;
+import com.github.mjdev.libaums.fs.FileSystem;
 import com.google.gson.Gson;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
@@ -55,6 +59,7 @@ import com.youth.banner.indicator.CircleIndicator;
 
 import org.primftpd.PrimitiveFtpdActivity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,12 +82,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 	private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
 
 	private final Map<String, Integer> mWeatherMap = new HashMap<>();
-	private UsbManager mUsbManager;
 
 	@Override
 	protected void initialize() {
 		ServiceUtils.startService(MscService.class);
-		openUsbDevice();
+//		getUsbPermission();
 		initClick();
 		initIcon();
 		initBanner();
@@ -132,38 +136,42 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
 	private void getDevicesToken(String android_id, String userid) {
 		String url = UrlConfig.Device.GET_DEVICESTOKEN;
-		RxHttp.postForm(url).add("sn", android_id).asString().observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<String>() {
-			@Override
-			public void onSubscribe(@NonNull Disposable d) {
-				Log.d("", "");
-			}
+		RxHttp.postForm(url)
+		      .add("sn", android_id)
+		      .asString()
+		      .observeOn(AndroidSchedulers.mainThread())
+		      .subscribe(new Observer<String>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {
+				      Log.d("", "");
+			      }
 
-			@Override
-			public void onNext(@NonNull String s) {
-				//添加公共请求头
+			      @Override
+			      public void onNext(@NonNull String s) {
+				      //添加公共请求头
 //                        {"code":0,"msg":"OK","data":{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpdGVtIjp7Iml0ZW1JZCI6ImY2ZmUyNTkyMmZhMjAyOGEiLCJpdGVtVHlwZSI6IjIifSwiaXNzIjoiYXV0aDAiLCJleHAiOjE2MjA0MjA4ODh9.DJk9tVcaIK62PQbR_c8zwkyHxDB0zP3Mvc_In7pcrac"}}
 //                        {"code":0,"msg":"OK","data":null}
-				Gson gson = new Gson();
-				DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
-				String token = loglinCodeEntity.getData().getToken();
-				SPUtils.getInstance().put("token", token);
-				postCallId(token, android_id, userid);
-				Log.d("", "");
-			}
+				      Gson gson = new Gson();
+				      DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
+				      String token = loglinCodeEntity.getData().getToken();
+				      SPUtils.getInstance().put("token", token);
+				      postCallId(token, android_id, userid);
+				      Log.d("", "");
+			      }
 
-			@Override
-			public void onError(@NonNull Throwable e) {
+			      @Override
+			      public void onError(@NonNull Throwable e) {
 //                        CommonUtils.showErrorToast(e.getMessage());
-				Log.d("", "");
-			}
+				      Log.d("", "");
+			      }
 
-			@Override
-			public void onComplete() {
-				Log.d("", "");
+			      @Override
+			      public void onComplete() {
+				      Log.d("", "");
 //                        SPUtils.getInstance().remove(SPConfig.LOGIN_CODE_SESSION_ID);
 ////                        mViewBinding.actvLoginAccountBtn.setClickable(true);
-			}
-		});
+			      }
+		      });
 
 //        postCallId(android_id,android_id);
 	}
@@ -233,7 +241,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 			     .load(R.mipmap.main_unlogin)
 			     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
 			     .into(mViewBinding.acivMainUserIcon);
-			mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE)));
+			mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance()
+			                                                                              .getString(SPConfig.PHONE)));
 			mViewBinding.llcMainUser.setOnClickListener(null);
 		} else {
 			Glide.with(mActivity)
@@ -271,8 +280,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		//音频
 		Glide.with(this)
 		     .load(R.mipmap.main_icon_audio)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIconAudio);
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconAudio);
 		mViewBinding.acivMainIconAudio.setOnClickListener(view -> ActivityUtils.startActivity(AudioActivity.class));
 
 		//视频
@@ -282,12 +290,30 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		     .into(mViewBinding.acivMainIconVideo);
 		mViewBinding.acivMainIconVideo.setOnClickListener(view -> ActivityUtils.startActivity(VideoActivity.class));
 
-		Glide.with(this).load(R.mipmap.test_icon_3).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon3);
-		Glide.with(this).load(R.mipmap.test_icon_4).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon4);
-		Glide.with(this).load(R.mipmap.test_icon_5).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon5);
-		Glide.with(this).load(R.mipmap.test_icon_6).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon6);
-		Glide.with(this).load(R.mipmap.test_icon_7).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon7);
-		Glide.with(this).load(R.mipmap.test_icon_8).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon8);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_3)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon3);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_4)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon4);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_5)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon5);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_6)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon6);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_7)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon7);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_8)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon8);
 		mViewBinding.acivMainIcon5.setOnClickListener(view -> {
 			Intent liveIntent = new Intent();
 			liveIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
@@ -360,66 +386,56 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		}
 	}
 
-	private void openUsbDevice() {
-		//before open usb device
-		//should try to get usb permission
-		tryGetUsbPermission();
-	}
-
 	@SuppressLint("WrongConstant")
-	private void tryGetUsbPermission() {
-		mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-
-		IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-		registerReceiver(mUsbPermissionActionReceiver, filter);
-
-		PendingIntent mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
-
-		//here do emulation to ask all connected usb device for permission
-		for (final UsbDevice usbDevice : mUsbManager.getDeviceList().values()) {
-			//add some conditional check if necessary
-			//if(isWeCaredUsbDevice(usbDevice)){
-			if (mUsbManager.hasPermission(usbDevice)) {
-				//if has already got permission, just goto connect it
-				//that means: user has choose yes for your previously popup window asking for grant perssion for this usb device
-				//and also choose option: not ask again
-				afterGetUsbPermission(usbDevice);
-			} else {
-				//this line will let android popup window, ask user whether to allow this app to have permission to operate this usb device
-				mUsbManager.requestPermission(usbDevice, mPermissionIntent);
+	private void getUsbPermission() {
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+		IntentFilter intentFilter = new IntentFilter(ACTION_USB_PERMISSION);
+		registerReceiver(mUsbPermissionReceiver, intentFilter);
+		UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+		for (UsbDevice usbDevice : usbManager.getDeviceList().values()) {
+			if (!usbManager.hasPermission(usbDevice) && "USB Storage".equals(usbDevice.getProductName())) {
+				LogUtils.iTag("getUsbPermission", usbDevice.getProductName() + ": 未获取权限，开始申请");
+				usbManager.requestPermission(usbDevice, pendingIntent);
+				break;
 			}
-			//}
 		}
 	}
 
-	private void afterGetUsbPermission(UsbDevice usbDevice) {
-		//call method to set up device communication
-		//Toast.makeText(this, String.valueOf("Got permission for usb device: " + usbDevice), Toast.LENGTH_LONG).show();
-		//Toast.makeText(this, String.valueOf("Found USB device: VID=" + usbDevice.getVendorId() + " PID=" + usbDevice.getProductId()), Toast.LENGTH_LONG).show();
-
-		doYourOpenUsbDevice(usbDevice);
-	}
-
-	private void doYourOpenUsbDevice(UsbDevice usbDevice) {
-		//now follow line will NOT show: User has not given permission to device UsbDevice
-		UsbDeviceConnection connection = mUsbManager.openDevice(usbDevice);
-		//add your operation code here
-	}
-
-	private final BroadcastReceiver mUsbPermissionActionReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mUsbPermissionReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (ACTION_USB_PERMISSION.equals(action)) {
 				synchronized (this) {
 					UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 					if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-						//user choose YES for your previously popup window asking for grant perssion for this usb device
 						if (null != usbDevice) {
-							afterGetUsbPermission(usbDevice);
+							for (UsbMassStorageDevice device : UsbMassStorageDevice.getMassStorageDevices(Utils.getApp())) {
+								try {
+									device.init();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+								if (usbDevice.getProductName().equals(device.getUsbDevice().getProductName())) {
+									if (device.getPartitions().isEmpty()) {
+										ToastUtils.showLong("分区为空");
+										LogUtils.iTag("getUsbPermission", "分区为空");
+										return;
+									}
+									FileSystem currentFs = device.getPartitions().get(0).getFileSystem();
+									ToastUtils.showLong(currentFs.getVolumeLabel() + " - " + currentFs.getRootDirectory()
+									                                                                  .getAbsolutePath());
+									LogUtils.iTag("getUsbPermission",
+									              currentFs.getVolumeLabel(),
+									              currentFs.getRootDirectory().getAbsolutePath());
+								}
+							}
+						} else {
+							ToastUtils.showLong("设备为空");
+							LogUtils.eTag("getUsbPermission", "设备为空");
 						}
 					} else {
-						//user choose NO for your previously popup window asking for grant perssion for this usb device
-						Toast.makeText(context, "Permission denied for device" + usbDevice, Toast.LENGTH_LONG).show();
+						ToastUtils.showLong("permission denied for device " + usbDevice);
+						LogUtils.eTag("getUsbPermission", "permission denied for device " + usbDevice);
 					}
 				}
 			}

@@ -161,7 +161,8 @@ public enum SkillManager {
 						break;
 
 					default:
-						AIUIManager.INSTANCE.startTTS("对不起，我没明白你的意思，请再说一遍。", AIUIManager.INSTANCE::startListening);
+						AIUIManager.INSTANCE.startTTS(JSON.parseObject(message, SkillEntity.class).getAnswer().getText(),
+						                              AIUIManager.INSTANCE::startListening);
 						break;
 				}
 				return null;
@@ -514,7 +515,11 @@ public enum SkillManager {
 					      String id = musicObj.getString("id");
 					      String name = musicObj.getString("name");
 					      //同步请求
-					      RxHttp.get(MUSIC_SERVER + "check/music").setAssemblyEnabled(false).add("id", id).setSync().asString()
+					      RxHttp.get(MUSIC_SERVER + "check/music")
+					            .setAssemblyEnabled(false)
+					            .add("id", id)
+					            .setSync()
+					            .asString()
 					            .subscribe(new Observer<String>() {
 						            @Override
 						            public void onSubscribe(@NonNull Disposable d) {}
