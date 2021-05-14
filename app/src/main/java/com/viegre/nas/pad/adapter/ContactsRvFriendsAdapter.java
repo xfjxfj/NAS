@@ -12,6 +12,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.entity.ContactsBean;
 
@@ -44,9 +46,13 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
     public void onBindViewHolder(@NonNull ContactsRvFriendsAdapter.MyHolder holder, int position) {
         holder.textfr.setText(languages.get(position).getUsername() + languages.get(position).getUserphone());
 //        Glide.with(context1).load(languages.get(position).getUserimg()).placeholder(R.mipmap.ic_launcher).into(holder.img_im1);
+        String ur = "https://t7.baidu.com/it/u=2963767354,870442698&fm=193&f=GIF";
         Glide.with(context1)
-                .load("https://image.baidu.com/search/albumsdetail?tn=albumsdetail&word=%E6%B8%90%E5%8F%98%E9%A3%8E%E6%A0%BC%E6%8F%92%E7%94%BB&fr=albumslist&album_tab=%E8%AE%BE%E8%AE%A1%E7%B4%A0%E6%9D%90&album_id=409&rn=30")
-                .placeholder(R.mipmap.ic_launcher).into(holder.img_im1);
+                .load(ur)
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                .placeholder(R.mipmap.ic_launcher)
+                .into(holder.img_im1);
+
         holder.img_im2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,11 +73,7 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
     }
 
     private void RunCall(String userid, Boolean isAudioOnly) {
-//        VoipExt.video
-        WfcUIKit.singleCall(context1, userid, isAudioOnly);//13168306428
-//        WfcUIKit.singleCall(context1, "TUT9T9LL", false);
-//        WfcUIKit.singleCall(context1, "agahahss", false);
-//        WfcUIKit.singleCall(context1, "dzxGhGjj", false);
+        WfcUIKit.singleCall(context1, userid, isAudioOnly);
     }
 
     /**
@@ -92,7 +94,6 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
             img_im1 = itemView.findViewById(R.id.img_im1);
             img_im2 = itemView.findViewById(R.id.img_im2);
             img_im3 = itemView.findViewById(R.id.img_im3);
-
         }
     }
 }

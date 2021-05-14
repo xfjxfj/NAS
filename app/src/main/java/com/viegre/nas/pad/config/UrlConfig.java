@@ -7,8 +7,8 @@ package com.viegre.nas.pad.config;
 public class UrlConfig {
 
 	//服务器地址
-	public static final String APP_SERVER = "http://39.108.98.92:8708/";
-//	public static final String APP_SERVER = "http://192.168.10.15:8080/";
+//	public static final String APP_SERVER = "http://39.108.98.92:8708/";
+	public static final String APP_SERVER = "http://192.168.10.15:8080/";
 
 	public static final String MQTT_SERVER = "tcp://39.108.236.191:1883";
 

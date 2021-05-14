@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.entity.RecordListBean2;
@@ -70,11 +72,12 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
             holder.tvTitle.setText(mdata.getCallId());
             holder.tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, 14);
         }
-        holder.item_user_time.setText(setTimeText(mdata,holder));
+        holder.item_user_time.setText(setTimeText(mdata, holder));
         holder.delete_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, 14);
-
+        String url = "https://t7.baidu.com/it/u=4036010509,3445021118&fm=193&f=GIF";
         Glide.with(mcontext)
-                .load("https://image.baidu.com/search/albumsdetail?tn=albumsdetail&word=%E6%B8%90%E5%8F%98%E9%A3%8E%E6%A0%BC%E6%8F%92%E7%94%BB&fr=albumslist&album_tab=%E8%AE%BE%E8%AE%A1%E7%B4%A0%E6%9D%90&album_id=409&rn=30")
+                .load(url)
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .placeholder(R.mipmap.ic_launcher)
                 .into(holder.userImage);
 
