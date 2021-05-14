@@ -158,17 +158,16 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				return null;
 			}
 
-					@Override
-					public void onSuccess(Void result) {
-						SharedPreferences prefs = LoadPrefsUtil.getPrefs(mActivity);
-						PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
-						keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
-						ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
-//						ActivityUtils.startActivity(MainActivity.class);
-//						ActivityUtils.startActivity(WelcomeActivity.class);
-						getDeviceBoundstatus();
-					}
-				});
+			@Override
+			public void onSuccess(Void v) {
+				super.onSuccess(v);
+				SharedPreferences prefs = LoadPrefsUtil.getPrefs(mActivity);
+				PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
+				keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
+				ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
+//				ActivityUtils.startActivity(MainActivity.class);
+//				ActivityUtils.startActivity(WelcomeActivity.class);
+				getDeviceBoundstatus();
 			}
 		});
 	}
@@ -231,44 +230,44 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 */
 	private void getDeviceResource() {
 		RxHttp.postForm(UrlConfig.Device.GET_RESOURCE)
-		      .setAssemblyEnabled(false)
-		      .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
-		      .asResponse(DeviceResourceRootEntity.class)
-		      .subscribe(new Observer<DeviceResourceRootEntity>() {
-			      @Override
-			      public void onSubscribe(@NonNull Disposable d) {}
+				.setAssemblyEnabled(false)
+				.add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+				.asResponse(DeviceResourceRootEntity.class)
+				.subscribe(new Observer<DeviceResourceRootEntity>() {
+					@Override
+					public void onSubscribe(@NonNull Disposable d) {}
 
-			      @Override
-			      public void onNext(@NonNull DeviceResourceRootEntity deviceResourceRootEntity) {
-				      List<DeviceResourceEntity> resourceList = deviceResourceRootEntity.getResourceList();
-				      if (!resourceList.isEmpty()) {
-					      LitePal.deleteAll(DeviceResourceEntity.class);
-					      LitePal.saveAll(resourceList);
-					      DeviceResourceEntity deviceResourceEntity = LitePal.where("type = ?", "guideVideo").findFirst(DeviceResourceEntity.class);
-					      List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
-					      if (null != deviceResourceEntity) {
-						      String url = deviceResourceEntity.getContent();
-						      String fileName = FileUtils.getFileName(url);
-						      //判断文件是否已下载
-						      if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
-							      showGuideData();
-							      return;
-						      }
-						      downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
-					      }
-				      }
-				      showGuideData();
-			      }
+					@Override
+					public void onNext(@NonNull DeviceResourceRootEntity deviceResourceRootEntity) {
+						List<DeviceResourceEntity> resourceList = deviceResourceRootEntity.getResourceList();
+						if (!resourceList.isEmpty()) {
+							LitePal.deleteAll(DeviceResourceEntity.class);
+							LitePal.saveAll(resourceList);
+							DeviceResourceEntity deviceResourceEntity = LitePal.where("type = ?", "guideVideo").findFirst(DeviceResourceEntity.class);
+							List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
+							if (null != deviceResourceEntity) {
+								String url = deviceResourceEntity.getContent();
+								String fileName = FileUtils.getFileName(url);
+								//判断文件是否已下载
+								if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
+									showGuideData();
+									return;
+								}
+								downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
+							}
+						}
+						showGuideData();
+					}
 
-			      @Override
-			      public void onError(@NonNull Throwable e) {
-				      e.printStackTrace();
-				      showGuideData();
-			      }
+					@Override
+					public void onError(@NonNull Throwable e) {
+						e.printStackTrace();
+						showGuideData();
+					}
 
-			      @Override
-			      public void onComplete() {}
-		      });
+					@Override
+					public void onComplete() {}
+				});
 	}
 
 	/**
@@ -360,27 +359,27 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	private void downloadGuideData(GuideResourceEntity guideResourceEntity) {
 		FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
 		RxHttp.get(guideResourceEntity.getUrl())
-		      .setAssemblyEnabled(false)
-		      .asDownload(PathConfig.GUIDE_RESOURCE + guideResourceEntity.getFileName())
-		      .subscribe(new Observer<String>() {
-			      @Override
-			      public void onSubscribe(@NonNull Disposable d) {}
+				.setAssemblyEnabled(false)
+				.asDownload(PathConfig.GUIDE_RESOURCE + guideResourceEntity.getFileName())
+				.subscribe(new Observer<String>() {
+					@Override
+					public void onSubscribe(@NonNull Disposable d) {}
 
-			      @Override
-			      public void onNext(@NonNull String s) {
-				      LitePal.deleteAll(GuideResourceEntity.class);
-				      guideResourceEntity.save();
-			      }
+					@Override
+					public void onNext(@NonNull String s) {
+						LitePal.deleteAll(GuideResourceEntity.class);
+						guideResourceEntity.save();
+					}
 
-			      @Override
-			      public void onError(@NonNull Throwable e) {
-				      e.printStackTrace();
-				      LitePal.deleteAll(GuideResourceEntity.class);
-				      FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
-			      }
+					@Override
+					public void onError(@NonNull Throwable e) {
+						e.printStackTrace();
+						LitePal.deleteAll(GuideResourceEntity.class);
+						FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
+					}
 
-			      @Override
-			      public void onComplete() {}
-		      });
+					@Override
+					public void onComplete() {}
+				});
 	}
 }
