@@ -23,6 +23,8 @@ public class PathConfig {
 	//回收站目录
 	public static final String RECYCLE_BIN = NAS + ".recycleBin" + File.separator;
 
+	public static final String CONTACTS_RECOMDING = "/Recomding.txt";
+
 //	//图片目录
 //	public static class IMAGE {
 //		private static final String IMAGE = "image";

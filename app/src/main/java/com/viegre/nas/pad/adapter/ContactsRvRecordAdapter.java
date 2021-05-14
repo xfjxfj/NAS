@@ -1,6 +1,7 @@
 package com.viegre.nas.pad.adapter;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,27 +13,32 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.entity.RecordListBean2;
 import com.viegre.nas.pad.util.ExpandableViewHoldersUtil;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvRecordAdapter.ViewHolder> {
     private ExpandableViewHoldersUtil.KeepOneHolder<ViewHolder> keepOne;
     private final Context mcontext;
     boolean isClick = false;
-    private final List<String> mData;
+    private final List<String> data;
+    private Gson gs = new Gson();
 
     public ContactsRvRecordAdapter(Context context, List<String> languages) {
         mcontext = context;
-        mData = languages;
+        data = languages;
     }
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return data.size();
     }
 
     @NonNull
@@ -45,7 +51,28 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull ViewHolder holder, int position) {
-        holder.tvTitle.setText("张三" + mData.get(position));
+
+        RecordListBean2 mdata = gs.fromJson(data.get(position), RecordListBean2.class);
+        if (null == mdata) {
+            return;
+        }
+
+
+        if (mdata.getDirection().equals("Receive")) {
+            holder.delete_text.setText("呼入");
+
+            holder.tvTitle.setText(mdata.getTargetId());
+            holder.tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, 14);
+
+        } else {
+            holder.delete_text.setText("呼出");
+
+            holder.tvTitle.setText(mdata.getCallId());
+            holder.tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, 14);
+        }
+        holder.item_user_time.setText(setTimeText(mdata,holder));
+        holder.delete_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, 14);
+
         Glide.with(mcontext)
                 .load("https://image.baidu.com/search/albumsdetail?tn=albumsdetail&word=%E6%B8%90%E5%8F%98%E9%A3%8E%E6%A0%BC%E6%8F%92%E7%94%BB&fr=albumslist&album_tab=%E8%AE%BE%E8%AE%A1%E7%B4%A0%E6%9D%90&album_id=409&rn=30")
                 .placeholder(R.mipmap.ic_launcher)
@@ -72,39 +99,45 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
         holder.delete_text_1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mData.remove(position);
+                data.remove(position);
                 notifyItemRemoved(position);
-//                notifyItemRangeChanged(position,getItemCount()-position);
                 notifyDataSetChanged();
             }
         });
         holder.delete_text_2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mData.remove(position);
+                data.remove(position);
                 notifyItemRemoved(position);
-//                notifyItemRangeChanged(position,getItemCount()-position);
                 notifyDataSetChanged();
             }
         });
-//        holder.tvTitle.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                    if(ExpandableViewHoldersUtil.isExpaned(position)){
-////                        holder.contentTv.setMaxLines(3);
-////                    }else {
-////                        holder.contentTv.setMaxLines(100);
-////                    }
-//                keepOne.toggle((ViewHolder) holder);
-//            }
-//        });
+    }
 
-//        holder.lvArrorwBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                keepOne.toggle(holder);
-//            }
-//        });
+    private String setTimeText(RecordListBean2 mdata, ViewHolder holder) {
+        String year = "";
+        if (new SimpleDateFormat("yyyy-MM-dd HH:mm").format(Calendar.getInstance().getTime()).split(" ")[0].equals(mdata.getCallTime().split(" ")[0])) {
+            String[] s = mdata.getCallTime().split(" ");
+            year = s[1];
+        } else {
+            String[] split = mdata.getCallTime().split("-");
+            year = split[0] + "/" + split[1] + "/" + split[2];
+        }
+
+        String[] split1 = mdata.getTurnOnTime().split(":");
+        String time = " 通话";
+        if (!split1[0].equals("0")) {
+            time = time + split1[0] + "小时";
+        }
+        if (!split1[1].equals("00")) {
+            time = time + split1[1] + "分";
+        }
+        if (!split1[2].equals("0")) {
+            time = time + split1[2] + "秒";
+        } else {
+            holder.delete_text.setText("未接");
+        }
+        return year + time;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements ExpandableViewHoldersUtil.Expandable {
@@ -116,6 +149,8 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
         private final TextView delete_text_1;
         private final TextView delete_text_2;
         private final ImageView userImage;
+        private final TextView item_user_time;
+        private final TextView delete_text;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -128,6 +163,8 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
             delete_text_2 = itemView.findViewById(R.id.delete_text_2);
             contentTv = itemView.findViewById(R.id.delete_image_3);
             userImage = itemView.findViewById(R.id.userImage);
+            item_user_time = itemView.findViewById(R.id.item_user_time);
+            delete_text = itemView.findViewById(R.id.delete_text);
 
             keepOne = ExpandableViewHoldersUtil.getInstance().getKeepOneHolder();
 
@@ -148,10 +185,5 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
 //                ExpandableViewHoldersUtil.getInstance().rotateExpandIcon(arrowImage, 0, 180);
             }
         }
-
-//    public static void showActivity(Context context) {
-//        Intent intent = new Intent(context, ExPandableViewActivity.class);
-//        context.startActivity(intent);
-//    }
     }
 }

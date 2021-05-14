@@ -34,6 +34,7 @@ import com.viegre.nas.pad.activity.im.ContactsActivity;
 import com.viegre.nas.pad.activity.image.ImageActivity;
 import com.viegre.nas.pad.activity.video.VideoActivity;
 import com.viegre.nas.pad.config.BusConfig;
+import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivityMainBinding;
@@ -53,17 +54,22 @@ import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.primftpd.PrimitiveFtpdActivity;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import cn.wildfire.chat.kit.ChatManagerHolder;
+import cn.wildfirechat.message.CallStartMessageContent;
 import cn.wildfirechat.message.Message;
 import cn.wildfirechat.remote.ChatManager;
 import cn.wildfirechat.remote.OnMessageUpdateListener;
@@ -95,6 +101,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         loginIM();
         ChatManager.Instance().addOnMessageUpdateListener(this);
     }
+
+
 
     //登录音视频通话服务器
     private void loginIM() {
@@ -432,30 +440,60 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         }
     };
 
-    @SuppressLint("ApplySharedPref")
+    @SuppressLint({"ApplySharedPref", "DefaultLocale", "SimpleDateFormat"})
     @Override
     public void onMessageUpdate(Message message) {
-//      SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
         try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("userimage", "1");
-            jsonObject.put("username", "2");
-            jsonObject.put("userType", "3");
-            jsonObject.put("userTime", "4");
-            jsonObject.put("callType", "5");
-            jsonObject.put("Time", "6");
-
-        } catch (JSONException e) {
+            CallStartMessageContent me = (CallStartMessageContent) message.content;
+            //大于0 为挂断状态
+            if (me.getEndTime() > 0) {
+                JSONObject jsStr = new JSONObject();
+                jsStr.put("targetId", message.conversation.target);
+                jsStr.put("Direction", message.direction.toString());
+                jsStr.put("AudioOnly", me.isAudioOnly());
+                jsStr.put("ConnectTime", me.getConnectTime());
+                jsStr.put("EndTime", me.getEndTime());
+                jsStr.put("CallId", me.getCallId());
+                jsStr.put("MessageUid", message.messageUid);
+                jsStr.put("CallTime", new SimpleDateFormat("yyyy-MM-dd HH:mm").format(Calendar.getInstance().getTime()));
+                if (me.getConnectTime() > 0 && me.getEndTime() > 0) {
+                    Long q = (me.getEndTime() - me.getConnectTime());
+//                    int i = q.intValue();
+                    Long time = q / 1000;
+                    String str = "";
+                    if (time > 3600) {
+                        str = String.format("%d:%02d:%02d", time / 3600, time / 60, time % 60);
+                    } else {
+                        str = String.format("%d:%02d:%02d", time / 3600,time / 60, time % 60);
+                    }
+                    jsStr.put("TurnOnTime", str);
+                    jsStr.put("TurnOn", true);
+                } else {
+                    jsStr.put("TurnOnTime", "0");
+                    jsStr.put("TurnOn", false);
+                }
+                initContactsFile();//判断本地是否有相关文件存储数据 没有则创建
+                FileWriter fileWriter = new FileWriter(getFilesDir().toString()+ PathConfig.CONTACTS_RECOMDING, true);
+                BufferedWriter vBufferedWriter = new BufferedWriter(fileWriter);
+                vBufferedWriter.append(jsStr.toString());
+                vBufferedWriter.newLine();
+                vBufferedWriter.close();
+                fileWriter.close();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        SharedPreferences sp = getSharedPreferences("ImMessage", Context.MODE_PRIVATE);
-        sp.edit().putString("", "")
-                .putString("", "")
-                .putString("", "")
-                .putString("", "")
-                .putString("", "")
-                .putString("", "").commit();
-        Log.d("", message.messageId + "");
-        Log.d("", message.serverTime + "");
+    }
+
+    private void initContactsFile() {
+        File file = new File(getFilesDir().toString() + "/" + "Recomding.txt");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 }

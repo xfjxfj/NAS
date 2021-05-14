@@ -111,6 +111,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
         viewModelProvider = new ViewModelProvider(viewModelStore, factory);
         OKHttpHelper.init(application.getApplicationContext());
         Log.d("WfcUIKit", "init end");
+
     }
 
     public boolean isSupportMoment() {

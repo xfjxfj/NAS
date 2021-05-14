@@ -1,45 +1,47 @@
 package com.viegre.nas.pad.activity.im;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.google.gson.Gson;
+import com.kongzue.dialog.interfaces.OnDialogButtonClickListener;
+import com.kongzue.dialog.interfaces.OnDismissListener;
+import com.kongzue.dialog.util.BaseDialog;
+import com.kongzue.dialog.v3.MessageDialog;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.viegre.nas.pad.R;
-import com.viegre.nas.pad.activity.MainActivity;
 import com.viegre.nas.pad.adapter.ContactsRvDevicesAdapter;
 import com.viegre.nas.pad.adapter.ContactsRvFriendsAdapter;
 import com.viegre.nas.pad.adapter.ContactsRvRecordAdapter;
+import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivityContactsBinding;
 import com.viegre.nas.pad.entity.ContactsBean;
 import com.viegre.nas.pad.entity.DevicesFollowEntity;
-import com.viegre.nas.pad.entity.DevicesTokenEntity;
-import com.viegre.nas.pad.entity.LoginResult;
-import com.viegre.nas.pad.service.AppService;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.ExpandableViewHoldersUtil;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import cn.wildfire.chat.kit.ChatManagerHolder;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
@@ -57,10 +59,12 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     private RecyclerView contactsRv2;
     private RecyclerView contactsRv3;
     private ImageView homeImg;
-    private final List<ContactsBean> mContactsData = new ArrayList<>();
+    private final List<ContactsBean> mFriendData = new ArrayList<>();
+    private final List<String> mDevicesData = new ArrayList<>();
+    private List<String> mRecordData = new ArrayList<>();
     public static String phone = "";
     private TextView textView2;
-
+    private TextView textRecord;
 
     @Override
     protected void initialize() {
@@ -72,44 +76,65 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         contactsRv1 = findViewById(R.id.contactsRv1);
         contactsRv2 = findViewById(R.id.contactsRv2);
         contactsRv3 = findViewById(R.id.contactsRv3);
+        textRecord = findViewById(R.id.textRecord);
         homeImg = findViewById(R.id.homeImg);
         textView2 = findViewById(R.id.textView2);
         mViewBinding.homeImg.setOnClickListener(view -> finish());
         textView2.setOnClickListener(this);
         ExpandableViewHoldersUtil.getInstance().init().setNeedExplanedOnlyOne(false);
         //初始化RecycleViewAdapter
-//        getContactsDatas();
-//        initAdapter();
+        ExpandableViewHoldersUtil.getInstance().resetExpanedList();
+//        initFriendData(mContactsData);
+        ifRecordList();
+        initDevicesData(mDevicesData);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        ifRecordList();
+    }
+
+    private void ifRecordList() {
+        mRecordData = getRecordData();
+        if (mRecordData.size() == 0) {
+            ResetRecord();
+        } else {
+            initRecordData(mRecordData);
+        }
+    }
+
+    private List<String> getRecordData() {
+        mRecordData.clear();
+        File file = new File(getFilesDir().toString() + PathConfig.CONTACTS_RECOMDING);
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(file));
+            String textOnLineString;
+            while ((textOnLineString = reader.readLine()) != null) {
+                mRecordData.add(textOnLineString);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        return mRecordData;
     }
 
 
-    private void initAdapter(List<ContactsBean> mContactsData) {
-        ExpandableViewHoldersUtil.getInstance().resetExpanedList();
-        List<String> qqqqq = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            qqqqq.add(i + "");
-        }
+    private void initDevicesData(List<String> mDevicesData) {
         List<String> wwwww = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             wwwww.add(i + "");
         }
-        //初始化数据
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        //设置布局管理器
-        contactsRv1.setLayoutManager(linearLayoutManager);
-        //创建适配器，将数据传递给适配器
-        //设置适配器adapter
-        contactsRv1.setAdapter(new ContactsRvRecordAdapter(this, qqqqq));
-//        contactsRv1.setAdapter(new ContactsRvRecordAdapter(this));
-
-        //初始化数据
-        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        //设置布局管理器
-        contactsRv2.setLayoutManager(linearLayoutManager1);
-        //创建适配器，将数据传递给适配器
-        //设置适配器adapter
-        contactsRv2.setAdapter(new ContactsRvFriendsAdapter(this, mContactsData));
-
         //初始化数据
         LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         //设置布局管理器
@@ -117,6 +142,26 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         //创建适配器，将数据传递给适配器
         //设置适配器adapter
         contactsRv3.setAdapter(new ContactsRvDevicesAdapter(this, wwwww));
+    }
+
+    private void initFriendData(List<ContactsBean> mContactsData) {
+        //初始化数据
+        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        //设置布局管理器
+        contactsRv2.setLayoutManager(linearLayoutManager1);
+        //创建适配器，将数据传递给适配器
+        //设置适配器adapter
+        contactsRv2.setAdapter(new ContactsRvFriendsAdapter(this, mContactsData));
+    }
+
+    private void initRecordData(List<String> mRecordData) {
+        //初始化数据
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        //设置布局管理器
+        contactsRv1.setLayoutManager(linearLayoutManager);
+        //创建适配器，将数据传递给适配器
+        //设置适配器adapter
+        contactsRv1.setAdapter(new ContactsRvRecordAdapter(this, mRecordData));
     }
 
     private void getContactsDatas() {
@@ -149,16 +194,16 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                                 } else {
                                     nickName = (String) datum.getNickName();
                                 }
-                                mContactsData.add(new ContactsBean(userid, "", nickName, phone));
+                                mFriendData.add(new ContactsBean(userid, "", nickName, phone));
                             }
-                            mContactsData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
-                            mContactsData.add(new ContactsBean("anaOaOjj", "", "设备pad", "191"));
-                            mContactsData.add(new ContactsBean("ISIFIF99", "", "oppo-pad", "191"));
-                            mContactsData.add(new ContactsBean("agahahss", "", "华为AL00-pad", "456"));
-                            mContactsData.add(new ContactsBean("ZoZcZcKK", "", "夜神模拟器-pad", "666"));
+                            mFriendData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
+                            mFriendData.add(new ContactsBean("anaOaOjj", "", "设备pad", "191"));
+                            mFriendData.add(new ContactsBean("ISIFIF99", "", "oppo-pad", "191"));
+                            mFriendData.add(new ContactsBean("agahahss", "", "华为AL00-pad", "456"));
+                            mFriendData.add(new ContactsBean("ZoZcZcKK", "", "夜神模拟器-pad", "666"));
                         }
-                            TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
-                            initAdapter(mContactsData);
+                        TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
+                        initFriendData(mFriendData);
                     }
 
                     @Override
@@ -179,19 +224,54 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.textView2:
-                ResetRecord();
+                MessageDialog.show(this, "提示", "确定删除通话记录吗", "是", "取消")
+                        .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
+                            @Override
+                            public boolean onClick(BaseDialog baseDialog, View v) {
+                                WaitDialog.show(ContactsActivity.this, "请稍候...");
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ResetRecord();
+                                                TipDialog.show(ContactsActivity.this, "成功！", TipDialog.TYPE.SUCCESS).setOnDismissListener(new OnDismissListener() {
+                                                    @Override
+                                                    public void onDismiss() {
+
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                }, 1000);
+
+
+                                return false;
+                            }
+                        })
+                        .setButtonOrientation(LinearLayout.VERTICAL);
+
                 break;
         }
     }
 
     private void ResetRecord() {
-//        //初始化数据
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-//        //设置布局管理器
-//        contactsRv1.setLayoutManager(linearLayoutManager);
-//        //创建适配器，将数据传递给适配器
-//        //设置适配器adapter
-//        contactsRv1.setAdapter(new ContactsRvRecordAdapter(this, qqqqq));
+        mRecordData.clear();
+        try {
+            File file = new File(getFilesDir().toString() + PathConfig.CONTACTS_RECOMDING);
+            if (file.exists()) {
+                if (file.isFile()) {  // 为文件时调用删除文件方法
+                    file.delete();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        initRecordData(mRecordData);
+        contactsRv1.setVisibility(View.GONE);//无数据隐藏列表
+        textRecord.setVisibility(View.VISIBLE);//显示提示信息
     }
 }
 

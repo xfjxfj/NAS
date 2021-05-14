@@ -35,7 +35,8 @@ public class MoreAppActivity extends BaseActivity<MoreAppActivityRvBinding> {
 		//初始化数据
 		mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 		//创建适配器，将数据传递给适配器
-		mAdapter = new MoreAppActivityRvAdapter(MoreAppActivity.this, getAllApps(this));
+		List<PackageInfo> allApps = getAllApps(this);
+		mAdapter = new MoreAppActivityRvAdapter(MoreAppActivity.this,allApps);
 		//设置布局管理器
 		mRecycleView.setLayoutManager(mLinearLayoutManager);
 		//设置适配器adapter

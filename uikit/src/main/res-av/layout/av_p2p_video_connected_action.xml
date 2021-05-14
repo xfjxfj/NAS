@@ -28,12 +28,14 @@
             android:id="@+id/shareScreenImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:src="@drawable/av_share" />
 
         <TextView
             android:id="@+id/shareScreenTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_marginTop="10dp"
             android:textColor="@color/white"
             android:text="开始屏幕共享" />
@@ -101,6 +103,7 @@
 
             <ImageView
                 android:id="@+id/switchCameraImageView"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/av_switch_camera_selector" />
@@ -109,6 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:visibility="gone"
                 android:textColor="@color/white"
                 android:text="旋转摄像头" />
 
