@@ -1,59 +1,44 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.google.gms.google-services'
 android {
-    compileSdkVersion 28
+	compileSdkVersion 28
 
 
-    defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+	defaultConfig {
+		minSdkVersion 16
+		manifestPlaceholders = [
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+				MI_APP_ID      : "2882303761517722456",
+				MI_APP_KEY     : "5731772292456",
 
-        manifestPlaceholders = [
+				HMS_APP_ID     : "100221325",
 
-                MI_APP_ID    : "2882303761517722456",
-                MI_APP_KEY   : "5731772292456",
+				MEIZU_APP_ID   : "113616",
+				MEIZU_APP_KEY  : "fcd886f51c144b45b87a67a28e2934d1",
 
-                HMS_APP_ID   : "100221325",
+				VIVO_APP_ID    : "12918",
+				VIVO_APP_KEY   : "c42feb05-de6c-427d-af55-4f902d9e0a75",
 
-                MEIZU_APP_ID : "113616",
-                MEIZU_APP_KEY: "fcd886f51c144b45b87a67a28e2934d1",
+				OPPO_APP_KEY   : "16c6afe503b24259928e082ef01a6bf2",
+				OPPO_APP_SECRET: "16c6afe503b24259928e082ef01a6bf2"
+		]
+	}
 
-                VIVO_APP_ID  : "12918",
-                VIVO_APP_KEY : "c42feb05-de6c-427d-af55-4f902d9e0a75",
-
-                OPPO_APP_KEY  : "16c6afe503b24259928e082ef01a6bf2",
-                OPPO_APP_SECRET : "16c6afe503b24259928e082ef01a6bf2"
-        ]
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
-    }
-
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JavaVersion.VERSION_1_8
+	}
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+	implementation fileTree(dir: 'libs', include: ['*.jar'])
+	implementation 'com.huawei.hms:push:4.0.3.301'
+	implementation 'androidx.appcompat:appcompat:1.3.0-rc01'
+	implementation project(':client')
+	implementation 'com.meizu.flyme.internet:push-internal:3.4.2@aar'
+	implementation platform('com.google.firebase:firebase-bom:26.6.0')
+	implementation 'com.google.firebase:firebase-messaging:20.1.6'
 
-    implementation 'com.huawei.hms:push:4.0.3.301'
-
-    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
-    implementation project(':client')
-    implementation 'com.meizu.flyme.internet:push-internal:3.4.2@aar'
-    implementation platform('com.google.firebase:firebase-bom:26.6.0')
-    implementation 'com.google.firebase:firebase-messaging:20.1.6'
-
-    def lifecycle_version = '2.2.0'
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+	def lifecycle_version = '2.2.0'
+	implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
 }

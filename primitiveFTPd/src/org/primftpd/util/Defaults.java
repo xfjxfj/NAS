@@ -10,12 +10,13 @@ import org.primftpd.filepicker.nononsenseapps.FilePickerActivity;
 import java.io.File;
 
 public final class Defaults {
+
 	private Defaults() {}
 
 	public static final String PUBLICKEY_FILENAME = "pftpd-pub.bin";
 	public static final String PRIVATEKEY_FILENAME = "pftpd-priv.pk8";
 
-	public static final File HOME_DIR = Environment.getExternalStorageDirectory();
+	public static final File HOME_DIR = new File("/storage/emulated/0/nas/");
 	public static final File DOWNLOADS_DIR = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 	public static final String PUB_KEY_AUTH_KEY_PATH_OLD = HOME_DIR.getAbsolutePath() + "/.ssh/authorized_keys";
 	public static final String PUB_KEY_AUTH_KEY_PATH_OLDER = HOME_DIR.getAbsolutePath() + "/.ssh/authorized_key.pub";

@@ -130,7 +130,7 @@
 		android:title="@string/prefsCategoryTitleSystem">
 		<org.primftpd.prefs.StartDirEditTextPreference
 			android:name="startDir"
-			android:defaultValue="/sdcard/nas/public/"
+			android:defaultValue="/storage/emulated/0/nas/"
 			android:key="startDirPref"
 			android:summary="@string/prefSummaryStartDir"
 			android:title="@string/prefTitleStartDir" />

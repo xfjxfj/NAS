@@ -4,61 +4,37 @@ apply plugin: 'com.android.library'
 group = 'com.github.wildfirechat'
 
 android {
-    compileSdkVersion 28
+	compileSdkVersion 28
 
+	defaultConfig {
+		minSdkVersion 16
+	}
 
-    defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+	sourceSets {
+		main {
+			jniLibs.srcDirs = ['libs']
+		}
+	}
 
-        // testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        ndk {
-            // TODO: changes this for your application if needed
-            moduleName = "mmnet"
-            //abiFilter "armeabi" //去掉armeabi架构，armeabi-v7a可以兼容armeabi架构。
-            abiFilter "armeabi-v7a"
-            abiFilter "arm64-v8a"
-            abiFilter "x86"
-            abiFilter "x86_64"
-        }
-    }
-
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-        }
-    }
-
-    lintOptions {
-        abortOnError false
-    }
-    compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
-    }
+	lintOptions {
+		abortOnError false
+	}
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JavaVersion.VERSION_1_8
+	}
 }
 
 
 dependencies {
-    api project(':mars-core-release')
-    def lifecycle_version = '2.0.0-beta01'
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-    implementation "androidx.core:core-ktx:+"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0-beta01"
+	api project(':mars-core-release')
+	def lifecycle_version = '2.0.0-beta01'
+	implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+	implementation "androidx.core:core-ktx:+"
+	implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0-beta01"
 //    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {
-    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
-    mavenCentral()
+	maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+	mavenCentral()
 }

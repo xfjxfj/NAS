@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -36,6 +37,10 @@ public class ExternalStorageActivity extends BaseActivity<ActivityExternalStorag
 	@Override
 	protected void initialize() {
 		mUsbMassStorageDevices = UsbMassStorageDevice.getMassStorageDevices(this);
+		List<File> list = FileUtils.listFilesInDir("/storage/3C3E71843E71384A/Android/");
+		for (File file : list) {
+			LogUtils.iTag("ExternalStorageActivity", file.getAbsolutePath());
+		}
 		initList();
 	}
 

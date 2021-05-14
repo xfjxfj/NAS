@@ -14,6 +14,9 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.constant.TimeConstants;
@@ -63,9 +66,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 /**
  * Created by レインマン on 2021/04/12 09:40 with Android Studio.
@@ -200,7 +200,9 @@ public class MQTTService extends Service {
 			String CHANNEL_ID = "nas_channel_mqtt";
 			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT);
 			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
-			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("").setContentText("").build();
+			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("")
+			                                                                            .setContentText("")
+			                                                                            .build();
 			startForeground(1, notification);
 		}
 	}
@@ -243,8 +245,7 @@ public class MQTTService extends Service {
 							@Override
 							public List<ExternalDriveEntity> doInBackground() {
 								List<ExternalDriveEntity> list = new ArrayList<>();
-								list.add(new ExternalDriveEntity("SG2000DG008-3KJ654", "/sdcard/1/"));
-								list.add(new ExternalDriveEntity("ST2023GE684-4GV231", "/sdcard/1/"));
+								list.add(new ExternalDriveEntity("USB Storage", "/storage/3C3E71843E71384A/"));
 								return list;
 							}
 
@@ -283,7 +284,8 @@ public class MQTTService extends Service {
 				switch (mqttMsgEntity.getAction()) {
 					//磁盘整理
 					case MQTTMsgEntity.MSG_DISK_DEFRAGMENT:
-						ViewUtils.runOnUiThreadDelayed(() -> sendMQTTMsg(diskDefragment(mqttMsgEntity.getFromId())), getRandomNum(10, 20) * 1000L);
+						ViewUtils.runOnUiThreadDelayed(() -> sendMQTTMsg(diskDefragment(mqttMsgEntity.getFromId())),
+						                               getRandomNum(10, 20) * 1000L);
 						break;
 
 					//还原
@@ -353,7 +355,8 @@ public class MQTTService extends Service {
 
 					//使用寿命检测
 					case MQTTMsgEntity.MSG_LIFE_TEST:
-						ViewUtils.runOnUiThreadDelayed(() -> sendMQTTMsg(lifeTest(mqttMsgEntity.getFromId())), getRandomNum(10, 20) * 1000L);
+						ViewUtils.runOnUiThreadDelayed(() -> sendMQTTMsg(lifeTest(mqttMsgEntity.getFromId())),
+						                               getRandomNum(10, 20) * 1000L);
 						break;
 
 					//关机
@@ -382,7 +385,8 @@ public class MQTTService extends Service {
 									if (!FileUtils.isFileExists(ftpCmdEntity.getPath())) {
 										continue;
 									}
-									FileUtils.copy(ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
+									FileUtils.copy(ftpCmdEntity.getPath(),
+									               destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
 								}
 								return true;
 							}
@@ -476,7 +480,8 @@ public class MQTTService extends Service {
 									return false;
 								}
 								for (FtpCmdEntity ftpCmdEntity : rstPathList) {
-									RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?", ftpCmdEntity.getPath())
+									RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?",
+									                                                  ftpCmdEntity.getPath())
 									                                           .findFirst(RecycleBinEntity.class);
 									if (null == recycleBinEntity) {
 										continue;
@@ -517,7 +522,8 @@ public class MQTTService extends Service {
 								} else {
 									for (FtpCmdEntity ftpCmdEntity : erasePathList) {
 										FileUtils.delete(ftpCmdEntity.getPath());
-										RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?", ftpCmdEntity.getPath())
+										RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?",
+										                                                  ftpCmdEntity.getPath())
 										                                           .findFirst(RecycleBinEntity.class);
 										if (null != recycleBinEntity) {
 											recycleBinEntity.delete();
@@ -553,12 +559,13 @@ public class MQTTService extends Service {
 									SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 									for (FtpFavoritesEntity ftpFavoritesEntity : favoritesPathList) {
 										if (isAdd) {
-											ftpFavoritesEntity.setTime(TimeUtils.millis2String(FileUtils.getFileLastModified(ftpFavoritesEntity.getPath()),
-											                                                   sdf));
+											ftpFavoritesEntity.setTime(TimeUtils.millis2String(FileUtils.getFileLastModified(
+													ftpFavoritesEntity.getPath()), sdf));
 											ftpFavoritesEntity.setSize(FileUtils.getSize(ftpFavoritesEntity.getPath()));
 											ftpFavoritesEntity.save();
 										} else {
-											FtpFavoritesEntity ftpFavorites = LitePal.where("path = ?", ftpFavoritesEntity.getPath())
+											FtpFavoritesEntity ftpFavorites = LitePal.where("path = ?",
+											                                                ftpFavoritesEntity.getPath())
 											                                         .findFirst(FtpFavoritesEntity.class);
 											if (null != ftpFavorites) {
 												ftpFavorites.delete();
@@ -629,10 +636,12 @@ public class MQTTService extends Service {
 										ftpFileQueryEntity.setPath(path);
 										ftpFileQueryEntity.setType(FileUtils.isDir(path) ? "dir" : "file");
 										long time = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED));
-										TimeUtils.millis2String(time, new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()));
+										TimeUtils.millis2String(time,
+										                        new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()));
 										ftpFileQueryEntity.setCreateTime(TimeUtils.millis2String(time,
-										                                                         new SimpleDateFormat("yyyy-MM-dd HH:mm",
-										                                                                              Locale.getDefault())));
+										                                                         new SimpleDateFormat(
+												                                                         "yyyy-MM-dd HH:mm",
+												                                                         Locale.getDefault())));
 										ftpFileQueryEntity.setSrc(path.startsWith(PathConfig.PUBLIC) ? "public" : "private");
 										ftpFileList.add(ftpFileQueryEntity);
 									}
@@ -686,7 +695,7 @@ public class MQTTService extends Service {
 	 */
 	private MQTTMsgEntity deviceInfo(String toId) {
 		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("name", "模拟器");
+		paramMap.put("name", "国乾NAS 2020");
 		paramMap.put("mac", DeviceUtils.getMacAddress());
 		paramMap.put("ip", NetworkUtils.getIPAddress(true));
 		paramMap.put("cpu", "Cortex-A53 8核 1.5GHz");
@@ -696,10 +705,10 @@ public class MQTTService extends Service {
 		paramMap.put("ram", memoryInfo.totalMem);
 		paramMap.put("status", "正常");
 		paramMap.put("runningTime", SystemClock.elapsedRealtime());
-		paramMap.put("driveSn", "");
-		paramMap.put("driveStatus", "");
-		paramMap.put("driveModel", "");
-		paramMap.put("driveCapacity", "");
+		paramMap.put("driveSn", "000000000033");
+		paramMap.put("driveStatus", "正常");
+		paramMap.put("driveModel", "1816");
+		paramMap.put("driveCapacity", FileUtils.getFsTotalSize("/storage/3C3E71843E71384A/"));
 		JSONObject paramJson = new JSONObject(paramMap);
 		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_NOTIFY, MQTTMsgEntity.MSG_DEVICE_INFO, toId, paramJson.toJSONString());
 	}
@@ -786,7 +795,8 @@ public class MQTTService extends Service {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("days",
 		             TimeUtils.getTimeSpan(System.currentTimeMillis(),
-		                                   TimeUtils.string2Millis("20210401", new SimpleDateFormat("yyyyMMdd", Locale.getDefault())),
+		                                   TimeUtils.string2Millis("20210401",
+		                                                           new SimpleDateFormat("yyyyMMdd", Locale.getDefault())),
 		                                   TimeConstants.DAY));
 		JSONObject paramJson = new JSONObject(paramMap);
 		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_LIFE_TEST, toId, paramJson.toJSONString());

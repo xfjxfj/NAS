@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import org.primftpd.util.Defaults;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -87,8 +89,8 @@ public class Utils {
 		if (!file.getPath().startsWith(root.getPath())) {
 			throw new SecurityException("Resolved path jumped beyond configured root");
 		}
-
-		return file;
+//		return file;
+		return Defaults.HOME_DIR;
 	}
 
 	/**

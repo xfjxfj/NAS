@@ -58,7 +58,8 @@ public class AudioPlayerActivity extends BaseActivity<ActivityAudioPlayerBinding
 	private void init(int position) {
 		AudioPlayListManager.INSTANCE.setPosition(position);
 		mViewBinding.iAudioPlayerTitle.actvFileManagerTitle.setText(AudioPlayListManager.INSTANCE.getList()
-		                                                                                         .get(AudioPlayListManager.INSTANCE.getPosition())
+		                                                                                         .get(AudioPlayListManager.INSTANCE
+				                                                                                              .getPosition())
 		                                                                                         .getName());
 		AudioWife.getInstance().release();
 		AudioWife.getInstance()
@@ -92,7 +93,8 @@ public class AudioPlayerActivity extends BaseActivity<ActivityAudioPlayerBinding
 			AudioPlayListManager.INSTANCE.cutPostion();
 		}
 		mViewBinding.iAudioPlayerTitle.actvFileManagerTitle.setText(AudioPlayListManager.INSTANCE.getList()
-		                                                                                         .get(AudioPlayListManager.INSTANCE.getPosition())
+		                                                                                         .get(AudioPlayListManager.INSTANCE
+				                                                                                              .getPosition())
 		                                                                                         .getName());
 		AudioWife.getInstance().release();
 		AudioWife.getInstance()
@@ -124,7 +126,8 @@ public class AudioPlayerActivity extends BaseActivity<ActivityAudioPlayerBinding
 			AudioPlayListManager.INSTANCE.addPostion();
 		}
 		mViewBinding.iAudioPlayerTitle.actvFileManagerTitle.setText(AudioPlayListManager.INSTANCE.getList()
-		                                                                                         .get(AudioPlayListManager.INSTANCE.getPosition())
+		                                                                                         .get(AudioPlayListManager.INSTANCE
+				                                                                                              .getPosition())
 		                                                                                         .getName());
 		AudioWife.getInstance().release();
 		AudioWife.getInstance()

@@ -4,12 +4,14 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.provider.Settings;
 
+import androidx.multidex.MultiDex;
+
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.djangoogle.framework.applicaiton.BaseApplication;
 import com.djangoogle.framework.manager.OkHttpManager;
-import com.lzx.starrysky.StarrySky;
+import com.shuyu.gsyvideoplayer.player.PlayerFactory;
 import com.topqizhi.ai.manager.AIUIManager;
 import com.topqizhi.ai.manager.AudioRecordManager;
 import com.topqizhi.ai.manager.MscManager;
@@ -29,11 +31,18 @@ import cn.wildfire.chat.kit.conversation.message.viewholder.MessageViewHolderMan
 import cn.wildfire.chat.kit.third.location.viewholder.LocationMessageContentViewHolder;
 import cn.wildfirechat.push.PushService;
 import rxhttp.RxHttp;
+import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
 
 /**
  * Created by レインマン on 2020/09/10 10:21 with Android Studio.
  */
 public class NasApp extends BaseApplication {
+
+	@Override
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(base);
+		MultiDex.install(this);
+	}
 
 	@Override
 	public void onCreate() {
@@ -45,11 +54,11 @@ public class NasApp extends BaseApplication {
 		MscManager.INSTANCE.initialize(this);
 		AIUIManager.INSTANCE.initialize(this);
 		VolumeManager.INSTANCE.initialize(this);
+		PlayerFactory.setPlayManager(Exo2PlayerManager.class);
 		AudioRecordManager.INSTANCE.initialize();
 		CsvLoggerFactory.CONTEXT = this;
 		initAMap();
 		initIM();
-		StarrySky.init(this).apply();
 	}
 
 	/**
@@ -118,7 +127,8 @@ public class NasApp extends BaseApplication {
 
 	private void initAndroidId() {
 		if (!SPUtils.getInstance().contains(SPConfig.ANDROID_ID)) {
-			SPUtils.getInstance().put(SPConfig.ANDROID_ID, Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+			SPUtils.getInstance()
+			       .put(SPConfig.ANDROID_ID, Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
 		}
 	}
 }
