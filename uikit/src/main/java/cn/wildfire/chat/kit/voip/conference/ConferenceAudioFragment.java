@@ -346,7 +346,7 @@ public class ConferenceAudioFragment extends Fragment implements AVEngineKit.Cal
             speakerImageView.setSelected(false);
         }
 
-        speakerImageView.setEnabled(device != AVAudioManager.AudioDevice.WIRED_HEADSET && device != AVAudioManager.AudioDevice.BLUETOOTH);
+	    speakerImageView.setEnabled(device != AVAudioManager.AudioDevice.WIRED_HEADSET && device != AVAudioManager.AudioDevice.BLUETOOTH);
     }
 
     @Override

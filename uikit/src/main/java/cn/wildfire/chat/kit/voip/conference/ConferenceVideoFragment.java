@@ -700,7 +700,7 @@ public class ConferenceVideoFragment extends Fragment implements AVEngineKit.Cal
         super.onStop();
         if(hiddenBarTimer!=null) {
             hiddenBarTimer.cancel();
-            hiddenBarTimer = null;
+	        hiddenBarTimer = null;
         }
     }
 }

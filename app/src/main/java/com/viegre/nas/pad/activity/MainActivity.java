@@ -24,7 +24,6 @@ import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -55,7 +54,6 @@ import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.manager.AMapLocationManager;
 import com.viegre.nas.pad.manager.AccessibilityServiceManager;
 import com.viegre.nas.pad.service.AppService;
-import com.viegre.nas.pad.service.MscService;
 import com.viegre.nas.pad.service.WakeupService;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
@@ -101,7 +99,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
 	@Override
 	protected void initialize() {
-		ServiceUtils.startService(MscService.class);
+//		ServiceUtils.startService(MscService.class);
 //		getUsbPermission();
 		initClick();
 		initIcon();

@@ -77,6 +77,7 @@ public class ConferenceActivity extends VoipBaseActivity {
         String desc = session.getDesc();
         boolean audience = session.isAudience();
         String host = session.getHost();
+        boolean advanced = session.isAdvanced();
 
         postAction(() -> {
             if (callEndReason == AVEngineKit.CallEndReason.RoomNotExist) {
@@ -88,7 +89,7 @@ public class ConferenceActivity extends VoipBaseActivity {
                         .negativeText("否")
                         .positiveText("是")
                         .onPositive((dialog, which) -> {
-                            AVEngineKit.CallSession newSession = AVEngineKit.Instance().startConference(callId, audioOnly, pin, host, title, desc, audience, this);
+                            AVEngineKit.CallSession newSession = AVEngineKit.Instance().startConference(callId, audioOnly, pin, host, title, desc, audience, advanced, this);
                             if (newSession == null) {
                                 Toast.makeText(this, "创建会议失败", Toast.LENGTH_SHORT).show();
                                 finish();
@@ -103,7 +104,7 @@ public class ConferenceActivity extends VoipBaseActivity {
                     finish();
                 }
             } else if (callEndReason == AVEngineKit.CallEndReason.RoomParticipantsFull) {
-                AVEngineKit.CallSession newSession = AVEngineKit.Instance().joinConference(callId, audioOnly, pin, host, title, desc, audience, this);
+                AVEngineKit.CallSession newSession = AVEngineKit.Instance().joinConference(callId, audioOnly, pin, host, title, desc, audience, advanced, this);
                 if (newSession == null) {
                     Toast.makeText(this, "加入会议失败", Toast.LENGTH_SHORT).show();
                     finish();

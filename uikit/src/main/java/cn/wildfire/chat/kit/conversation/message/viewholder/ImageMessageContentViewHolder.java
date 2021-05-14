@@ -37,7 +37,7 @@ public class ImageMessageContentViewHolder extends MediaMessageContentViewHolder
     @BindView(R2.id.imageView)
     BubbleImageView imageView;
 
-    private  String imagePath ;
+    private String imagePath;
 
     public ImageMessageContentViewHolder(ConversationFragment fragment, RecyclerView.Adapter adapter, View itemView) {
         super(fragment, adapter, itemView);
@@ -48,16 +48,16 @@ public class ImageMessageContentViewHolder extends MediaMessageContentViewHolder
         ImageMessageContent imageMessage = (ImageMessageContent) message.message.content;
         Bitmap thumbnail = imageMessage.getThumbnail();
         int[] imageSize = WeChatImageUtils.getImageSizeByOrgSizeToWeChat((int) imageMessage.getImageWidth(), (int) imageMessage.getImageHeight());
-        int width = imageSize[0] >0? imageSize[0]: 200;
-        int height = imageSize[1] >0 ? imageSize[1] : 200;
+        int width = imageSize[0] > 0 ? imageSize[0] : 200;
+        int height = imageSize[1] > 0 ? imageSize[1] : 200;
         imageView.getLayoutParams().width = width;
         imageView.getLayoutParams().height = height;
-        if(FileUtils.isFileExists(imageMessage.localPath)){
+        if (FileUtils.isFileExists(imageMessage.localPath)) {
             imagePath = imageMessage.localPath;
-        }else {
+        } else {
             imagePath = imageMessage.remoteUrl;
         }
-        loadMedia(thumbnail,imagePath,imageView);
+        loadMedia(thumbnail, imagePath, imageView);
 
     }
 
