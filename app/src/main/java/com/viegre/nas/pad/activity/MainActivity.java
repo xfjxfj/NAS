@@ -7,14 +7,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
+import android.hardware.usb.IUsbManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.os.IBinder;
+import android.os.ServiceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -92,6 +98,26 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		initBanner();
 		initWeather();
 		loginIM();
+
+		try {
+			PackageManager pm = getPackageManager();
+			ApplicationInfo ai = pm.getApplicationInfo(AppUtils.getAppPackageName(), 0);
+			if (ai != null) {
+				@SuppressLint("WrongConstant")
+				UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
+				IBinder b = ServiceManager.getService(Context.USB_SERVICE);
+				IUsbManager service = IUsbManager.Stub.asInterface(b);
+				HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
+				for (UsbDevice device : deviceList.values()) {
+					if (1507 == device.getVendorId()) {
+						service.grantDevicePermission(device, ai.uid);
+						service.setDevicePackage(device, AppUtils.getAppPackageName());
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	//登录音视频通话服务器
@@ -280,7 +306,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 		//音频
 		Glide.with(this)
 		     .load(R.mipmap.main_icon_audio)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconAudio);
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIconAudio);
 		mViewBinding.acivMainIconAudio.setOnClickListener(view -> ActivityUtils.startActivity(AudioActivity.class));
 
 		//视频
