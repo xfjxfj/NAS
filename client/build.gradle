@@ -28,10 +28,9 @@ android {
 
 dependencies {
 	api project(':mars-core-release')
-	def lifecycle_version = '2.0.0-beta01'
-	implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-	implementation "androidx.core:core-ktx:+"
-	implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0-beta01"
+	implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+	implementation "androidx.core:core-ktx:1.3.1"
+	implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha07"
 //    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {

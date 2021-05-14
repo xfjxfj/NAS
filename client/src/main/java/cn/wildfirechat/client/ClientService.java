@@ -709,6 +709,29 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
             });
         }
 
+        @Override
+        public void clearRemoteConversationMessage(Conversation conversation, IGeneralCallback callback) throws RemoteException {
+            ProtoLogic.clearRemoteConversationMessages(conversation.type.ordinal(), conversation.target, conversation.line, new ProtoLogic.IGeneralCallback() {
+                @Override
+                public void onSuccess() {
+                    try {
+                        callback.onSuccess();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(int i) {
+                    try {
+                        callback.onFailure(i);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
 
         @Override
         public cn.wildfirechat.message.Message getMessage(long messageId) throws RemoteException {
@@ -968,7 +991,11 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
             Xlog.setConsoleLogOpen(true);
             String path = getLogPath();
             //wflog为ChatSManager中使用判断日志文件，如果修改需要对应修改
-            Xlog.appenderOpen(Xlog.LEVEL_INFO, AppednerModeAsync, path, path, "wflog", null);
+            try {
+                Xlog.appenderOpen(Xlog.LEVEL_INFO, AppednerModeAsync, path, path, "wflog", null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -1432,6 +1459,29 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         @Override
         public boolean deleteMessage(long messageId) throws RemoteException {
             return ProtoLogic.deleteMessage(messageId);
+        }
+
+        @Override
+        public void deleteRemoteMessage(long messageUid, IGeneralCallback callback) throws RemoteException {
+            ProtoLogic.deleteRemoteMessage(messageUid, new ProtoLogic.IGeneralCallback() {
+                @Override
+                public void onSuccess() {
+                    try {
+                        callback.onSuccess();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(int i) {
+                    try {
+                        callback.onFailure(i);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
 
         @Override
@@ -2230,8 +2280,13 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         }
 
         @Override
-        public void sendConferenceRequest(long sessionId, String roomId, String request, String data, IGeneralCallback2 callback) throws RemoteException {
-            ProtoLogic.sendConferenceRequest(sessionId, roomId, request, data, new ProtoLogic.IGeneralCallback2() {
+        public boolean isGlobalDisableSyncDraft() throws RemoteException {
+            return ProtoLogic.isGlobalDisableSyncDraft();
+        }
+
+        @Override
+        public void sendConferenceRequest(long sessionId, String roomId, String request, boolean advanced, String data, IGeneralCallback2 callback) throws RemoteException {
+            ProtoLogic.sendConferenceRequest(sessionId, roomId, request, advanced, data, new ProtoLogic.IGeneralCallback2() {
                 @Override
                 public void onSuccess(String s) {
                     try {
@@ -2532,7 +2587,13 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
 
         ProtoLogic.setConnectionStatusCallback(null);
         ProtoLogic.setReceiveMessageCallback(null);
-        ProtoLogic.appWillTerminate();
+
+        try {
+            //发现在某些机型上，程序被杀掉时有崩溃现象，加个保护避免出现崩溃。
+            ProtoLogic.appWillTerminate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void openXlog() {
