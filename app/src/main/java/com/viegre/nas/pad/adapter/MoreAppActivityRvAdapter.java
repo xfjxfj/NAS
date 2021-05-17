@@ -74,40 +74,7 @@ public class MoreAppActivityRvAdapter extends RecyclerView.Adapter<MoreAppActivi
 //                holder.more_app_item_img1.setOnClickListener(v -> AppUtils.launchApp(mList.get(finalPosition1).packageName));
 //            }
 //        }
-//        position = position + 1;
-//        if (position < mList.size()) {
-//            holder.more_app_item_img2.setImageDrawable(packageManager.getApplicationIcon(mList.get(position).applicationInfo));
-//            int finalPosition = position;
-//            holder.more_app_item_img2.setOnClickListener(v -> AppUtils.launchApp(mList.get(finalPosition).packageName));
-//        }
-//        position = position + 1;
-//        if (position < mList.size()) {
-//            holder.more_app_item_img3.setImageDrawable(packageManager.getApplicationIcon(mList.get(position).applicationInfo));
-//            int finalPosition2 = position;
-//            holder.more_app_item_img3.setOnClickListener(v -> AppUtils.launchApp(mList.get(finalPosition2).packageName));
-//        }
-//        position = position + 1;
-//        if (position < mList.size()) {
-//            holder.more_app_item_img4.setImageDrawable(packageManager.getApplicationIcon(mList.get(position).applicationInfo));
-//            int finalPosition3 = position;
-//            holder.more_app_item_img4.setOnClickListener(v -> AppUtils.launchApp(mList.get(finalPosition3).packageName));
-//        }
-//        position = position + 1;
-//        if (position < mList.size()) {
-//            holder.more_app_item_img5.setImageDrawable(packageManager.getApplicationIcon(mList.get(position).applicationInfo));
-//            int finalPosition4 = position;
-//            holder.more_app_item_img5.setOnClickListener(v -> AppUtils.launchApp(mList.get(finalPosition4).packageName));
-//        }
-//        position = position + 1;
-//        if (position < mList.size()) {
-//            try {
-//                holder.more_app_item_img6.setImageDrawable(packageManager.getApplicationIcon(mList.get(position).applicationInfo));
-//                int finalPosition5 = position;
-//                holder.more_app_item_img6.setOnClickListener(v -> AppUtils.launchApp(mList.get(finalPosition5).packageName));
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
+//     
     }
 
     //获取数据源总的条数
@@ -122,22 +89,10 @@ public class MoreAppActivityRvAdapter extends RecyclerView.Adapter<MoreAppActivi
     class MyHolder extends RecyclerView.ViewHolder {
 
         ImageView more_app_ico_img;
-//        public final ImageView more_app_item_img1;
-//        public final ImageView more_app_item_img2;
-//        public final ImageView more_app_item_img3;
-//        public final ImageView more_app_item_img4;
-//        public final ImageView more_app_item_img5;
-//        public final ImageView more_app_item_img6;
 
         public MyHolder(View itemView) {
             super(itemView);
             more_app_ico_img = itemView.findViewById(R.id.more_app_ico_img);
-//            more_app_item_img1 = itemView.findViewById(R.id.more_app_item_img1);
-//            more_app_item_img2 = itemView.findViewById(R.id.more_app_item_img2);
-//            more_app_item_img3 = itemView.findViewById(R.id.more_app_item_img3);
-//            more_app_item_img4 = itemView.findViewById(R.id.more_app_item_img4);
-//            more_app_item_img5 = itemView.findViewById(R.id.more_app_item_img5);
-//            more_app_item_img6 = itemView.findViewById(R.id.more_app_item_img6);
         }
     }
 }
