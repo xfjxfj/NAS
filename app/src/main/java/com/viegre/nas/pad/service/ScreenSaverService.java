@@ -9,14 +9,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.IBinder;
-import android.provider.Settings;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.receiver.ScreenStatusReceiver;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 /**
  * Created by レインマン on 2021/03/09 18:12 with Android Studio.
@@ -76,9 +75,11 @@ public class ScreenSaverService extends Service {
 	private void initNotificationChannel() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			String CHANNEL_ID = "nas_channel_screen_saver";
-			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT);
+			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_NONE);
 			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
-			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("").setContentText("").build();
+			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("")
+			                                                                            .setContentText("")
+			                                                                            .build();
 			startForeground(1, notification);
 		}
 	}

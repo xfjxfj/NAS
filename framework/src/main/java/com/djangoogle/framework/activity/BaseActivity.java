@@ -4,15 +4,18 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
-import com.blankj.utilcode.util.BusUtils;
-import com.blankj.utilcode.util.ReflectUtils;
-
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewbinding.ViewBinding;
+
+import com.blankj.utilcode.util.ReflectUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * Created by レインマン on 2020/11/26 14:19 with Android Studio.
@@ -40,13 +43,13 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
 	@Override
 	protected void onStart() {
 		super.onStart();
-		BusUtils.register(this);
+		EventBus.getDefault().register(this);
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		BusUtils.unregister(this);
+		EventBus.getDefault().unregister(this);
 	}
 
 	@Override
@@ -59,6 +62,9 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
 	}
 
 	protected abstract void initialize();
+
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onBaseActivityEvent() {}
 
 	@Override
 	public void onBackPressed() {}

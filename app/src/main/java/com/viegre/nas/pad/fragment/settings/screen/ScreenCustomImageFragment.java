@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ColorUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -25,6 +24,8 @@ import com.viegre.nas.pad.entity.ImageEntity;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.widget.GridSpaceItemDecoration;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -66,7 +67,7 @@ public class ScreenCustomImageFragment extends BaseFragment<FragmentScreenCustom
 				} else {
 					SPUtils.getInstance().remove(SPConfig.SCREEN_SAVER_CUSTOM_IMAGES);
 				}
-				BusUtils.post(BusConfig.SCREEN_CUSTOM_HIDE);
+				EventBus.getDefault().post(BusConfig.SCREEN_CUSTOM_HIDE);
 				return null;
 			}
 		}));

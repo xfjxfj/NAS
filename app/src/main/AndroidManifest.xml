@@ -87,15 +87,6 @@
 				<action android:name="${applicationId}.main" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
-			<!-- USB -->
-			<intent-filter>
-				<action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-			</intent-filter>
-
-			<meta-data
-				android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-				android:resource="@xml/device_filter" />
-			<!-- USB END -->
 		</activity>
 
 		<activity
@@ -125,15 +116,7 @@
 
 		<activity
 			android:name=".activity.ExternalStorageActivity"
-			android:screenOrientation="landscape">
-			<intent-filter>
-				<action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-			</intent-filter>
-
-			<meta-data
-				android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-				android:resource="@xml/device_filter" />
-		</activity>
+			android:screenOrientation="landscape" />
 
 		<activity
 			android:name=".activity.im.ContactsActivity"

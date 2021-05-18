@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ServiceUtils;
@@ -37,7 +36,6 @@ import com.viegre.nas.pad.activity.audio.AudioActivity;
 import com.viegre.nas.pad.activity.im.ContactsActivity;
 import com.viegre.nas.pad.activity.image.ImageActivity;
 import com.viegre.nas.pad.activity.video.VideoActivity;
-import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
@@ -47,10 +45,8 @@ import com.viegre.nas.pad.entity.LoginResult;
 import com.viegre.nas.pad.entity.LoglinCodeEntity;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.manager.AMapLocationManager;
-import com.viegre.nas.pad.manager.AccessibilityServiceManager;
 import com.viegre.nas.pad.service.AppService;
 import com.viegre.nas.pad.service.MscService;
-import com.viegre.nas.pad.service.WakeupService;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.youth.banner.Banner;
@@ -58,6 +54,8 @@ import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 import org.primftpd.PrimitiveFtpdActivity;
 
@@ -101,25 +99,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		initIcon();
 		initBanner();
 		initWeather();
-//		try {
-//			PackageManager pm = getPackageManager();
-//			ApplicationInfo ai = pm.getApplicationInfo(AppUtils.getAppPackageName(), 0);
-//			if (ai != null) {
-//				@SuppressLint("WrongConstant")
-//				UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
-//				IBinder b = ServiceManager.getService(Context.USB_SERVICE);
-//				IUsbManager service = IUsbManager.Stub.asInterface(b);
-//				HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
-//				for (UsbDevice device : deviceList.values()) {
-//					if (1507 == device.getVendorId()) {
-//						service.grantDevicePermission(device, ai.uid);
-//						service.setDevicePackage(device, AppUtils.getAppPackageName());
-//					}
-//				}
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
 	}
 
 	@Override
@@ -170,38 +149,42 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
 	private void getDevicesToken(String android_id, String userid) {
 		String url = UrlConfig.Device.GET_DEVICESTOKEN;
-		RxHttp.postForm(url).add("sn", android_id).asString().observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<String>() {
-			@Override
-			public void onSubscribe(@NonNull Disposable d) {
-				Log.d("", "");
-			}
+		RxHttp.postForm(url)
+		      .add("sn", android_id)
+		      .asString()
+		      .observeOn(AndroidSchedulers.mainThread())
+		      .subscribe(new Observer<String>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {
+				      Log.d("", "");
+			      }
 
-			@Override
-			public void onNext(@NonNull String s) {
-				//添加公共请求头
+			      @Override
+			      public void onNext(@NonNull String s) {
+				      //添加公共请求头
 //                        {"code":0,"msg":"OK","data":{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpdGVtIjp7Iml0ZW1JZCI6ImY2ZmUyNTkyMmZhMjAyOGEiLCJpdGVtVHlwZSI6IjIifSwiaXNzIjoiYXV0aDAiLCJleHAiOjE2MjA0MjA4ODh9.DJk9tVcaIK62PQbR_c8zwkyHxDB0zP3Mvc_In7pcrac"}}
 //                        {"code":0,"msg":"OK","data":null}
-				Gson gson = new Gson();
-				DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
-				String token = loglinCodeEntity.getData().getToken();
-				SPUtils.getInstance().put("token", token);
-				postCallId(token, android_id, userid);
-				Log.d("", "");
-			}
+				      Gson gson = new Gson();
+				      DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
+				      String token = loglinCodeEntity.getData().getToken();
+				      SPUtils.getInstance().put("token", token);
+				      postCallId(token, android_id, userid);
+				      Log.d("", "");
+			      }
 
-			@Override
-			public void onError(@NonNull Throwable e) {
+			      @Override
+			      public void onError(@NonNull Throwable e) {
 //                        CommonUtils.showErrorToast(e.getMessage());
-				Log.d("", "");
-			}
+				      Log.d("", "");
+			      }
 
-			@Override
-			public void onComplete() {
-				Log.d("", "");
+			      @Override
+			      public void onComplete() {
+				      Log.d("", "");
 //                        SPUtils.getInstance().remove(SPConfig.LOGIN_CODE_SESSION_ID);
 ////                        mViewBinding.actvLoginAccountBtn.setClickable(true);
-			}
-		});
+			      }
+		      });
 
 //        postCallId(android_id,android_id);
 	}
@@ -250,9 +233,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (!AccessibilityServiceManager.INSTANCE.isOn(this, WakeupService.class.getName())) {
-			AccessibilityServiceManager.INSTANCE.gotoSettings(this);
-		}
+//		if (!AccessibilityServiceManager.INSTANCE.isOn(this, WakeupService.class.getName())) {
+//			AccessibilityServiceManager.INSTANCE.gotoSettings(this);
+//		}
 		initUser();
 		AMapLocationManager.INSTANCE.getLocation();
 	}
@@ -271,7 +254,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 			     .load(R.mipmap.main_unlogin)
 			     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
 			     .into(mViewBinding.acivMainUserIcon);
-			mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE)));
+			mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance()
+			                                                                              .getString(SPConfig.PHONE)));
 			mViewBinding.llcMainUser.setOnClickListener(null);
 		} else {
 			Glide.with(mActivity)
@@ -287,12 +271,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 	private void initClick() {
 		if (BuildConfig.DEBUG) {
 			mViewBinding.tcMainTime.setOnClickListener(view -> ActivityUtils.startActivity(PrimitiveFtpdActivity.class));
-//			mViewBinding.tcMainTime.setOnClickListener(view -> {
-//				if (!MscManager.INSTANCE.isListenHardWakeup() || AIUIManager.INSTANCE.isHardWakeup()) {
-//					return;
-//				}
-//				AIUIManager.INSTANCE.startHardListening();
-//			});
 		}
 		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
 		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
@@ -309,8 +287,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		//音频
 		Glide.with(this)
 		     .load(R.mipmap.main_icon_audio)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-		     .into(mViewBinding.acivMainIconAudio);
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconAudio);
 		mViewBinding.acivMainIconAudio.setOnClickListener(view -> ActivityUtils.startActivity(AudioActivity.class));
 
 		//视频
@@ -320,12 +297,30 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		     .into(mViewBinding.acivMainIconVideo);
 		mViewBinding.acivMainIconVideo.setOnClickListener(view -> ActivityUtils.startActivity(VideoActivity.class));
 
-		Glide.with(this).load(R.mipmap.test_icon_3).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon3);
-		Glide.with(this).load(R.mipmap.test_icon_4).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon4);
-		Glide.with(this).load(R.mipmap.test_icon_5).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon5);
-		Glide.with(this).load(R.mipmap.test_icon_6).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon6);
-		Glide.with(this).load(R.mipmap.test_icon_7).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon7);
-		Glide.with(this).load(R.mipmap.test_icon_8).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon8);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_3)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon3);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_4)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon4);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_5)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon5);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_6)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon6);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_7)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon7);
+		Glide.with(this)
+		     .load(R.mipmap.test_icon_8)
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIcon8);
 		mViewBinding.acivMainIcon5.setOnClickListener(view -> {
 			Intent liveIntent = new Intent();
 			liveIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
@@ -335,7 +330,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 			liveIntent.putExtra("ChannelNum", 1);
 			ActivityUtils.startActivity(liveIntent);
 		});
-//        mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(SettingsActivity.class));
 		mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(MoreAppActivity.class));//跳转到更多应用activity中
 	}
 
@@ -383,7 +377,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		});
 	}
 
-	@BusUtils.Bus(tag = BusConfig.WEATHER, threadMode = BusUtils.ThreadMode.MAIN)
+	@Subscribe(threadMode = ThreadMode.MAIN)
 	public void getWeather(WeatherEntity weatherEntity) {
 		if (null != weatherEntity && !mWeatherMap.isEmpty()) {
 			for (Map.Entry<String, Integer> entry : mWeatherMap.entrySet()) {
@@ -434,8 +428,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 										return;
 									}
 									FileSystem currentFs = device.getPartitions().get(0).getFileSystem();
-									ToastUtils.showLong(currentFs.getVolumeLabel() + " - " + currentFs.getRootDirectory().getAbsolutePath());
-									LogUtils.iTag("getUsbPermission", currentFs.getVolumeLabel(), currentFs.getRootDirectory().getAbsolutePath());
+									ToastUtils.showLong(currentFs.getVolumeLabel() + " - " + currentFs.getRootDirectory()
+									                                                                  .getAbsolutePath());
+									LogUtils.iTag("getUsbPermission",
+									              currentFs.getVolumeLabel(),
+									              currentFs.getRootDirectory().getAbsolutePath());
 								}
 							}
 						} else {

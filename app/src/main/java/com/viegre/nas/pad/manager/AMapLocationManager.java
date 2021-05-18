@@ -4,15 +4,15 @@ import android.content.Context;
 
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
-import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.TimeUtils;
-import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.entity.WeatherRootEntity;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -37,14 +37,15 @@ public enum AMapLocationManager {
 			mAMapLocationClient = new AMapLocationClient(applicationContext);
 			mAMapLocationClient.setLocationListener(aMapLocation -> {
 				if (null == aMapLocation) {
-					BusUtils.post(BusConfig.WEATHER, new WeatherEntity());
+					EventBus.getDefault().post(new WeatherEntity());
 				} else {
 					if (0 != aMapLocation.getErrorCode()) {
 						//定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
 						LogUtils.e("location Error, ErrCode:" + aMapLocation.getErrorCode() + ", errInfo:" + aMapLocation.getErrorInfo());
-						BusUtils.post(BusConfig.WEATHER, new WeatherEntity());
+						EventBus.getDefault().post(new WeatherEntity());
 					} else {
-						RxHttp.postForm(UrlConfig.Device.GET_WEATHER).setAssemblyEnabled(false)
+						RxHttp.postForm(UrlConfig.Device.GET_WEATHER)
+						      .setAssemblyEnabled(false)
 						      .add("lat", aMapLocation.getLatitude())
 						      .add("lng", aMapLocation.getLongitude())
 						      .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
@@ -60,18 +61,18 @@ public enum AMapLocationManager {
 									      for (WeatherEntity weather : weatherList) {
 										      if (TimeUtils.isToday(weather.getDate(),
 										                            new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()))) {
-											      BusUtils.post(BusConfig.WEATHER, weather);
+											      EventBus.getDefault().post(weather);
 											      return;
 										      }
 									      }
 								      }
-								      BusUtils.post(BusConfig.WEATHER, new WeatherEntity());
+								      EventBus.getDefault().post(new WeatherEntity());
 							      }
 
 							      @Override
 							      public void onError(@NonNull Throwable e) {
 								      e.printStackTrace();
-								      BusUtils.post(BusConfig.WEATHER, new WeatherEntity());
+								      EventBus.getDefault().post(new WeatherEntity());
 							      }
 
 							      @Override

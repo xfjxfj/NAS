@@ -21,7 +21,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.constant.TimeConstants;
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -56,6 +55,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
 import java.io.File;
@@ -155,7 +155,7 @@ public class MQTTService extends Service {
 		public void connectComplete(boolean reconnect, String serverURI) {
 			LogUtils.iTag(TAG, "connectComplete", SPUtils.getInstance().getString(SPConfig.ANDROID_ID), serverURI);
 			try {
-				mMqttAndroidClient.subscribe("nas/device/" + SPUtils.getInstance().getString(SPConfig.ANDROID_ID), 2);
+				mMqttAndroidClient.subscribe("nas/device/" + SPUtils.getInstance().getString(SPConfig.ANDROID_ID), 1);
 			} catch (MqttException e) {
 				LogUtils.eTag(TAG, e.toString());
 			}
@@ -198,7 +198,7 @@ public class MQTTService extends Service {
 	private void initNotificationChannel() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			String CHANNEL_ID = "nas_channel_mqtt";
-			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT);
+			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_NONE);
 			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
 			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("")
 			                                                                            .setContentText("")
@@ -215,7 +215,7 @@ public class MQTTService extends Service {
 	public void sendMQTTMsg(MQTTMsgEntity mqttMsgEntity) {
 		MqttMessage mqttMessage = new MqttMessage();
 		mqttMessage.setPayload(JSON.toJSONString(mqttMsgEntity).getBytes());//设置消息内容
-		mqttMessage.setQos(2);//设置消息发送质量，可为0,1,2.
+		mqttMessage.setQos(1);//设置消息发送质量，可为0,1,2.
 		mqttMessage.setRetained(false);//服务器是否保存最后一条消息，若保存，client再次上线时，将再次受到上次发送的最后一条消息。
 		try {
 			mMqttAndroidClient.publish("nas/user/" + mqttMsgEntity.getToId(), mqttMessage);//设置消息的topic，并发送。
@@ -270,7 +270,7 @@ public class MQTTService extends Service {
 						if (2 == state) {
 							ToastUtils.showShort("管理员拒绝绑定");
 						} else if (1 == state || 3 == state) {
-							BusUtils.postSticky(BusConfig.DEVICE_BOUND);
+							EventBus.getDefault().postSticky(BusConfig.DEVICE_BOUND);
 							ActivityUtils.finishActivity(WelcomeActivity.class);
 						}
 						break;

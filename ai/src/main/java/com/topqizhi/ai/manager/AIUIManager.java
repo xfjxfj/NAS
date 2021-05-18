@@ -200,7 +200,7 @@ public enum AIUIManager {
 			switch (aiuiEvent.eventType) {
 				case AIUIConstant.EVENT_CONNECTED_TO_SERVER:
 					Log.i(TAG, "已连接服务器");
-//					BusUtils.postSticky("AIUI_CONNECTED_TO_SERVER");
+//					EventBus.getDefault().postSticky("AIUI_CONNECTED_TO_SERVER");
 					break;
 
 				case AIUIConstant.EVENT_SERVER_DISCONNECTED:

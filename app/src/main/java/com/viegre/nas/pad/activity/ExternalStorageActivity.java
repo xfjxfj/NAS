@@ -2,7 +2,6 @@ package com.viegre.nas.pad.activity;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -17,6 +16,9 @@ import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.databinding.ActivityExternalStorageBinding;
 import com.viegre.nas.pad.entity.FileEntity;
 import com.viegre.nas.pad.widget.GridSpaceItemDecoration;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -157,14 +159,20 @@ public class ExternalStorageActivity extends BaseActivity<ActivityExternalStorag
 		});
 	}
 
-	@BusUtils.Bus(tag = BusConfig.USB_DEVICE_ATTACHED, threadMode = BusUtils.ThreadMode.MAIN)
-	public void usbDeviceAttached() {
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void usbDeviceAttached(String event) {
+		if (!BusConfig.USB_DEVICE_ATTACHED.equals(event)) {
+			return;
+		}
 		ThreadUtils.cancel(ThreadUtils.getSinglePool());
 		initList();
 	}
 
-	@BusUtils.Bus(tag = BusConfig.USB_DEVICE_DETACHED, threadMode = BusUtils.ThreadMode.MAIN)
-	public void usbDeviceDetached() {
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void usbDeviceDetached(String event) {
+		if (!BusConfig.USB_DEVICE_DETACHED.equals(event)) {
+			return;
+		}
 		ThreadUtils.cancel(ThreadUtils.getSinglePool());
 		initList();
 	}

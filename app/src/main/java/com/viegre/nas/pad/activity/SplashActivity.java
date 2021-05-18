@@ -11,7 +11,6 @@ import android.provider.Settings;
 import android.view.View;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.ImageUtils;
@@ -43,6 +42,8 @@ import com.viegre.nas.pad.service.ScreenSaverService;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 import org.primftpd.prefs.LoadPrefsUtil;
 import org.primftpd.prefs.PrefsBean;
@@ -156,7 +157,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 判断设备是否绑定用户
 	 */
 	private void getDeviceBoundstatus() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) Utils.getApp().getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager connectivityManager = (ConnectivityManager) Utils.getApp()
+		                                                                     .getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkEthernetInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
 		NetworkInfo networkWiFiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 		boolean isEthernetConnected = null != networkEthernetInfo && networkEthernetInfo.isConnected();
@@ -181,9 +183,12 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		}
 	}
 
-	@BusUtils.Bus(tag = BusConfig.NETWORK_DETAIL, threadMode = BusUtils.ThreadMode.MAIN)
-	public void networkDetailOperation(String operation) {
-		switch (operation) {
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void networkDetailOperation(String[] events) {
+		if (!BusConfig.NETWORK_DETAIL.equals(events[0])) {
+			return;
+		}
+		switch (events[1]) {
 			case BusConfig.SHOW_NETWORK_DETAIL:
 				FragmentUtils.add(getSupportFragmentManager(), mNetworkDetailFragment, R.id.flSplash);
 				FragmentUtils.show(mNetworkDetailFragment);
@@ -198,8 +203,11 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		}
 	}
 
-	@BusUtils.Bus(tag = BusConfig.DEVICE_BOUND, sticky = true, threadMode = BusUtils.ThreadMode.MAIN)
-	public void deviceBound() {
+	@Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+	public void deviceBound(String event) {
+		if (!BusConfig.DEVICE_BOUND.equals(event)) {
+			return;
+		}
 		SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
 		//获取并显示最新引导页
 		getDeviceResource();
@@ -223,7 +231,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				      if (!resourceList.isEmpty()) {
 					      LitePal.deleteAll(DeviceResourceEntity.class);
 					      LitePal.saveAll(resourceList);
-					      DeviceResourceEntity deviceResourceEntity = LitePal.where("type = ?", "guideVideo").findFirst(DeviceResourceEntity.class);
+					      DeviceResourceEntity deviceResourceEntity = LitePal.where("type = ?", "guideVideo")
+					                                                         .findFirst(DeviceResourceEntity.class);
 					      List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
 					      if (null != deviceResourceEntity) {
 						      String url = deviceResourceEntity.getContent();

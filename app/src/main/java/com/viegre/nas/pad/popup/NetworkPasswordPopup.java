@@ -6,7 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.text.InputType;
 import android.view.MotionEvent;
 
-import com.blankj.utilcode.util.BusUtils;
+import androidx.annotation.NonNull;
+
 import com.blankj.utilcode.util.ResourceUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -15,7 +16,7 @@ import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.databinding.PopupNetworkPasswordBinding;
 
-import androidx.annotation.NonNull;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by レインマン on 2020/11/30 10:06 with Android Studio.
@@ -62,10 +63,16 @@ public class NetworkPasswordPopup extends CenterPopupView {
 			if (motionEvent.getX() > mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.getWidth() - mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput
 					.getPaddingRight() - drawable.getIntrinsicWidth()) {
 				if (drawableShow == drawable) {
-					mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setCompoundDrawables(null, null, drawableHide, null);
+					mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setCompoundDrawables(null,
+					                                                                                null,
+					                                                                                drawableHide,
+					                                                                                null);
 					mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 				} else {
-					mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setCompoundDrawables(null, null, drawableShow, null);
+					mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setCompoundDrawables(null,
+					                                                                                null,
+					                                                                                drawableShow,
+					                                                                                null);
 					mPopupNetworkPasswordBinding.acetPopupNetworkPasswordInput.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
 				}
 			}
@@ -85,6 +92,6 @@ public class NetworkPasswordPopup extends CenterPopupView {
 			return;
 		}
 
-		dismissWith(() -> BusUtils.post(BusConfig.NETWORK_PASSWORD, password));
+		dismissWith(() -> EventBus.getDefault().post(new String[]{BusConfig.NETWORK_PASSWORD, password}));
 	}
 }

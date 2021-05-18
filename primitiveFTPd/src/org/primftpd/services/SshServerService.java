@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Looper;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationCompat;
+
 import org.apache.ftpserver.ftplet.Authentication;
 import org.apache.ftpserver.ftplet.AuthenticationFailedException;
 import org.apache.ftpserver.usermanager.AnonymousAuthentication;
@@ -52,7 +54,6 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.core.app.NotificationCompat;
 import eu.chainfire.libsuperuser.Shell;
 
 /**
@@ -263,9 +264,11 @@ public class SshServerService extends AbstractServerService {
 	private void initNotificationChannel() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			String CHANNEL_ID = "nas_channel_ftp_ssh";
-			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT);
+			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_NONE);
 			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
-			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("").setContentText("").build();
+			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("")
+			                                                                            .setContentText("")
+			                                                                            .build();
 			startForeground(1, notification);
 		}
 	}

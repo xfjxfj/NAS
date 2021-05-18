@@ -5,7 +5,6 @@ import android.view.View;
 import androidx.fragment.app.Fragment;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.djangoogle.framework.activity.BaseFragmentActivity;
@@ -30,6 +29,9 @@ import com.viegre.nas.pad.impl.PopupClickListener;
 import com.viegre.nas.pad.manager.PopupManager;
 import com.viegre.nas.pad.popup.PromptPopup;
 import com.viegre.nas.pad.util.CommonUtils;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,14 +169,20 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 		      });
 	}
 
-	@BusUtils.Bus(tag = BusConfig.SCREEN_CUSTOM_SHOW, threadMode = BusUtils.ThreadMode.MAIN)
-	public void screenCustomShow() {
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void screenCustomShow(String event) {
+		if (!BusConfig.SCREEN_CUSTOM_SHOW.equals(event)) {
+			return;
+		}
 		FragmentUtils.add(getSupportFragmentManager(), mScreenCustomImageFragment, R.id.flSettingsFragment);
 		FragmentUtils.show(mScreenCustomImageFragment);
 	}
 
-	@BusUtils.Bus(tag = BusConfig.SCREEN_CUSTOM_HIDE, threadMode = BusUtils.ThreadMode.MAIN)
-	public void screenCustomHide() {
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void screenCustomHide(String event) {
+		if (!BusConfig.SCREEN_CUSTOM_HIDE.equals(event)) {
+			return;
+		}
 		FragmentUtils.remove(mScreenCustomImageFragment);
 	}
 }

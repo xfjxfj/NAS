@@ -10,9 +10,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.alibaba.fastjson.JSON;
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.ColorUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -40,11 +42,12 @@ import com.viegre.nas.pad.popup.NetworkConnectionFailedPopup;
 import com.viegre.nas.pad.popup.NetworkPasswordPopup;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 /**
  * 网络设置
@@ -78,7 +81,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 			if (mIsConnecting) {
 				return;
 			}
-			BusUtils.post(BusConfig.NETWORK_DETAIL, BusConfig.SHOW_NETWORK_DETAIL);
+			EventBus.getDefault().post(new String[]{BusConfig.NETWORK_DETAIL, BusConfig.SHOW_NETWORK_DETAIL});
 		});
 		mViewBinding.acivNetworkRefresh.setOnClickListener(view -> {
 			mViewBinding.acivNetworkRefresh.setClickable(false);
@@ -104,9 +107,10 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 		}
 		mWiFiEntity = mNetworkListAdapter.getItem(position);
 		if (StringUtils.isEmpty(mWiFiEntity.getPassword())) {
-			PopupManager.INSTANCE.showCustomXPopup(mContext, new NetworkPasswordPopup(mContext, mWiFiEntity.getScanResult().SSID));
+			PopupManager.INSTANCE.showCustomXPopup(mContext,
+			                                       new NetworkPasswordPopup(mContext, mWiFiEntity.getScanResult().SSID));
 		} else {
-			getPassword(mWiFiEntity.getPassword());
+			getPassword(new String[]{BusConfig.NETWORK_PASSWORD, mWiFiEntity.getPassword()});
 		}
 	}
 
@@ -155,7 +159,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 			if (mIsFirstRun) {
 				//引导用户注册
 				ActivityUtils.startActivity(WelcomeActivity.class);
-				BusUtils.post(BusConfig.NETWORK_DETAIL, BusConfig.HIDE_NETWORK);
+				EventBus.getDefault().post(new String[]{BusConfig.NETWORK_DETAIL, BusConfig.HIDE_NETWORK});
 			}
 		} else {
 			if (!mIsConnecting) {
@@ -172,10 +176,8 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 		mNetworkListAdapter.setOnItemClickListener(this);
 		mNetworkListAdapter.setOnItemChildClickListener(this);
 		mViewBinding.rvNetworkOtherNetworkList.setLayoutManager(new LinearLayoutManager(mActivity));
-		mViewBinding.rvNetworkOtherNetworkList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(R.color.divider_line))
-		                                                                                                               .size(1)
-		                                                                                                               .margin(40, 25)
-		                                                                                                               .build());
+		mViewBinding.rvNetworkOtherNetworkList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(
+				ColorUtils.getColor(R.color.divider_line)).size(1).margin(40, 25).build());
 		mViewBinding.rvNetworkOtherNetworkList.setAdapter(mNetworkListAdapter);
 	}
 
@@ -254,24 +256,26 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 	 * 开始扫描WiFi
 	 */
 	private void scanWiFi() {
-		WifiUtils.withContext(Utils.getApp()).scanWifi(scanResults -> ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<WiFiEntity>>() {
-			@Override
-			public List<WiFiEntity> doInBackground() {
-				List<WiFiEntity> wifiList = new ArrayList<>();
-				for (ScanResult scanResult : scanResults) {
-					wifiList.add(new WiFiEntity(scanResult, ""));
-				}
-				return updateWiFiList(wifiList);
-			}
+		WifiUtils.withContext(Utils.getApp())
+		         .scanWifi(scanResults -> ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<WiFiEntity>>() {
+			         @Override
+			         public List<WiFiEntity> doInBackground() {
+				         List<WiFiEntity> wifiList = new ArrayList<>();
+				         for (ScanResult scanResult : scanResults) {
+					         wifiList.add(new WiFiEntity(scanResult, ""));
+				         }
+				         return updateWiFiList(wifiList);
+			         }
 
-			@Override
-			public void onSuccess(List<WiFiEntity> result) {
-				if (!result.isEmpty()) {
-					mNetworkListAdapter.setList(result);
-				}
-				mViewBinding.acivNetworkRefresh.setClickable(true);
-			}
-		})).start();
+			         @Override
+			         public void onSuccess(List<WiFiEntity> result) {
+				         if (!result.isEmpty()) {
+					         mNetworkListAdapter.setList(result);
+				         }
+				         mViewBinding.acivNetworkRefresh.setClickable(true);
+			         }
+		         }))
+		         .start();
 	}
 
 	/**
@@ -284,7 +288,8 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 		List<WiFiEntity> processWiFiList = new ArrayList<>(wifiList);
 		for (WiFiEntity scanResult : processWiFiList) {
 			for (WiFiEntity wifiEntity : mSavedWiFiList) {
-				if (scanResult.getScanResult().SSID.equals(wifiEntity.getScanResult().SSID) && scanResult.getScanResult().BSSID.equals(wifiEntity.getScanResult().BSSID)) {
+				if (scanResult.getScanResult().SSID.equals(wifiEntity.getScanResult().SSID) && scanResult.getScanResult().BSSID.equals(
+						wifiEntity.getScanResult().BSSID)) {
 					scanResult.setPassword(wifiEntity.getPassword());
 				}
 			}
@@ -304,24 +309,27 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 	/**
 	 * 获取密码消息
 	 *
-	 * @param password
+	 * @param events
 	 */
-	@BusUtils.Bus(tag = BusConfig.NETWORK_PASSWORD, threadMode = BusUtils.ThreadMode.MAIN)
-	public void getPassword(String password) {
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void getPassword(String[] events) {
+		if (!events[0].equals(BusConfig.NETWORK_PASSWORD)) {
+			return;
+		}
 		mIsConnecting = true;
 		showSelectedWiFi();
 		mViewBinding.ilNetworkSelected.acivItemNetworkStatus.setImageResource(R.mipmap.network_wifi_loading);
 		mViewBinding.ilNetworkSelected.acivItemNetworkStatus.startAnimation(mNetworkLoadingAnimation);
 		mViewBinding.ilNetworkSelected.actvItemNetworkName.setText(mWiFiEntity.getScanResult().SSID);
 		mWifiUtilsBuilder = WifiUtils.withContext(Utils.getApp());
-		mWifiUtilsBuilder.connectWith(mWiFiEntity.getScanResult().SSID, mWiFiEntity.getScanResult().BSSID, password)
+		mWifiUtilsBuilder.connectWith(mWiFiEntity.getScanResult().SSID, mWiFiEntity.getScanResult().BSSID, events[1])
 		                 .setTimeout(15 * 1000L)
 		                 .onConnectionResult(new ConnectionSuccessListener() {
 			                 @Override
 			                 public void success() {
 				                 mIsConnecting = false;
 				                 mWifiUtilsBuilder = null;
-				                 saveConnectedWiFi(new WiFiEntity(mWiFiEntity.getScanResult(), password));
+				                 saveConnectedWiFi(new WiFiEntity(mWiFiEntity.getScanResult(), events[1]));
 				                 mViewBinding.ilNetworkSelected.acivItemNetworkStatus.clearAnimation();
 				                 mViewBinding.ilNetworkSelected.acivItemNetworkStatus.setImageResource(R.mipmap.network_wifi_connected);
 				                 mNetworkListAdapter.notifyDataSetChanged();
@@ -376,8 +384,8 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 			boolean hasWiFi = false;
 			for (int i = 0; i < mSavedWiFiList.size(); i++) {
 				if (mSavedWiFiList.get(i).getScanResult().SSID.equals(wifiEntity.getScanResult().SSID) && mSavedWiFiList.get(i)
-				                                                                                                        .getScanResult().BSSID.equals(
-								wifiEntity.getScanResult().BSSID)) {
+				                                                                                                        .getScanResult().BSSID
+						.equals(wifiEntity.getScanResult().BSSID)) {
 					if (!mSavedWiFiList.get(i).getPassword().equals(wifiEntity.getPassword())) {
 						index = i;
 					}

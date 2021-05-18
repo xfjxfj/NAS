@@ -5,8 +5,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.BusUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -21,14 +23,14 @@ import com.viegre.nas.pad.manager.AudioPlayListManager;
 import com.viegre.nas.pad.manager.TextStyleManager;
 import com.viegre.nas.pad.util.MediaScanner;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 import nl.changer.audiowife.AudioWife;
 
 /**
@@ -53,7 +55,7 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		onPlayListUpdate();
+		onPlayListUpdate(BusConfig.UPDATE_AUDIO_PLAY_LIST);
 	}
 
 	@Override
@@ -72,7 +74,8 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 			mViewBinding.srlAudioRefresh.setRefreshing(true);
 			queryAudioByLitepal();
 		});
-		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbAudioTagPrivate, mViewBinding.acrbAudioTagPublic);
+		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbAudioTagPrivate,
+		                                                           mViewBinding.acrbAudioTagPublic);
 	}
 
 	private void initList() {
@@ -220,8 +223,11 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 		return albumImage;
 	}
 
-	@BusUtils.Bus(tag = BusConfig.UPDATE_AUDIO_PLAY_LIST, threadMode = BusUtils.ThreadMode.MAIN)
-	public void onPlayListUpdate() {
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onPlayListUpdate(String event) {
+		if (!BusConfig.UPDATE_AUDIO_PLAY_LIST.equals(event)) {
+			return;
+		}
 		if (null != mAudioListAdapter) {
 			int position = AudioPlayListManager.INSTANCE.getPosition();
 			int previousPosition = AudioPlayListManager.INSTANCE.getPreviousPosition();

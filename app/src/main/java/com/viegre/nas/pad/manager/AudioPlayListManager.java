@@ -1,8 +1,9 @@
 package com.viegre.nas.pad.manager;
 
-import com.blankj.utilcode.util.BusUtils;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.entity.AudioEntity;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public enum AudioPlayListManager {
 			mPreviousPosition = mPosition;
 		}
 		mPosition = position;
-		BusUtils.post(BusConfig.UPDATE_AUDIO_PLAY_LIST);
+		EventBus.getDefault().post(BusConfig.UPDATE_AUDIO_PLAY_LIST);
 	}
 
 	public int getPreviousPosition() {

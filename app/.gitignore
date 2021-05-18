@@ -3,4 +3,3 @@ captures
 .externalNativeBuild
 *.iml
 *.DS_Store
-__bus__.json
