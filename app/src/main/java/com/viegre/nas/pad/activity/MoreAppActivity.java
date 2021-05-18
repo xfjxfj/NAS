@@ -32,7 +32,6 @@ public class MoreAppActivity extends BaseActivity<MoreAppActivityRvBinding> {
     }
 
     private void initAdapter() {
-
         List<PackageInfo> allApps = getAllApps(this);
         allApps.add(allApps.get(allApps.size() - 1));
         mAdapter = new MoreAppActivityRvAdapter(MoreAppActivity.this, allApps);

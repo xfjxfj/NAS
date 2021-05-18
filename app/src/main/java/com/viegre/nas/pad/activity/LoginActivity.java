@@ -40,6 +40,7 @@ import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.ImageStreamUtils;
 import com.viegre.nas.pad.util.ZxingUtils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import cn.wildfire.chat.kit.ChatManagerHolder;
@@ -57,7 +58,13 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 
     @Override
     protected void initialize() {
-        mViewBinding.acivLoginQRCode.setImageBitmap(ZxingUtils.createQRCodewhite(SPUtils.getInstance().getString(SPConfig.ANDROID_ID), 500, 500, true));
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("login",SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mViewBinding.acivLoginQRCode.setImageBitmap(ZxingUtils.createQRCodewhite(jsonObject.toString(), 500, 500, true));
         mViewBinding.acivLoginAccountCode.setTag(false);
 //        mViewBinding.acetLoginAccountPhone.setText("13168306428");
 //        mViewBinding.acetLoginAccountPassword.setText("abcd123456");

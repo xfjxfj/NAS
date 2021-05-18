@@ -152,6 +152,8 @@
 	<!--图片-->
 	<string name="image">图片</string>
 	<string name="image_private">私人图片</string>
+	<string name="image_filter">筛选</string>
+	<string name="image_edittext_hint">请输入搜索内容</string>
 
 	<!--音频-->
 	<string name="audio">音频</string>

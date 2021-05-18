@@ -1,11 +1,20 @@
 package com.viegre.nas.pad.activity.image;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.huantansheng.easyphotos.models.album.AlbumModel;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
@@ -29,16 +38,20 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 /**
  * Created by レインマン on 2021/01/18 16:36 with Android Studio.
  */
-public class ImageActivity extends BaseActivity<ActivityImageBinding> {
+public class ImageActivity extends BaseActivity<ActivityImageBinding> implements View.OnClickListener {
 
     private volatile boolean mIsPublic = true;
     private List<ImageEntity> imageList;
     private ImageListAdapter mImageListAdapter;
 
+    private RightPopupWindows rightpopuwindows;
+
     @Override
     protected void initialize() {
+//        mainlayout = findViewById(R.id.mainlayout);
         mViewBinding.iImageTitle.actvFileManagerTitle.setText(R.string.image);
         mViewBinding.iImageTitle.llcFileManagerTitleBack.setOnClickListener(view -> finish());
+        mViewBinding.iImageTitle.acivFileManagerFilter.setOnClickListener(this);
         initRadioGroup();
         initList();
     }
@@ -47,6 +60,7 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> {
         mViewBinding.rgImageTag.setOnCheckedChangeListener((radioGroup, i) -> {
             if (R.id.acrbImageTagPrivate == i) {
                 mIsPublic = false;
+
             } else if (R.id.acrbImageTagPublic == i) {
                 mIsPublic = true;
             }
@@ -110,4 +124,58 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> {
             }
         });
     }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+//            case mViewBinding.iImageTitle.acivFileManagerFilter.getId();
+            case R.id.acivFileManagerFilter:
+                ToastUtils.showLong("cehuaaaaa");
+                setPupwind();
+                break;
+        }
+    }
+
+    private void setPupwind() {
+        rightpopuwindows = new RightPopupWindows(this,rightonclick );
+        rightpopuwindows.showAtLocation(mViewBinding.mainlayout, Gravity.RIGHT,0,0);
+        rightpopuwindows.setWindowAlpa(true);
+
+        rightpopuwindows.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                rightpopuwindows.setWindowAlpa(false);
+            }
+        });
+    }
+
+    private View.OnClickListener rightonclick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            rightpopuwindows.dismiss();
+            switch (v.getId()) {
+
+                case R.id.shenqing:
+                    Toast.makeText(ImageActivity.this, "菜单1", Toast.LENGTH_SHORT).show();
+                    break;
+
+                case R.id.shenpi:
+                    Toast.makeText(ImageActivity.this, "菜单2", Toast.LENGTH_SHORT).show();
+
+                    break;
+                case R.id.gongxiangwj:
+                    Toast.makeText(ImageActivity.this, "菜单3", Toast.LENGTH_SHORT).show();
+
+                    break;
+
+                case R.id.exit:
+                    Toast.makeText(ImageActivity.this, "退出", Toast.LENGTH_SHORT).show();
+
+                    break;
+
+            }
+        }
+    };
 }
