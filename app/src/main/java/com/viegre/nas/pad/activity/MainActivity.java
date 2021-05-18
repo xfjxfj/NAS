@@ -93,7 +93,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
 	@Override
 	protected void initialize() {
-		ServiceUtils.startService(MscService.class);
+		if("official".equals(BuildConfig.FLAVOR)) {
+			ServiceUtils.startService(MscService.class);
+		}
 //		getUsbPermission();
 		initClick();
 		initIcon();

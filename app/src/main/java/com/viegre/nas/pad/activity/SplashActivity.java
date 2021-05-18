@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide;
 import com.djangoogle.framework.activity.BaseFragmentActivity;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
+import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
@@ -104,11 +105,13 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 开启无障碍服务、授予权限、忽略电池优化、创建私有文件夹
 	 */
 	private void grantPermission() {
-		//开启无障碍服务
-		Settings.Secure.putString(getContentResolver(),
-		                          Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-		                          getPackageName() + "/com.viegre.nas.pad.service.WakeupService");
-		Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
+		if("official".equals(BuildConfig.FLAVOR)) {
+			//开启无障碍服务
+			Settings.Secure.putString(getContentResolver(),
+					Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
+					getPackageName() + "/com.viegre.nas.pad.service.WakeupService");
+			Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
+		}
 		List<String> commandList = new ArrayList<>();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			//授予修改系统设置权限
