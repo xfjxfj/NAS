@@ -287,7 +287,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		//音频
 		Glide.with(this)
 		     .load(R.mipmap.main_icon_audio)
-		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIconAudio);
+		     .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+		     .into(mViewBinding.acivMainIconAudio);
 		mViewBinding.acivMainIconAudio.setOnClickListener(view -> ActivityUtils.startActivity(AudioActivity.class));
 
 		//视频
@@ -399,9 +400,33 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		registerReceiver(mUsbPermissionReceiver, intentFilter);
 		UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 		for (UsbDevice usbDevice : usbManager.getDeviceList().values()) {
-			if (!usbManager.hasPermission(usbDevice) && "USB Storage".equals(usbDevice.getProductName())) {
-				LogUtils.iTag("getUsbPermission", usbDevice.getProductName() + ": 未获取权限，开始申请");
-				usbManager.requestPermission(usbDevice, pendingIntent);
+			if ("USB Storage".equals(usbDevice.getProductName())) {
+				if (!usbManager.hasPermission(usbDevice)) {
+					LogUtils.iTag("getUsbPermission", usbDevice.getProductName() + ": 未获取权限，开始申请");
+					usbManager.requestPermission(usbDevice, pendingIntent);
+				} else {
+					LogUtils.iTag("getUsbPermission", usbDevice.getProductName() + ": 权限已获取");
+					for (UsbMassStorageDevice device : UsbMassStorageDevice.getMassStorageDevices(Utils.getApp())) {
+						try {
+							device.init();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						if (usbDevice.getProductName().equals(device.getUsbDevice().getProductName())) {
+							if (device.getPartitions().isEmpty()) {
+								ToastUtils.showLong("分区为空");
+								LogUtils.iTag("getUsbPermission", "分区为空");
+								return;
+							}
+							FileSystem currentFs = device.getPartitions().get(0).getFileSystem();
+							ToastUtils.showLong(currentFs.getVolumeLabel() + " - " + currentFs.getRootDirectory()
+							                                                                  .getAbsolutePath());
+							LogUtils.iTag("getUsbPermission",
+							              currentFs.getVolumeLabel(),
+							              currentFs.getRootDirectory().getAbsolutePath());
+						}
+					}
+				}
 				break;
 			}
 		}

@@ -4,8 +4,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.provider.Settings;
 
-import androidx.multidex.MultiDex;
-
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -37,12 +35,6 @@ import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
  * Created by レインマン on 2020/09/10 10:21 with Android Studio.
  */
 public class NasApp extends BaseApplication {
-
-	@Override
-	protected void attachBaseContext(Context base) {
-		super.attachBaseContext(base);
-		MultiDex.install(this);
-	}
 
 	@Override
 	public void onCreate() {

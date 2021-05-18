@@ -11,7 +11,6 @@ android {
 		versionCode 2
 		versionName "0.0.2"
 		vectorDrawables.useSupportLibrary = true
-		multiDexEnabled true
 		javaCompileOptions {
 			annotationProcessorOptions {
 				arguments = [
@@ -121,7 +120,6 @@ dependencies {
 	//https://github.com/qstumn/VerticalTabLayout
 	implementation project(':vertical_tablayout')
 	//https://maven.google.com/web/index.html
-	implementation 'androidx.multidex:multidex:2.0.1'
 	implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 	//https://github.com/JakeWharton/butterknife
 	implementation 'com.jakewharton:butterknife:10.2.3'
@@ -159,6 +157,7 @@ dependencies {
 	implementation 'net.the4thdimension:audio-wife:1.0.3'
 	//https://github.com/magnusja/libaums
 	implementation 'me.jahnen:libaums:0.8.0'
+	implementation 'me.jahnen:libaums-storageprovider:0.5.1'
 	//https://github.com/eclipse/paho.mqtt.android
 	implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
 	implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
