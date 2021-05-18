@@ -3,8 +3,8 @@ package com.viegre.nas.pad.activity.image;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,11 +16,8 @@ import android.widget.Toast;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.djangoogle.framework.activity.BaseActivity;
-import com.huantansheng.easyphotos.models.album.AlbumModel;
-import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.ImageListAdapter;
-import com.viegre.nas.pad.adapter.PhotoAlbumAdapter;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.databinding.ActivityImageBinding;
 import com.viegre.nas.pad.entity.ImageEntity;
@@ -28,15 +25,18 @@ import com.viegre.nas.pad.manager.TextStyleManager;
 import com.viegre.nas.pad.util.MediaScanner;
 import com.viegre.nas.pad.widget.GridSpaceItemDecoration;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
 /**
- * Created by レインマン on 2021/01/18 16:36 with Android Studio.
+ * 2021年5月18日
  */
 public class ImageActivity extends BaseActivity<ActivityImageBinding> implements View.OnClickListener {
 
@@ -161,15 +161,6 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
                     Toast.makeText(ImageActivity.this, "菜单1", Toast.LENGTH_SHORT).show();
                     break;
 
-                case R.id.shenpi:
-                    Toast.makeText(ImageActivity.this, "菜单2", Toast.LENGTH_SHORT).show();
-
-                    break;
-                case R.id.gongxiangwj:
-                    Toast.makeText(ImageActivity.this, "菜单3", Toast.LENGTH_SHORT).show();
-
-                    break;
-
                 case R.id.exit:
                     Toast.makeText(ImageActivity.this, "退出", Toast.LENGTH_SHORT).show();
 
@@ -179,3 +170,43 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
         }
     };
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

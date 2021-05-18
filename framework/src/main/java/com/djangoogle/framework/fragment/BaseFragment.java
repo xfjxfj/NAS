@@ -72,5 +72,5 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
 	protected abstract void initialize();
 
 	@Subscribe(threadMode = ThreadMode.MAIN)
-	public void onBaseFragmentEvent() {}
+	public void onBaseFragmentEvent(String event) {}
 }

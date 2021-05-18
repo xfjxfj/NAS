@@ -154,6 +154,18 @@
 	<string name="image_private">私人图片</string>
 	<string name="image_filter">筛选</string>
 	<string name="image_edittext_hint">请输入搜索内容</string>
+	<string name="image_edittext_1">搜索范围</string>
+	<string name="image_text_1">搜索范围</string>
+	<string name="image_text_2">全部</string>
+	<string name="image_text_3">私人空间</string>
+	<string name="image_text_4">公共空间</string>
+	<string name="image_text_5">最近浏览过</string>
+	<string name="image_text_6">全部</string>
+	<string name="image_text_7">1天内</string>
+	<string name="image_text_8">3天内</string>
+	<string name="image_text_9">7天内</string>
+	<string name="image_text_10">一个月内</string>
+	<string name="image_text_11">3个月内</string>
 
 	<!--音频-->
 	<string name="audio">音频</string>

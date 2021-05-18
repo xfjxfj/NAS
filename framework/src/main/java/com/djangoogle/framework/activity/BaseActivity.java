@@ -64,7 +64,7 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
 	protected abstract void initialize();
 
 	@Subscribe(threadMode = ThreadMode.MAIN)
-	public void onBaseActivityEvent() {}
+	public void onBaseActivityEvent(String event) {}
 
 	@Override
 	public void onBackPressed() {}

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pop_layout"
-    android:layout_width="240dp"
+    android:layout_width="440px"
     android:layout_height="match_parent"
     android:background="#212123"
     android:orientation="vertical">
@@ -50,10 +50,10 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableRight="@mipmap/image_at_exit"
+            android:background="@drawable/image_edittext_bg"
+            android:drawableRight="@mipmap/image_search_for"
             android:hint="@string/image_edittext_hint"
             android:textColorHint="@color/gray26"
-            android:background="@drawable/image_edittext_bg"
             android:textSize="24px"
             tools:ignore="MissingConstraints" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -63,107 +63,109 @@
         android:layout_height="1dp"
         android:background="#4A4A52" />
     <!--?android:attr/selectableItemBackground-水波纹效果-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="31px"
+        android:text="@string/image_edittext_1"
+        android:textColor="@color/black10"
+        android:textSize="20px" />
 
     <LinearLayout
-        android:id="@+id/shenqing"        android:layout_width="match_parent"
-        android:layout_height="58dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp" />
-
-        <ImageView
-            android:id="@+id/shenqing_red"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:visibility="visible" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="菜单1"
-            android:textSize="15sp" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="230dp"
-        android:layout_height="1dp"
-        android:layout_gravity="center_horizontal"
-        android:background="#33000000" />
-
-    <LinearLayout
-        android:id="@+id/shenpi"
+        android:id="@+id/shenqing"
         android:layout_width="match_parent"
-        android:layout_height="58dp"
+        android:layout_height="56px"
+        android:layout_marginTop="20px"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="wrap_content"
+        <Button
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp" />
+            android:layout_weight="1"
+            android:text="@string/image_text_2" />
 
-        <ImageView
-            android:id="@+id/shenpi_red"
-            android:layout_width="wrap_content"
+        <Button
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:visibility="visible" />
+            android:layout_weight="1"
+            android:text="@string/image_text_3" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <Button
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="菜单2"
-            android:textSize="15sp" />
-
+            android:layout_weight="1"
+            android:text="@string/image_text_4" />
     </LinearLayout>
 
-    <View
-        android:layout_width="230dp"
-        android:layout_height="1dp"
-        android:layout_gravity="center_horizontal"
-        android:background="#33000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="31px"
+        android:text="@string/image_text_5"
+        android:textColor="@color/black10"
+        android:textSize="20px" />
 
     <LinearLayout
-        android:id="@+id/gongxiangwj"
+        android:id="@+id/shenqing1"
         android:layout_width="match_parent"
-        android:layout_height="58dp"
+        android:layout_height="56px"
+        android:layout_marginTop="20px"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
-
-            android:layout_width="wrap_content"
+        <Button
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp" />
+            android:layout_weight="1"
+            android:text="@string/image_text_6" />
 
-        <ImageView
-            android:id="@+id/gongxiangwj_red"
-            android:layout_width="wrap_content"
+        <Button
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:visibility="visible" />
+            android:layout_weight="1"
+            android:text="@string/image_text_7" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <Button
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="菜单3"
-            android:textSize="15sp" />
+            android:layout_weight="1"
+            android:text="@string/image_text_8" />
+    </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/shenqing2"
+        android:layout_width="match_parent"
+        android:layout_height="56px"
+        android:layout_marginTop="20px"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/image_text_9" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/image_text_10" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/image_text_11" />
     </LinearLayout>
 
     <View
@@ -171,7 +173,6 @@
         android:layout_height="1dp"
         android:layout_gravity="center_horizontal"
         android:background="#33000000" />
-
 
     <LinearLayout
         android:id="@+id/exit"

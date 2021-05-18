@@ -2,7 +2,7 @@ package com.viegre.nas.pad.activity.image;
 
 /**
  * Created by pang on 2017/4/4.
- *  自定义 popupwindow 左侧弹窗
+ * 自定义 popupwindow 左侧弹窗
  */
 
 import android.animation.ValueAnimator;
@@ -32,11 +32,7 @@ public class RightPopupWindows extends PopupWindow {
     private OnClickListener myOnClick; // PopupWindow 菜单 空间单击事件
 
     private LinearLayout shenqing;
-    private LinearLayout shenpi;
-    private LinearLayout gongxiangwj;
     private LinearLayout exit;
-    private TextView name;
-    private ImageView shenqing_red,shenpi_red,gongxiangwj_red;
 
     public RightPopupWindows(Activity context, OnClickListener myOnClick) {
         super(context);
@@ -51,20 +47,8 @@ public class RightPopupWindows extends PopupWindow {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mMenuView = inflater.inflate(R.layout.leftpopuwindows, null);
         shenqing = (LinearLayout) mMenuView.findViewById(R.id.shenqing);
-        shenpi = (LinearLayout) mMenuView.findViewById(R.id.shenpi);
-        gongxiangwj = (LinearLayout) mMenuView.findViewById(R.id.gongxiangwj);
-        name = (TextView) mMenuView.findViewById(R.id.leftname);
-        shenpi_red = (ImageView) mMenuView.findViewById(R.id.shenpi_red);
-        shenqing_red = (ImageView) mMenuView.findViewById(R.id.shenqing_red);
-        gongxiangwj_red = (ImageView) mMenuView.findViewById(R.id.gongxiangwj_red);
         exit = (LinearLayout) mMenuView.findViewById(R.id.exit);
 
-        //审批
-        shenpi.setOnClickListener(myOnClick);
-        //申请
-        shenqing.setOnClickListener(myOnClick);
-        //共享文件
-        gongxiangwj.setOnClickListener(myOnClick);
         //退出
         exit.setOnClickListener(myOnClick);
 
@@ -101,6 +85,7 @@ public class RightPopupWindows extends PopupWindow {
 
 
     }
+
     /**
      * 动态设置Activity背景透明度
      * @param isopen

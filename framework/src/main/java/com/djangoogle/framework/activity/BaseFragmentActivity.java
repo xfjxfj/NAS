@@ -64,7 +64,7 @@ public abstract class BaseFragmentActivity<VB extends ViewBinding> extends Fragm
 	protected abstract void initialize();
 
 	@Subscribe(threadMode = ThreadMode.MAIN)
-	public void onBaseFragmentActivityEvent() {}
+	public void onBaseFragmentActivityEvent(String event) {}
 
 	@Override
 	public void onBackPressed() {}
