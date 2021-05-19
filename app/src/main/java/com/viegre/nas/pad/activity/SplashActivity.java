@@ -149,9 +149,9 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
 				keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
 				ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
-				ActivityUtils.startActivity(MainActivity.class);
+//				ActivityUtils.startActivity(MainActivity.class);
 //				ActivityUtils.startActivity(WelcomeActivity.class);
-//				getDeviceBoundstatus();
+				getDeviceBoundstatus();
 			}
 		});
 	}

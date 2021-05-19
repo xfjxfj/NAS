@@ -166,6 +166,8 @@
 	<string name="image_text_9">7天内</string>
 	<string name="image_text_10">一个月内</string>
 	<string name="image_text_11">3个月内</string>
+	<string name="image_text_12">重置</string>
+	<string name="image_text_13">确定</string>
 
 	<!--音频-->
 	<string name="audio">音频</string>

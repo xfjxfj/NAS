@@ -129,9 +129,7 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-//            case mViewBinding.iImageTitle.acivFileManagerFilter.getId();
             case R.id.acivFileManagerFilter:
-                ToastUtils.showLong("cehuaaaaa");
                 setPupwind();
                 break;
         }
@@ -153,19 +151,15 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
     private View.OnClickListener rightonclick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             rightpopuwindows.dismiss();
             switch (v.getId()) {
-
                 case R.id.shenqing:
                     Toast.makeText(ImageActivity.this, "菜单1", Toast.LENGTH_SHORT).show();
                     break;
 
                 case R.id.exit:
                     Toast.makeText(ImageActivity.this, "退出", Toast.LENGTH_SHORT).show();
-
                     break;
-
             }
         }
     };

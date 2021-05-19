@@ -27,4 +27,7 @@
 	<color name="screen_custom_album_list_divider">#232325</color>
 	<color name="welcome_next_text">#485DE5</color>
 	<color name="contacts_dialog_ok">#4452E5</color>
+	<color name="image_puwind_button_text_1">#A6A7B2</color>
+	<color name="image_puwind_button_text_2">#FFFFFF</color>
+
 </resources>

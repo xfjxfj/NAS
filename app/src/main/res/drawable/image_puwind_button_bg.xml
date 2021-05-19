@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <!--	<solid android:color="#1A1E27"/>-->
+    <!--	<corners android:topLeftRadius="10dip"-->
+    <!--		android:topRightRadius="10dip"-->
+    <!--		android:bottomRightRadius="10dip"-->
+    <!--		android:bottomLeftRadius="10dip" />-->
+    <!--圆角矩形白色背景-->
+    <selector xmlns:android="http://schemas.android.com/apk/res/android"
+     >
+        <item
+            android:drawable="@drawable/image_puwind_button_bg_normal"
+            android:state_pressed="false" />
+        <item
+            android:drawable="@drawable/image_puwind_button_bg_pressed"
+            android:state_pressed="true" />
+    </selector>

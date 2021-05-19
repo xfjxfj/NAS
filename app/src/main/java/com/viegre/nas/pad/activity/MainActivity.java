@@ -111,7 +111,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
 	//登录音视频通话服务器
 	private void loginIM() {
-		//音视频登录
+		//音视频登录 04f69b6004f9cc41
 		String ANDROID_ID = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
 		String authCode = "66666";
 		AppService.Instance().smsLogin(ANDROID_ID, authCode, new AppService.LoginCallback() {

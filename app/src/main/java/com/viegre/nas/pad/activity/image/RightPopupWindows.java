@@ -19,20 +19,22 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.king.zxing.ViewfinderView;
 import com.viegre.nas.pad.R;
 
 public class RightPopupWindows extends PopupWindow {
     private View mMenuView; // PopupWindow 菜单布局
-    private Context context; // 上下文参数
+    private Activity context; // 上下文参数
     private OnClickListener myOnClick; // PopupWindow 菜单 空间单击事件
-
     private LinearLayout shenqing;
     private LinearLayout exit;
+    private EditText pupwin_ed;
 
     public RightPopupWindows(Activity context, OnClickListener myOnClick) {
         super(context);
@@ -42,12 +44,20 @@ public class RightPopupWindows extends PopupWindow {
     }
 
     private void Init() {
+        WindowManager.LayoutParams attrs = context.getWindow().getAttributes();
+        attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        context.getWindow().setAttributes(attrs);
+        //隐藏虚拟按键，并且全屏
+        hideNavigation();
+
+
         // TODO Auto-generated method stub
         // PopupWindow 导入
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mMenuView = inflater.inflate(R.layout.leftpopuwindows, null);
         shenqing = (LinearLayout) mMenuView.findViewById(R.id.shenqing);
         exit = (LinearLayout) mMenuView.findViewById(R.id.exit);
+        pupwin_ed = mMenuView.findViewById(R.id.pupwin_ed);
 
         //退出
         exit.setOnClickListener(myOnClick);
@@ -82,12 +92,24 @@ public class RightPopupWindows extends PopupWindow {
                 return true;
             }
         });
+    }
 
-
+    private void hideNavigation() {
+        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
+            View v = context.getWindow().getDecorView();
+            v.setSystemUiVisibility(View.GONE);
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            //for new api versions.
+            View decorView = context.getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
     }
 
     /**
      * 动态设置Activity背景透明度
+     *
      * @param isopen
      */
     public void setWindowAlpa(boolean isopen) {

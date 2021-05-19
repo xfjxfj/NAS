@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--按下时的字体色  - 白色  -->
+    <item android:color="@color/image_puwind_button_text_1"
+        android:state_pressed="false" />
+
+    <item android:color="@color/image_puwind_button_text_2"
+        android:state_pressed="true" />
+</selector>
