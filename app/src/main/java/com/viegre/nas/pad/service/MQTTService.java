@@ -9,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
@@ -21,6 +22,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.constant.TimeConstants;
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -38,12 +40,15 @@ import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.entity.ExternalDriveEntity;
+import com.viegre.nas.pad.entity.FtpCategoryEntity;
 import com.viegre.nas.pad.entity.FtpCmdEntity;
 import com.viegre.nas.pad.entity.FtpFavoritesEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
 import com.viegre.nas.pad.entity.RecycleBinEntity;
+import com.viegre.nas.pad.task.VoidTask;
+import com.viegre.nas.pad.util.MediaScanner;
 
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -636,8 +641,6 @@ public class MQTTService extends Service {
 										ftpFileQueryEntity.setPath(path);
 										ftpFileQueryEntity.setType(FileUtils.isDir(path) ? "dir" : "file");
 										long time = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED));
-										TimeUtils.millis2String(time,
-										                        new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()));
 										ftpFileQueryEntity.setCreateTime(TimeUtils.millis2String(time,
 										                                                         new SimpleDateFormat(
 												                                                         "yyyy-MM-dd HH:mm",
@@ -673,6 +676,39 @@ public class MQTTService extends Service {
 								MQTTMsgEntity ftpQueryListMsg = ftpQueryList(mqttMsgEntity.getFromId());
 								ftpQueryListMsg.setParam(JSON.toJSONString(result));
 								sendMQTTMsg(ftpQueryListMsg);
+							}
+						});
+						break;
+
+					//文件分类
+					case MQTTMsgEntity.MSG_FTP_CATEGORY_LIST:
+						boolean privateOnly = JSON.parseObject(mqttMsgEntity.getParam()).getBoolean("privateOnly");
+						String category = JSON.parseObject(mqttMsgEntity.getParam()).getString("category");
+						ThreadUtils.executeByCached(new VoidTask() {
+							@Override
+							public Void doInBackground() {
+								MediaScanner mediaScanner = new MediaScanner(MQTTService.this,
+								                                             () -> ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<FtpCategoryEntity>>() {
+									                                             @Override
+									                                             public List<FtpCategoryEntity> doInBackground() {
+										                                             return queryFtpCategory(privateOnly,
+										                                                                     category);
+									                                             }
+
+									                                             @Override
+									                                             public void onSuccess(List<FtpCategoryEntity> result) {
+										                                             Map<String, Object> ftpCategoryListMap = new HashMap<>();
+										                                             ftpCategoryListMap.put("categoryList",
+										                                                                    result);
+										                                             MQTTMsgEntity ftpCategoryListMsg = ftpCategoryList(
+												                                             mqttMsgEntity.getFromId());
+										                                             ftpCategoryListMsg.setParam(new JSONObject(
+												                                             ftpCategoryListMap).toJSONString());
+										                                             sendMQTTMsg(ftpCategoryListMsg);
+									                                             }
+								                                             }));
+								mediaScanner.scanFile(new File(PathConfig.NAS));
+								return null;
 							}
 						});
 						break;
@@ -909,6 +945,16 @@ public class MQTTService extends Service {
 	}
 
 	/**
+	 * ftp文件分类
+	 *
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
+	 */
+	private MQTTMsgEntity ftpCategoryList(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_CATEGORY_LIST, toId);
+	}
+
+	/**
 	 * 生成一个startNum 到 endNum之间的随机数(不包含endNum的随机数)
 	 *
 	 * @param startNum
@@ -949,5 +995,135 @@ public class MQTTService extends Service {
 		keyWord = keyWord.replace("(", "/(");
 		keyWord = keyWord.replace(")", "/)");
 		return keyWord;
+	}
+
+	private List<FtpCategoryEntity> queryFtpCategory(boolean privateOnly, String category) {
+		Uri uri;
+		String pathProjection, nameProjection, timeProjection, sizeProjection;
+		switch (category) {
+			case "image":
+				uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+				pathProjection = MediaStore.Images.Media.DATA;
+				nameProjection = MediaStore.Images.Media.DISPLAY_NAME;
+				timeProjection = MediaStore.Images.Media.DATE_MODIFIED;
+				sizeProjection = MediaStore.Images.Media.SIZE;
+				break;
+
+			case "video":
+				uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+				pathProjection = MediaStore.Video.Media.DATA;
+				nameProjection = MediaStore.Video.Media.DISPLAY_NAME;
+				timeProjection = MediaStore.Video.Media.DATE_MODIFIED;
+				sizeProjection = MediaStore.Video.Media.SIZE;
+				break;
+
+			case "audio":
+				uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+				pathProjection = MediaStore.Audio.Media.DATA;
+				nameProjection = MediaStore.Audio.Media.DISPLAY_NAME;
+				timeProjection = MediaStore.Audio.Media.DATE_MODIFIED;
+				sizeProjection = MediaStore.Audio.Media.SIZE;
+				break;
+
+			default:
+				uri = MediaStore.Files.getContentUri("external");
+				pathProjection = MediaStore.Files.FileColumns.DATA;
+				nameProjection = MediaStore.Files.FileColumns.DISPLAY_NAME;
+				timeProjection = MediaStore.Files.FileColumns.DATE_MODIFIED;
+				sizeProjection = MediaStore.Files.FileColumns.SIZE;
+				break;
+		}
+		List<FtpCategoryEntity> list = new ArrayList<>();
+		Cursor cursor = Utils.getApp()
+		                     .getContentResolver()
+		                     .query(uri,
+		                            new String[]{pathProjection, nameProjection, timeProjection, sizeProjection},
+		                            null,
+		                            null,
+		                            null);
+		while (cursor.moveToNext()) {
+			String path = cursor.getString(cursor.getColumnIndexOrThrow(pathProjection));
+			if (FileUtils.isDir(path)) {
+				continue;
+			}
+
+			if (privateOnly) {
+				if (!path.startsWith(PathConfig.PRIVATE)) {
+					continue;
+				}
+			} else {
+				if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
+					continue;
+				}
+			}
+
+			String name = cursor.getString(cursor.getColumnIndexOrThrow(nameProjection));
+			if ("document".equals(category) && !isDocument(FileUtils.getFileExtension(name).toLowerCase())) {
+				continue;
+			}
+
+			if ("other".equals(category)) {
+				if (isImage(FileUtils.getFileExtension(name).toLowerCase()) || isVideo(FileUtils.getFileExtension(name)
+				                                                                                .toLowerCase()) || isAudio(
+						FileUtils.getFileExtension(name).toLowerCase()) || isDocument(FileUtils.getFileExtension(name)
+				                                                                               .toLowerCase())) {
+					continue;
+				}
+			}
+
+			long time = cursor.getLong(cursor.getColumnIndexOrThrow(timeProjection));
+			String createTime = TimeUtils.millis2String(time, new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()));
+			long size = cursor.getLong(cursor.getColumnIndexOrThrow(sizeProjection));
+			list.add(new FtpCategoryEntity(name, path, createTime, ConvertUtils.byte2FitMemorySize(size, 2)));
+		}
+		cursor.close();
+		return list;
+	}
+
+	private boolean isImage(String name) {
+		List<String> nameList = new ArrayList<>();
+		nameList.add("jpg");
+		nameList.add("png");
+		nameList.add("gif");
+		nameList.add("bmp");
+		nameList.add("webp");
+		return nameList.contains(name.toLowerCase());
+	}
+
+	private boolean isVideo(String name) {
+		List<String> nameList = new ArrayList<>();
+		nameList.add("3gp");
+		nameList.add("mp4");
+		nameList.add("ts");
+		nameList.add("mkv");
+		nameList.add("avi");
+		nameList.add("rm");
+		nameList.add("rmvb");
+		nameList.add("mov");
+		return nameList.contains(name.toLowerCase());
+	}
+
+	private boolean isAudio(String name) {
+		List<String> nameList = new ArrayList<>();
+		nameList.add("3gp");
+		nameList.add("m4a");
+		nameList.add("aac");
+		nameList.add("flac");
+		nameList.add("wav");
+		nameList.add("ogg");
+		return nameList.contains(name.toLowerCase());
+	}
+
+	private boolean isDocument(String name) {
+		List<String> nameList = new ArrayList<>();
+		nameList.add("docx");
+		nameList.add("doc");
+		nameList.add("xls");
+		nameList.add("xlsx");
+		nameList.add("ppt");
+		nameList.add("pptx");
+		nameList.add("pdf");
+		nameList.add("txt");
+		return nameList.contains(name.toLowerCase());
 	}
 }
