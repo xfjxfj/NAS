@@ -105,11 +105,11 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 开启无障碍服务、授予权限、忽略电池优化、创建私有文件夹
 	 */
 	private void grantPermission() {
-		if("official".equals(BuildConfig.FLAVOR)) {
+		if ("official".equals(BuildConfig.FLAVOR)) {
 			//开启无障碍服务
 			Settings.Secure.putString(getContentResolver(),
-					Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-					getPackageName() + "/com.viegre.nas.pad.service.WakeupService");
+			                          Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
+			                          getPackageName() + "/com.viegre.nas.pad.service.WakeupService");
 			Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
 		}
 		List<String> commandList = new ArrayList<>();
@@ -149,9 +149,9 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
 				keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
 				ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
-				ActivityUtils.startActivity(MainActivity.class);
+//				ActivityUtils.startActivity(MainActivity.class);
 //				ActivityUtils.startActivity(WelcomeActivity.class);
-//				getDeviceBoundstatus();
+				getDeviceBoundstatus();
 			}
 		});
 	}
