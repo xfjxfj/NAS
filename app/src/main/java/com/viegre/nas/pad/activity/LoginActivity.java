@@ -23,6 +23,7 @@ import com.google.gson.JsonObject;
 import com.kongzue.dialog.interfaces.OnDismissListener;
 import com.kongzue.dialog.v3.MessageDialog;
 import com.kongzue.dialog.v3.TipDialog;
+import com.kongzue.dialog.v3.WaitDialog;
 import com.rxjava.rxlife.RxLife;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.im.ContactsActivity;
@@ -133,7 +134,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 
         } else if (R.id.acivLoginAccountCode == view.getId()) {//点击验证码
             getCodeImage();
-        } else if (R.id.actvLoginAccountBtn == view.getId()) {//账号密码登录
+        } else if (R.id.actvLoginAccountBtn == view.getId()) {
+            //账号密码登录
             loginbyAccount();
         } else if (R.id.acivLoginExit == view.getId()) {//点击退出
             finish();
@@ -274,7 +276,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 //            mViewBinding.actvLoginAccountBtn.setClickable(true);
             return;
         }
-
+        TipDialog show = WaitDialog.show(this, "请稍候...");
         RxHttp.postForm(UrlConfig.User.LOGIN)
                 .addHeader("Cookie", SPUtils.getInstance().getString(SPConfig.LOGIN_CODE_SESSION_ID))
                 .add("code", code)
@@ -286,6 +288,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
                 .subscribe(new Observer<LoginEntity>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
+
                     }
 
                     @Override
@@ -294,11 +297,13 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
                         RxHttp.setOnParamAssembly(param -> param.addHeader("token", loginEntity.getToken()));
                         SPUtils.getInstance().put(SPConfig.PHONE, phone);
                         SPUtils.getInstance().put("token", loginEntity.getToken());
+                        TipDialog.show(LoginActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
+                        setLoginTime();
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-                        CommonUtils.showErrorToast(e.getMessage());
+                        TipDialog.show(LoginActivity.this, e.getMessage(), TipDialog.TYPE.ERROR).doDismiss();
                     }
 
                     @Override
