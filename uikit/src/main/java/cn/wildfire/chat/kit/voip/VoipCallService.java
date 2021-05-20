@@ -87,7 +87,7 @@ public class VoipCallService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
-        Log.d("**sessionVoipCall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
+//        Log.d("**sessionVoipCall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
         boolean screenShare = intent.getBooleanExtra("screenShare", false);
         if (screenShare) {
             if (session != null) {

@@ -115,6 +115,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		String ANDROID_ID = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
 		String authCode = "66666";
 		AppService.Instance().smsLogin(ANDROID_ID, authCode, new AppService.LoginCallback() {
+
 			@Override
 			public void onUiSuccess(LoginResult loginResult) {
 				if (isFinishing()) {
@@ -338,18 +339,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
 	private void initBanner() {
 		List<String> bannerList = new ArrayList<>();
-		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/30/s608b78aaea651.jpg");
-		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/30/s608b77ae271cb.jpg");
+		bannerList.add("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201408%2F07%2F213601f2xz7usscm2z1mjh.jpg&refer=http%3A%2F%2Fattach.bbs.miui.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1624012837&t=89dae71696d130dcd16e8d3e172e3581");
+		bannerList.add("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201401%2F04%2F114458foyo99odqb8qjzg4.jpg&refer=http%3A%2F%2Fattach.bbs.miui.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1624012837&t=1e5b4e8b874cb0a28b6881a2df2d1e0c");
 		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/30/s608b768f32fd9.jpg");
 		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/30/s608b75e282420.jpg");
 		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/30/s608b744114525.jpg");
-		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/09/s607004e9597f9.jpg");
-		bannerList.add("https://img.dpm.org.cn/Uploads/Picture/2021/04/06/s606c1b321897c.jpg");
+		bannerList.add("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201306%2F21%2F220728m5zcr5ecr7cqq7bw.jpg&refer=http%3A%2F%2Fattach.bbs.miui.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1624012837&t=76888dc2a6bb90cc3b028ebec7f523b2");
+		bannerList.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3060410847,3338028579&fm=26&gp=0.jpg");
 		Banner<String, BannerImageAdapter<String>> bMainBanner = findViewById(R.id.bMainBanner);
 		bMainBanner.setAdapter(new BannerImageAdapter<String>(bannerList) {
 			@Override
 			public void onBindView(BannerImageHolder holder, String data, int position, int size) {
 				Glide.with(holder.itemView).load(data).into(holder.imageView);
+				holder.imageView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						startActivity(new Intent(MainActivity.this,WebActivity.class));
+					}
+				});
 			}
 		}).addBannerLifecycleObserver(this).setBannerRound2(16F).setIndicator(new CircleIndicator(this));
 	}

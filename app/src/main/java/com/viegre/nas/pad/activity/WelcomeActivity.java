@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.ParcelUuid;
 import android.os.SystemClock;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -40,7 +41,11 @@ import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.ActivityWelcomeBinding;
 import com.viegre.nas.pad.util.CommonUtils;
+import com.viegre.nas.pad.util.VerifyDevice;
 import com.viegre.nas.pad.util.ZxingUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -84,7 +89,7 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
         @SuppressLint("MissingPermission")
         @Override
         public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
-           Log.i(TAG,String.format("onConnectionStateChange:%s,%s,%s,%s", device.getName(), device.getAddress(), status, newState));
+            Log.i(TAG, String.format("onConnectionStateChange:%s,%s,%s,%s", device.getName(), device.getAddress(), status, newState));
             CommonUtils.showToast(String.format(status == 0 ? (newState == 2 ? "与[%s]连接成功" : "与[%s]连接断开") : ("与[%s]连接出错,错误码:" + status), device));
         }
 
@@ -228,40 +233,67 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 
     @SuppressLint("MissingPermission")
     private void initBle() {
-        // 检查蓝牙开关
-        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-        if (adapter == null) {
+        if (!isEmulator(this)) {
+            // 检查蓝牙开关
+            BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+            if (adapter == null) {
 //            APP.toast(MainActivity.this,"本机没有找到蓝牙硬件或驱动！", 0);
-            CommonUtils.showToast("本机没有找到蓝牙硬件或驱动！");
+                CommonUtils.showToast("本机没有找到蓝牙硬件或驱动！");
 //            finish();
-            return;
-        } else {
-            if (!adapter.isEnabled()) {
-                //直接开启蓝牙
-                adapter.enable();
-                //跳转到设置界面
-                //startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 112);
+                return;
+            } else {
+                if (!adapter.isEnabled()) {
+                    //直接开启蓝牙
+                    adapter.enable();
+                    //跳转到设置界面
+                    //startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 112);
+                }
             }
-        }
 
-        // 检查是否支持BLE蓝牙
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            // 检查是否支持BLE蓝牙
+            if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
 //            APP.toast(MainActivity.this,"本机不支持低功耗蓝牙！", 0);
-            CommonUtils.showToast("本机不支持低功耗蓝牙！");
-            finish();
-            return;
-        }
+                CommonUtils.showToast("本机不支持低功耗蓝牙！");
+                finish();
+                return;
+            }
 
-        // Android 6.0动态请求权限
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_COARSE_LOCATION};
-            for (String str : permissions) {
-                if (checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(permissions, 111);
-                    break;
+            // Android 6.0动态请求权限
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_COARSE_LOCATION};
+                for (String str : permissions) {
+                    if (checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(permissions, 111);
+                        break;
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * 判断当前设备是否是模拟器。如果返回TRUE，则当前是模拟器，不是返回FALSE
+     *
+     * @param context
+     * @return
+     */
+    public static boolean isEmulator(Context context) {
+//        try {
+
+        return VerifyDevice.verify(context.getApplicationContext());
+
+//            TelephonyManager tm = (TelephonyManager) context
+//                    .getSystemService(Context.TELEPHONY_SERVICE);
+//            @SuppressLint("MissingPermission") String imei = tm.getDeviceId();
+//            if (imei != null && imei.equals("000000000000000")) {
+//                return true;
+//            }
+//            return (Build.MODEL.equals("sdk"))
+//                    || (Build.MODEL.equals("google_sdk"));
+//        } catch (Exception e) {
+//
+//        }
+//        return false;
     }
 
     private void initView() {
@@ -283,7 +315,13 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 
     private void createQRCode() {
         try {
-            Bitmap bitmapSN = ZxingUtils.createQRCode(SPUtils.getInstance().getString(SPConfig.ANDROID_ID), 500, 500, true);
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("bind",SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Bitmap bitmapSN = ZxingUtils.createQRCode(jsonObject.toString(), 500, 500, true);
             Glide.with(this).load(bitmapSN).into(mQRCodeImg);
         } catch (Exception e) {
             e.printStackTrace();
@@ -319,7 +357,9 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
         Layout1.setVisibility(View.GONE);
         Layout2.setVisibility(View.GONE);
         layout3.setVisibility(View.VISIBLE);
-        runBle();
+        if (!isEmulator(getApplicationContext())) {
+            runBle();
+        }
     }
 
     @SuppressLint("NewApi")

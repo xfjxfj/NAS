@@ -160,8 +160,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 判断设备是否绑定用户
 	 */
 	private void getDeviceBoundstatus() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) Utils.getApp()
-		                                                                     .getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager connectivityManager = (ConnectivityManager) Utils.getApp().getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkEthernetInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
 		NetworkInfo networkWiFiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 		boolean isEthernetConnected = null != networkEthernetInfo && networkEthernetInfo.isConnected();
