@@ -57,10 +57,10 @@ public class MediaScanner {
 				return;
 			}
 			File[] files = file.listFiles();
-			if (files == null) {
+			if (null == files) {
 				return;
 			}
-			for (File f : file.listFiles()) {
+			for (File f : files) {
 				scan(f);
 			}
 		}
