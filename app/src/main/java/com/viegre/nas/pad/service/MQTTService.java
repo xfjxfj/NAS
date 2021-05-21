@@ -249,7 +249,7 @@ public class MQTTService extends Service {
                         RxHttp.setOnParamAssembly(param -> param.addHeader("token", token));
                         SPUtils.getInstance().put(SPConfig.PHONE, phone);
                         SPUtils.getInstance().put("token", token);
-//                        PopupManager.INSTANCE.showCustomXPopup(this, new LoginTimePopup(this));
+                        EventBus.getDefault().postSticky(BusConfig.DEVICE_LOGIN);
                         ActivityUtils.finishActivity(LoginActivity.class);
                         break;
                     //设备信息

@@ -45,4 +45,5 @@ public class BusConfig {
 	 * 设备绑定成功
 	 */
 	public static final String DEVICE_BOUND = "device_bound";
+	public static final String DEVICE_LOGIN = "device_LOGIN";
 }

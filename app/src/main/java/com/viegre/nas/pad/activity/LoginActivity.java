@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -67,7 +68,13 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
         }
         mViewBinding.acivLoginQRCode.setImageBitmap(ZxingUtils.createQRCodewhite(jsonObject.toString(), 500, 500, true));
         mViewBinding.acivLoginAccountCode.setTag(false);
-//        mViewBinding.acetLoginAccountPhone.setText("13168306428");
+
+        mViewBinding.acetLoginAccountPhone.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);//控制键盘不全屏
+        mViewBinding.acetLoginAccountPassword.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);//控制键盘不全屏
+        mViewBinding.acetLoginAccountCode.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);//控制键盘不全屏
+
+        mViewBinding.acetLoginPhone.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);//控制键盘不全屏
+        mViewBinding.acetLoginPhoneCode.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);//控制键盘不全屏
 //        mViewBinding.acetLoginAccountPassword.setText("abcd123456");
         initListener();
     }
