@@ -9,7 +9,10 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
+import android.os.Environment;
+import android.os.storage.StorageManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -93,7 +96,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
 	@Override
 	protected void initialize() {
-		if("official".equals(BuildConfig.FLAVOR)) {
+		if ("official".equals(BuildConfig.FLAVOR)) {
 			ServiceUtils.startService(MscService.class);
 		}
 //		getUsbPermission();
@@ -101,6 +104,26 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		initIcon();
 		initBanner();
 		initWeather();
+//		getUsbPaths();
+	}
+
+	private void getUsbPaths() {
+		try {
+			@SuppressLint("WrongConstant")
+			StorageManager srgMgr = (StorageManager) getSystemService(Context.STORAGE_SERVICE);
+			Class<StorageManager> srgMgrClass = StorageManager.class;
+			String[] paths = (String[]) srgMgrClass.getMethod("getVolumePaths").invoke(srgMgr);
+			if (null != paths && paths.length > 0) {
+				for (String path : paths) {
+					Object volumeState = srgMgrClass.getMethod("getVolumeState", String.class).invoke(srgMgr, path);
+					if (!path.contains("emulated") && Environment.MEDIA_MOUNTED.equals(volumeState)) {
+						LogUtils.iTag("getUsbPaths", path);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -409,19 +432,22 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		registerReceiver(mUsbPermissionReceiver, intentFilter);
 		UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 		for (UsbDevice usbDevice : usbManager.getDeviceList().values()) {
-			if ("USB Storage".equals(usbDevice.getProductName())) {
-				if (!usbManager.hasPermission(usbDevice)) {
-					LogUtils.iTag("getUsbPermission", usbDevice.getProductName() + ": 未获取权限，开始申请");
-					usbManager.requestPermission(usbDevice, pendingIntent);
-				} else {
-					LogUtils.iTag("getUsbPermission", usbDevice.getProductName() + ": 权限已获取");
-					for (UsbMassStorageDevice device : UsbMassStorageDevice.getMassStorageDevices(Utils.getApp())) {
-						try {
-							device.init();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						if (usbDevice.getProductName().equals(device.getUsbDevice().getProductName())) {
+			int deviceClass = usbDevice.getDeviceClass();
+			if (0 == deviceClass) {
+				UsbInterface usbInterface = usbDevice.getInterface(0);
+				int interfaceClass = usbInterface.getInterfaceClass();
+				if (8 == interfaceClass) {
+					if (!usbManager.hasPermission(usbDevice)) {
+						LogUtils.iTag("getUsbPermission", usbDevice.getProductName() + ": 未获取权限，开始申请");
+						usbManager.requestPermission(usbDevice, pendingIntent);
+					} else {
+						LogUtils.iTag("getUsbPermission", usbDevice.getProductName() + ": 权限已获取");
+						for (UsbMassStorageDevice device : UsbMassStorageDevice.getMassStorageDevices(Utils.getApp())) {
+							try {
+								device.init();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 							if (device.getPartitions().isEmpty()) {
 								ToastUtils.showLong("分区为空");
 								LogUtils.iTag("getUsbPermission", "分区为空");
@@ -435,8 +461,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 							              currentFs.getRootDirectory().getAbsolutePath());
 						}
 					}
+					break;
 				}
-				break;
 			}
 		}
 	}
@@ -455,19 +481,17 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
-								if (usbDevice.getProductName().equals(device.getUsbDevice().getProductName())) {
-									if (device.getPartitions().isEmpty()) {
-										ToastUtils.showLong("分区为空");
-										LogUtils.iTag("getUsbPermission", "分区为空");
-										return;
-									}
-									FileSystem currentFs = device.getPartitions().get(0).getFileSystem();
-									ToastUtils.showLong(currentFs.getVolumeLabel() + " - " + currentFs.getRootDirectory()
-									                                                                  .getAbsolutePath());
-									LogUtils.iTag("getUsbPermission",
-									              currentFs.getVolumeLabel(),
-									              currentFs.getRootDirectory().getAbsolutePath());
+								if (device.getPartitions().isEmpty()) {
+									ToastUtils.showLong("分区为空");
+									LogUtils.iTag("getUsbPermission", "分区为空");
+									return;
 								}
+								FileSystem currentFs = device.getPartitions().get(0).getFileSystem();
+								ToastUtils.showLong(currentFs.getVolumeLabel() + " - " + currentFs.getRootDirectory()
+								                                                                  .getAbsolutePath());
+								LogUtils.iTag("getUsbPermission",
+								              currentFs.getVolumeLabel(),
+								              currentFs.getRootDirectory().getAbsolutePath());
 							}
 						} else {
 							ToastUtils.showLong("设备为空");
