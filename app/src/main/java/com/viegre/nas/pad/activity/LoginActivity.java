@@ -146,6 +146,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
         }
     }
 
+    //验证码登录
     private void phoneCodeLogin(String phone, String phoneCode) {
         if (judgePhone(phone)) return;
         if (judgeCode(phoneCode)) return;
@@ -185,7 +186,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
     private void getPhoneNumberCode(String phoneString) {
         if (judgePhone(phoneString)) return;
         RxHttp.postForm(UrlConfig.User.GET_PHONENUMBER)
-                .add("phoneNumber", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+                .add("phoneNumber", phoneString)
                 .asString()
 //                .asResponse(LoglinCodeEntity.class)
                 .observeOn(AndroidSchedulers.mainThread())

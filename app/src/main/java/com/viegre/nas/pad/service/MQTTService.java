@@ -34,6 +34,8 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.blankj.utilcode.util.ViewUtils;
 import com.google.common.collect.Lists;
+import com.kongzue.dialog.v3.TipDialog;
+import com.viegre.nas.pad.activity.LoginActivity;
 import com.viegre.nas.pad.activity.WelcomeActivity;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
@@ -47,6 +49,8 @@ import com.viegre.nas.pad.entity.FtpFileQueryEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
 import com.viegre.nas.pad.entity.RecycleBinEntity;
+import com.viegre.nas.pad.manager.PopupManager;
+import com.viegre.nas.pad.popup.LoginTimePopup;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.MediaScanner;
 
@@ -71,6 +75,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+
+import rxhttp.RxHttp;
 
 /**
  * Created by レインマン on 2021/04/12 09:40 with Android Studio.
@@ -233,13 +239,18 @@ public class MQTTService extends Service {
 
     private void parseMessage(String message) {
         MQTTMsgEntity mqttMsgEntity = JSON.parseObject(message, MQTTMsgEntity.class);
-
         switch (mqttMsgEntity.getMsgType()) {
             case MQTTMsgEntity.TYPE_NOTIFY:
                 switch (mqttMsgEntity.getAction()) {
                     //登录设备
                     case MQTTMsgEntity.MSG_SCAN_LOGIN:
-
+                        String token = JSON.parseObject(mqttMsgEntity.getParam()).getString("token");
+                        String phone = JSON.parseObject(mqttMsgEntity.getParam()).getString("phone");
+                        RxHttp.setOnParamAssembly(param -> param.addHeader("token", token));
+                        SPUtils.getInstance().put(SPConfig.PHONE, phone);
+                        SPUtils.getInstance().put("token", token);
+//                        PopupManager.INSTANCE.showCustomXPopup(this, new LoginTimePopup(this));
+                        ActivityUtils.finishActivity(LoginActivity.class);
                         break;
                     //设备信息
                     case MQTTMsgEntity.MSG_DEVICE_INFO:
