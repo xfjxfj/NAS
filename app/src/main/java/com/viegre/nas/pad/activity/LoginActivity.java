@@ -83,6 +83,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
     protected void onDestroy() {
         super.onDestroy();
         //取消获取图片验证码任务
+
+
         ThreadUtils.cancel(ThreadUtils.getSinglePool());
         //清除验证码sessionId缓存
         SPUtils.getInstance().remove(SPConfig.LOGIN_CODE_SESSION_ID);
