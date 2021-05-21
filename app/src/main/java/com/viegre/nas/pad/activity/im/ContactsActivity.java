@@ -61,7 +61,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     private final List<ContactsBean> mFriendData = new ArrayList<>();
     private final List<String> mDevicesData = new ArrayList<>();
     private List<String> mRecordData = new ArrayList<>();
-    public static String phone = "";
+    public static Boolean Token_valid = true;
     private TextView textView2;
     private TextView textRecord;
 
@@ -176,34 +176,39 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                         Log.d("onSubscribe", d.toString());
                     }
 
-                    //                    {"msg":"token verify fail","code":"4111"}
+                    //                    {"msg":"token verify fail","code":"4111"}   2021年5月21日
                     @Override
                     public void onNext(@NonNull String s) {
+//                        {"msg":"token verify fail","code":"4111"}
+//                        {"code":0,"msg":"OK","data":[{"phone":"15357906428","nickName":null,"avater":null,"callId":"sws8s888","status":{"desc":"管理员","code":3},"boundTime":"2021-05-20 10:45:19.447.44.4"}]}
                         Gson gson = new Gson();
                         DevicesFollowEntity devicesFollowEntity = gson.fromJson(s, DevicesFollowEntity.class);
-                        List<DevicesFollowEntity.DataDTO> data = devicesFollowEntity.getData();
-
-                        if (null != data) {
-                            for (DevicesFollowEntity.DataDTO datum : data) {
-                                String userid = datum.getCallId();
-                                String phone = datum.getPhone();
-                                String nickName = "";
-                                if (datum.getNickName() == null) {
-                                    nickName = "";
-                                } else {
-                                    nickName = (String) datum.getNickName();
+                        if (devicesFollowEntity.getMsg().equals("ok")) {//返回数据正确
+                            List<DevicesFollowEntity.DataDTO> data = devicesFollowEntity.getData();
+                            if (null != data) {
+                                for (DevicesFollowEntity.DataDTO datum : data) {
+                                    String userid = datum.getCallId();
+                                    String phone = datum.getPhone();
+                                    String nickName = "";
+                                    if (datum.getNickName() == null) {
+                                        nickName = "";
+                                    } else {
+                                        nickName = (String) datum.getNickName();
+                                    }
+                                    mFriendData.add(new ContactsBean(userid, "", nickName, phone));
                                 }
-                                mFriendData.add(new ContactsBean(userid, "", nickName, phone));
+                                mFriendData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
+                                mFriendData.add(new ContactsBean("anaOaOjj", "", "设备pad", "191"));
+                                mFriendData.add(new ContactsBean("ISIFIF99", "", "oppo-pad", "191"));
+                                mFriendData.add(new ContactsBean("agahahss", "", "华为AL00-pad", "456"));
+                                mFriendData.add(new ContactsBean("ZoZcZcKK", "", "夜神模拟器-pad", "666"));
+                                mFriendData.add(new ContactsBean("RlRbRbGG", "", "设备2-pad", "666"));
                             }
-                            mFriendData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
-                            mFriendData.add(new ContactsBean("anaOaOjj", "", "设备pad", "191"));
-                            mFriendData.add(new ContactsBean("ISIFIF99", "", "oppo-pad", "191"));
-                            mFriendData.add(new ContactsBean("agahahss", "", "华为AL00-pad", "456"));
-                            mFriendData.add(new ContactsBean("ZoZcZcKK", "", "夜神模拟器-pad", "666"));
-                            mFriendData.add(new ContactsBean("RlRbRbGG", "", "设备2-pad", "666"));
+                            TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
+                            initFriendData(mFriendData);
+                        } else {
+                            Token_valid = false;
                         }
-                        TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
-                        initFriendData(mFriendData);
                     }
 
                     @Override

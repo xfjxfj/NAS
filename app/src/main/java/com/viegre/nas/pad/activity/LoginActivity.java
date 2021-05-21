@@ -56,8 +56,6 @@ import rxhttp.RxHttp;
  * Created by レインマン on 2021/01/06 10:39 with Android Studio.
  */
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements View.OnClickListener {
-
-
     @Override
     protected void initialize() {
         JSONObject jsonObject = new JSONObject();
