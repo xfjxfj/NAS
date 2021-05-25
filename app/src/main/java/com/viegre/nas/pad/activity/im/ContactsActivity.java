@@ -183,7 +183,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
 //                        {"code":0,"msg":"OK","data":[{"phone":"15357906428","nickName":null,"avater":null,"callId":"sws8s888","status":{"desc":"管理员","code":3},"boundTime":"2021-05-20 10:45:19.447.44.4"}]}
                         Gson gson = new Gson();
                         DevicesFollowEntity devicesFollowEntity = gson.fromJson(s, DevicesFollowEntity.class);
-                        if (devicesFollowEntity.getMsg().equals("ok")) {//返回数据正确
+                        if (devicesFollowEntity.getMsg().equals("OK")) {//返回数据正确
                             List<DevicesFollowEntity.DataDTO> data = devicesFollowEntity.getData();
                             if (null != data) {
                                 for (DevicesFollowEntity.DataDTO datum : data) {
@@ -203,23 +203,26 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                                 mFriendData.add(new ContactsBean("agahahss", "", "华为AL00-pad", "456"));
                                 mFriendData.add(new ContactsBean("ZoZcZcKK", "", "夜神模拟器-pad", "666"));
                                 mFriendData.add(new ContactsBean("RlRbRbGG", "", "设备2-pad", "666"));
+                                mFriendData.add(new ContactsBean("OkORORNN", "", "设备3-oppo", "1313"));
                             }
                             TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
                             initFriendData(mFriendData);
                         } else {
                             Token_valid = false;
+                            TipDialog.show(ContactsActivity.this, devicesFollowEntity.getMsg(), TipDialog.TYPE.ERROR).doDismiss();
                         }
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
                         TipDialog.show(ContactsActivity.this, e.getMessage(), TipDialog.TYPE.SUCCESS).doDismiss();
+
                         CommonUtils.showErrorToast(e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-                        Log.d("", "");
+                         Log.d("", "");
                     }
                 });
     }

@@ -33,6 +33,7 @@ import com.djangoogle.framework.activity.BaseActivity;
 import com.github.mjdev.libaums.UsbMassStorageDevice;
 import com.github.mjdev.libaums.fs.FileSystem;
 import com.google.gson.Gson;
+import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
@@ -60,6 +61,7 @@ import com.youth.banner.indicator.CircleIndicator;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.primftpd.PrimitiveFtpdActivity;
 
@@ -105,6 +107,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         initIcon();
         initBanner();
         initWeather();
+        loginIM();
 //		getUsbPaths();
     }
 
@@ -131,7 +134,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     protected void onRestart() {
         super.onRestart();
         if (!ContactsActivity.Token_valid) {
-
             loginIM();
         }
     }
@@ -147,6 +149,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
             @Override
             public void onUiSuccess(LoginResult loginResult) {
                 if (isFinishing()) {
+                    TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
                     return;
                 }
                 //需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
@@ -172,7 +175,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                 if (isFinishing()) {
                     return;
                 }
-                Toast.makeText(MainActivity.this, "登录失败：" + code + " " + msg, Toast.LENGTH_SHORT).show();
+                TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
+//                Toast.makeText(MainActivity.this, "登录失败：" + code + " " + msg, Toast.LENGTH_SHORT).show();
 //                loginButton.setEnabled(true);
             }
         });
@@ -195,18 +199,22 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                         //添加公共请求头
 //                        {"code":0,"msg":"OK","data":{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpdGVtIjp7Iml0ZW1JZCI6ImY2ZmUyNTkyMmZhMjAyOGEiLCJpdGVtVHlwZSI6IjIifSwiaXNzIjoiYXV0aDAiLCJleHAiOjE2MjA0MjA4ODh9.DJk9tVcaIK62PQbR_c8zwkyHxDB0zP3Mvc_In7pcrac"}}
 //                        {"code":0,"msg":"OK","data":null}
+//                        {"code":1000,"msg":"设备不存在","data":null}
                         Gson gson = new Gson();
                         DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
-                        String token = loglinCodeEntity.getData().getToken();
-                        SPUtils.getInstance().put("token", token);
-                        postCallId(token, android_id, userid);
-                        Log.d("", "");
+                        if (loglinCodeEntity.getMsg().equals("OK")) {
+                            String token = loglinCodeEntity.getData().getToken();
+                            SPUtils.getInstance().put("token", token);
+                            postCallId(token, android_id, userid);
+                        } else {
+                            TipDialog.show(MainActivity.this, loglinCodeEntity.getMsg(), TipDialog.TYPE.ERROR).doDismiss();
+                        }
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
 //                        CommonUtils.showErrorToast(e.getMessage());
-                        Log.d("", "");
+                        TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
                     }
 
                     @Override
@@ -242,6 +250,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                         LoglinCodeEntity loglinCodeEntity = gson.fromJson(s, LoglinCodeEntity.class);
                         String msg = loglinCodeEntity.getMsg();
                         Log.d("postCallId：", msg);
+                        TipDialog.show(MainActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
 //                        CommonUtils.showErrorToast(msg);
 //                        {"code":500,"msg":"服务器内部异常","data":null}
                     }
@@ -249,7 +258,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                     @Override
                     public void onError(@NonNull Throwable e) {
 //                        CommonUtils.showErrorToast(e.getMessage());
-                        Log.d("", "");
+                        TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.SUCCESS).doDismiss();
                     }
 
                     @Override
@@ -511,9 +520,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         }
     };
 
-    @SuppressLint({"ApplySharedPref", "DefaultLocale", "SimpleDateFormat"})
     @Override
     public void onMessageUpdate(Message message) {
+        Log.d("onMessageUpdate:message", message.toString());
         try {
             CallStartMessageContent me = (CallStartMessageContent) message.content;
             //大于0 为挂断状态
