@@ -73,6 +73,8 @@ import java.util.Random;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import custom.fileobserver.FileListener;
+import custom.fileobserver.FileWatcher;
 import rxhttp.RxHttp;
 
 /**
@@ -84,7 +86,7 @@ public class MQTTService extends Service {
 
 	private MqttConnectOptions mMqttConnectOptions;
 	private MqttAndroidClient mMqttAndroidClient;
-//	private FileObserverJni mFileObserverJni;
+	private FileWatcher mFileWatcher;
 
 	@Nullable
 	@Override
@@ -95,16 +97,7 @@ public class MQTTService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-//		mFileObserverJni = new FileObserverJni(PathConfig.NAS, FileObserverJni.ALL_EVENTS);
-//		SetFileObserverJni();
-//		RecursiveFileObserver recursiveFileObserver = new RecursiveFileObserver(PathConfig.NAS.substring(0, PathConfig.NAS.length() - 1),
-//		                                                                        FileObserver.ALL_EVENTS);
-
-//		recursiveFileObserver.startWatching();
-//		Observable<FileEvent> sdCardFileEvents = RxFileObserver.create(PathConfig.NAS.substring(0, PathConfig.NAS.length() - 1));
-//		sdCardFileEvents.subscribe(fileEvent -> {
-//			LogUtils.i("RxFileObserver", fileEvent.toString());
-//		});
+		initFileWatcher();
 		initNotificationChannel();
 		initMqttAndroidClient();
 	}
@@ -117,20 +110,41 @@ public class MQTTService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		if (null != mFileWatcher) {
+			mFileWatcher.stopWatching();
+		}
 	}
 
-//	private void SetFileObserverJni() {
-//		FileObserverJni.setmCallback((path, mask) -> {
-////			if ((FileObserver.CREATE | FileObserver.DELETE | FileObserver.DELETE_SELF | FileObserver.MODIFY | FileObserver.MOVED_FROM | FileObserver.MOVED_TO | FileObserver.MOVE_SELF) == mask) {
-////				LogUtils.iTag("FileObserverJni_NOT_OPEN", path);
-////				mFileObserverJni.setmCallback(null);
-////				SetFileObserverJni();
-////			}
-////			if (FileObserver.OPEN == mask) {
-////				LogUtils.iTag("FileObserverJni_OPEN", path);
-////			}
-//		});
-//	}
+	private void initFileWatcher() {
+		mFileWatcher = new FileWatcher(PathConfig.NAS, true, FileWatcher.ALL_EVENTS);
+		mFileWatcher.setFileListener(new FileListener() {
+			@Override
+			public void onFileOpen(String path) {
+				MediaScannerConnection.scanFile(Utils.getApp(), new String[]{path}, null, null);
+			}
+
+			@Override
+			public void onFileCreated(String path) {
+				MediaScannerConnection.scanFile(Utils.getApp(), new String[]{path}, null, null);
+			}
+
+			@Override
+			public void onFileDeleted(String path) {
+				MediaScannerConnection.scanFile(Utils.getApp(), new String[]{path}, null, null);
+			}
+
+			@Override
+			public void onFileModified(String path) {
+				MediaScannerConnection.scanFile(Utils.getApp(), new String[]{path}, null, null);
+			}
+
+			@Override
+			public void onFileRenamed(String oldPath, String newPath) {
+				MediaScannerConnection.scanFile(Utils.getApp(), new String[]{oldPath, newPath}, null, null);
+			}
+		});
+		mFileWatcher.startWatching();
+	}
 
 	private void initMqttConnectOptions() {
 		mMqttConnectOptions = new MqttConnectOptions();

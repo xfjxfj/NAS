@@ -107,8 +107,6 @@ dependencies {
 	implementation project(':ai')
 	//https://github.com/AlphaBoom/ClassifyView
 	implementation project(':classify_view')
-	//https://github.com/jiangchaochao/fileObserver
-	implementation project(':file_observer')
 	//https://github.com/doyee/FileObserver-android
 	implementation project(':fileobserver')
 	implementation project(':framework')

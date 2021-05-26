@@ -2,15 +2,13 @@ package custom.fileobserver;
 
 public interface FileListener {
 
-	void onFileAccess(String name);
+	void onFileOpen(String path);
 
-	void onFileOpen(String name);
+	void onFileCreated(String path);
 
-	void onFileCreated(String name);
+	void onFileDeleted(String path);
 
-	void onFileDeleted(String name);
+	void onFileModified(String path);
 
-	void onFileModified(String name);
-
-	void onFileRenamed(String oldName, String newName);
+	void onFileRenamed(String oldPath, String newPath);
 }

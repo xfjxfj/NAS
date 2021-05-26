@@ -23,7 +23,15 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <errno.h>
-#include "logger.h"
+#include <unistd.h>
+//#include "logger.h"
+#include<android/log.h>
+#define TAG "fileobserver"
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,TAG ,__VA_ARGS__) // 定义LOGD类型
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,TAG ,__VA_ARGS__) // 定义LOGI类型
+#define LOGW(...) __android_log_print(ANDROID_LOG_WARN,TAG ,__VA_ARGS__) // 定义LOGW类型
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,TAG ,__VA_ARGS__) // 定义LOGE类型
+#define LOGF(...) __android_log_print(ANDROID_LOG_FATAL,TAG ,__VA_ARGS__) // 定义LOGF类型
 
 #define HAVE_INOTIFY
 #ifdef HAVE_INOTIFY
