@@ -36,11 +36,11 @@
     <uses-permission
         android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission
-        android:name="android.permission.MANAGE_USB"
-        tools:ignore="ProtectedPermissions" />
+    <!--    <uses-permission-->
+    <!--        android:name="android.permission.MANAGE_USB"-->
+    <!--        tools:ignore="ProtectedPermissions" />-->
 
-    <uses-feature android:name="android.hardware.usb.host" />
+    <!--    <uses-feature android:name="android.hardware.usb.host" />-->
 
     <application
         android:name=".application.NasApp"
@@ -162,18 +162,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-        <provider
-            android:name="com.github.mjdev.libaums.storageprovider.UsbDocumentProvider"
-            android:authorities="com.github.mjdev.libaums.storageprovider.documents"
-            android:enabled="@bool/isAtLeastKitKat"
-            android:exported="true"
-            android:grantUriPermissions="true"
-            android:permission="android.permission.MANAGE_DOCUMENTS">
-            <intent-filter>
-                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
-            </intent-filter>
-        </provider>
     </application>
 
 </manifest>

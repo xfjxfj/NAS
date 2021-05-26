@@ -15,7 +15,6 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ShellUtils;
@@ -105,40 +104,34 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 * 开启无障碍服务、授予权限、忽略电池优化、创建私有文件夹
 	 */
 	private void grantPermission() {
-		if ("official".equals(BuildConfig.FLAVOR)) {
-			//开启无障碍服务
-			Settings.Secure.putString(getContentResolver(),
-			                          Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-			                          getPackageName() + "/com.viegre.nas.pad.service.WakeupService");
-			Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
-		}
-		List<String> commandList = new ArrayList<>();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			//授予修改系统设置权限
-			if (!PermissionUtils.isGrantedWriteSettings()) {
-				commandList.add("appops set " + getPackageName() + " WRITE_SETTINGS allow");
-			}
-			//忽略电池优化
-			PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
-			if (!powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
-				String ignoreBatteryOptimization = "dumpsys deviceidle whitelist +" + getPackageName();
-				commandList.add(ignoreBatteryOptimization);
-			}
-		}
 		ThreadUtils.executeByCached(new VoidTask() {
 			@Override
 			public Void doInBackground() {
-				if (!commandList.isEmpty()) {
-					ShellUtils.CommandResult commandResult = ShellUtils.execCmd(commandList, true);
-					LogUtils.iTag("ShellUtils", commandResult.toString());
-				}
 				//创建文件夹
 				FileUtils.createOrExistsDir(PathConfig.GUIDE_RESOURCE);
 				FileUtils.createOrExistsDir(PathConfig.RECYCLE_BIN);
-				List<String> commands = new ArrayList<>();
-				commands.add("cd /data/data/com.viegre.nas.pad/files/frp/");
-				commands.add("./frpc -c ./frpc.ini > frpc.log  2>&1  &");
-				ShellUtils.execCmd(commands, false);
+				//开启无障碍服务
+				if ("official".equals(BuildConfig.FLAVOR)) {
+					Settings.Secure.putString(getContentResolver(),
+					                          Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
+					                          getPackageName() + "/com.viegre.nas.pad.service.WakeupService");
+					Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
+				}
+				//执行command
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+					List<String> commandList = new ArrayList<>();
+					//忽略电池优化
+					PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
+					if (!powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
+						String ignoreBatteryOptimization = "dumpsys deviceidle whitelist +" + getPackageName();
+						commandList.add(ignoreBatteryOptimization);
+					}
+					//开启frp内网穿透
+					commandList.add("cd /data/data/com.viegre.nas.pad/files/frp/");
+					commandList.add("./frpc -c ./frpc.ini > frpc.log  2>&1  &");
+					ShellUtils.CommandResult commandResult = ShellUtils.execCmd(commandList, true);
+					LogUtils.iTag("ShellUtils", commandResult.toString());
+				}
 				return null;
 			}
 
@@ -149,9 +142,9 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
 				keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
 				ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
-//				ActivityUtils.startActivity(MainActivity.class);
-//				ActivityUtils.startActivity(WelcomeActivity.class);
-				getDeviceBoundstatus();
+				ActivityUtils.startActivity(MainActivity.class);
+				finish();
+//				getDeviceBoundstatus();
 			}
 		});
 	}
@@ -173,8 +166,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
 				FragmentUtils.show(mNetworkFragment);
 			} else {//引导用户注册
-//				ActivityUtils.startActivity(WelcomeActivity.class);
-				ActivityUtils.startActivity(MainActivity.class);
+				ActivityUtils.startActivity(WelcomeActivity.class);
+//				ActivityUtils.startActivity(MainActivity.class);
 			}
 		} else {//已绑定
 			//判断网络是否可用
@@ -234,8 +227,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				      if (!resourceList.isEmpty()) {
 					      LitePal.deleteAll(DeviceResourceEntity.class);
 					      LitePal.saveAll(resourceList);
-					      DeviceResourceEntity deviceResourceEntity = LitePal.where("type = ?", "guideVideo")
-					                                                         .findFirst(DeviceResourceEntity.class);
+					      DeviceResourceEntity deviceResourceEntity = LitePal.where("type = ?", "guideVideo").findFirst(DeviceResourceEntity.class);
 					      List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
 					      if (null != deviceResourceEntity) {
 						      String url = deviceResourceEntity.getContent();

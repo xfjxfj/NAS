@@ -3,3 +3,4 @@ captures
 .externalNativeBuild
 *.iml
 *.DS_Store
+dev

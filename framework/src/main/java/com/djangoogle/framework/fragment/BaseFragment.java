@@ -7,19 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.viewbinding.ViewBinding;
-
-import com.blankj.utilcode.util.ReflectUtils;
+import com.dylanc.viewbinding.base.ViewBindingUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.viewbinding.ViewBinding;
 
 /**
  * Created by レインマン on 2020/11/26 14:22 with Android Studio.
@@ -32,16 +29,9 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
 
 	@Nullable
 	@Override
-	public View onCreateView(
-			@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		Type superClass = getClass().getGenericSuperclass();
-		if (null == superClass) {
-			throw new RuntimeException("BaseFragment泛型反射失败");
-		} else {
-			Class<?> viewBindingClass = (Class<?>) ((ParameterizedType) superClass).getActualTypeArguments()[0];
-			mViewBinding = ReflectUtils.reflect(viewBindingClass).method("inflate", getLayoutInflater(), container, false).get();
-			return mViewBinding.getRoot();
-		}
+	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		mViewBinding = ViewBindingUtil.inflateWithGeneric(this, getLayoutInflater(), container, false);
+		return mViewBinding.getRoot();
 	}
 
 	@Override
@@ -67,6 +57,12 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
 	public void onStop() {
 		super.onStop();
 		EventBus.getDefault().unregister(this);
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		mViewBinding = null;
 	}
 
 	protected abstract void initialize();

@@ -5,9 +5,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -20,17 +17,18 @@ import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.databinding.ActivityAudioBinding;
 import com.viegre.nas.pad.entity.AudioEntity;
 import com.viegre.nas.pad.manager.AudioPlayListManager;
+import com.viegre.nas.pad.manager.MediaScannerManager;
 import com.viegre.nas.pad.manager.TextStyleManager;
-import com.viegre.nas.pad.util.MediaScanner;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import nl.changer.audiowife.AudioWife;
 
 /**
@@ -74,8 +72,7 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 			mViewBinding.srlAudioRefresh.setRefreshing(true);
 			queryAudioByLitepal();
 		});
-		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbAudioTagPrivate,
-		                                                           mViewBinding.acrbAudioTagPublic);
+		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbAudioTagPrivate, mViewBinding.acrbAudioTagPublic);
 	}
 
 	private void initList() {
@@ -142,8 +139,7 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 	}
 
 	private void scanMedia() {
-		MediaScanner mediaScanner = new MediaScanner(this, this::scanAndSaveAudioList);
-		mediaScanner.scanFile(new File(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE));
+		MediaScannerManager.INSTANCE.scan(this::scanAndSaveAudioList, mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE);
 	}
 
 	private void scanAndSaveAudioList() {

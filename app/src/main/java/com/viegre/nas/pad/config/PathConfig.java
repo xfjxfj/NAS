@@ -12,7 +12,7 @@ public class PathConfig {
 	public static final String NAS = PathUtils.getExternalStoragePath() + File.separator + "nas" + File.separator;
 
 	//引导资源目录
-	public static final String GUIDE_RESOURCE = NAS + "guideResource" + File.separator;
+	public static final String GUIDE_RESOURCE = NAS + ".guideResource" + File.separator;
 
 	//私有空间目录
 	public static final String PRIVATE = NAS + "private" + File.separator;

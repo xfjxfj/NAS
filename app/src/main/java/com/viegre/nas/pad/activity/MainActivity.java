@@ -1,21 +1,14 @@
 package com.viegre.nas.pad.activity;
 
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbInterface;
-import android.hardware.usb.UsbManager;
 import android.os.Environment;
 import android.os.storage.StorageManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -23,15 +16,11 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
-import com.blankj.utilcode.util.ToastUtils;
-import com.blankj.utilcode.util.Utils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.djangoogle.framework.activity.BaseActivity;
-import com.github.mjdev.libaums.UsbMassStorageDevice;
-import com.github.mjdev.libaums.fs.FileSystem;
 import com.google.gson.Gson;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
@@ -61,14 +50,12 @@ import com.youth.banner.indicator.CircleIndicator;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.primftpd.PrimitiveFtpdActivity;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -432,93 +419,93 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                 if (name.contains(weatherEntity.getWeather())) {
                     mViewBinding.acivMainWeather.setImageResource(entry.getValue());
                     mViewBinding.actvMainTemperature.setText(StringUtils.getString(R.string.weather_unknown_temperature,
-                            weatherEntity.getCurtemperature()));
+                                                                                   weatherEntity.getCurtemperature()));
                     return;
                 }
             }
         }
     }
 
-    @SuppressLint("WrongConstant")
-    private void getUsbPermission() {
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
-        IntentFilter intentFilter = new IntentFilter(ACTION_USB_PERMISSION);
-        registerReceiver(mUsbPermissionReceiver, intentFilter);
-        UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-        for (UsbDevice usbDevice : usbManager.getDeviceList().values()) {
-            int deviceClass = usbDevice.getDeviceClass();
-            if (0 == deviceClass) {
-                UsbInterface usbInterface = usbDevice.getInterface(0);
-                int interfaceClass = usbInterface.getInterfaceClass();
-                if (8 == interfaceClass) {
-                    if (!usbManager.hasPermission(usbDevice)) {
-                        LogUtils.iTag("getUsbPermission", usbDevice.getProductName() + ": 未获取权限，开始申请");
-                        usbManager.requestPermission(usbDevice, pendingIntent);
-                    } else {
-                        LogUtils.iTag("getUsbPermission", usbDevice.getProductName() + ": 权限已获取");
-                        for (UsbMassStorageDevice device : UsbMassStorageDevice.getMassStorageDevices(Utils.getApp())) {
-                            try {
-                                device.init();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            if (device.getPartitions().isEmpty()) {
-                                ToastUtils.showLong("分区为空");
-                                LogUtils.iTag("getUsbPermission", "分区为空");
-                                return;
-                            }
-                            FileSystem currentFs = device.getPartitions().get(0).getFileSystem();
-                            ToastUtils.showLong(currentFs.getVolumeLabel() + " - " + currentFs.getRootDirectory()
-                                    .getAbsolutePath());
-                            LogUtils.iTag("getUsbPermission",
-                                    currentFs.getVolumeLabel(),
-                                    currentFs.getRootDirectory().getAbsolutePath());
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    private final BroadcastReceiver mUsbPermissionReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (ACTION_USB_PERMISSION.equals(action)) {
-                synchronized (this) {
-                    UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                        if (null != usbDevice) {
-                            for (UsbMassStorageDevice device : UsbMassStorageDevice.getMassStorageDevices(Utils.getApp())) {
-                                try {
-                                    device.init();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                if (device.getPartitions().isEmpty()) {
-                                    ToastUtils.showLong("分区为空");
-                                    LogUtils.iTag("getUsbPermission", "分区为空");
-                                    return;
-                                }
-                                FileSystem currentFs = device.getPartitions().get(0).getFileSystem();
-                                ToastUtils.showLong(currentFs.getVolumeLabel() + " - " + currentFs.getRootDirectory()
-                                        .getAbsolutePath());
-                                LogUtils.iTag("getUsbPermission",
-                                        currentFs.getVolumeLabel(),
-                                        currentFs.getRootDirectory().getAbsolutePath());
-                            }
-                        } else {
-                            ToastUtils.showLong("设备为空");
-                            LogUtils.eTag("getUsbPermission", "设备为空");
-                        }
-                    } else {
-                        ToastUtils.showLong("permission denied for device " + usbDevice);
-                        LogUtils.eTag("getUsbPermission", "permission denied for device " + usbDevice);
-                    }
-                }
-            }
-        }
-    };
+//    @SuppressLint("WrongConstant")
+//    private void getUsbPermission() {
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+//        IntentFilter intentFilter = new IntentFilter(ACTION_USB_PERMISSION);
+//        registerReceiver(mUsbPermissionReceiver, intentFilter);
+//        UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+//        for (UsbDevice usbDevice : usbManager.getDeviceList().values()) {
+//            int deviceClass = usbDevice.getDeviceClass();
+//            if (0 == deviceClass) {
+//                UsbInterface usbInterface = usbDevice.getInterface(0);
+//                int interfaceClass = usbInterface.getInterfaceClass();
+//                if (8 == interfaceClass) {
+//                    if (!usbManager.hasPermission(usbDevice)) {
+//                        LogUtils.iTag("getUsbPermission", usbDevice.getProductName() + ": 未获取权限，开始申请");
+//                        usbManager.requestPermission(usbDevice, pendingIntent);
+//                    } else {
+//                        LogUtils.iTag("getUsbPermission", usbDevice.getProductName() + ": 权限已获取");
+//                        for (UsbMassStorageDevice device : UsbMassStorageDevice.getMassStorageDevices(Utils.getApp())) {
+//                            try {
+//                                device.init();
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                            if (device.getPartitions().isEmpty()) {
+//                                ToastUtils.showLong("分区为空");
+//                                LogUtils.iTag("getUsbPermission", "分区为空");
+//                                return;
+//                            }
+//                            FileSystem currentFs = device.getPartitions().get(0).getFileSystem();
+//                            ToastUtils.showLong(currentFs.getVolumeLabel() + " - " + currentFs.getRootDirectory()
+//                                    .getAbsolutePath());
+//                            LogUtils.iTag("getUsbPermission",
+//                                    currentFs.getVolumeLabel(),
+//                                    currentFs.getRootDirectory().getAbsolutePath());
+//                        }
+//                    }
+//                    break;
+//                }
+//            }
+//        }
+//    }
+//
+//    private final BroadcastReceiver mUsbPermissionReceiver = new BroadcastReceiver() {
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            if (ACTION_USB_PERMISSION.equals(action)) {
+//                synchronized (this) {
+//                    UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+//                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+//                        if (null != usbDevice) {
+//                            for (UsbMassStorageDevice device : UsbMassStorageDevice.getMassStorageDevices(Utils.getApp())) {
+//                                try {
+//                                    device.init();
+//                                } catch (IOException e) {
+//                                    e.printStackTrace();
+//                                }
+//                                if (device.getPartitions().isEmpty()) {
+//                                    ToastUtils.showLong("分区为空");
+//                                    LogUtils.iTag("getUsbPermission", "分区为空");
+//                                    return;
+//                                }
+//                                FileSystem currentFs = device.getPartitions().get(0).getFileSystem();
+//                                ToastUtils.showLong(currentFs.getVolumeLabel() + " - " + currentFs.getRootDirectory()
+//                                        .getAbsolutePath());
+//                                LogUtils.iTag("getUsbPermission",
+//                                        currentFs.getVolumeLabel(),
+//                                        currentFs.getRootDirectory().getAbsolutePath());
+//                            }
+//                        } else {
+//                            ToastUtils.showLong("设备为空");
+//                            LogUtils.eTag("getUsbPermission", "设备为空");
+//                        }
+//                    } else {
+//                        ToastUtils.showLong("permission denied for device " + usbDevice);
+//                        LogUtils.eTag("getUsbPermission", "permission denied for device " + usbDevice);
+//                    }
+//                }
+//            }
+//        }
+//    };
 
     @Override
     public void onMessageUpdate(Message message) {

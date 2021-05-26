@@ -29,4 +29,6 @@ dependencies {
 	api 'com.squareup.okhttp3:okhttp:4.9.1'
 	//https://github.com/greenrobot/EventBus
 	api 'org.greenrobot:eventbus:3.2.0'
+	//https://github.com/DylanCaiCoding/ViewBindingKtx
+	api 'com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-base:1.2.1'
 }

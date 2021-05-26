@@ -1,15 +1,11 @@
 package com.viegre.nas.pad.activity;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.djangoogle.framework.activity.BaseActivity;
-import com.github.mjdev.libaums.UsbMassStorageDevice;
-import com.github.mjdev.libaums.fs.FileSystem;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.ExternalStorageListAdapter;
 import com.viegre.nas.pad.config.BusConfig;
@@ -25,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+
 /**
  * 外部存储
  * Created by レインマン on 2021/04/01 17:03 with Android Studio.
@@ -33,12 +31,12 @@ public class ExternalStorageActivity extends BaseActivity<ActivityExternalStorag
 
 	private ExternalStorageListAdapter mExternalStorageListAdapter;
 	private final CopyOnWriteArrayList<List<FileEntity>> mHistoryList = new CopyOnWriteArrayList<>();
-	private UsbMassStorageDevice[] mUsbMassStorageDevices;
+	//	private UsbMassStorageDevice[] mUsbMassStorageDevices;
 	private volatile String mVolumeLabel;
 
 	@Override
 	protected void initialize() {
-		mUsbMassStorageDevices = UsbMassStorageDevice.getMassStorageDevices(this);
+//		mUsbMassStorageDevices = UsbMassStorageDevice.getMassStorageDevices(this);
 		List<File> list = FileUtils.listFilesInDir("/storage/3C3E71843E71384A/Android/");
 		for (File file : list) {
 			LogUtils.iTag("ExternalStorageActivity", file.getAbsolutePath());
@@ -138,13 +136,13 @@ public class ExternalStorageActivity extends BaseActivity<ActivityExternalStorag
 			@Override
 			public List<FileEntity> doInBackground() throws Throwable {
 				List<FileEntity> list = new ArrayList<>();
-				for (UsbMassStorageDevice device : mUsbMassStorageDevices) {
-					device.init();
-					FileSystem currentFs = device.getPartitions().get(0).getFileSystem();
-					list.add(new FileEntity(currentFs.getVolumeLabel(),
-					                        currentFs.getRootDirectory().getAbsolutePath(),
-					                        FileEntity.Type.STORAGE));
-				}
+//				for (UsbMassStorageDevice device : mUsbMassStorageDevices) {
+//					device.init();
+//					FileSystem currentFs = device.getPartitions().get(0).getFileSystem();
+//					list.add(new FileEntity(currentFs.getVolumeLabel(),
+//					                        currentFs.getRootDirectory().getAbsolutePath(),
+//					                        FileEntity.Type.STORAGE));
+//				}
 				return list;
 			}
 

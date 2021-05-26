@@ -1,5 +1,6 @@
 package com.viegre.nas.pad.service;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -9,14 +10,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.MediaStore;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -49,7 +48,6 @@ import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
 import com.viegre.nas.pad.entity.RecycleBinEntity;
 import com.viegre.nas.pad.task.VoidTask;
-import com.viegre.nas.pad.util.MediaScanner;
 
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -73,6 +71,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import rxhttp.RxHttp;
 
 /**
@@ -207,11 +207,10 @@ public class MQTTService extends Service {
 	private void initNotificationChannel() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			String CHANNEL_ID = "nas_channel_mqtt";
+			@SuppressLint("WrongConstant")
 			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_NONE);
 			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
-			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("")
-			                                                                            .setContentText("")
-			                                                                            .build();
+			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("").setContentText("").build();
 			startForeground(1, notification);
 		}
 	}
@@ -303,8 +302,7 @@ public class MQTTService extends Service {
 				switch (mqttMsgEntity.getAction()) {
 					//磁盘整理
 					case MQTTMsgEntity.MSG_DISK_DEFRAGMENT:
-						ViewUtils.runOnUiThreadDelayed(() -> sendMQTTMsg(diskDefragment(mqttMsgEntity.getFromId())),
-						                               getRandomNum(10, 20) * 1000L);
+						ViewUtils.runOnUiThreadDelayed(() -> sendMQTTMsg(diskDefragment(mqttMsgEntity.getFromId())), getRandomNum(10, 20) * 1000L);
 						break;
 
 					//还原
@@ -374,8 +372,7 @@ public class MQTTService extends Service {
 
 					//使用寿命检测
 					case MQTTMsgEntity.MSG_LIFE_TEST:
-						ViewUtils.runOnUiThreadDelayed(() -> sendMQTTMsg(lifeTest(mqttMsgEntity.getFromId())),
-						                               getRandomNum(10, 20) * 1000L);
+						ViewUtils.runOnUiThreadDelayed(() -> sendMQTTMsg(lifeTest(mqttMsgEntity.getFromId())), getRandomNum(10, 20) * 1000L);
 						break;
 
 					//关机
@@ -404,8 +401,11 @@ public class MQTTService extends Service {
 									if (!FileUtils.isFileExists(ftpCmdEntity.getPath())) {
 										continue;
 									}
-									FileUtils.copy(ftpCmdEntity.getPath(),
-									               destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
+									FileUtils.copy(ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
+									MediaScannerConnection.scanFile(Utils.getApp(),
+									                                new String[]{destPath + FileUtils.getFileName(ftpCmdEntity.getPath())},
+									                                null,
+									                                null);
 								}
 								return true;
 							}
@@ -452,6 +452,7 @@ public class MQTTService extends Service {
 									                                                         PathConfig.RECYCLE_BIN + FileUtils.getFileName(
 											                                                         ftpCmdEntity.getPath()));
 									FileUtils.move(recycleBinEntity.getPathBeforeDelete(), recycleBinEntity.getPathAfterDelete());
+									MediaScannerConnection.scanFile(Utils.getApp(), new String[]{recycleBinEntity.getPathBeforeDelete()}, null, null);
 									recycleBinEntity.save();
 								}
 								return true;
@@ -499,8 +500,7 @@ public class MQTTService extends Service {
 									return false;
 								}
 								for (FtpCmdEntity ftpCmdEntity : rstPathList) {
-									RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?",
-									                                                  ftpCmdEntity.getPath())
+									RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?", ftpCmdEntity.getPath())
 									                                           .findFirst(RecycleBinEntity.class);
 									if (null == recycleBinEntity) {
 										continue;
@@ -541,8 +541,7 @@ public class MQTTService extends Service {
 								} else {
 									for (FtpCmdEntity ftpCmdEntity : erasePathList) {
 										FileUtils.delete(ftpCmdEntity.getPath());
-										RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?",
-										                                                  ftpCmdEntity.getPath())
+										RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?", ftpCmdEntity.getPath())
 										                                           .findFirst(RecycleBinEntity.class);
 										if (null != recycleBinEntity) {
 											recycleBinEntity.delete();
@@ -578,13 +577,12 @@ public class MQTTService extends Service {
 									SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 									for (FtpFavoritesEntity ftpFavoritesEntity : favoritesPathList) {
 										if (isAdd) {
-											ftpFavoritesEntity.setTime(TimeUtils.millis2String(FileUtils.getFileLastModified(
-													ftpFavoritesEntity.getPath()), sdf));
+											ftpFavoritesEntity.setTime(TimeUtils.millis2String(FileUtils.getFileLastModified(ftpFavoritesEntity.getPath()),
+											                                                   sdf));
 											ftpFavoritesEntity.setSize(FileUtils.getSize(ftpFavoritesEntity.getPath()));
 											ftpFavoritesEntity.save();
 										} else {
-											FtpFavoritesEntity ftpFavorites = LitePal.where("path = ?",
-											                                                ftpFavoritesEntity.getPath())
+											FtpFavoritesEntity ftpFavorites = LitePal.where("path = ?", ftpFavoritesEntity.getPath())
 											                                         .findFirst(FtpFavoritesEntity.class);
 											if (null != ftpFavorites) {
 												ftpFavorites.delete();
@@ -656,9 +654,8 @@ public class MQTTService extends Service {
 										ftpFileQueryEntity.setType(FileUtils.isDir(path) ? "dir" : "file");
 										long time = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED));
 										ftpFileQueryEntity.setCreateTime(TimeUtils.millis2String(time,
-										                                                         new SimpleDateFormat(
-												                                                         "yyyy-MM-dd HH:mm",
-												                                                         Locale.getDefault())));
+										                                                         new SimpleDateFormat("yyyy-MM-dd HH:mm",
+										                                                                              Locale.getDefault())));
 										ftpFileQueryEntity.setSrc(path.startsWith(PathConfig.PUBLIC) ? "public" : "private");
 										ftpFileList.add(ftpFileQueryEntity);
 									}
@@ -698,30 +695,45 @@ public class MQTTService extends Service {
 					case MQTTMsgEntity.MSG_FTP_CATEGORY_LIST:
 						boolean privateOnly = JSON.parseObject(mqttMsgEntity.getParam()).getBoolean("privateOnly");
 						String category = JSON.parseObject(mqttMsgEntity.getParam()).getString("category");
+						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<FtpCategoryEntity>>() {
+							@Override
+							public List<FtpCategoryEntity> doInBackground() {
+								return queryFtpCategory(privateOnly, category);
+							}
+
+							@Override
+							public void onSuccess(List<FtpCategoryEntity> result) {
+								Map<String, Object> ftpCategoryListMap = new HashMap<>();
+								ftpCategoryListMap.put("category", category);
+								ftpCategoryListMap.put("categoryList", result);
+								MQTTMsgEntity ftpCategoryListMsg = ftpCategoryList(mqttMsgEntity.getFromId());
+								ftpCategoryListMsg.setParam(new JSONObject(ftpCategoryListMap).toJSONString());
+								sendMQTTMsg(ftpCategoryListMsg);
+							}
+						});
+						break;
+
+					//ftp文件状态刷新
+					case MQTTMsgEntity.MSG_FTP_STATUS_REFRESH:
+						List<FtpCmdEntity> refreshPathList = JSON.parseObject(mqttMsgEntity.getParam())
+						                                         .getJSONArray("refreshPathList")
+						                                         .toJavaList(FtpCmdEntity.class);
 						ThreadUtils.executeByCached(new VoidTask() {
 							@Override
 							public Void doInBackground() {
-								MediaScanner mediaScanner = new MediaScanner(MQTTService.this,
-								                                             () -> ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<FtpCategoryEntity>>() {
-									                                             @Override
-									                                             public List<FtpCategoryEntity> doInBackground() {
-										                                             return queryFtpCategory(privateOnly,
-										                                                                     category);
-									                                             }
-
-									                                             @Override
-									                                             public void onSuccess(List<FtpCategoryEntity> result) {
-										                                             Map<String, Object> ftpCategoryListMap = new HashMap<>();
-										                                             ftpCategoryListMap.put("categoryList",
-										                                                                    result);
-										                                             MQTTMsgEntity ftpCategoryListMsg = ftpCategoryList(
-												                                             mqttMsgEntity.getFromId());
-										                                             ftpCategoryListMsg.setParam(new JSONObject(
-												                                             ftpCategoryListMap).toJSONString());
-										                                             sendMQTTMsg(ftpCategoryListMsg);
-									                                             }
-								                                             }));
-								mediaScanner.scanFile(new File(PathConfig.NAS));
+								if (!refreshPathList.isEmpty()) {
+									List<String> pathList = new ArrayList<>();
+									for (FtpCmdEntity ftpCmdEntity : refreshPathList) {
+										pathList.add(ftpCmdEntity.getPath());
+									}
+									MediaScannerConnection.scanFile(Utils.getApp(), pathList.toArray(new String[0]), null, (s, uri) -> {
+										Map<String, Object> ftpRefreshPathParamMap = new HashMap<>();
+										ftpRefreshPathParamMap.put("result", true);
+										MQTTMsgEntity ftpRefreshPathMsg = ftpStatusRefresh(mqttMsgEntity.getFromId());
+										ftpRefreshPathMsg.setParam(new JSONObject(ftpRefreshPathParamMap).toJSONString());
+										sendMQTTMsg(ftpRefreshPathMsg);
+									});
+								}
 								return null;
 							}
 						});
@@ -845,8 +857,7 @@ public class MQTTService extends Service {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("days",
 		             TimeUtils.getTimeSpan(System.currentTimeMillis(),
-		                                   TimeUtils.string2Millis("20210401",
-		                                                           new SimpleDateFormat("yyyyMMdd", Locale.getDefault())),
+		                                   TimeUtils.string2Millis("20210401", new SimpleDateFormat("yyyyMMdd", Locale.getDefault())),
 		                                   TimeConstants.DAY));
 		JSONObject paramJson = new JSONObject(paramMap);
 		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_LIFE_TEST, toId, paramJson.toJSONString());
@@ -969,6 +980,16 @@ public class MQTTService extends Service {
 	}
 
 	/**
+	 * ftp文件状态刷新
+	 *
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
+	 */
+	private MQTTMsgEntity ftpStatusRefresh(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_STATUS_REFRESH, toId);
+	}
+
+	/**
 	 * 生成一个startNum 到 endNum之间的随机数(不包含endNum的随机数)
 	 *
 	 * @param startNum
@@ -1050,11 +1071,7 @@ public class MQTTService extends Service {
 		List<FtpCategoryEntity> list = new ArrayList<>();
 		Cursor cursor = Utils.getApp()
 		                     .getContentResolver()
-		                     .query(uri,
-		                            new String[]{pathProjection, nameProjection, timeProjection, sizeProjection},
-		                            null,
-		                            null,
-		                            null);
+		                     .query(uri, new String[]{pathProjection, nameProjection, timeProjection, sizeProjection}, null, null, null);
 		while (cursor.moveToNext()) {
 			String path = cursor.getString(cursor.getColumnIndexOrThrow(pathProjection));
 			if (FileUtils.isDir(path)) {
@@ -1077,10 +1094,8 @@ public class MQTTService extends Service {
 			}
 
 			if ("other".equals(category)) {
-				if (isImage(FileUtils.getFileExtension(name).toLowerCase()) || isVideo(FileUtils.getFileExtension(name)
-				                                                                                .toLowerCase()) || isAudio(
-						FileUtils.getFileExtension(name).toLowerCase()) || isDocument(FileUtils.getFileExtension(name)
-				                                                                               .toLowerCase())) {
+				if (isImage(FileUtils.getFileExtension(name).toLowerCase()) || isVideo(FileUtils.getFileExtension(name).toLowerCase()) || isAudio(
+						FileUtils.getFileExtension(name).toLowerCase()) || isDocument(FileUtils.getFileExtension(name).toLowerCase())) {
 					continue;
 				}
 			}
