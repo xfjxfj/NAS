@@ -145,6 +145,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
  */
 
 public class ChatManager {
+
     private static final String TAG = ChatManager.class.getName();
 
     private final String SERVER_HOST;
@@ -1373,7 +1374,7 @@ public class ChatManager {
     public void registerMessageContent(Class<? extends MessageContent> msgContentCls) {
 
         validateMessageContent(msgContentCls);
-        ContentTag tag = (ContentTag) msgContentCls.getAnnotation(ContentTag.class);
+        ContentTag tag = msgContentCls.getAnnotation(ContentTag.class);
         messageContentMap.put(tag.type(), msgContentCls);
         if (!checkRemoteService()) {
             return;
@@ -1421,20 +1422,14 @@ public class ChatManager {
         Message message = new Message();
         message.conversation = conversation;
         message.content = content;
+        message.sender = sender;
         message.status = status;
         message.messageUid = messageUid;
         message.serverTime = serverTime;
-
-        message.direction = MessageDirection.Send;
-        if(status.value() >= MessageStatus.Mentioned.value()){
+        if (this.userId.equals(sender)) {
+            message.direction = MessageDirection.Send;
+        } else {
             message.direction = MessageDirection.Receive;
-            if(conversation.type == Conversation.ConversationType.Single){
-                message.sender = conversation.target;
-            }else {
-                message.sender = sender;
-            }
-        }else {
-            message.sender = getUserId();
         }
 
         try {
@@ -2909,30 +2904,6 @@ public class ChatManager {
         }
     }
 
-    public void clearRemoteConversationMessage(Conversation conversation, GeneralCallback callback) {
-        if (!checkRemoteService()) {
-            callback.onFail(ErrorCode.SERVICE_DIED);
-            return;
-        }
-
-        try {
-            mClient.clearRemoteConversationMessage(conversation, new IGeneralCallback.Stub() {
-                @Override
-                public void onSuccess() throws RemoteException {
-                    if(callback != null) mainHandler.post(()->callback.onSuccess());
-                }
-
-                @Override
-                public void onFailure(int errorCode) throws RemoteException {
-                    if(callback != null) mainHandler.post(()->callback.onFail(errorCode));
-                }
-            });
-        } catch (RemoteException e) {
-            e.printStackTrace();
-            if(callback != null) mainHandler.post(()->callback.onFail(ErrorCode.SERVICE_DIED));
-        }
-    }
-
     public void setConversationTop(Conversation conversation, boolean top) {
         setConversationTop(conversation, top, null);
     }
@@ -2945,7 +2916,6 @@ public class ChatManager {
      */
     public void setConversationTop(Conversation conversation, boolean top, GeneralCallback callback) {
         if (!checkRemoteService()) {
-            callback.onFail(ErrorCode.SERVICE_DIED);
             return;
         }
 
@@ -4127,7 +4097,7 @@ public class ChatManager {
             });
         } catch (RemoteException e) {
             e.printStackTrace();
-            if (callback != null) mainHandler.post(() -> callback.onFail(ErrorCode.SERVICE_EXCEPTION));
+            if (callback != null) { mainHandler.post(() -> callback.onFail(ErrorCode.SERVICE_EXCEPTION)); }
         }
 
     }
@@ -4153,41 +4123,7 @@ public class ChatManager {
             e.printStackTrace();
             return false;
         }
-    }
 
-    /**
-     * 删除远程消息消息，只有专业版支持
-     *
-     * @param messageUid 消息的UID
-     * @param callback 操作结果回调
-     */
-    public void deleteRemoteMessage(long messageUid, GeneralCallback callback) {
-        if (!checkRemoteService()) {
-            callback.onFail(ErrorCode.SERVICE_DIED);
-            return;
-        }
-
-        try {
-            mClient.deleteRemoteMessage(messageUid, new IGeneralCallback.Stub() {
-                @Override
-                public void onSuccess() throws RemoteException {
-                    mainHandler.post(()->{
-                        onDeleteMessage(messageUid);
-                        if (callback != null) {
-                            callback.onSuccess();
-                        }
-                    });
-                }
-
-                @Override
-                public void onFailure(int errorCode) throws RemoteException {
-                    if (callback != null) mainHandler.post(()->callback.onFail(errorCode));
-                }
-            });
-        } catch (RemoteException e) {
-            e.printStackTrace();
-            if (callback != null) mainHandler.post(() -> callback.onFail(ErrorCode.SERVICE_EXCEPTION));
-        }
     }
 
     /**
@@ -5208,7 +5144,7 @@ public class ChatManager {
         }
 
         String value = getUserSetting(UserSettingScope.FavoriteGroup, groupId);
-	    return value != null && value.equals("1");
+        return value != null && value.equals("1");
     }
 
     public void setFavGroup(String groupId, boolean isSet, GeneralCallback callback) {
@@ -5250,7 +5186,7 @@ public class ChatManager {
         }
 
         String value = getUserSetting(UserSettingScope.FavoriteUser, userId);
-	    return value != null && value.equals("1");
+        return value != null && value.equals("1");
     }
 
     public void setFavUser(String userId, boolean isSet, GeneralCallback callback) {
@@ -5581,10 +5517,10 @@ public class ChatManager {
     /**
      * 设置全局免打扰
      *
-     * @param isSilent
+     * @param isSlient
      * @param callback
      */
-    public void setGlobalSilent(boolean isSilent, final GeneralCallback callback) {
+    public void setGlobalSilent(boolean isSlient, final GeneralCallback callback) {
         if (!checkRemoteService()) {
             if (callback != null) {
                 callback.onFail(ErrorCode.SERVICE_DIED);
@@ -5593,7 +5529,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.setUserSetting(UserSettingScope.GlobalSilent, "", isSilent ? "1" : "0", new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.setUserSetting(UserSettingScope.GlobalSilent, "", isSlient ? "1" : "0", new cn.wildfirechat.client.IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -5611,77 +5547,6 @@ public class ChatManager {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * 判断是否禁止同步草稿功能，仅专业版支持
-     *
-     * @return
-     */
-    public boolean isDisableSyncDraft() {
-        if (!checkRemoteService()) {
-            return false;
-        }
-
-        try {
-            return "1".equals(mClient.getUserSetting(UserSettingScope.DisableSyncDraft, ""));
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * 设置是否禁止同步草稿，仅专业版支持
-     *
-     * @param isEnable
-     * @param callback
-     */
-    public void setDisableSyncDraft(boolean isEnable, final GeneralCallback callback) {
-        if (!checkRemoteService()) {
-            if (callback != null) {
-                callback.onFail(ErrorCode.SERVICE_DIED);
-            }
-            return;
-        }
-
-        try {
-            mClient.setUserSetting(UserSettingScope.DisableSyncDraft, "", isEnable ? "1" : "0", new cn.wildfirechat.client.IGeneralCallback.Stub() {
-                @Override
-                public void onSuccess() throws RemoteException {
-                    if (callback != null) {
-                        mainHandler.post(() -> callback.onSuccess());
-                    }
-                }
-
-                @Override
-                public void onFailure(int errorCode) throws RemoteException {
-                    if (callback != null) {
-                        mainHandler.post(() -> callback.onFail(errorCode));
-                    }
-                }
-            });
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 应用全局是否禁止同步草稿功能，仅专业版支持
-     *
-     * @return
-     */
-    public boolean isGlobalDisableSyncDraft() {
-        if (!checkRemoteService()) {
-            return false;
-        }
-
-        try {
-            return mClient.isGlobalDisableSyncDraft();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     /**
@@ -6070,7 +5935,7 @@ public class ChatManager {
         }
 
         String value = getUserSetting(UserSettingScope.MuteWhenPcOnline, "");
-	    return value != null && value.equals("1");
+        return value != null && value.equals("1");
     }
 
     /**
@@ -6115,10 +5980,6 @@ public class ChatManager {
 
 
     public void sendConferenceRequest(long sessionId, String roomId, String request, String data, final GeneralCallback2 callback) {
-        sendConferenceRequest(sessionId, roomId, request, false, data, callback);
-    }
-
-    public void sendConferenceRequest(long sessionId, String roomId, String request, boolean advanced, String data, final GeneralCallback2 callback) {
         if (!checkRemoteService()) {
             if (callback != null)
                 callback.onFail(ErrorCode.SERVICE_DIED);
@@ -6127,7 +5988,7 @@ public class ChatManager {
 
         try {
             Log.d("PCRTCClient", "send conference data:" + request + ": " + data);
-            mClient.sendConferenceRequest(sessionId, roomId, request, advanced, data, new cn.wildfirechat.client.IGeneralCallback2.Stub() {
+            mClient.sendConferenceRequest(sessionId, roomId, request, data, new cn.wildfirechat.client.IGeneralCallback2.Stub() {
                 @Override
                 public void onSuccess(String result) throws RemoteException {
                     Log.d("PCRTCClient", "send conference result:" + result);

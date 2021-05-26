@@ -8,23 +8,18 @@ import android.content.Intent;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.R2;
 import cn.wildfire.chat.kit.WfcBaseActivity;
-import cn.wildfire.chat.kit.user.UserViewModel;
 import cn.wildfire.chat.kit.widget.FixedTextInputEditText;
 import cn.wildfirechat.avenginekit.AVEngineKit;
-import cn.wildfirechat.model.UserInfo;
 import cn.wildfirechat.remote.ChatManager;
 
 public class CreateConferenceActivity extends WfcBaseActivity {
@@ -36,9 +31,6 @@ public class CreateConferenceActivity extends WfcBaseActivity {
     SwitchMaterial videoSwitch;
     @BindView((R2.id.audienceSwitch))
     SwitchMaterial audienceSwitch;
-    @BindView((R2.id.advancedSwitch))
-    SwitchMaterial advancedSwitch;
-
     @BindView(R2.id.createConferenceBtn)
     Button createButton;
 
@@ -50,29 +42,6 @@ public class CreateConferenceActivity extends WfcBaseActivity {
         return R.layout.conference_create_activity;
     }
 
-    @Override
-    protected void afterViews() {
-        super.afterViews();
-        UserViewModel userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
-        UserInfo userInfo = userViewModel.getUserInfo(ChatManager.Instance().getUserId(), false);
-        if(userInfo != null) {
-            titleEditText.setText(userInfo.displayName + "的会议");
-        } else {
-            titleEditText.setText("会议");
-        }
-        descEditText.setText("欢迎参加");
-        advancedSwitch.setChecked(false);
-    }
-
-    @OnCheckedChanged(R2.id.advancedSwitch)
-    void advancedChecked(CompoundButton button, boolean checked) {
-        if(checked) {
-            audienceSwitch.setEnabled(false);
-            audienceSwitch.setChecked(false);
-        } else {
-            audienceSwitch.setEnabled(true);
-        }
-    }
     @OnTextChanged(value = R2.id.conferenceTitleTextInputEditText, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void conferenceTitleChannelName(Editable editable) {
         this.title = editable.toString();
@@ -101,6 +70,4 @@ public class CreateConferenceActivity extends WfcBaseActivity {
             Toast.makeText(this, "创建会议失败", Toast.LENGTH_SHORT).show();
         }
     }
-
-
 }

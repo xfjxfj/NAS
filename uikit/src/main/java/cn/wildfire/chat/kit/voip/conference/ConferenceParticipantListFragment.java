@@ -7,9 +7,7 @@ package cn.wildfire.chat.kit.voip.conference;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -61,13 +59,6 @@ public class ConferenceParticipantListFragment extends BaseUserListFragment {
                 items.add("邀请参与互动");
             } else {
                 items.add("取消互动");
-            }
-        } else if(selfUid.equals(userInfo.getUserInfo().uid)) {
-            AVEngineKit.ParticipantProfile profile = session.getParticipantProfile(userInfo.getUserInfo().uid);
-            if(profile.isAudience()) {
-                items.add("参与互动");
-            } else {
-                items.add("结束互动");
             }
         }
 
