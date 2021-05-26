@@ -3,9 +3,9 @@ package com.jiangc.receiver;
 import android.util.Log;
 
 public class FileObserverJni {
+	private static final String TAG = "FileObserverJni";
 
-	private static final String TAG = FileObserverJni.class.getSimpleName();
-
+	//Event
 	/**
 	 * Event type: Data was read from a file
 	 */

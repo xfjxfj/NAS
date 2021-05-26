@@ -1,0 +1,30 @@
+apply plugin: 'com.android.library'
+
+android {
+	compileSdkVersion 30
+
+	defaultConfig {
+		minSdkVersion 21
+	}
+
+//	tasks.withType(JavaCompile) {
+//		compileTask -> compileTask.dependsOn ndkBuild
+//	}
+}
+
+static String getNdkBuildPath() {
+	return "C:\\Develop\\Android\\Sdk\\ndk\\22.1.7171670\\ndk-build.cmd"
+}
+
+task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
+	println('executing ndkBuild')
+	def ndkBuildPath = getNdkBuildPath()
+	commandLine ndkBuildPath, '-j4', '-C', file('src/main/jni').absolutePath
+}
+
+task ndkClean(type: Exec, description: 'clean JNI libraries') {
+	println('executing ndkBuild clean')
+	def ndkBuildPath = getNdkBuildPath()
+	commandLine ndkBuildPath, 'clean', '-C', file('src/main/jni').absolutePath
+}
+//clean.dependsOn 'ndkClean'

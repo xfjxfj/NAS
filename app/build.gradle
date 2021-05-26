@@ -109,6 +109,8 @@ dependencies {
 	implementation project(':classify_view')
 	//https://github.com/jiangchaochao/fileObserver
 	implementation project(':file_observer')
+	//https://github.com/doyee/FileObserver-android
+	implementation project(':fileobserver')
 	implementation project(':framework')
 	//https://github.com/Bigkoo/Android-PickerView
 	implementation project(':pickerview')
@@ -120,12 +122,13 @@ dependencies {
 	//https://github.com/qstumn/VerticalTabLayout
 	implementation project(':vertical_tablayout')
 	//https://maven.google.com/web/index.html
+	implementation 'androidx.appcompat:appcompat:1.4.0-alpha01'
+	implementation 'com.google.android.material:material:1.4.0-beta01'
+	implementation 'androidx.constraintlayout:constraintlayout:2.1.0-beta02'
+	//https://maven.google.com/web/index.html
 	implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 	//https://github.com/JakeWharton/butterknife
 	implementation 'com.jakewharton:butterknife:10.2.3'
-	implementation 'androidx.appcompat:appcompat:1.2.0'
-	implementation 'com.google.android.material:material:1.3.0'
-	implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 	annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
 	//https://github.com/CymChad/BaseRecyclerViewAdapterHelper
 	implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'

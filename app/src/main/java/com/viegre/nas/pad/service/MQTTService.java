@@ -770,7 +770,8 @@ public class MQTTService extends Service {
 		paramMap.put("driveSn", "000000000033");
 		paramMap.put("driveStatus", "正常");
 		paramMap.put("driveModel", "1816");
-		paramMap.put("driveCapacity", FileUtils.getFsTotalSize("/storage/3C3E71843E71384A/"));
+//		paramMap.put("driveCapacity", FileUtils.getFsTotalSize("/storage/3C3E71843E71384A/"));
+		paramMap.put("driveCapacity", 0);
 		JSONObject paramJson = new JSONObject(paramMap);
 		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_NOTIFY, MQTTMsgEntity.MSG_DEVICE_INFO, toId, paramJson.toJSONString());
 	}
