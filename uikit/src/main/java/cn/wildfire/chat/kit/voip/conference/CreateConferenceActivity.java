@@ -44,30 +44,37 @@ public class CreateConferenceActivity extends WfcBaseActivity {
 
     @OnTextChanged(value = R2.id.conferenceTitleTextInputEditText, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void conferenceTitleChannelName(Editable editable) {
-        this.title = editable.toString();
-        createButton.setEnabled(!TextUtils.isEmpty(title) && !TextUtils.isEmpty(desc));
+	    this.title = editable.toString();
+	    createButton.setEnabled(!TextUtils.isEmpty(title) && !TextUtils.isEmpty(desc));
     }
 
     @OnTextChanged(value = R2.id.conferenceDescTextInputEditText, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void conferenceDescChannelName(Editable editable) {
-        this.desc = editable.toString();
-        createButton.setEnabled(!TextUtils.isEmpty(desc) && !TextUtils.isEmpty(title));
+	    this.desc = editable.toString();
+	    createButton.setEnabled(!TextUtils.isEmpty(desc) && !TextUtils.isEmpty(title));
     }
 
     @OnClick(R2.id.createConferenceBtn)
     public void onClickCreateBtn() {
-        boolean audioOnly = !videoSwitch.isChecked();
-        boolean audience = !audienceSwitch.isChecked();
-        boolean advanced = advancedSwitch.isChecked();
-        String title = titleEditText.getText().toString();
-        String desc = descEditText.getText().toString();
-        AVEngineKit.CallSession session = AVEngineKit.Instance().startConference(null, audioOnly, null, ChatManager.Instance().getUserId(), title, desc, audience, advanced, null);
-        if (session != null) {
-            Intent intent = new Intent(this, ConferenceActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(this, "创建会议失败", Toast.LENGTH_SHORT).show();
-        }
+	    boolean audioOnly = !videoSwitch.isChecked();
+	    boolean audience = audienceSwitch.isChecked();
+	    String title = titleEditText.getText().toString();
+	    String desc = descEditText.getText().toString();
+	    AVEngineKit.CallSession session = AVEngineKit.Instance()
+	                                                 .startConference(null,
+	                                                                  audioOnly,
+	                                                                  null,
+	                                                                  ChatManager.Instance().getUserId(),
+	                                                                  title,
+	                                                                  desc,
+	                                                                  audience,
+	                                                                  null);
+	    if (session != null) {
+		    Intent intent = new Intent(this, ConferenceActivity.class);
+		    startActivity(intent);
+		    finish();
+	    } else {
+		    Toast.makeText(this, "创建会议失败", Toast.LENGTH_SHORT).show();
+	    }
     }
 }

@@ -42,32 +42,23 @@ import cn.wildfirechat.model.UserInfo;
 import cn.wildfirechat.remote.ChatManager;
 
 public class ConferenceAudioFragment extends Fragment implements AVEngineKit.CallSessionCallback {
-    @BindView(R2.id.durationTextView)
-    TextView durationTextView;
+	@BindView(R2.id.durationTextView) TextView durationTextView;
+	@BindView(R2.id.audioContainerGridLayout) GridLayout participantGridView;
 
-    @BindView(R2.id.manageParticipantTextView)
-    TextView manageParticipantTextView;
+	@BindView(R2.id.focusAudioContainerFrameLayout) FrameLayout focusAudioContainerFrameLayout;
 
-    @BindView(R2.id.audioContainerGridLayout)
-    GridLayout participantGridView;
+	@BindView(R2.id.speakerImageView) ImageView speakerImageView;
+	@BindView(R2.id.muteImageView) ImageView muteImageView;
 
-    @BindView(R2.id.focusAudioContainerFrameLayout)
-    FrameLayout focusAudioContainerFrameLayout;
+	private List<String> participants;
+	private UserInfo me;
+	private UserViewModel userViewModel;
+	private boolean isSpeakerOn;
+	private boolean audioEnable = false;
 
-    @BindView(R2.id.speakerImageView)
-    ImageView speakerImageView;
-    @BindView(R2.id.muteImageView)
-    ImageView audioImageView;
+	public static final String TAG = "ConferenceVideoFragment";
 
-    private List<String> participants;
-    private UserInfo me;
-    private UserViewModel userViewModel;
-    private boolean isSpeakerOn;
-    private boolean audioEnable = false;
-
-    public static final String TAG = "ConferenceVideoFragment";
-
-    @Nullable
+	@Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.av_conference_audio_connected, container, false);
@@ -77,69 +68,54 @@ public class ConferenceAudioFragment extends Fragment implements AVEngineKit.Cal
     }
 
     private void init() {
-        userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
-        AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
-        if (session == null) {
-            getActivity().finish();
-            return;
-        }
+	    userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
+	    AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
+	    if (session == null) {
+		    getActivity().finish();
+		    return;
+	    }
 
-        audioEnable = session.isEnableAudio();
-        audioImageView.setSelected(audioEnable);
+	    audioEnable = session.isEnableAudio();
+	    muteImageView.setSelected(!audioEnable);
 
-        initParticipantsView(session);
-        updateParticipantStatus(session);
-        updateCallDuration();
+	    initParticipantsView(session);
+	    updateParticipantStatus(session);
+	    updateCallDuration();
 
-        AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
-        isSpeakerOn = audioManager.getMode() == AudioManager.MODE_NORMAL;
-        speakerImageView.setSelected(isSpeakerOn);
-
-        manageParticipantTextView.setText("管理(" + (session.getParticipantIds().size()+1) +")");
+	    AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+	    isSpeakerOn = audioManager.getMode() == AudioManager.MODE_NORMAL;
+	    speakerImageView.setSelected(isSpeakerOn);
     }
 
     private void initParticipantsView(AVEngineKit.CallSession session) {
 
-        me = userViewModel.getUserInfo(userViewModel.getUserId(), false);
+	    me = userViewModel.getUserInfo(userViewModel.getUserId(), false);
 
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        int with = dm.widthPixels;
+	    DisplayMetrics dm = getResources().getDisplayMetrics();
+	    int with = dm.widthPixels;
 
-        participantGridView.getLayoutParams().height = with;
-        participantGridView.removeAllViews();
+	    participantGridView.getLayoutParams().height = with;
+	    participantGridView.removeAllViews();
 
-        // session里面的participants包含除自己外的所有人
-        participants = new ArrayList();
-        List<AVEngineKit.ParticipantProfile> profiles = session.getParticipantProfiles();
-        if(profiles != null && !profiles.isEmpty()) {
-            for (AVEngineKit.ParticipantProfile profile : profiles) {
-                if (!profile.isAudience()) {
-                    participants.add(profile.getUserId());
-                }
-            }
-        }
+	    // session里面的participants包含除自己外的所有人
+	    participants = session.getParticipantIds();
+	    List<UserInfo> participantUserInfos;
+	    if (participants != null && !participants.isEmpty()) {
+		    participantUserInfos = userViewModel.getUserInfos(participants);
+	    } else {
+		    participantUserInfos = new ArrayList<>();
+	    }
+	    participantUserInfos.add(me);
+	    int size = with / Math.max((int) Math.ceil(Math.sqrt(participantUserInfos.size())), 3);
+	    for (UserInfo userInfo : participantUserInfos) {
+		    ConferenceItem multiCallItem = new ConferenceItem(getActivity());
+		    multiCallItem.setTag(userInfo.uid);
 
-        List<UserInfo> participantUserInfos;
-        if (participants != null && !participants.isEmpty()) {
-            participantUserInfos = userViewModel.getUserInfos(participants);
-        } else {
-            participantUserInfos = new ArrayList<>();
-        }
-        AVEngineKit.ParticipantProfile myProfile = session.getMyProfile();
-        if(!myProfile.isAudience()) {
-            participantUserInfos.add(me);
-        }
-
-        int size = with / Math.max((int) Math.ceil(Math.sqrt(participantUserInfos.size())), 3);
-        for (UserInfo userInfo : participantUserInfos) {
-            ConferenceItem multiCallItem = new ConferenceItem(getActivity());
-            multiCallItem.setTag(userInfo.uid);
-
-            multiCallItem.setLayoutParams(new ViewGroup.LayoutParams(size, size));
-            multiCallItem.getStatusTextView().setText(R.string.connecting);
-            GlideApp.with(multiCallItem).load(userInfo.portrait).placeholder(R.mipmap.avatar_def).into(multiCallItem.getPortraitImageView());
-            participantGridView.addView(multiCallItem);
-        }
+		    multiCallItem.setLayoutParams(new ViewGroup.LayoutParams(size, size));
+		    multiCallItem.getStatusTextView().setText(R.string.connecting);
+		    GlideApp.with(multiCallItem).load(userInfo.portrait).placeholder(R.mipmap.avatar_def).into(multiCallItem.getPortraitImageView());
+		    participantGridView.addView(multiCallItem);
+	    }
     }
 
     private void updateParticipantStatus(AVEngineKit.CallSession session) {
@@ -172,9 +148,9 @@ public class ConferenceAudioFragment extends Fragment implements AVEngineKit.Cal
     void mute() {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
         if (session != null && session.getState() == AVEngineKit.CallState.Connected) {
-            session.muteAudio(audioEnable);
-            audioEnable = !audioEnable;
-            audioImageView.setSelected(audioEnable);
+	        session.muteAudio(audioEnable);
+	        audioEnable = !audioEnable;
+	        muteImageView.setSelected(!audioEnable);
         }
     }
 
@@ -219,44 +195,30 @@ public class ConferenceAudioFragment extends Fragment implements AVEngineKit.Cal
 
     @Override
     public void didParticipantJoined(String userId) {
-        if (participants.contains(userId)) {
-            return;
-        }
+	    if (participants.contains(userId)) {
+		    return;
+	    }
+	    int count = participantGridView.getChildCount();
+	    DisplayMetrics dm = getResources().getDisplayMetrics();
+	    int with = dm.widthPixels;
+	    for (int i = 0; i < count; i++) {
+		    View view = participantGridView.getChildAt(i);
+		    // 将自己放到最后
+		    if (me.uid.equals(view.getTag())) {
 
-        AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
-        if(session == null || session.getState() == AVEngineKit.CallState.Idle) {
-            return;
-        }
+			    UserInfo info = userViewModel.getUserInfo(userId, false);
+			    ConferenceItem multiCallItem = new ConferenceItem(getActivity());
+			    multiCallItem.setTag(info.uid);
 
-        manageParticipantTextView.setText("管理(" + (session.getParticipantIds().size()+1) +")");
+			    multiCallItem.setLayoutParams(new ViewGroup.LayoutParams(with / 3, with / 3));
 
-        AVEngineKit.ParticipantProfile profile = session.getParticipantProfile(userId);
-        if(profile == null || profile.isAudience()) {
-            return;
-        }
-
-        int count = participantGridView.getChildCount();
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        int with = dm.widthPixels;
-        UserInfo info = userViewModel.getUserInfo(userId, false);
-        ConferenceItem multiCallItem = new ConferenceItem(getActivity());
-        multiCallItem.setTag(info.uid);
-
-        multiCallItem.setLayoutParams(new ViewGroup.LayoutParams(with / 3, with / 3));
-
-        multiCallItem.getStatusTextView().setText(R.string.connecting);
-        GlideApp.with(multiCallItem).load(info.portrait).placeholder(R.mipmap.avatar_def).into(multiCallItem.getPortraitImageView());
-        int pos = 0;
-        for (int i = 0; i < count; i++) {
-            View view = participantGridView.getChildAt(i);
-            // 将自己放到最后
-            if (me.uid.equals(view.getTag())) {
-                pos = i;
-                break;
-            }
-        }
-        participants.add(userId);
-        participantGridView.addView(multiCallItem, pos);
+			    multiCallItem.getStatusTextView().setText(R.string.connecting);
+			    GlideApp.with(multiCallItem).load(info.portrait).placeholder(R.mipmap.avatar_def).into(multiCallItem.getPortraitImageView());
+			    participantGridView.addView(multiCallItem, i);
+			    break;
+		    }
+	    }
+	    participants.add(userId);
     }
 
     private ConferenceItem getUserConferenceItem(String userId) {
@@ -277,12 +239,6 @@ public class ConferenceAudioFragment extends Fragment implements AVEngineKit.Cal
         participants.remove(userId);
 
         Toast.makeText(getActivity(), "用户" + ChatManager.Instance().getUserDisplayName(userId) + "离开了通话", Toast.LENGTH_SHORT).show();
-
-        AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
-        if(session == null || session.getState() == AVEngineKit.CallState.Idle) {
-            return;
-        }
-        manageParticipantTextView.setText("管理(" + (session.getParticipantIds().size()+1) +")");
     }
 
     @Override
@@ -349,45 +305,20 @@ public class ConferenceAudioFragment extends Fragment implements AVEngineKit.Cal
 	    speakerImageView.setEnabled(device != AVAudioManager.AudioDevice.WIRED_HEADSET && device != AVAudioManager.AudioDevice.BLUETOOTH);
     }
 
-    @Override
-    public void didChangeType(String userId, boolean audience) {
-        if(!audience) {
-            didParticipantJoined(userId);
-        } else {
-            if (!participants.contains(userId)) {
-                return;
-            }
-
-            participants.remove(userId);
-            int count = participantGridView.getChildCount();
-            for (int i = 0; i < count; i++) {
-                View view = participantGridView.getChildAt(i);
-                if (userId.equals(view.getTag())) {
-                    participantGridView.removeView(view);
-                    break;
-                }
-            }
-        }
-    }
-
     private final Handler handler = new Handler();
 
     private void updateCallDuration() {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
         if (session != null && session.getState() == AVEngineKit.CallState.Connected) {
-            String text;
-            if(session.getConnectedTime() == 0) {
-                text = "未开始";
-            } else {
-                long s = System.currentTimeMillis() - session.getConnectedTime();
-                s = s / 1000;
-                if (s > 3600) {
-                    text = String.format("%d:%02d:%02d", s / 3600, (s % 3600) / 60, (s % 60));
-                } else {
-                    text = String.format("%02d:%02d", s / 60, (s % 60));
-                }
-            }
-            durationTextView.setText(text);
+	        long s = System.currentTimeMillis() - session.getConnectedTime();
+	        s = s / 1000;
+	        String text;
+	        if (s > 3600) {
+		        text = String.format("%d:%02d:%02d", s / 3600, (s % 3600) / 60, (s % 60));
+	        } else {
+		        text = String.format("%02d:%02d", s / 60, (s % 60));
+	        }
+	        durationTextView.setText(text);
         }
         handler.postDelayed(this::updateCallDuration, 1000);
     }

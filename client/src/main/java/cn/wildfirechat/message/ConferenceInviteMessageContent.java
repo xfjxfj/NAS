@@ -34,7 +34,7 @@ public class ConferenceInviteMessageContent extends MessageContent {
     public ConferenceInviteMessageContent() {
     }
 
-    public ConferenceInviteMessageContent(String callId, String host, String title, String desc, long startTime, boolean audioOnly, boolean audience, boolean advanced, String pin) {
+    public ConferenceInviteMessageContent(String callId, String host, String title, String desc, long startTime, boolean audioOnly, boolean audience, String pin) {
         this.callId = callId;
         this.host = host;
         this.title = title;
@@ -42,7 +42,6 @@ public class ConferenceInviteMessageContent extends MessageContent {
         this.startTime = startTime;
         this.audioOnly = audioOnly;
         this.audience = audience;
-        this.advanced = advanced;
         this.pin = pin;
     }
 
@@ -160,8 +159,7 @@ public class ConferenceInviteMessageContent extends MessageContent {
                 desc = jsonObject.optString("d");
                 pin = jsonObject.optString("p");
                 startTime = jsonObject.optLong("s");
-                audience = jsonObject.optInt("audience")>0;
-                advanced = jsonObject.optInt("advanced")>0;
+                audience = jsonObject.optBoolean("audience");
                 audioOnly = jsonObject.optInt("a") > 0;
             }
         } catch (JSONException e) {

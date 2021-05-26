@@ -200,22 +200,6 @@ public class MessageViewModel extends ViewModel implements OnReceiveMessageListe
         ChatManager.Instance().deleteMessage(message);
     }
 
-    public void deleteRemoteMessage(Message message) {
-        ChatManager.Instance().deleteRemoteMessage(message.messageUid, new GeneralCallback() {
-            @Override
-            public void onSuccess() {
-                if (messageRemovedLiveData != null) {
-                    messageRemovedLiveData.setValue(new UiMessage(message));
-                }
-            }
-
-            @Override
-            public void onFail(int errorCode) {
-                Log.e("Message", "delete remote message error: " + errorCode);
-            }
-        });
-    }
-
     public void playAudioMessage(UiMessage message) {
         if (message == null || !(message.message.content instanceof SoundMessageContent)) {
             return;

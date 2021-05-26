@@ -74,18 +74,8 @@ public class ConferenceParticipantListFragment extends BaseUserListFragment {
                         break;
                     case 1:
                         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
-                        AVEngineKit.ParticipantProfile profile = session.getParticipantProfile(userInfo.getUserInfo().uid);
-                        if (selfUid.equals(session.getHost())) {
-                            ConferenceManager.Instance().requestChangeModel(session.getCallId(), userInfo.getUserInfo().uid, !profile.isAudience());
-                            if(profile.isAudience()) {
-                                Toast.makeText(getActivity(), "已经请求用户，等待用户同意...", Toast.LENGTH_SHORT).show();
-                            } else {
-                                new Handler().postDelayed(this::loadAndShowConferenceParticipants, 1500);
-                            }
-                        } else if(selfUid.equals(userInfo.getUserInfo().uid)) {
-                            session.switchAudience(!profile.isAudience());
-                            loadAndShowConferenceParticipants();
-                        }
+                        boolean isAudience = "audience".equals(userInfo.getExtra());
+                        ConferenceManager.Instance().requestChangeModel(session.getCallId(), userInfo.getUserInfo().uid, !isAudience);
                         break;
                     default:
                         break;

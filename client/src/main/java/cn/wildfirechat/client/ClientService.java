@@ -2230,13 +2230,8 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         }
 
         @Override
-        public boolean isGlobalDisableSyncDraft() throws RemoteException {
-            return ProtoLogic.isGlobalDisableSyncDraft();
-        }
-
-        @Override
-        public void sendConferenceRequest(long sessionId, String roomId, String request, boolean advanced, String data, IGeneralCallback2 callback) throws RemoteException {
-            ProtoLogic.sendConferenceRequest(sessionId, roomId, request, advanced, data, new ProtoLogic.IGeneralCallback2() {
+        public void sendConferenceRequest(long sessionId, String roomId, String request, String data, IGeneralCallback2 callback) throws RemoteException {
+            ProtoLogic.sendConferenceRequest(sessionId, roomId, request, data, new ProtoLogic.IGeneralCallback2() {
                 @Override
                 public void onSuccess(String s) {
                     try {
@@ -2537,13 +2532,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
 
         ProtoLogic.setConnectionStatusCallback(null);
         ProtoLogic.setReceiveMessageCallback(null);
-
-        try {
-            //发现在某些机型上，程序被杀掉时有崩溃现象，加个保护避免出现崩溃。
-            ProtoLogic.appWillTerminate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ProtoLogic.appWillTerminate();
     }
 
     public void openXlog() {
