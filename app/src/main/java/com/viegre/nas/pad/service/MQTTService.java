@@ -1049,12 +1049,11 @@ public class MQTTService extends Service {
 
 	private List<FtpCategoryEntity> queryFtpCategory(boolean privateOnly, String category) {
 		Uri uri;
-		String pathProjection, nameProjection, timeProjection, sizeProjection;
+		String pathProjection, timeProjection, sizeProjection;
 		switch (category) {
 			case "image":
 				uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 				pathProjection = MediaStore.Images.Media.DATA;
-				nameProjection = MediaStore.Images.Media.DISPLAY_NAME;
 				timeProjection = MediaStore.Images.Media.DATE_MODIFIED;
 				sizeProjection = MediaStore.Images.Media.SIZE;
 				break;
@@ -1062,7 +1061,6 @@ public class MQTTService extends Service {
 			case "video":
 				uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 				pathProjection = MediaStore.Video.Media.DATA;
-				nameProjection = MediaStore.Video.Media.DISPLAY_NAME;
 				timeProjection = MediaStore.Video.Media.DATE_MODIFIED;
 				sizeProjection = MediaStore.Video.Media.SIZE;
 				break;
@@ -1070,7 +1068,6 @@ public class MQTTService extends Service {
 			case "audio":
 				uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 				pathProjection = MediaStore.Audio.Media.DATA;
-				nameProjection = MediaStore.Audio.Media.DISPLAY_NAME;
 				timeProjection = MediaStore.Audio.Media.DATE_MODIFIED;
 				sizeProjection = MediaStore.Audio.Media.SIZE;
 				break;
@@ -1078,7 +1075,6 @@ public class MQTTService extends Service {
 			default:
 				uri = MediaStore.Files.getContentUri("external");
 				pathProjection = MediaStore.Files.FileColumns.DATA;
-				nameProjection = MediaStore.Files.FileColumns.DISPLAY_NAME;
 				timeProjection = MediaStore.Files.FileColumns.DATE_MODIFIED;
 				sizeProjection = MediaStore.Files.FileColumns.SIZE;
 				break;
@@ -1086,7 +1082,7 @@ public class MQTTService extends Service {
 		List<FtpCategoryEntity> list = new ArrayList<>();
 		Cursor cursor = Utils.getApp()
 		                     .getContentResolver()
-		                     .query(uri, new String[]{pathProjection, nameProjection, timeProjection, sizeProjection}, null, null, null);
+		                     .query(uri, new String[]{pathProjection, timeProjection, sizeProjection}, null, null, null);
 		while (cursor.moveToNext()) {
 			String path = cursor.getString(cursor.getColumnIndexOrThrow(pathProjection));
 			if (FileUtils.isDir(path)) {
@@ -1103,14 +1099,14 @@ public class MQTTService extends Service {
 				}
 			}
 
-			String name = cursor.getString(cursor.getColumnIndexOrThrow(nameProjection));
-			if ("document".equals(category) && !isDocument(FileUtils.getFileExtension(name).toLowerCase())) {
+			String name = FileUtils.getFileName(path);
+			if ("document".equals(category) && !isDocument(FileUtils.getFileExtension(name))) {
 				continue;
 			}
 
 			if ("other".equals(category)) {
-				if (isImage(FileUtils.getFileExtension(name).toLowerCase()) || isVideo(FileUtils.getFileExtension(name).toLowerCase()) || isAudio(
-						FileUtils.getFileExtension(name).toLowerCase()) || isDocument(FileUtils.getFileExtension(name).toLowerCase())) {
+				if (isImage(FileUtils.getFileExtension(name)) || isVideo(FileUtils.getFileExtension(name)) || isAudio(FileUtils.getFileExtension(name)) || isDocument(
+						FileUtils.getFileExtension(name))) {
 					continue;
 				}
 			}

@@ -18,6 +18,7 @@ import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.manager.AMapLocationManager;
+import com.viegre.nas.pad.manager.ServerManager;
 import com.viegre.nas.pad.service.AppService;
 
 import org.litepal.LitePal;
@@ -43,6 +44,7 @@ public class NasApp extends BaseApplication {
 		initAndroidId();
 		LitePal.initialize(this);
 		initRxHttp();
+		ServerManager.INSTANCE.initialize();
 		MscManager.INSTANCE.initialize(this);
 		AIUIManager.INSTANCE.initialize(this);
 		VolumeManager.INSTANCE.initialize(this);
@@ -119,8 +121,7 @@ public class NasApp extends BaseApplication {
 
 	private void initAndroidId() {
 		if (!SPUtils.getInstance().contains(SPConfig.ANDROID_ID)) {
-			SPUtils.getInstance()
-			       .put(SPConfig.ANDROID_ID, Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+			SPUtils.getInstance().put(SPConfig.ANDROID_ID, Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
 		}
 	}
 }

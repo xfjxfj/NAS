@@ -37,6 +37,7 @@ import com.viegre.nas.pad.entity.DeviceResourceRootEntity;
 import com.viegre.nas.pad.entity.GuideResourceEntity;
 import com.viegre.nas.pad.fragment.settings.network.NetworkDetailFragment;
 import com.viegre.nas.pad.fragment.settings.network.NetworkFragment;
+import com.viegre.nas.pad.manager.ServerManager;
 import com.viegre.nas.pad.service.MQTTService;
 import com.viegre.nas.pad.service.ScreenSaverService;
 import com.viegre.nas.pad.task.VoidTask;
@@ -110,6 +111,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				//创建文件夹
 				FileUtils.createOrExistsDir(PathConfig.GUIDE_RESOURCE);
 				FileUtils.createOrExistsDir(PathConfig.RECYCLE_BIN);
+				//开启Http服务
+				ServerManager.INSTANCE.startServer();
 				//开启无障碍服务
 				if ("official".equals(BuildConfig.FLAVOR)) {
 					Settings.Secure.putString(getContentResolver(),
