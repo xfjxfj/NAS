@@ -6,7 +6,6 @@ package cn.wildfire.chat.kit.voip;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import org.webrtc.StatsReport;
 
@@ -208,9 +207,8 @@ public class MultiCallActivity extends VoipBaseActivity {
         fragmentManager.beginTransaction()
             .replace(android.R.id.content, fragment)
             .commit();
-        Log.d("**sessionMultcall**","session-status:"+session.getState().toString()+"*************************************************");
+
         session.answerCall(session.isAudioOnly());
-        Log.d("**sessionMultcall**","session-status:"+session.getState().toString()+"---"+session.isAudioOnly()+"*************************************************");
     }
 
     @Override

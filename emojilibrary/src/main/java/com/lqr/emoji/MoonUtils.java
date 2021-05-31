@@ -64,7 +64,7 @@ public class MoonUtils {
                     continue;
                 }
             } else {
-                codePoint = chars[i];
+                codePoint = (int) chars[i];
                 isSurrogatePair = false;
             }
 
@@ -124,7 +124,7 @@ public class MoonUtils {
                     continue;
                 }
             } else {
-                codePoint = chars[i];
+                codePoint = (int) chars[i];
                 isSurrogatePair = false;
             }
 
@@ -199,7 +199,7 @@ public class MoonUtils {
                     continue;
                 }
             } else {
-                codePoint = chars[i];
+                codePoint = (int) chars[i];
                 isSurrogatePair = false;
             }
 

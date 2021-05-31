@@ -22,6 +22,8 @@ public class MessageNotifySettingActivity extends WfcBaseActivity {
     SwitchButton switchShowMsgDetail;
     @BindView(R2.id.switchUserReceipt)
     SwitchButton switchUserReceipt;
+    @BindView(R2.id.switchSyncDraft)
+    SwitchButton switchSyncDraft;
 
     @Override
     protected int contentLayout() {
@@ -73,6 +75,19 @@ public class MessageNotifySettingActivity extends WfcBaseActivity {
             @Override
             public void onFail(int errorCode) {
                 Toast.makeText(MessageNotifySettingActivity.this, "网络错误", Toast.LENGTH_SHORT);
+            }
+        }));
+
+        switchSyncDraft.setChecked(!ChatManager.Instance().isDisableSyncDraft());
+        switchSyncDraft.setOnCheckedChangeListener((buttonView, isChecked) -> ChatManager.Instance().setDisableSyncDraft(!isChecked, new GeneralCallback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFail(int errorCode) {
+
             }
         }));
     }

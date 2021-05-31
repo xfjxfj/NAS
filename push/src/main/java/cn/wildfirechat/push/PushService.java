@@ -115,14 +115,14 @@ public class PushService {
             String simNo = tm.getSimOperator();
 
             if(!TextUtils.isEmpty(no) && TextUtils.isEmpty(simNo)) {
-                //当sim卡和网络都是大陆运营商时，不能使用fcm
-                //当sim卡和网络有一个不是大陆运营商时，可以使用fcm
-                return !no.startsWith("460") || !simNo.startsWith("460");
+	            //当sim卡和网络都是大陆运营商时，不能使用fcm
+	            //当sim卡和网络有一个不是大陆运营商时，可以使用fcm
+	            return !no.startsWith("460") || !simNo.startsWith("460");
             }
 
             //区域是中国大陆简体中文且是中国标准时区，不用fcm
             Locale locale = context.getResources().getConfiguration().locale;
-            return !"zh".equals(locale.getLanguage()) || !"CN".equals(locale.getCountry()) || !"Asia/Shanghai".equals(TimeZone.getDefault().getID());
+	        return !"zh".equals(locale.getLanguage()) || !"CN".equals(locale.getCountry()) || !"Asia/Shanghai".equals(TimeZone.getDefault().getID());
         }
         return false;
     }
@@ -248,7 +248,7 @@ public class PushService {
                 if (!TextUtils.isEmpty(appId) && !TextUtils.isEmpty(appKey)) {
                     String pushId = com.meizu.cloud.pushsdk.PushManager.getPushId(context);
                     com.meizu.cloud.pushsdk.PushManager.register(context, appId, appKey);
-                    com.meizu.cloud.pushsdk.PushManager.switchPush(context, String.valueOf(appId), appKey, pushId, 1, true);
+                    com.meizu.cloud.pushsdk.PushManager.switchPush(context, appId, appKey, pushId, 1, true);
                     ChatManager.Instance().setDeviceToken(pushId, PushServiceType.MeiZu.ordinal());
                 }
             }

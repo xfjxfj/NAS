@@ -46,4 +46,10 @@ public class BusConfig {
 	 */
 	public static final String DEVICE_BOUND = "device_bound";
 	public static final String DEVICE_LOGIN = "device_LOGIN";
+
+	/**
+	 * 控制语音识别
+	 */
+	public static final String START_MSC = "start_msc";
+	public static final String STOP_MSC = "stop_msc";
 }

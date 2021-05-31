@@ -17,8 +17,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.lqr.emoji.LQREmotionKit;
-import com.topqizhi.ai.manager.AIUIManager;
-import com.topqizhi.ai.manager.MscManager;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -69,7 +69,6 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
     private boolean isSupportMoment = false;
 
     private WfcUIKit() {
-
     }
 
     public static WfcUIKit getWfcUIKit() {
@@ -110,8 +109,8 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
         ViewModelProvider.Factory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application);
         viewModelProvider = new ViewModelProvider(viewModelStore, factory);
         OKHttpHelper.init(application.getApplicationContext());
-        Log.d("WfcUIKit", "init end");
 
+        Log.d("WfcUIKit", "init end");
     }
 
     public boolean isSupportMoment() {
@@ -137,8 +136,9 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
             ChatManager.Instance().registerMessageContent(ConferenceKickoffMemberContent.class);
             ChatManagerHolder.gAVEngine = AVEngineKit.Instance();
             for (String[] server : Config.ICE_SERVERS) {
-                ChatManagerHolder.gAVEngine.addIceServer(server[0], server[1], server[2]);//初始化音视频
+                ChatManagerHolder.gAVEngine.addIceServer(server[0], server[1], server[2]);
             }
+
 //            SharedPreferences sp = application.getSharedPreferences("config", Context.MODE_PRIVATE);
 //            String id = sp.getString("id", null);
 //            String token = sp.getString("token", null);
@@ -208,7 +208,6 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
             if (conversation.type == Conversation.ConversationType.Single) {
                 Intent intent = new Intent(WfcIntent.ACTION_VOIP_SINGLE);
                 startActivity(application, intent);
-
             } else {
                 Intent intent = new Intent(WfcIntent.ACTION_VOIP_MULTI);
                 startActivity(application, intent);
@@ -254,6 +253,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
 
         Intent voip = new Intent(context, SingleCallActivity.class);
         startActivity(context, voip);
+
         VoipCallService.start(context, false);
     }
 
@@ -280,16 +280,12 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
     }
 
     public static void startActivity(Context context, Intent intent) {
-//        xfj 2021年4月28日
-        MscManager.INSTANCE.stopListening();
-        AIUIManager.INSTANCE.stopVoiceNlp();
+        EventBus.getDefault().postSticky("stop_msc");
         if (context instanceof Activity) {
             context.startActivity(intent);
             ((Activity) context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } else {
             Intent main = new Intent(context.getPackageName() + ".main");
-//            Intent main = new Intent(context,SingleCallActivity.class);
-
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivities(context, 100, new Intent[]{main, intent}, PendingIntent.FLAG_UPDATE_CURRENT);
             try {
@@ -325,7 +321,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
             while (iterator.hasNext()) {
                 Message message = iterator.next();
                 if (message.content.getPersistFlag() == PersistFlag.No_Persist
-                        || now - (message.serverTime - delta) > 10 * 1000) {
+                    || now - (message.serverTime - delta) > 10 * 1000) {
                     iterator.remove();
                 }
             }

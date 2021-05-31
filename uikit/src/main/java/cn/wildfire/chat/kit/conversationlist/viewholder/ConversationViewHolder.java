@@ -24,6 +24,7 @@ import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.R2;
 import cn.wildfire.chat.kit.annotation.ConversationContextMenuItem;
 import cn.wildfire.chat.kit.conversation.ConversationActivity;
+import cn.wildfire.chat.kit.conversation.ConversationViewModel;
 import cn.wildfire.chat.kit.conversation.Draft;
 import cn.wildfire.chat.kit.conversationlist.ConversationListViewModel;
 import cn.wildfire.chat.kit.conversationlist.ConversationListViewModelFactory;
@@ -43,6 +44,7 @@ public abstract class ConversationViewHolder extends RecyclerView.ViewHolder {
     protected ConversationInfo conversationInfo;
     protected RecyclerView.Adapter adapter;
     protected ConversationListViewModel conversationListViewModel;
+    private final ConversationViewModel conversationViewModel;
 
     @BindView(R2.id.nameTextView)
     protected TextView nameTextView;
@@ -73,6 +75,7 @@ public abstract class ConversationViewHolder extends RecyclerView.ViewHolder {
         conversationListViewModel = ViewModelProviders
             .of(fragment, new ConversationListViewModelFactory(Arrays.asList(Conversation.ConversationType.Single, Conversation.ConversationType.Group), Arrays.asList(0)))
             .get(ConversationListViewModel.class);
+        conversationViewModel = ViewModelProviders.of(fragment).get(ConversationViewModel.class);
     }
 
     final public void onBind(ConversationInfo conversationInfo, int position) {
@@ -182,13 +185,6 @@ public abstract class ConversationViewHolder extends RecyclerView.ViewHolder {
         conversationListViewModel.removeConversation(conversationInfo, true);
     }
 
-    @ConversationContextMenuItem(tag = ConversationContextMenuItemTags.TAG_CLEAR,
-        confirm = true,
-        priority = 0)
-    public void clearMessages(View itemView, ConversationInfo conversationInfo) {
-        conversationListViewModel.clearMessages(conversationInfo.conversation);
-    }
-
     @ConversationContextMenuItem(tag = ConversationContextMenuItemTags.TAG_TOP, priority = 1)
     public void stickConversationTop(View itemView, ConversationInfo conversationInfo) {
         conversationListViewModel.setConversationTop(conversationInfo, true);
@@ -208,9 +204,6 @@ public abstract class ConversationViewHolder extends RecyclerView.ViewHolder {
     public String contextMenuTitle(Context context, String tag) {
         String title = "未设置";
         switch (tag) {
-            case ConversationContextMenuItemTags.TAG_CLEAR:
-                title = "清空会话";
-                break;
             case ConversationContextMenuItemTags.TAG_REMOVE:
                 title = "删除会话";
                 break;
@@ -235,9 +228,6 @@ public abstract class ConversationViewHolder extends RecyclerView.ViewHolder {
     public String contextConfirmPrompt(Context context, String tag) {
         String title = "未设置";
         switch (tag) {
-            case ConversationContextMenuItemTags.TAG_CLEAR:
-                title = "确认清空会话？";
-                break;
             case ConversationContextMenuItemTags.TAG_REMOVE:
                 title = "确认删除会话?";
                 break;

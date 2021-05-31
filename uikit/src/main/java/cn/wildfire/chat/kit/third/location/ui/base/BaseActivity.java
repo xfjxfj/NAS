@@ -53,6 +53,7 @@ public abstract class BaseActivity<V, T extends BasePresenter<V>> extends AppCom
         if (mPresenter != null) {
             mPresenter.attachView((V) this);//因为之后所有的子类都要实现对应的View接口
         }
+
         //子类不再需要设置布局ID，也不再需要使用ButterKnife.bind()
         setContentView(provideContentViewId());
         ButterKnife.bind(this);

@@ -44,6 +44,7 @@ import cn.wildfirechat.model.GroupSearchResult;
 import cn.wildfirechat.model.ModifyMyInfoEntry;
 import cn.wildfirechat.model.ConversationInfo;
 import cn.wildfirechat.model.FriendRequest;
+import cn.wildfirechat.model.Friend;
 import cn.wildfirechat.model.UserInfo;
 import cn.wildfirechat.model.GroupMember;
 import cn.wildfirechat.model.GroupInfo;
@@ -107,6 +108,7 @@ interface IRemoteClient {
     oneway void deleteFileRecord(in long messageUid, in IGeneralCallback callback);
     oneway void searchFileRecords(in String keyword, in Conversation conversation, in String fromUser, in long beforeMessageUid, in int count, in IGetFileRecordCallback callback);
     oneway void searchMyFileRecords(in String keyword, in long beforeMessageUid, in int count, in IGetFileRecordCallback callback);
+    oneway void clearRemoteConversationMessage(in Conversation conversation, in IGeneralCallback callback);
 
     Message getMessage(in long messageId);
     Message getMessageByUid(in long messageUid);
@@ -125,6 +127,7 @@ interface IRemoteClient {
     void clearMessages(in int conversationType, in String target, in int line);
     void clearMessagesEx(in int conversationType, in String target, in int line, in long before);
     void setMediaMessagePlayed(in long messageId);
+    boolean setMessageLocalExtra(in long messageId, in String extra);
     void removeConversation(in int conversationType, in String target, in int line, in boolean clearMsg);
     oneway void setConversationTop(in int conversationType, in String target, in int line, in boolean top, in IGeneralCallback callback);
     void setConversationDraft(in int conversationType, in String target, in int line, in String draft);
@@ -137,6 +140,7 @@ interface IRemoteClient {
 
     boolean isMyFriend(in String userId);
     List<String> getMyFriendList(in boolean refresh);
+    List<Friend> getFriendList(in boolean refresh);
     List<UserInfo> getMyFriendListInfo(in boolean refresh);
     oneway void loadFriendRequestFromRemote();
 
@@ -155,7 +159,7 @@ interface IRemoteClient {
     void clearUnreadFriendRequestStatus();
     int getUnreadFriendRequestStatus();
     oneway void removeFriend(in String userId, in IGeneralCallback callback);
-    oneway void sendFriendRequest(in String userId, in String reason, in IGeneralCallback callback);
+    oneway void sendFriendRequest(in String userId, in String reason, in String extra, in IGeneralCallback callback);
     oneway void handleFriendRequest(in String userId, in boolean accept, in String extra, in IGeneralCallback callback);
     oneway void deleteFriend(in String userId, in IGeneralCallback callback);
 
@@ -178,6 +182,7 @@ interface IRemoteClient {
     oneway void uploadMediaFile(in String mediaPath, int mediaType, in IUploadMediaCallback callback);
     oneway void modifyMyInfo(in List<ModifyMyInfoEntry> values, in IGeneralCallback callback);
     boolean deleteMessage(in long messageId);
+    void deleteRemoteMessage(in long messageUid, in IGeneralCallback callback);
     List<ConversationSearchResult> searchConversation(in String keyword, in int[] conversationTypes, in int[] lines);
     List<Message> searchMessage(in Conversation conversation, in String keyword, in boolean desc, in int limit, in int offset);
     oneway void searchMessagesEx(in int[] conversationTypes, in int[] lines, in int[] contentTypes, in String keyword, in long fromIndex, in boolean before, in int count, in IGetMessageCallback callback);
@@ -187,8 +192,8 @@ interface IRemoteClient {
 
     String getEncodedClientId();
 
-    oneway void createGroup(in String groupId, in String groupName, in String groupPortrait, in int groupType, in List<String> memberIds, in int[] notifyLines, in MessagePayload notifyMsg, in IGeneralCallback2 callback);
-    oneway void addGroupMembers(in String groupId, in List<String> memberIds, in int[] notifyLines, in MessagePayload notifyMsg, in IGeneralCallback callback);
+    oneway void createGroup(in String groupId, in String groupName, in String groupPortrait, in int groupType, in String groupExtra, in List<String> memberIds, in String memberExtra, in int[] notifyLines, in MessagePayload notifyMsg, in IGeneralCallback2 callback);
+    oneway void addGroupMembers(in String groupId, in List<String> memberIds, in String extra, in int[] notifyLines, in MessagePayload notifyMsg, in IGeneralCallback callback);
     oneway void removeGroupMembers(in String groupId, in List<String> memberIds, in int[] notifyLines, in MessagePayload notifyMsg, in IGeneralCallback callback);
     oneway void quitGroup(in String groupId, in int[] notifyLines, in MessagePayload notifyMsg, in IGeneralCallback callback);
     oneway void dismissGroup(in String groupId, in int[] notifyLines, in MessagePayload notifyMsg, in IGeneralCallback callback);
@@ -233,5 +238,6 @@ interface IRemoteClient {
 
     boolean isCommercialServer();
     boolean isReceiptEnabled();
-    void sendConferenceRequest(in long sessionId, in String roomId, in String request, in String data, in IGeneralCallback2 callback);
+    boolean isGlobalDisableSyncDraft();
+    void sendConferenceRequest(in long sessionId, in String roomId, in String request, in boolean advanced, in String data, in IGeneralCallback2 callback);
 }

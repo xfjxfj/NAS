@@ -6,6 +6,7 @@ package cn.wildfire.chat.kit.voip.conference;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -77,6 +78,7 @@ public class ConferenceActivity extends VoipBaseActivity {
         String desc = session.getDesc();
         boolean audience = session.isAudience();
         String host = session.getHost();
+        boolean advanced = session.isAdvanced();
 
         postAction(() -> {
             if (callEndReason == AVEngineKit.CallEndReason.RoomNotExist) {
@@ -88,21 +90,16 @@ public class ConferenceActivity extends VoipBaseActivity {
                         .negativeText("否")
                         .positiveText("是")
                         .onPositive((dialog, which) -> {
-	                        AVEngineKit.CallSession newSession = AVEngineKit.Instance()
-	                                                                        .startConference(callId,
-	                                                                                         audioOnly,
-	                                                                                         pin,
-	                                                                                         host,
-	                                                                                         title,
-	                                                                                         desc,
-	                                                                                         audience,
-	                                                                                         this);
-	                        if (newSession == null) {
-		                        Toast.makeText(this, "创建会议失败", Toast.LENGTH_SHORT).show();
-		                        finish();
-	                        } else {
-		                        newSession.setCallback(ConferenceActivity.this);
-	                        }
+                            finish();
+                            new Handler().postDelayed(()->{
+                                AVEngineKit.CallSession newSession = AVEngineKit.Instance().startConference(callId, audioOnly, pin, host, title, desc, audience, advanced, false, this);
+                                if (newSession == null) {
+                                    Toast.makeText(this, "创建会议失败", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Intent intent = new Intent(getApplicationContext(), ConferenceActivity.class);
+                                    startActivity(intent);
+                                }
+                            }, 800);
                         })
                         .onNegative((dialog, which) -> finish())
                         .show();
@@ -111,13 +108,13 @@ public class ConferenceActivity extends VoipBaseActivity {
                     finish();
                 }
             } else if (callEndReason == AVEngineKit.CallEndReason.RoomParticipantsFull) {
-	            AVEngineKit.CallSession newSession = AVEngineKit.Instance().joinConference(callId, audioOnly, pin, host, title, desc, audience, this);
-	            if (newSession == null) {
-		            Toast.makeText(this, "加入会议失败", Toast.LENGTH_SHORT).show();
-		            finish();
-	            } else {
-		            newSession.setCallback(ConferenceActivity.this);
-	            }
+                AVEngineKit.CallSession newSession = AVEngineKit.Instance().joinConference(callId, audioOnly, pin, host, title, desc, audience, advanced, this);
+                if (newSession == null) {
+                    Toast.makeText(this, "加入会议失败", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    newSession.setCallback(ConferenceActivity.this);
+                }
             } else if (!isFinishing()) {
                 finish();
             }

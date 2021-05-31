@@ -29,15 +29,15 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Vi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mBtnOk = topBar.findViewById(R.id.btn_ok);
+        mBtnOk = (Button) topBar.findViewById(R.id.btn_ok);
         mBtnOk.setVisibility(View.VISIBLE);
         mBtnOk.setOnClickListener(this);
 
         bottomBar = findViewById(R.id.bottom_bar);
         bottomBar.setVisibility(View.VISIBLE);
 
-        mCbCheck = findViewById(R.id.cb_check);
-        mCbOrigin = findViewById(R.id.cb_origin);
+        mCbCheck = (SuperCheckBox) findViewById(R.id.cb_check);
+        mCbOrigin = (SuperCheckBox) findViewById(R.id.cb_origin);
         mCbOrigin.setText(getString(R.string.origin));
         mCbOrigin.setOnCheckedChangeListener(this);
         mCbOrigin.setChecked(!store.isCompress());

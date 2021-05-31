@@ -166,10 +166,10 @@ public class EmotionLayout extends LinearLayout implements View.OnClickListener 
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         emotionLayout = inflater.inflate(R.layout.emotion_layout, this);
 
-        mVpEmotioin = findViewById(R.id.vpEmotioin);
-        mLlPageNumber = findViewById(R.id.llPageNumber);
-        mLlTabContainer = findViewById(R.id.llTabContainer);
-        mRlEmotionAdd = findViewById(R.id.rlEmotionAdd);
+        mVpEmotioin = (ViewPagerFixed) findViewById(R.id.vpEmotioin);
+        mLlPageNumber = (LinearLayout) findViewById(R.id.llPageNumber);
+        mLlTabContainer = (LinearLayout) findViewById(R.id.llTabContainer);
+        mRlEmotionAdd = (RelativeLayout) findViewById(R.id.rlEmotionAdd);
 
 //        mVpEmotioin.removeAllViews();
 //        mLlPageNumber.removeAllViews();

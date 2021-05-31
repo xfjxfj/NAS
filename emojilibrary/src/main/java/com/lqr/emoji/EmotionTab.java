@@ -33,7 +33,7 @@ public class EmotionTab extends RelativeLayout {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.emotion_tab, this);
 
-        mIvIcon = findViewById(R.id.ivIcon);
+        mIvIcon = (ImageView) findViewById(R.id.ivIcon);
 
         if (TextUtils.isEmpty(mStickerCoverImgPath)) {
             mIvIcon.setImageResource(mIconSrc);

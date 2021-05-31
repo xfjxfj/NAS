@@ -61,20 +61,12 @@ public class ConferenceInviteMessageContentViewHolder extends NormalMessageConte
 
     @OnClick(R2.id.contentLayout)
     void joinConference() {
-	    if (!AVEngineKit.isSupportConference()) {
-		    Toast.makeText(fragment.getActivity(), "本版本不支持会议功能", Toast.LENGTH_SHORT).show();
-		    return;
-	    }
-	    AVEngineKit.Instance()
-	               .joinConference(inviteMessageContent.getCallId(),
-	                               inviteMessageContent.isAudioOnly(),
-	                               inviteMessageContent.getPin(),
-	                               inviteMessageContent.getHost(),
-	                               inviteMessageContent.getTitle(),
-	                               inviteMessageContent.getDesc(),
-	                               inviteMessageContent.isAudience(),
-	                               null);
-	    Intent intent = new Intent(fragment.getActivity(), ConferenceActivity.class);
-	    fragment.startActivity(intent);
+        if (!AVEngineKit.isSupportConference()) {
+            Toast.makeText(fragment.getActivity(), "本版本不支持会议功能", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        AVEngineKit.Instance().joinConference(inviteMessageContent.getCallId(), inviteMessageContent.isAudioOnly(), inviteMessageContent.getPin(), inviteMessageContent.getHost(), inviteMessageContent.getTitle(), inviteMessageContent.getDesc(), inviteMessageContent.isAudience(), inviteMessageContent.isAdvanced(), null);
+        Intent intent = new Intent(fragment.getActivity(), ConferenceActivity.class);
+        fragment.startActivity(intent);
     }
 }

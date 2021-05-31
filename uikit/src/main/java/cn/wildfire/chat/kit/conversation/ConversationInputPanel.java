@@ -450,15 +450,16 @@ public class ConversationInputPanel extends FrameLayout implements IEmotionSelec
         if (mentions != null) {
             for (Mention mention : mentions) {
                 if (mention.isMentionAll()) {
-                    spannableStringBuilder.setSpan(new MentionSpan(true), mention.getStart(), mention.getEnd(), mention.getFlags());
+                    spannableStringBuilder.setSpan(new MentionSpan(true), mention.getStart(), mention.getEnd(), Spanned.SPAN_MARK_MARK);
                 } else {
-                    spannableStringBuilder.setSpan(new MentionSpan(mention.getUid()), mention.getStart(), mention.getEnd(), mention.getFlags());
+                    spannableStringBuilder.setSpan(new MentionSpan(mention.getUid()), mention.getStart(), mention.getEnd(), Spanned.SPAN_MARK_MARK);
                 }
             }
         }
 
         editText.setText(spannableStringBuilder);
-        editText.requestFocus();
+//         FIXME: 4/16/21 恢复草稿时，消息列表界面会抖动，且没有滑动到最后
+//        editText.requestFocus();
     }
 
     public void setInputText(String text) {
@@ -475,7 +476,7 @@ public class ConversationInputPanel extends FrameLayout implements IEmotionSelec
         updateConversationDraft();
     }
 
-    private void updateConversationDraft(){
+    private void updateConversationDraft() {
         Editable editable = editText.getText();
         String draft = Draft.toDraftJson(editable, messageEmojiCount, quoteInfo);
         messageViewModel.saveDraft(conversation, draft);

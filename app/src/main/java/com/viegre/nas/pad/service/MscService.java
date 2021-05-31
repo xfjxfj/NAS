@@ -9,17 +9,18 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
 
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-
 import com.topqizhi.ai.manager.AIUIManager;
 import com.topqizhi.ai.manager.MscManager;
+import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.manager.SkillManager;
 import com.viegre.nas.pad.util.IotGateway;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 /**
  * Created by レインマン on 2021/04/25 14:42 with Android Studio.
@@ -74,14 +75,29 @@ public class MscService extends Service {
 		}
 	}
 
+	@Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+	public void mscControl(String event) {
+		switch (event) {
+			case BusConfig.START_MSC:
+				AIUIManager.INSTANCE.startListening();
+				break;
+
+			case BusConfig.STOP_MSC:
+				AIUIManager.INSTANCE.stopVoiceNlp();
+				MscManager.INSTANCE.stopListening();
+				break;
+
+			default:
+				break;
+		}
+	}
+
 	private void initNotificationChannel() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			String CHANNEL_ID = "nas_channel_msc";
 			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_NONE);
 			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
-			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("")
-			                                                                            .setContentText("")
-			                                                                            .build();
+			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("").setContentText("").build();
 			startForeground(1, notification);
 		}
 	}

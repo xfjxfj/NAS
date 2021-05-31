@@ -64,6 +64,7 @@ import cn.wildfirechat.model.Conversation;
 import cn.wildfirechat.model.ConversationInfo;
 import cn.wildfirechat.model.ConversationSearchResult;
 import cn.wildfirechat.model.FileRecord;
+import cn.wildfirechat.model.Friend;
 import cn.wildfirechat.model.FriendRequest;
 import cn.wildfirechat.model.GroupInfo;
 import cn.wildfirechat.model.GroupMember;
@@ -77,6 +78,7 @@ import cn.wildfirechat.model.ProtoChatRoomMembersInfo;
 import cn.wildfirechat.model.ProtoConversationInfo;
 import cn.wildfirechat.model.ProtoConversationSearchresult;
 import cn.wildfirechat.model.ProtoFileRecord;
+import cn.wildfirechat.model.ProtoFriend;
 import cn.wildfirechat.model.ProtoFriendRequest;
 import cn.wildfirechat.model.ProtoGroupInfo;
 import cn.wildfirechat.model.ProtoGroupMember;
@@ -322,6 +324,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
             protoMessage.setStatus(msg.status.value());
             protoMessage.setMessageUid(msg.messageUid);
             protoMessage.setTimestamp(msg.serverTime);
+            protoMessage.setLocalExtra(msg.localExtra);
 
             return protoMessage;
         }
@@ -709,6 +712,29 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
             });
         }
 
+        @Override
+        public void clearRemoteConversationMessage(Conversation conversation, IGeneralCallback callback) throws RemoteException {
+            ProtoLogic.clearRemoteConversationMessages(conversation.type.ordinal(), conversation.target, conversation.line, new ProtoLogic.IGeneralCallback() {
+                @Override
+                public void onSuccess() {
+                    try {
+                        callback.onSuccess();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(int i) {
+                    try {
+                        callback.onFailure(i);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
 
         @Override
         public cn.wildfirechat.message.Message getMessage(long messageId) throws RemoteException {
@@ -801,6 +827,11 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         }
 
         @Override
+        public boolean setMessageLocalExtra(long messageId, String extra) throws RemoteException {
+            return ProtoLogic.setMessageLocalExtra(messageId, extra);
+        }
+
+        @Override
         public void removeConversation(int conversationType, String target, int line, boolean clearMsg) throws RemoteException {
             ProtoLogic.removeConversation(conversationType, target, line, clearMsg);
         }
@@ -880,6 +911,23 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
             if (friends != null) {
                 for (String friend : friends) {
                     out.add(friend);
+                }
+            }
+            return out;
+        }
+
+        @Override
+        public List<Friend> getFriendList(boolean refresh) throws RemoteException {
+            List<Friend> out = new ArrayList<>();
+            ProtoFriend[] requests = ProtoLogic.getFriendList(refresh);
+            if (requests != null) {
+                for (ProtoFriend protoFriend : requests) {
+                    Friend f = new Friend();
+                    f.userId = protoFriend.getUserId();
+                    f.alias = protoFriend.getAlias();
+                    f.extra = protoFriend.getExtra();
+                    f.timestamp = protoFriend.getTimestamp();
+                    out.add(f);
                 }
             }
             return out;
@@ -968,7 +1016,11 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
             Xlog.setConsoleLogOpen(true);
             String path = getLogPath();
             //wflog为ChatSManager中使用判断日志文件，如果修改需要对应修改
-            Xlog.appenderOpen(Xlog.LEVEL_INFO, AppednerModeAsync, path, path, "wflog", null);
+            try {
+                Xlog.appenderOpen(Xlog.LEVEL_INFO, AppednerModeAsync, path, path, "wflog", null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -998,6 +1050,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
             request.direction = protoRequest.getDirection();
             request.target = protoRequest.getTarget();
             request.reason = protoRequest.getReason();
+            request.extra = protoRequest.getExtra();
             request.status = protoRequest.getStatus();
             request.readStatus = protoRequest.getReadStatus();
             request.timestamp = protoRequest.getTimestamp();
@@ -1094,8 +1147,8 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         }
 
         @Override
-        public void sendFriendRequest(String userId, String reason, final IGeneralCallback callback) throws RemoteException {
-            ProtoLogic.sendFriendRequest(userId, reason, new ProtoLogic.IGeneralCallback() {
+        public void sendFriendRequest(String userId, String reason, String extra, final IGeneralCallback callback) throws RemoteException {
+            ProtoLogic.sendFriendRequest(userId, reason, extra, new ProtoLogic.IGeneralCallback() {
                 @Override
                 public void onSuccess() {
                     try {
@@ -1435,6 +1488,29 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         }
 
         @Override
+        public void deleteRemoteMessage(long messageUid, IGeneralCallback callback) throws RemoteException {
+            ProtoLogic.deleteRemoteMessage(messageUid, new ProtoLogic.IGeneralCallback() {
+                @Override
+                public void onSuccess() {
+                    try {
+                        callback.onSuccess();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(int i) {
+                    try {
+                        callback.onFailure(i);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
+        @Override
         public List<ConversationSearchResult> searchConversation(String keyword, int[] conversationTypes, int[] lines) throws RemoteException {
             ProtoConversationSearchresult[] protoResults = ProtoLogic.searchConversation(keyword, conversationTypes, lines);
             List<ConversationSearchResult> output = new ArrayList<>();
@@ -1520,12 +1596,12 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         }
 
         @Override
-        public void createGroup(String groupId, String groupName, String groupPortrait, int groupType, List<String> memberIds, int[] notifyLines, MessagePayload notifyMsg, final IGeneralCallback2 callback) throws RemoteException {
+        public void createGroup(String groupId, String groupName, String groupPortrait, int groupType, String groupExtra, List<String> memberIds, String memberExtra, int[] notifyLines, MessagePayload notifyMsg, final IGeneralCallback2 callback) throws RemoteException {
             String[] memberArray = new String[memberIds.size()];
             for (int i = 0; i < memberIds.size(); i++) {
                 memberArray[i] = memberIds.get(i);
             }
-            ProtoLogic.createGroup(groupId, groupName, groupPortrait, groupType, memberArray, notifyLines, notifyMsg == null ? null : notifyMsg.toProtoContent(), new ProtoLogic.IGeneralCallback2() {
+            ProtoLogic.createGroup(groupId, groupName, groupPortrait, groupType, groupExtra, memberArray, memberExtra, notifyLines, notifyMsg == null ? null : notifyMsg.toProtoContent(), new ProtoLogic.IGeneralCallback2() {
                 @Override
                 public void onSuccess(String s) {
                     try {
@@ -1547,12 +1623,12 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         }
 
         @Override
-        public void addGroupMembers(String groupId, List<String> memberIds, int[] notifyLines, MessagePayload notifyMsg, final IGeneralCallback callback) throws RemoteException {
+        public void addGroupMembers(String groupId, List<String> memberIds, String extra, int[] notifyLines, MessagePayload notifyMsg, final IGeneralCallback callback) throws RemoteException {
             String[] memberArray = new String[memberIds.size()];
             for (int i = 0; i < memberIds.size(); i++) {
                 memberArray[i] = memberIds.get(i);
             }
-            ProtoLogic.addMembers(groupId, memberArray, notifyLines, notifyMsg == null ? null : notifyMsg.toProtoContent(), new ProtoLogic.IGeneralCallback() {
+            ProtoLogic.addMembers(groupId, memberArray, extra, notifyLines, notifyMsg == null ? null : notifyMsg.toProtoContent(), new ProtoLogic.IGeneralCallback() {
                 @Override
                 public void onSuccess() {
                     try {
@@ -2230,8 +2306,13 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         }
 
         @Override
-        public void sendConferenceRequest(long sessionId, String roomId, String request, String data, IGeneralCallback2 callback) throws RemoteException {
-            ProtoLogic.sendConferenceRequest(sessionId, roomId, request, data, new ProtoLogic.IGeneralCallback2() {
+        public boolean isGlobalDisableSyncDraft() throws RemoteException {
+            return ProtoLogic.isGlobalDisableSyncDraft();
+        }
+
+        @Override
+        public void sendConferenceRequest(long sessionId, String roomId, String request, boolean advanced, String data, IGeneralCallback2 callback) throws RemoteException {
+            ProtoLogic.sendConferenceRequest(sessionId, roomId, request, advanced, data, new ProtoLogic.IGeneralCallback2() {
                 @Override
                 public void onSuccess(String s) {
                     try {
@@ -2300,6 +2381,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         member.groupId = protoGroupMember.getGroupId();
         member.memberId = protoGroupMember.getMemberId();
         member.alias = protoGroupMember.getAlias();
+        member.extra = protoGroupMember.getExtra();
         member.type = GroupMember.GroupMemberType.type(protoGroupMember.getType());
         member.updateDt = protoGroupMember.getUpdateDt();
         member.createDt = protoGroupMember.getCreateDt();
@@ -2447,6 +2529,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         msg.status = MessageStatus.status(protoMessage.getStatus());
         msg.messageUid = protoMessage.getMessageUid();
         msg.serverTime = protoMessage.getTimestamp();
+        msg.localExtra = protoMessage.getLocalExtra();
 
         return msg;
     }
@@ -2532,7 +2615,13 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
 
         ProtoLogic.setConnectionStatusCallback(null);
         ProtoLogic.setReceiveMessageCallback(null);
-        ProtoLogic.appWillTerminate();
+
+        try {
+            //发现在某些机型上，程序被杀掉时有崩溃现象，加个保护避免出现崩溃。
+            ProtoLogic.appWillTerminate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void openXlog() {

@@ -1,39 +1,42 @@
 apply plugin: 'com.android.library'
-//apply plugin: 'kotlin-android'
 
 group = 'com.github.wildfirechat'
 
 android {
-	compileSdkVersion 28
+    compileSdkVersion 28
 
-	defaultConfig {
-		minSdkVersion 16
-	}
+    defaultConfig {
+        minSdkVersion 16
+        ndk {
+            moduleName = "mmnet"
+            abiFilter "armeabi-v7a"
+        }
+    }
 
-	sourceSets {
-		main {
-			jniLibs.srcDirs = ['libs']
-		}
-	}
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 
-	lintOptions {
-		abortOnError false
-	}
-	compileOptions {
-		sourceCompatibility JavaVersion.VERSION_1_8
-		targetCompatibility JavaVersion.VERSION_1_8
-	}
+    lintOptions {
+        abortOnError false
+    }
+    
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
 }
-
 
 dependencies {
-	api project(':mars-core-release')
-	implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-	implementation "androidx.core:core-ktx:1.3.1"
-	implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha07"
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api project(':mars-core-release')
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0-beta01"
 }
+
 repositories {
-	maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
-	mavenCentral()
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+    mavenCentral()
 }

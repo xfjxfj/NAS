@@ -166,7 +166,6 @@ public abstract class VoipBaseActivity extends FragmentActivity implements AVEng
             return;
         }
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();
-//        Log.d("**session**","session-status:"+session.getState().toString()+"*************************************************");
         if (session != null && session.getState() != AVEngineKit.CallState.Idle) {
             session.resetRenderer();
             session.setCallback(null);

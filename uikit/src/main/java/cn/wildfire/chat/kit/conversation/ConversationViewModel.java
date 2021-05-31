@@ -4,6 +4,8 @@
 
 package cn.wildfire.chat.kit.conversation;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import cn.wildfirechat.message.Message;
 import cn.wildfirechat.model.Conversation;
 import cn.wildfirechat.model.ConversationInfo;
 import cn.wildfirechat.remote.ChatManager;
+import cn.wildfirechat.remote.GeneralCallback;
 import cn.wildfirechat.remote.GetMessageCallback;
 import cn.wildfirechat.remote.GetRemoteMessageCallback;
 
@@ -55,7 +58,9 @@ public class ConversationViewModel extends ViewModel implements AppScopeViewMode
                                 if (messages != null && !messages.isEmpty()) {
                                     List<UiMessage> msgs = new ArrayList<>();
                                     for (Message msg : messages) {
-                                        msgs.add(new UiMessage(msg));
+                                        if(msg.messageId != 0) {
+                                            msgs.add(new UiMessage(msg));
+                                        }
                                     }
                                     result.postValue(msgs);
                                 } else {
@@ -163,6 +168,22 @@ public class ConversationViewModel extends ViewModel implements AppScopeViewMode
         if (clearConversationMessageLiveData != null) {
             clearConversationMessageLiveData.setValue(conversation);
         }
+    }
+
+    public void clearRemoteConversationMessage(Conversation conversation){
+        ChatManager.Instance().clearRemoteConversationMessage(conversation, new GeneralCallback() {
+            @Override
+            public void onSuccess() {
+                if (clearConversationMessageLiveData != null){
+                    clearConversationMessageLiveData.setValue(conversation);
+                }
+            }
+
+            @Override
+            public void onFail(int errorCode) {
+                Log.e("Conversation", "clearRemoteConversation error: " + errorCode);
+            }
+        });
     }
 
     public ConversationInfo getConversationInfo(Conversation conversation) {

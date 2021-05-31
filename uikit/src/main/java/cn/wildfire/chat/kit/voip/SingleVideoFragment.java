@@ -4,7 +4,6 @@
 
 package cn.wildfire.chat.kit.voip;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -26,11 +25,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.wildfire.chat.kit.Config;
 import cn.wildfire.chat.kit.GlideApp;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.R2;
@@ -208,71 +205,29 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
 
     }
 
-    @SuppressLint("LongLogTag")
     @OnClick(R2.id.acceptImageView)
     public void accept() {
-//        Log.d("acceptImageView-accept:", "accept"+gEngineKit.getCurren+"*************************************************");
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();
         if (session == null) {
-            Log.d("acceptImageView-accept:", "accept-if*************************************************");
             if (getActivity() != null && !getActivity().isFinishing()) {
-                Log.d("acceptImageView-accept:", "accept-if-if*************************************************");
                 getActivity().finish();
                 getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            } else {
-                //xfj 2021年4月28日
-                Log.d("acceptImageView-accept:", "accept-if-if-else*************************************************");
-                if (session != null) {
-                    Log.d("acceptImageView-accept:", "accept-if-if-if*************************************************");
-                    session.endCall();
-                } else {
-                    Log.d("acceptImageView-accept:", "accept-if-if-if-else*************************************************");
-                    getActivity().finish();
-                    getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                }
             }
             return;
         }
-        Log.d("session.getState()", session.getState().toString());
-        Log.d("AVEngineKit.CallState.Incoming", AVEngineKit.CallState.Incoming.toString());
-        Log.d("acceptImageView-accept:", "accept-session.getState()*"+session.getState().toString()+"************************************************");
-        AVEngineKit.CallState state = session.getState();
-        Log.d("acceptImageView-accept:", "accept-AVEngineKit.CallState.Incoming"+AVEngineKit.CallState.Incoming.toString()+"*************************************************");
-        AVEngineKit.CallState state2 = AVEngineKit.CallState.Incoming;
-        Log.d("acceptImageView-accept:", "accept-boolean is_stat = state == state2;"+ String.valueOf(state == state2)+"*************************************************");
-        boolean is_stat = state == state2;
-        Log.d("acceptImageView-accept:", "accept-2-if*************************************************");
-        if (is_stat) {
-            Log.d("acceptImageView-accept:", "accept-2-if*************************************************");
-//            到这里可以接通
+        if (session.getState() == AVEngineKit.CallState.Incoming) {
             session.answerCall(false);
             AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
             audioManager.setMode(AudioManager.MODE_NORMAL);
             audioManager.setSpeakerphoneOn(true);
-        } else {
-            Log.d("acceptImageView-accept:", "accept-2-if-else*************************************************");
-            if (session != null) {
-                Log.d("acceptImageView-accept:", "accept-2-if-if-session.endCall()*************************************************");
-                session.endCall();
-            } else {
-                Log.d("acceptImageView-accept:", "accept-2-if-if-else*************************************************");
-                getActivity().finish();
-                getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            }
         }
-        Log.d("acceptImageView-accept:", "accept*************************************************");
     }
 
-
-
-
-    //音频接受
     @OnClick({R2.id.incomingAudioOnlyImageView})
     public void audioAccept() {
         ((SingleCallActivity) getActivity()).audioAccept();
     }
 
-    //视频接收
     @OnClick({R2.id.outgoingAudioOnlyImageView, R2.id.connectedAudioOnlyImageView})
     public void audioCall() {
         ((SingleCallActivity) getActivity()).audioCall();
@@ -280,11 +235,10 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
 
     // callFragment.OnCallEvents interface implementation.
     @OnClick({R2.id.connectedHangupImageView,
-            R2.id.outgoingHangupImageView,
-            R2.id.incomingHangupImageView})
+        R2.id.outgoingHangupImageView,
+        R2.id.incomingHangupImageView})
     public void hangUp() {
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();
-
         if (session != null) {
             session.endCall();
         } else {
@@ -296,6 +250,7 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
     @OnClick(R2.id.switchCameraImageView)
     public void switchCamera() {
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();
+
         if (session != null && !session.isScreenSharing() && session.getState() == AVEngineKit.CallState.Connected) {
             session.switchCamera();
         }

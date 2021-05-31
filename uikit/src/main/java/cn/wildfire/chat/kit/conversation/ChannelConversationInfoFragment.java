@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.kyleduo.switchbutton.SwitchButton;
 
@@ -114,7 +115,7 @@ public class ChannelConversationInfoFragment extends Fragment implements Compoun
         stickTopSwitchButton.setOnCheckedChangeListener(this);
         silentSwitchButton.setOnCheckedChangeListener(this);
 
-        if(ChatManager.Instance().isCommercialServer()) {
+        if (ChatManager.Instance().isCommercialServer()) {
             fileRecordOptionItem.setVisibility(View.VISIBLE);
         } else {
             fileRecordOptionItem.setVisibility(View.GONE);
@@ -136,7 +137,19 @@ public class ChannelConversationInfoFragment extends Fragment implements Compoun
 
     @OnClick(R2.id.clearMessagesOptionItemView)
     void clearMessage() {
-        conversationViewModel.clearConversationMessage(conversationInfo.conversation);
+        new MaterialDialog.Builder(getActivity())
+            .items("清空本地会话", "清空远程会话")
+            .itemsCallback(new MaterialDialog.ListCallback() {
+                @Override
+                public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                    if (position == 0) {
+                        conversationViewModel.clearConversationMessage(conversationInfo.conversation);
+                    } else {
+                        conversationViewModel.clearRemoteConversationMessage(conversationInfo.conversation);
+                    }
+                }
+            })
+            .show();
     }
 
     @OnClick(R2.id.channelQRCodeOptionItemView)
@@ -147,7 +160,7 @@ public class ChannelConversationInfoFragment extends Fragment implements Compoun
     }
 
     @OnClick(R2.id.fileRecordOptionItemView)
-    void fileRecord(){
+    void fileRecord() {
         Intent intent = new Intent(getActivity(), FileRecordActivity.class);
         intent.putExtra("conversation", conversationInfo.conversation);
         startActivity(intent);

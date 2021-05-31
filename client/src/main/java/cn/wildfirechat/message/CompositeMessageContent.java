@@ -5,6 +5,7 @@
 package cn.wildfirechat.message;
 
 import android.os.Parcel;
+import android.text.TextUtils;
 import android.util.Base64;
 
 import org.json.JSONArray;
@@ -68,24 +69,35 @@ public class CompositeMessageContent extends MessageContent {
                 msgObj.put("direction", message.direction.value());
                 msgObj.put("status", message.status);
                 msgObj.put("serverTime", message.serverTime);
+                if(!TextUtils.isEmpty(message.localExtra)) {
+                    msgObj.put("le", message.localExtra);
+                }
 
                 MessagePayload messagePayload = message.content.encode();
                 messagePayload.contentType = message.content.getMessageContentType();
 
                 msgObj.put("ctype", messagePayload.contentType);
-                msgObj.put("csc", messagePayload.searchableContent);
-                msgObj.put("cpc", messagePayload.pushContent);
-                msgObj.put("cpd", messagePayload.pushData);
-                msgObj.put("cc", messagePayload.content);
+                if(!TextUtils.isEmpty(messagePayload.searchableContent)) {
+                    msgObj.put("csc", messagePayload.searchableContent);
+                    payload.searchableContent = payload.searchableContent + messagePayload.searchableContent + " ";
+                }
+                if(!TextUtils.isEmpty(messagePayload.pushContent))
+                    msgObj.put("cpc", messagePayload.pushContent);
+                if(!TextUtils.isEmpty(messagePayload.pushData))
+                    msgObj.put("cpd", messagePayload.pushData);
+                if(!TextUtils.isEmpty(messagePayload.content))
+                    msgObj.put("cc", messagePayload.content);
                 if (messagePayload.binaryContent != null && messagePayload.binaryContent.length > 0) {
                     msgObj.put("cbc", Base64.encodeToString(messagePayload.binaryContent, Base64.DEFAULT));
                 }
                 msgObj.put("cmt", messagePayload.mentionedType);
                 msgObj.put("cmts", new JSONArray(messagePayload.mentionedTargets));
-                msgObj.put("ce", messagePayload.extra);
+                if(!TextUtils.isEmpty(messagePayload.extra))
+                    msgObj.put("ce", messagePayload.extra);
 
                 if (message.content instanceof MediaMessageContent) {
                     msgObj.put("mt", ((MediaMessageContent) message.content).mediaType);
+                    if(!TextUtils.isEmpty(((MediaMessageContent) message.content).remoteUrl))
                     msgObj.put("mru", ((MediaMessageContent) message.content).remoteUrl);
                 }
 
@@ -132,6 +144,7 @@ public class CompositeMessageContent extends MessageContent {
                 message.direction = MessageDirection.values()[object.optInt("direction")];
                 message.status = MessageStatus.status(object.optInt("status"));
                 message.serverTime = object.optLong("serverTime");
+                message.localExtra = object.optString("le");
 
                 MessagePayload messagePayload = super.encode();
                 messagePayload.contentType = object.optInt("ctype");

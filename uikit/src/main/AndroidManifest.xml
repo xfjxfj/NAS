@@ -86,8 +86,7 @@
         <activity
             android:name="cn.wildfire.chat.kit.voip.SingleCallActivity"
             android:launchMode="singleInstance"
-            android:screenOrientation="landscape">
-
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="${packageName}.kit.voip.single" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -172,14 +171,28 @@
         <activity
             android:name="cn.wildfire.chat.kit.qrcode.ScanQRCodeActivity"
             android:label="扫一扫" />
-        <activity android:name="cn.wildfire.chat.kit.group.manage.GroupManageActivity" />
-        <activity android:name="cn.wildfire.chat.kit.group.manage.GroupManagerListActivity" />
-        <activity android:name="cn.wildfire.chat.kit.group.manage.AddGroupManagerActivity" />
-        <activity android:name="cn.wildfire.chat.kit.group.manage.GroupMuteOrAllowActivity" />
-        <activity android:name="cn.wildfire.chat.kit.group.manage.GroupMemberPermissionActivity" />
+        <activity
+            android:name="cn.wildfire.chat.kit.group.manage.GroupManageActivity"
+            android:label="群管理" />
+        <activity
+            android:name="cn.wildfire.chat.kit.group.manage.GroupManagerListActivity"
+            android:label="管理员列表" />
+        <activity
+            android:name="cn.wildfire.chat.kit.group.manage.AddGroupManagerActivity"
+            android:label="添加管理员" />
+        <activity
+            android:name="cn.wildfire.chat.kit.group.manage.GroupMuteOrAllowActivity"
+            android:label="群禁言" />
+        <activity
+            android:name="cn.wildfire.chat.kit.group.manage.GroupMemberPermissionActivity"
+            android:label="群成员权限" />
 
-        <activity android:name="cn.wildfire.chat.kit.voip.conference.CreateConferenceActivity" />
-        <activity android:name="cn.wildfire.chat.kit.voip.conference.ConferenceActivity" />
+        <activity
+            android:name="cn.wildfire.chat.kit.voip.conference.CreateConferenceActivity"
+            android:label="发起会议" />
+        <activity
+            android:name="cn.wildfire.chat.kit.voip.conference.ConferenceActivity"
+            android:label="会议" />
 
         <activity
             android:name="cn.wildfire.chat.kit.group.GroupMemberListActivity"
@@ -243,7 +256,7 @@
         <!--moment end-->
 
         <provider
-            android:name=".provider.UIKitProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">

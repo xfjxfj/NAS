@@ -66,6 +66,7 @@ import java.util.concurrent.TimeUnit;
 import cn.wildfire.chat.kit.ChatManagerHolder;
 import cn.wildfirechat.message.CallStartMessageContent;
 import cn.wildfirechat.message.Message;
+import cn.wildfirechat.remote.ChatManager;
 import cn.wildfirechat.remote.OnMessageUpdateListener;
 import hdp.http.APIConstant;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -88,6 +89,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		if ("official".equals(BuildConfig.FLAVOR)) {
 			ServiceUtils.startService(MscService.class);
 		}
+		ChatManager.Instance().addOnMessageUpdateListener(this);
 //		getUsbPermission();
 		initClick();
 		initIcon();
@@ -131,7 +133,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		String ANDROID_ID = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
 		String authCode = "66666";
 		AppService.Instance().smsLogin(ANDROID_ID, authCode, new AppService.LoginCallback() {
-
 			@Override
 			public void onUiSuccess(LoginResult loginResult) {
 				if (isFinishing()) {

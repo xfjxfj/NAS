@@ -26,7 +26,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cn.wildfire.chat.kit.R2;
 
 public abstract class WfcBaseActivity extends AppCompatActivity {
     @BindView(R2.id.toolbar)

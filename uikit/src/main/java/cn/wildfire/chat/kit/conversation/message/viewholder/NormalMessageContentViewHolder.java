@@ -186,9 +186,21 @@ public abstract class NormalMessageContentViewHolder extends MessageContentViewH
         messageViewModel.recallMessage(message.message);
     }
 
-    @MessageContextMenuItem(tag = MessageContextMenuItemTags.TAG_DELETE, confirm = true, priority = 11)
+    @MessageContextMenuItem(tag = MessageContextMenuItemTags.TAG_DELETE, confirm = false, priority = 11)
     public void removeMessage(View itemView, UiMessage message) {
-	    messageViewModel.deleteMessage(message.message);
+        new MaterialDialog.Builder(fragment.getContext())
+            .items("删除本地消息", "删除远程消息")
+            .itemsCallback(new MaterialDialog.ListCallback() {
+                @Override
+                public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                    if (position == 0) {
+                        messageViewModel.deleteMessage(message.message);
+                    } else {
+                        messageViewModel.deleteRemoteMessage(message.message);
+                    }
+                }
+            })
+            .show();
     }
 
     @MessageContextMenuItem(tag = MessageContextMenuItemTags.TAG_FORWARD, priority = 11)
@@ -296,26 +308,26 @@ public abstract class NormalMessageContentViewHolder extends MessageContentViewH
 
             long delta = ChatManager.Instance().getServerDeltaTime();
             long now = System.currentTimeMillis();
-            return message.direction != MessageDirection.Send || !TextUtils.equals(message.sender,
-                                                                                   ChatManager.Instance()
-                                                                                              .getUserId()) || now - (message.serverTime - delta) >= Config.RECALL_TIME_LIMIT * 1000;
+	        return message.direction != MessageDirection.Send || !TextUtils.equals(message.sender,
+	                                                                               ChatManager.Instance()
+	                                                                                          .getUserId()) || now - (message.serverTime - delta) >= Config.RECALL_TIME_LIMIT * 1000;
         }
 
         // 只有channel 主可以发起
         if (MessageContextMenuItemTags.TAG_CHANEL_PRIVATE_CHAT.equals(tag)) {
-            return uiMessage.message.conversation.type != Conversation.ConversationType.Channel || uiMessage.message.direction != MessageDirection.Receive;
+	        return uiMessage.message.conversation.type != Conversation.ConversationType.Channel || uiMessage.message.direction != MessageDirection.Receive;
         }
 
         // 只有部分消息支持引用
         if (MessageContextMenuItemTags.TAG_QUOTE.equals(tag)) {
             MessageContent messageContent = message.content;
-            return !(messageContent instanceof TextMessageContent) && !(messageContent instanceof FileMessageContent) && !(messageContent instanceof VideoMessageContent) && !(messageContent instanceof StickerMessageContent) && !(messageContent instanceof ImageMessageContent);
+	        return !(messageContent instanceof TextMessageContent) && !(messageContent instanceof FileMessageContent) && !(messageContent instanceof VideoMessageContent) && !(messageContent instanceof StickerMessageContent) && !(messageContent instanceof ImageMessageContent);
         }
 
         // 只有部分消息支持引用
         if (MessageContextMenuItemTags.TAG_FAV.equals(tag)) {
             MessageContent messageContent = message.content;
-            return !(messageContent instanceof TextMessageContent) && !(messageContent instanceof FileMessageContent) && !(messageContent instanceof CompositeMessageContent) && !(messageContent instanceof VideoMessageContent) && !(messageContent instanceof SoundMessageContent) && !(messageContent instanceof ImageMessageContent);
+	        return !(messageContent instanceof TextMessageContent) && !(messageContent instanceof FileMessageContent) && !(messageContent instanceof CompositeMessageContent) && !(messageContent instanceof VideoMessageContent) && !(messageContent instanceof SoundMessageContent) && !(messageContent instanceof ImageMessageContent);
         }
 
         return false;
@@ -413,21 +425,21 @@ public abstract class NormalMessageContentViewHolder extends MessageContentViewH
             singleReceiptImageView.setVisibility(View.GONE);
 
             if (sentStatus == MessageStatus.Sent) {
-	            if (item.content instanceof CallStartMessageContent || (item.content.getPersistFlag().ordinal() & 0x2) == 0) {
-		            groupReceiptFrameLayout.setVisibility(View.GONE);
-	            } else {
-		            groupReceiptFrameLayout.setVisibility(View.VISIBLE);
-	            }
-	            int deliveryCount = 0;
-	            if (deliveries != null) {
-		            for (Map.Entry<String, Long> delivery : deliveries.entrySet()) {
-			            if (delivery.getValue() >= item.serverTime) {
-				            deliveryCount++;
-			            }
-		            }
-	            }
-	            int readCount = 0;
-	            if (readEntries != null) {
+                if (item.content instanceof CallStartMessageContent || (item.content.getPersistFlag().ordinal() & 0x2) == 0) {
+                    groupReceiptFrameLayout.setVisibility(View.GONE);
+                } else {
+                    groupReceiptFrameLayout.setVisibility(View.VISIBLE);
+                }
+                int deliveryCount = 0;
+                if (deliveries != null) {
+                    for (Map.Entry<String, Long> delivery : deliveries.entrySet()) {
+                        if (delivery.getValue() >= item.serverTime) {
+                            deliveryCount++;
+                        }
+                    }
+                }
+                int readCount = 0;
+                if (readEntries != null) {
                     for (Map.Entry<String, Long> readEntry : readEntries.entrySet()) {
                         if (readEntry.getValue() >= item.serverTime) {
                             readCount++;

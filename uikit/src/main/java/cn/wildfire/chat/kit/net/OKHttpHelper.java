@@ -226,7 +226,7 @@ public class OKHttpHelper {
             }
 
             if (type.equals(Void.class)) {
-                callback.onSuccess(null);
+                callback.onSuccess((T) null);
                 return;
             }
 

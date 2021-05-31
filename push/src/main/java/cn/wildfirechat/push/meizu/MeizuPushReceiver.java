@@ -124,13 +124,13 @@ public class MeizuPushReceiver extends MzPushMessageReceiver {
                 String next = iterator.next();
                 Object value = extras.get(next);
                 if (value instanceof Boolean) {
-                    jsonObject.put(next, value);
+                    jsonObject.put(next, (Boolean) value);
                 } else if (value instanceof Integer) {
-                    jsonObject.put(next, value);
+                    jsonObject.put(next, (Integer) value);
                 } else if (value instanceof Long) {
-                    jsonObject.put(next, value);
+                    jsonObject.put(next, (Long) value);
                 } else if (value instanceof Double) {
-                    jsonObject.put(next, value);
+                    jsonObject.put(next, (Double) value);
                 } else if (value instanceof String) {
                     jsonObject.put(next, value);
                 }

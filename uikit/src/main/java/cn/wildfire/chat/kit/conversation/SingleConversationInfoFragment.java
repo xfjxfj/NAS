@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.kyleduo.switchbutton.SwitchButton;
 
 import java.util.ArrayList;
@@ -127,7 +128,19 @@ public class SingleConversationInfoFragment extends Fragment implements Conversa
 
     @OnClick(R2.id.clearMessagesOptionItemView)
     void clearMessage() {
-        conversationViewModel.clearConversationMessage(conversationInfo.conversation);
+        new MaterialDialog.Builder(getActivity())
+            .items("清空本地会话", "清空远程会话")
+            .itemsCallback(new MaterialDialog.ListCallback() {
+                @Override
+                public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                    if (position == 0) {
+                        conversationViewModel.clearConversationMessage(conversationInfo.conversation);
+                    } else {
+                        conversationViewModel.clearRemoteConversationMessage(conversationInfo.conversation);
+                    }
+                }
+            })
+            .show();
     }
 
     @OnClick(R2.id.searchMessageOptionItemView)

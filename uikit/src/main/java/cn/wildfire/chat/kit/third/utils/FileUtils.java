@@ -29,7 +29,7 @@ public class FileUtils {
      * 判断SD卡是否挂载
      */
     public static boolean isSDCardAvailable() {
-        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+	    return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
     /**

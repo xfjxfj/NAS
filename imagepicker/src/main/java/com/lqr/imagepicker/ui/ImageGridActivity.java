@@ -64,13 +64,13 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         showCamera = intent.getBooleanExtra("showCamera", false);
 
         findViewById(R.id.btn_back).setOnClickListener(this);
-        mBtnOk = findViewById(R.id.btn_ok);
+        mBtnOk = (Button) findViewById(R.id.btn_ok);
         mBtnOk.setOnClickListener(this);
-        mBtnDir = findViewById(R.id.btn_dir);
+        mBtnDir = (Button) findViewById(R.id.btn_dir);
         mBtnDir.setOnClickListener(this);
-        mBtnPre = findViewById(R.id.btn_preview);
+        mBtnPre = (Button) findViewById(R.id.btn_preview);
         mBtnPre.setOnClickListener(this);
-        mGridView = findViewById(R.id.gridview);
+        mGridView = (GridView) findViewById(R.id.gridview);
         mFooterBar = findViewById(R.id.footer_bar);
         if (multiMode) {
             mBtnOk.setVisibility(View.VISIBLE);

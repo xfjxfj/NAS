@@ -45,19 +45,20 @@ public class ImageMessageContentViewHolder extends MediaMessageContentViewHolder
 
     @Override
     public void onBind(UiMessage message) {
-	    ImageMessageContent imageMessage = (ImageMessageContent) message.message.content;
-	    Bitmap thumbnail = imageMessage.getThumbnail();
-	    int[] imageSize = WeChatImageUtils.getImageSizeByOrgSizeToWeChat((int) imageMessage.getImageWidth(), (int) imageMessage.getImageHeight());
-	    int width = imageSize[0] > 0 ? imageSize[0] : 200;
-	    int height = imageSize[1] > 0 ? imageSize[1] : 200;
-	    imageView.getLayoutParams().width = width;
-	    imageView.getLayoutParams().height = height;
-	    if (FileUtils.isFileExists(imageMessage.localPath)) {
-		    imagePath = imageMessage.localPath;
-	    } else {
-		    imagePath = imageMessage.remoteUrl;
-	    }
-	    loadMedia(thumbnail, imagePath, imageView);
+        ImageMessageContent imageMessage = (ImageMessageContent) message.message.content;
+        Bitmap thumbnail = imageMessage.getThumbnail();
+        int[] imageSize = WeChatImageUtils.getImageSizeByOrgSizeToWeChat((int) imageMessage.getImageWidth(), (int) imageMessage.getImageHeight());
+        int width = imageSize[0] > 0 ? imageSize[0] : 200;
+        int height = imageSize[1] > 0 ? imageSize[1] : 200;
+        imageView.getLayoutParams().width = width;
+        imageView.getLayoutParams().height = height;
+        if (FileUtils.isFileExists(imageMessage.localPath)) {
+            imagePath = imageMessage.localPath;
+        } else {
+            imagePath = imageMessage.remoteUrl;
+        }
+        loadMedia(thumbnail, imagePath, imageView);
+
     }
 
     @OnClick(R2.id.imageView)

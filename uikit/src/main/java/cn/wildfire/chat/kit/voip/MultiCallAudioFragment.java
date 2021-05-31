@@ -299,7 +299,7 @@ public class MultiCallAudioFragment extends Fragment implements AVEngineKit.Call
             speakerImageView.setSelected(false);
         }
 
-        speakerImageView.setEnabled(device != AVAudioManager.AudioDevice.WIRED_HEADSET && device != AVAudioManager.AudioDevice.BLUETOOTH);
+	    speakerImageView.setEnabled(device != AVAudioManager.AudioDevice.WIRED_HEADSET && device != AVAudioManager.AudioDevice.BLUETOOTH);
     }
 
     private final Handler handler = new Handler();

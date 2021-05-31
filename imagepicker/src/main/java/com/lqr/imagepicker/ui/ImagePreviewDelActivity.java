@@ -18,7 +18,7 @@ public class ImagePreviewDelActivity extends ImagePreviewBaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ImageView mBtnDel = findViewById(R.id.btn_del);
+        ImageView mBtnDel = (ImageView) findViewById(R.id.btn_del);
         mBtnDel.setOnClickListener(this);
         mBtnDel.setVisibility(View.VISIBLE);
         topBar.findViewById(R.id.btn_back).setOnClickListener(this);
