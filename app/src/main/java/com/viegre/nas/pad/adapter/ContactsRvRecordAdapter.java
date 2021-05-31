@@ -129,14 +129,18 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
 
         String[] split1 = mdata.getTurnOnTime().split(":");
         String time = " 通话";
-        if (!split1[0].equals("0")) {
-            time = time + split1[0] + "小时";
-        }
-        if (!split1[1].equals("00")) {
-            time = time + split1[1] + "分";
-        }
-        if (!split1[2].equals("0")) {
-            time = time + split1[2] + "秒";
+        if (split1.length > 1) {
+            if (!split1[0].equals("0")) {
+                time = time + split1[0] + "小时";
+            }
+            if (!split1[1].equals("00")) {
+                time = time + split1[1] + "分";
+            }
+            if (!split1[2].equals("0")) {
+                time = time + split1[2] + "秒";
+            } else {
+                holder.delete_text.setText("未接");
+            }
         } else {
             holder.delete_text.setText("未接");
         }
@@ -145,8 +149,6 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
 
     class ViewHolder extends RecyclerView.ViewHolder implements ExpandableViewHoldersUtil.Expandable {
         TextView tvTitle;
-        //        ImageView arrowImage;
-//        LinearLayout lvArrorwBtn;
         LinearLayout lvLinearlayout;
         ImageView contentTv;
         private final TextView delete_text_1;
@@ -160,8 +162,6 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
 
             tvTitle = itemView.findViewById(R.id.item_user_concern_title);
             lvLinearlayout = itemView.findViewById(R.id.item_user_concern_link_layout);
-//            lvArrorwBtn = itemView.findViewById(R.id.item_user_concern_arrow);
-//            arrowImage = itemView.findViewById(R.id.item_user_concern_arrow_image);
             delete_text_1 = itemView.findViewById(R.id.delete_text_1);
             delete_text_2 = itemView.findViewById(R.id.delete_text_2);
             contentTv = itemView.findViewById(R.id.delete_image_3);
