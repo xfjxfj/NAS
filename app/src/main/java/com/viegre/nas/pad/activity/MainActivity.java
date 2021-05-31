@@ -51,7 +51,6 @@ import com.youth.banner.indicator.CircleIndicator;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
-import org.primftpd.PrimitiveFtpdActivity;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -256,9 +255,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 	@Override
 	protected void onResume() {
 		super.onResume();
-//		if (!AccessibilityServiceManager.INSTANCE.isOn(this, WakeupService.class.getName())) {
-//			AccessibilityServiceManager.INSTANCE.gotoSettings(this);
-//		}
 		initUser();
 		AMapLocationManager.INSTANCE.getLocation();
 	}
@@ -291,9 +287,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 	}
 
 	private void initClick() {
-		if (BuildConfig.DEBUG) {
-			mViewBinding.tcMainTime.setOnClickListener(view -> ActivityUtils.startActivity(PrimitiveFtpdActivity.class));
-		}
+//		if (BuildConfig.DEBUG) {
+//			mViewBinding.tcMainTime.setOnClickListener(view -> ActivityUtils.startActivity(PrimitiveFtpdActivity.class));
+//		}
 		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
 		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
 	}

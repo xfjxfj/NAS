@@ -1,7 +1,5 @@
 package com.viegre.nas.pad.config;
 
-import com.blankj.utilcode.util.PathUtils;
-
 import java.io.File;
 
 /**
@@ -9,8 +7,8 @@ import java.io.File;
  */
 public class PathConfig {
 
-	public static final String NAS = PathUtils.getExternalStoragePath() + File.separator + "nas" + File.separator;
-//	public static final String NAS = "/storage/52207D41207D2CDB/nas/";
+	//	public static final String NAS = PathUtils.getExternalStoragePath() + File.separator + "nas" + File.separator;
+	public static final String NAS = "/storage/52207D41207D2CDB/nas/";
 
 	//引导资源目录
 	public static final String GUIDE_RESOURCE = NAS + ".guideResource" + File.separator;
@@ -23,6 +21,9 @@ public class PathConfig {
 
 	//回收站目录
 	public static final String RECYCLE_BIN = NAS + ".recycleBin" + File.separator;
+
+	//上传文件缓存目录
+	public static final String UPLOAD_CACHE = NAS + ".uploadCache" + File.separator;
 
 	public static final String CONTACTS_RECOMDING = "/Recomding.txt";
 

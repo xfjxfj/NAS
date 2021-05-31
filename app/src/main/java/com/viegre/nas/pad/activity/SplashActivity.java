@@ -1,7 +1,6 @@
 package com.viegre.nas.pad.activity;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -37,7 +36,6 @@ import com.viegre.nas.pad.entity.DeviceResourceRootEntity;
 import com.viegre.nas.pad.entity.GuideResourceEntity;
 import com.viegre.nas.pad.fragment.settings.network.NetworkDetailFragment;
 import com.viegre.nas.pad.fragment.settings.network.NetworkFragment;
-import com.viegre.nas.pad.manager.ServerManager;
 import com.viegre.nas.pad.service.MQTTService;
 import com.viegre.nas.pad.service.ScreenSaverService;
 import com.viegre.nas.pad.task.VoidTask;
@@ -46,12 +44,6 @@ import com.viegre.nas.pad.util.CommonUtils;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
-import org.primftpd.prefs.LoadPrefsUtil;
-import org.primftpd.prefs.PrefsBean;
-import org.primftpd.util.KeyFingerprintProvider;
-import org.primftpd.util.ServicesStartStopUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -71,14 +63,13 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	private NetworkFragment mNetworkFragment;
 	private NetworkDetailFragment mNetworkDetailFragment;
 	private CountDownTimer mGuideSkipCountDownTimer;
-	private PrefsBean prefsBean;
-	private final Logger logger = LoggerFactory.getLogger(getClass());
-	private final KeyFingerprintProvider keyFingerprintProvider = new KeyFingerprintProvider();
+//	private PrefsBean prefsBean;
+//	private final Logger logger = LoggerFactory.getLogger(getClass());
+//	private final KeyFingerprintProvider keyFingerprintProvider = new KeyFingerprintProvider();
 
 	@Override
 	protected void initialize() {
 		ServiceUtils.startService(ScreenSaverService.class);
-		ServiceUtils.startService(MQTTService.class);
 		grantPermission();
 	}
 
@@ -111,8 +102,9 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				//创建文件夹
 				FileUtils.createOrExistsDir(PathConfig.GUIDE_RESOURCE);
 				FileUtils.createOrExistsDir(PathConfig.RECYCLE_BIN);
-				//开启Http服务
-				ServerManager.INSTANCE.startServer();
+				FileUtils.createOrExistsDir(PathConfig.UPLOAD_CACHE);
+				//开启MQTT服务
+				ServiceUtils.startService(MQTTService.class);
 				//开启无障碍服务
 				if ("official".equals(BuildConfig.FLAVOR)) {
 					Settings.Secure.putString(getContentResolver(),
@@ -141,10 +133,6 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 			@Override
 			public void onSuccess(Void v) {
 				super.onSuccess(v);
-				SharedPreferences prefs = LoadPrefsUtil.getPrefs(mActivity);
-				PrefsBean prefsBean = LoadPrefsUtil.loadPrefs(logger, prefs);
-				keyFingerprintProvider.calcPubkeyFingerprints(mActivity);
-				ServicesStartStopUtil.startServers(mActivity, prefsBean, keyFingerprintProvider, null);
 				ActivityUtils.startActivity(MainActivity.class);
 				finish();
 //				getDeviceBoundstatus();

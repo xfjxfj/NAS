@@ -48,10 +48,21 @@ import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
 import com.viegre.nas.pad.entity.RecycleBinEntity;
 import com.viegre.nas.pad.task.VoidTask;
+import com.yanzhenjie.andserver.AndServer;
+import com.yanzhenjie.andserver.Server;
 
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
+import org.apache.ftpserver.ConnectionConfigFactory;
+import org.apache.ftpserver.DataConnectionConfigurationFactory;
+import org.apache.ftpserver.FtpServer;
+import org.apache.ftpserver.FtpServerFactory;
+import org.apache.ftpserver.ftplet.Authority;
+import org.apache.ftpserver.ftplet.FtpException;
+import org.apache.ftpserver.listener.ListenerFactory;
+import org.apache.ftpserver.usermanager.impl.BaseUser;
+import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
@@ -70,12 +81,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import custom.fileobserver.FileListener;
 import custom.fileobserver.FileWatcher;
-import rxhttp.RxHttp;
+import rxhttp.RxHttpPlugins;
 
 /**
  * Created by レインマン on 2021/04/12 09:40 with Android Studio.
@@ -84,9 +96,11 @@ public class MQTTService extends Service {
 
 	private final String TAG = MQTTService.class.getSimpleName();
 
+	private Server mServer;
 	private MqttConnectOptions mMqttConnectOptions;
 	private MqttAndroidClient mMqttAndroidClient;
 	private FileWatcher mFileWatcher;
+	private FtpServer mFtpServer;
 
 	@Nullable
 	@Override
@@ -97,21 +111,90 @@ public class MQTTService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		mServer = AndServer.webServer(this).port(8080).timeout(15, TimeUnit.SECONDS).build();
 		initFileWatcher();
+		initFtp();
 		initNotificationChannel();
 		initMqttAndroidClient();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		startFtpServer();
+		startAndServer();
 		return START_STICKY;
 	}
 
 	@Override
 	public void onDestroy() {
-		super.onDestroy();
+		stopFtpServer();
+		stopAndServer();
 		if (null != mFileWatcher) {
 			mFileWatcher.stopWatching();
+		}
+		super.onDestroy();
+	}
+
+	private void startAndServer() {
+		if (null != mServer && !mServer.isRunning()) {
+			mServer.startup();
+		}
+	}
+
+	private void stopAndServer() {
+		if (null != mServer && mServer.isRunning()) {
+			mServer.shutdown();
+		}
+	}
+
+	private void startFtpServer() {
+		try {
+			if (null != mFtpServer && mFtpServer.isStopped()) {
+				mFtpServer.start();
+			}
+		} catch (FtpException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void stopFtpServer() {
+		if (null != mFtpServer) {
+			mFtpServer.stop();
+			mFtpServer = null;
+		}
+	}
+
+	private void initFtp() {
+		try {
+			FtpServerFactory ftpServerFactory = new FtpServerFactory();
+			BaseUser baseUser = new BaseUser();
+			baseUser.setName("resu");
+			baseUser.setPassword("tOPq!zH1");
+			baseUser.setHomeDirectory(PathConfig.NAS);
+
+			List<Authority> authorities = new ArrayList<>();
+			authorities.add(new WritePermission());
+			baseUser.setAuthorities(authorities);
+			ftpServerFactory.getUserManager().save(baseUser);
+
+			ListenerFactory listenerFactory = new ListenerFactory();
+			listenerFactory.setPort(2121);//设置端口号，非ROOT不可使用1024以下的端口
+			DataConnectionConfigurationFactory dataConnectionConfigurationFactory = new DataConnectionConfigurationFactory();
+			dataConnectionConfigurationFactory.setPassivePorts("23210-23219");
+			listenerFactory.setIdleTimeout(0);
+			dataConnectionConfigurationFactory.setIdleTime(0);
+			listenerFactory.setDataConnectionConfiguration(dataConnectionConfigurationFactory.createDataConnectionConfiguration());
+
+			ConnectionConfigFactory connectionConfigFactory = new ConnectionConfigFactory();
+			connectionConfigFactory.setAnonymousLoginEnabled(false);
+			connectionConfigFactory.setMaxLoginFailures(5);
+			connectionConfigFactory.setLoginFailureDelay(2000);
+			ftpServerFactory.setConnectionConfig(connectionConfigFactory.createConnectionConfig());
+
+			mFtpServer = ftpServerFactory.createServer();
+			ftpServerFactory.addListener("default", listenerFactory.createListener());
+		} catch (FtpException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -255,7 +338,7 @@ public class MQTTService extends Service {
 					case MQTTMsgEntity.MSG_SCAN_LOGIN:
 						String token = JSON.parseObject(mqttMsgEntity.getParam()).getString("token");
 						String phone = JSON.parseObject(mqttMsgEntity.getParam()).getString("phone");
-						RxHttp.setOnParamAssembly(param -> param.addHeader("token", token));
+						RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient()).setOnParamAssembly(param -> param.addHeader("token", token));
 						SPUtils.getInstance().put(SPConfig.PHONE, phone);
 						SPUtils.getInstance().put("token", token);
 //                        PopupManager.INSTANCE.showCustomXPopup(this, new LoginTimePopup(this));

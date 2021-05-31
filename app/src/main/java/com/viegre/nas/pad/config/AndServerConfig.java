@@ -2,7 +2,9 @@ package com.viegre.nas.pad.config;
 
 import android.content.Context;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.yanzhenjie.andserver.annotation.Config;
+import com.yanzhenjie.andserver.framework.config.Multipart;
 import com.yanzhenjie.andserver.framework.config.WebConfig;
 
 /**
@@ -13,6 +15,12 @@ public class AndServerConfig implements WebConfig {
 
 	@Override
 	public void onConfig(Context context, Delegate delegate) {
-//		delegate.addWebsite(new FileBrowser("/storage/52207D41207D2CDB/nas/"));
+//		delegate.addWebsite(new FileBrowser(PathConfig.NAS));
+		delegate.setMultipart(Multipart.newBuilder()
+		                               .allFileMaxSize(-1L)
+		                               .fileMaxSize(-1L)
+		                               .maxInMemorySize(1024 * 10)
+		                               .uploadTempDir(FileUtils.getFileByPath(PathConfig.UPLOAD_CACHE))
+		                               .build());
 	}
 }

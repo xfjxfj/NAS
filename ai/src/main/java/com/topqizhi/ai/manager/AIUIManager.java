@@ -3,10 +3,12 @@ package com.topqizhi.ai.manager;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.Utils;
 import com.iflytek.aiui.AIUIAgent;
 import com.iflytek.aiui.AIUIConstant;
 import com.iflytek.aiui.AIUIEvent;
@@ -14,6 +16,7 @@ import com.iflytek.aiui.AIUIListener;
 import com.iflytek.aiui.AIUIMessage;
 import com.topqizhi.ai.impl.AIUIResultListener;
 import com.ywl5320.libmusic.WlMusic;
+import com.ywl5320.util.RawAssetsUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,14 +50,16 @@ public enum AIUIManager {
 	private boolean isManualStopVoiceNlp = false;
 	private final List<String> mInitialResponseList = new ArrayList<>();
 	private volatile boolean mIsPauseMusicManually;
+	private MediaPlayer mMediaPlayer;
 
 	public void initialize(Context applicationContext) {
 		mAIUIAgent = AIUIAgent.createAgent(applicationContext, getAIUIParams(applicationContext), mAIUIListener);
-		mInitialResponseList.add("我在。");
-		mInitialResponseList.add("你说。");
-		mInitialResponseList.add("请说。");
-		mInitialResponseList.add("在呢。");
-		mInitialResponseList.add("怎么了。");
+		mInitialResponseList.add(RawAssetsUtil.getAssetsFilePath(Utils.getApp(), "01.mp3"));
+		mInitialResponseList.add(RawAssetsUtil.getAssetsFilePath(Utils.getApp(), "02.mp3"));
+		mInitialResponseList.add(RawAssetsUtil.getAssetsFilePath(Utils.getApp(), "03.mp3"));
+		mInitialResponseList.add(RawAssetsUtil.getAssetsFilePath(Utils.getApp(), "04.mp3"));
+		mInitialResponseList.add(RawAssetsUtil.getAssetsFilePath(Utils.getApp(), "05.mp3"));
+		mInitialResponseList.add(RawAssetsUtil.getAssetsFilePath(Utils.getApp(), "06.mp3"));
 	}
 
 	private String getAIUIParams(Context context) {
@@ -112,7 +117,7 @@ public enum AIUIManager {
 			}
 			Random random = new Random();
 			int index = random.nextInt(mInitialResponseList.size());
-			startTTS(mInitialResponseList.get(index), () -> {
+			playTTS(mInitialResponseList.get(index), () -> {
 				//先发送唤醒消息，改变AIUI内部状态，只有唤醒状态才能接收语音输入
 				//默认为oneshot模式，即一次唤醒后就进入休眠。可以修改aiui_phone.cfg中speech参数的interact_mode为continuous以支持持续交互
 				AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
@@ -136,7 +141,7 @@ public enum AIUIManager {
 		}
 		Random random = new Random();
 		int index = random.nextInt(mInitialResponseList.size());
-		startTTS(mInitialResponseList.get(index), () -> {
+		playTTS(mInitialResponseList.get(index), () -> {
 			//先发送唤醒消息，改变AIUI内部状态，只有唤醒状态才能接收语音输入
 			//默认为oneshot模式，即一次唤醒后就进入休眠。可以修改aiui_phone.cfg中speech参数的interact_mode为continuous以支持持续交互
 			AIUIMessage wakeupMsg = new AIUIMessage(AIUIConstant.CMD_WAKEUP, 0, 0, "", null);
@@ -160,6 +165,25 @@ public enum AIUIManager {
 		String params = "sample_rate=16000,data_type=audio";
 		AIUIMessage stopRecord = new AIUIMessage(AIUIConstant.CMD_STOP_RECORD, 0, 0, params, null);
 		mAIUIAgent.sendMessage(stopRecord);
+	}
+
+	private void playTTS(String url, Runnable onComplete) {
+		mMediaPlayer = new MediaPlayer();
+		try {
+			mMediaPlayer.setDataSource(url);
+			mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+			mMediaPlayer.setLooping(false);
+			mMediaPlayer.setOnCompletionListener(mp -> {
+				mMediaPlayer.release();
+				onComplete.run();
+			});
+			mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
+			mMediaPlayer.prepare();
+		} catch (IOException e) {
+			e.printStackTrace();
+			mMediaPlayer.release();
+			onComplete.run();
+		}
 	}
 
 	public void startTTS(String text, Runnable onComplete) {

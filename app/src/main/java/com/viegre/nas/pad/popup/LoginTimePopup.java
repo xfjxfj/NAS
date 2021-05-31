@@ -21,6 +21,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import rxhttp.RxHttp;
+import rxhttp.RxHttpPlugins;
 
 /**
  * Created by レインマン on 2021/01/08 16:03 with Android Studio.
@@ -91,7 +92,8 @@ public class LoginTimePopup extends CenterPopupView {
 
 			      @Override
 			      public void onNext(@io.reactivex.rxjava3.annotations.NonNull LoginEntity loginEntity) {
-				      RxHttp.setOnParamAssembly(param -> param.setHeader("token", loginEntity.getToken()));
+				      RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient())
+				                   .setOnParamAssembly(param -> param.addHeader("token", loginEntity.getToken()));
 				      ActivityUtils.startActivity(MainActivity.class);
 				      ActivityUtils.finishActivity(LoginActivity.class);
 			      }

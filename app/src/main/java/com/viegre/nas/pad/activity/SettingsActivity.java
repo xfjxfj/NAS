@@ -2,8 +2,6 @@ package com.viegre.nas.pad.activity;
 
 import android.view.View;
 
-import androidx.fragment.app.Fragment;
-
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -36,11 +34,13 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.fragment.app.Fragment;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import rxhttp.RxHttp;
+import rxhttp.RxHttpPlugins;
 
 /**
  * 设置页
@@ -91,8 +91,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 		if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
 			mViewBinding.acivSettingsLogout.setVisibility(View.VISIBLE);
 			mViewBinding.acivSettingsAvatar.setImageResource(R.mipmap.settings_unlogin);
-			mViewBinding.actvSettingsUsername.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance()
-			                                                                                  .getString(SPConfig.PHONE)));
+			mViewBinding.actvSettingsUsername.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE)));
 			mViewBinding.clSettingsLoginArea.setOnClickListener(null);
 		} else {
 			mViewBinding.acivSettingsLogout.setVisibility(View.GONE);
@@ -155,7 +154,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 			      @Override
 			      public void onNext(@NonNull String s) {
 				      SPUtils.getInstance().remove(SPConfig.PHONE);
-				      RxHttp.setOnParamAssembly(param -> param.removeAllHeader("token"));
+				      RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient()).setOnParamAssembly(param -> param.removeAllHeader("token"));
 				      checkLoginStatus();
 			      }
 

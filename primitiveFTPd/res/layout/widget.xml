@@ -21,5 +21,5 @@
 		android:layout_height="fill_parent"
 		android:gravity="center_horizontal"
 		android:text="@string/widgetTextStart"
-		android:textColor="@color/widgetTextColorEnabled"></TextView>
+		android:textColor="@color/widgetTextColorEnabled" />
 </LinearLayout>

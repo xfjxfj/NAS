@@ -18,18 +18,16 @@ import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.manager.AMapLocationManager;
-import com.viegre.nas.pad.manager.ServerManager;
 import com.viegre.nas.pad.service.AppService;
 
 import org.litepal.LitePal;
-import org.primftpd.log.CsvLoggerFactory;
 
 import cn.wildfire.chat.kit.Config;
 import cn.wildfire.chat.kit.WfcUIKit;
 import cn.wildfire.chat.kit.conversation.message.viewholder.MessageViewHolderManager;
 import cn.wildfire.chat.kit.third.location.viewholder.LocationMessageContentViewHolder;
 import cn.wildfirechat.push.PushService;
-import rxhttp.RxHttp;
+import rxhttp.RxHttpPlugins;
 import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
 
 /**
@@ -44,13 +42,11 @@ public class NasApp extends BaseApplication {
 		initAndroidId();
 		LitePal.initialize(this);
 		initRxHttp();
-		ServerManager.INSTANCE.initialize();
 		MscManager.INSTANCE.initialize(this);
 		AIUIManager.INSTANCE.initialize(this);
 		VolumeManager.INSTANCE.initialize(this);
 		PlayerFactory.setPlayManager(Exo2PlayerManager.class);
 		AudioRecordManager.INSTANCE.initialize();
-		CsvLoggerFactory.CONTEXT = this;
 		initAMap();
 		initIM();
 	}
@@ -108,8 +104,7 @@ public class NasApp extends BaseApplication {
 	}
 
 	private void initRxHttp() {
-		RxHttp.setDebug(BuildConfig.DEBUG);
-		RxHttp.init(OkHttpManager.INSTANCE.getOkHttpClient());
+		RxHttpPlugins.init(OkHttpManager.INSTANCE.getOkHttpClient()).setDebug(BuildConfig.DEBUG);
 	}
 
 	/**
