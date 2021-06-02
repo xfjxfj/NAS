@@ -40,10 +40,12 @@
                 android:textColor="@color/gray24"
                 android:textSize="24px" />
 
+<!--                android：textCursorDrawabl-->
             <EditText
                 android:id="@+id/add_device_dialog_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textCursorDrawable="@null"
                 android:hint="@string/contacts_add_devices3"
                 android:textColor="@color/white"
                 android:textColorHint="@color/gray25"
@@ -69,7 +71,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/contacts_add_devices4"
-                android:textColor="@color/gray25"
+                android:textColor="@color/white"
+                android:textCursorDrawable="@null"
                 android:textColorHint="@color/gray25"
                 android:textSize="20px" />
         </LinearLayout>
