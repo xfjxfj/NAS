@@ -19,11 +19,11 @@
         android:id="@+id/delete_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#8D8E99"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="17dp"
         android:scaleType="fitXY"
-        android:text="" />
+        android:text=""
+        android:textColor="#8D8E99" />
 
     <TextView
         android:id="@+id/item_user_concern_title"
@@ -70,11 +70,11 @@
     <LinearLayout
         android:id="@+id/item_user_concern_link_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80px"
         android:layout_below="@+id/item_user_time"
         android:layout_marginTop="4dp"
         android:layout_toRightOf="@+id/userImage"
-        android:background="#2B303D"
+        android:background="@mipmap/call_delete"
         android:orientation="vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -92,9 +92,9 @@
             <TextView
                 android:id="@+id/delete_text_1"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="8dp"
+                android:layout_weight="1"
                 android:text="删除"
                 android:textColor="#FA1233"
                 android:textSize="24px" />
@@ -102,17 +102,17 @@
             <TextView
                 android:id="@+id/delete_text_2"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="8dp"
+                android:layout_weight="1"
                 android:textColor="#FA1233"
                 android:textSize="24px" />
 
             <ImageView
                 android:id="@+id/delete_image_3"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="22px"
+                android:layout_weight="1"
                 android:ellipsize="end"
                 android:lineSpacingMultiplier="1.2"
                 android:src="@mipmap/delete_img"
@@ -120,4 +120,11 @@
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="13px"
+        android:layout_below="@+id/item_user_concern_link_layout"
+        android:background="@color/black11" />
 </RelativeLayout>

@@ -57,7 +57,7 @@ public enum AMapLocationManager {
 							      @Override
 							      public void onNext(@NonNull WeatherRootEntity weatherRootEntity) {
 								      List<WeatherEntity> weatherList = weatherRootEntity.getWeather();
-								      if (!weatherList.isEmpty()) {
+								      if (null != weatherList&&!weatherList.isEmpty()) {
 									      for (WeatherEntity weather : weatherList) {
 										      if (TimeUtils.isToday(weather.getDate(),
 										                            new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()))) {

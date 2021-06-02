@@ -85,7 +85,6 @@
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="${applicationId}.main" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

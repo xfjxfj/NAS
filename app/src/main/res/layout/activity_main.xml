@@ -1,217 +1,226 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="@android:color/black"
-	android:padding="40px">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:padding="40px">
 
-	<androidx.appcompat.widget.LinearLayoutCompat
-		android:id="@+id/llcMainUser"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:gravity="center_vertical"
-		android:orientation="horizontal"
-		android:visibility="invisible"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent">
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/llcMainUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-		<androidx.appcompat.widget.AppCompatImageView
-			android:id="@+id/acivMainUserIcon"
-			android:layout_width="48px"
-			android:layout_height="48px"
-			android:src="@mipmap/main_unlogin" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/acivMainUserIcon"
+            android:layout_width="48px"
+            android:layout_height="48px"
+            android:src="@mipmap/main_unlogin" />
 
-		<androidx.appcompat.widget.AppCompatTextView
-			android:id="@+id/actvMainUserInfo"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="16px"
-			android:includeFontPadding="false"
-			android:text="@string/main_click_to_login"
-			android:textColor="@color/tip"
-			android:textSize="18px" />
-	</androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/actvMainUserInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16px"
+            android:includeFontPadding="false"
+            android:text="@string/main_click_to_login"
+            android:textColor="@color/tip"
+            android:textSize="18px" />
 
-	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivMainIncomingCall"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginEnd="21px"
-		app:layout_constraintBottom_toBottomOf="@id/llcMainUser"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintTop_toTopOf="@id/llcMainUser"
-		app:srcCompat="@mipmap/main_incoming_call" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/main_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16px"
+            android:includeFontPadding="false"
+            android:textColor="#f00"
+            android:textSize="18px" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-	<View
-		android:id="@+id/vMainUnreadPoint"
-		android:layout_width="10px"
-		android:layout_height="10px"
-		android:background="@drawable/unread_point"
-		app:layout_constraintBottom_toTopOf="@id/acivMainIncomingCall"
-		app:layout_constraintStart_toEndOf="@id/acivMainIncomingCall" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/acivMainIncomingCall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="21px"
+        app:layout_constraintBottom_toBottomOf="@id/llcMainUser"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/llcMainUser"
+        app:srcCompat="@mipmap/main_incoming_call" />
 
-	<androidx.appcompat.widget.LinearLayoutCompat
-		android:id="@+id/llcMainUSBInfo"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginEnd="36px"
-		android:gravity="center_vertical"
-		android:orientation="horizontal"
-		app:layout_constraintBottom_toBottomOf="@id/llcMainUser"
-		app:layout_constraintEnd_toStartOf="@id/acivMainIncomingCall"
-		app:layout_constraintTop_toTopOf="@id/llcMainUser">
+    <View
+        android:id="@+id/vMainUnreadPoint"
+        android:layout_width="10px"
+        android:layout_height="10px"
+        android:background="@drawable/unread_point"
+        app:layout_constraintBottom_toTopOf="@id/acivMainIncomingCall"
+        app:layout_constraintStart_toEndOf="@id/acivMainIncomingCall" />
 
-		<androidx.appcompat.widget.AppCompatImageView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			app:srcCompat="@mipmap/main_usb_flash_drive" />
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/llcMainUSBInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="36px"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/llcMainUser"
+        app:layout_constraintEnd_toStartOf="@id/acivMainIncomingCall"
+        app:layout_constraintTop_toTopOf="@id/llcMainUser">
 
-		<androidx.appcompat.widget.AppCompatTextView
-			android:id="@+id/actvMainUSBInfo"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8px"
-			android:includeFontPadding="false"
-			android:text="@string/main_click_to_login"
-			android:textColor="@color/tip"
-			android:textSize="18px" />
-	</androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@mipmap/main_usb_flash_drive" />
 
-	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivMainIcon3"
-		style="@style/main_icon"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@id/acivMainIcon4"
-		app:layout_constraintHorizontal_chainStyle="spread_inside"
-		app:layout_constraintStart_toStartOf="parent"
-		app:srcCompat="@mipmap/test_icon_3" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/actvMainUSBInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8px"
+            android:includeFontPadding="false"
+            android:text="@string/main_click_to_login"
+            android:textColor="@color/tip"
+            android:textSize="18px" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivMainIcon4"
-		style="@style/main_icon"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@id/acivMainIcon5"
-		app:layout_constraintStart_toEndOf="@id/acivMainIcon3"
-		app:srcCompat="@mipmap/test_icon_4" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/acivMainIcon3"
+        style="@style/main_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/acivMainIcon4"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@mipmap/test_icon_3" />
 
-	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivMainIcon5"
-		style="@style/main_icon"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@id/acivMainIcon6"
-		app:layout_constraintStart_toEndOf="@id/acivMainIcon4"
-		app:srcCompat="@mipmap/test_icon_5" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/acivMainIcon4"
+        style="@style/main_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/acivMainIcon5"
+        app:layout_constraintStart_toEndOf="@id/acivMainIcon3"
+        app:srcCompat="@mipmap/test_icon_4" />
 
-	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivMainIcon6"
-		style="@style/main_icon"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@id/acivMainIcon7"
-		app:layout_constraintStart_toEndOf="@id/acivMainIcon5"
-		app:srcCompat="@mipmap/test_icon_6" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/acivMainIcon5"
+        style="@style/main_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/acivMainIcon6"
+        app:layout_constraintStart_toEndOf="@id/acivMainIcon4"
+        app:srcCompat="@mipmap/test_icon_5" />
 
-	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivMainIcon7"
-		style="@style/main_icon"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@id/acivMainIcon8"
-		app:layout_constraintStart_toEndOf="@id/acivMainIcon6"
-		app:srcCompat="@mipmap/test_icon_7" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/acivMainIcon6"
+        style="@style/main_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/acivMainIcon7"
+        app:layout_constraintStart_toEndOf="@id/acivMainIcon5"
+        app:srcCompat="@mipmap/test_icon_6" />
 
-	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivMainIcon8"
-		style="@style/main_icon"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toEndOf="@id/acivMainIcon7"
-		app:srcCompat="@mipmap/test_icon_8" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/acivMainIcon7"
+        style="@style/main_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/acivMainIcon8"
+        app:layout_constraintStart_toEndOf="@id/acivMainIcon6"
+        app:srcCompat="@mipmap/test_icon_7" />
 
-	<com.youth.banner.Banner
-		android:id="@+id/bMainBanner"
-		android:layout_width="0dp"
-		android:layout_height="0dp"
-		android:layout_marginTop="25px"
-		app:layout_constraintBottom_toBottomOf="@id/acivMainIconImage"
-		app:layout_constraintEnd_toEndOf="@id/acivMainIcon8"
-		app:layout_constraintStart_toStartOf="@id/acivMainIcon6"
-		app:layout_constraintTop_toBottomOf="@id/llcMainUser" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/acivMainIcon8"
+        style="@style/main_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/acivMainIcon7"
+        app:srcCompat="@mipmap/test_icon_8" />
 
-	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivMainIconImage"
-		style="@style/main_icon"
-		android:layout_marginBottom="40px"
-		app:layout_constraintBottom_toTopOf="@id/acivMainIcon3"
-		app:layout_constraintEnd_toEndOf="@id/acivMainIcon3"
-		app:layout_constraintStart_toStartOf="@id/acivMainIcon3"
-		app:srcCompat="@mipmap/main_icon_image" />
+    <com.youth.banner.Banner
+        android:id="@+id/bMainBanner"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="25px"
+        app:layout_constraintBottom_toBottomOf="@id/acivMainIconImage"
+        app:layout_constraintEnd_toEndOf="@id/acivMainIcon8"
+        app:layout_constraintStart_toStartOf="@id/acivMainIcon6"
+        app:layout_constraintTop_toBottomOf="@id/llcMainUser" />
 
-	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivMainIconAudio"
-		style="@style/main_icon"
-		app:layout_constraintBottom_toBottomOf="@id/acivMainIconImage"
-		app:layout_constraintEnd_toEndOf="@id/acivMainIcon4"
-		app:layout_constraintStart_toStartOf="@id/acivMainIcon4"
-		app:srcCompat="@mipmap/main_icon_audio" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/acivMainIconImage"
+        style="@style/main_icon"
+        android:layout_marginBottom="40px"
+        app:layout_constraintBottom_toTopOf="@id/acivMainIcon3"
+        app:layout_constraintEnd_toEndOf="@id/acivMainIcon3"
+        app:layout_constraintStart_toStartOf="@id/acivMainIcon3"
+        app:srcCompat="@mipmap/main_icon_image" />
 
-	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/acivMainIconVideo"
-		style="@style/main_icon"
-		app:layout_constraintBottom_toBottomOf="@id/acivMainIconImage"
-		app:layout_constraintEnd_toEndOf="@id/acivMainIcon5"
-		app:layout_constraintStart_toStartOf="@id/acivMainIcon5"
-		app:srcCompat="@mipmap/main_icon_video" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/acivMainIconAudio"
+        style="@style/main_icon"
+        app:layout_constraintBottom_toBottomOf="@id/acivMainIconImage"
+        app:layout_constraintEnd_toEndOf="@id/acivMainIcon4"
+        app:layout_constraintStart_toStartOf="@id/acivMainIcon4"
+        app:srcCompat="@mipmap/main_icon_audio" />
 
-	<TextClock
-		android:id="@+id/tcMainTime"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:format12Hour="hh:mm"
-		android:format24Hour="HH:mm"
-		android:includeFontPadding="false"
-		android:textColor="@android:color/white"
-		android:textSize="96px"
-		app:layout_constraintBottom_toTopOf="@id/acivMainIconImage"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/llcMainUser" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/acivMainIconVideo"
+        style="@style/main_icon"
+        app:layout_constraintBottom_toBottomOf="@id/acivMainIconImage"
+        app:layout_constraintEnd_toEndOf="@id/acivMainIcon5"
+        app:layout_constraintStart_toStartOf="@id/acivMainIcon5"
+        app:srcCompat="@mipmap/main_icon_video" />
 
-	<androidx.appcompat.widget.LinearLayoutCompat
-		android:id="@+id/llcMainWeather"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="9px"
-		android:gravity="center_vertical"
-		android:orientation="horizontal"
-		app:layout_constraintBottom_toTopOf="@id/tcMainDate"
-		app:layout_constraintStart_toEndOf="@id/tcMainTime"
-		app:layout_constraintTop_toTopOf="@id/tcMainTime">
+    <TextClock
+        android:id="@+id/tcMainTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:format12Hour="hh:mm"
+        android:format24Hour="HH:mm"
+        android:includeFontPadding="false"
+        android:textColor="@android:color/white"
+        android:textSize="96px"
+        app:layout_constraintBottom_toTopOf="@id/acivMainIconImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llcMainUser" />
 
-		<androidx.appcompat.widget.AppCompatImageView
-			android:id="@+id/acivMainWeather"
-			android:layout_width="43px"
-			android:layout_height="43px"
-			app:srcCompat="@mipmap/weather_unknown" />
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/llcMainWeather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="9px"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/tcMainDate"
+        app:layout_constraintStart_toEndOf="@id/tcMainTime"
+        app:layout_constraintTop_toTopOf="@id/tcMainTime">
 
-		<androidx.appcompat.widget.AppCompatTextView
-			android:id="@+id/actvMainTemperature"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:includeFontPadding="false"
-			android:textColor="@android:color/white"
-			android:textSize="26px" />
-	</androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/acivMainWeather"
+            android:layout_width="43px"
+            android:layout_height="43px"
+            app:srcCompat="@mipmap/weather_unknown" />
 
-	<TextClock
-		android:id="@+id/tcMainDate"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="24px"
-		android:format12Hour="MM月dd日 EEEE"
-		android:format24Hour="MM月dd日 EEEE"
-		android:includeFontPadding="false"
-		android:textColor="@android:color/white"
-		android:textSize="24px"
-		app:layout_constraintBottom_toBottomOf="@id/tcMainTime"
-		app:layout_constraintStart_toEndOf="@id/tcMainTime"
-		app:layout_constraintTop_toBottomOf="@id/llcMainWeather" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/actvMainTemperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:textColor="@android:color/white"
+            android:textSize="26px" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <TextClock
+        android:id="@+id/tcMainDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24px"
+        android:format12Hour="MM月dd日 EEEE"
+        android:format24Hour="MM月dd日 EEEE"
+        android:includeFontPadding="false"
+        android:textColor="@android:color/white"
+        android:textSize="24px"
+        app:layout_constraintBottom_toBottomOf="@id/tcMainTime"
+        app:layout_constraintStart_toEndOf="@id/tcMainTime"
+        app:layout_constraintTop_toBottomOf="@id/llcMainWeather" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -97,7 +97,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     private void ifRecordList() {
         mRecordData = getRecordData();
         if (mRecordData.size() == 0) {
-            ResetRecord();
+            initRecordData(mRecordData);
         } else {
             initRecordData(mRecordData);
         }
@@ -197,13 +197,13 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                                     }
                                     mFriendData.add(new ContactsBean(userid, "", nickName, phone));
                                 }
-                                mFriendData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
-                                mFriendData.add(new ContactsBean("anaOaOjj", "", "设备pad", "191"));
-                                mFriendData.add(new ContactsBean("ISIFIF99", "", "oppo-pad", "191"));
-                                mFriendData.add(new ContactsBean("agahahss", "", "华为AL00-pad", "456"));
-                                mFriendData.add(new ContactsBean("ZoZcZcKK", "", "夜神模拟器-pad", "666"));
-                                mFriendData.add(new ContactsBean("RlRbRbGG", "", "设备2-pad", "666"));
-                                mFriendData.add(new ContactsBean("OkORORNN", "", "设备3-oppo", "1313"));
+//                                mFriendData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
+//                                mFriendData.add(new ContactsBean("anaOaOjj", "", "设备pad", "191"));
+//                                mFriendData.add(new ContactsBean("ISIFIF99", "", "oppo-pad", "191"));
+//                                mFriendData.add(new ContactsBean("agahahss", "", "华为AL00-pad", "456"));
+//                                mFriendData.add(new ContactsBean("ZoZcZcKK", "", "夜神模拟器-pad", "666"));
+//                                mFriendData.add(new ContactsBean("RlRbRbGG", "", "设备2-pad", "666"));
+//                                mFriendData.add(new ContactsBean("OkORORNN", "", "设备3-oppo", "1313"));
                             }
                             TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
                             initFriendData(mFriendData);
@@ -222,7 +222,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
 
                     @Override
                     public void onComplete() {
-                         Log.d("", "");
+                        Log.d("", "");
                     }
                 });
     }
