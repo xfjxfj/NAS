@@ -49,6 +49,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		Log.d("login json:",jsonObject.toString());
 		mViewBinding.acivLoginQRCode.setImageBitmap(ZxingUtils.createQRCodewhite(jsonObject.toString(), 500, 500, true));
 		mViewBinding.acivLoginAccountCode.setTag(false);
 

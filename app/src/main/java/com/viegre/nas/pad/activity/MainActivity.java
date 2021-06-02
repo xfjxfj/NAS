@@ -151,6 +151,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                                 .putString("token", loginResult.getUserId())
                                 .putString("mToken", loginResult.getToken())
                                 .apply();
+                        Log.d("MainInfo:",ANDROID_ID+","+loginResult.getUserId());
                         getDevicesToken(ANDROID_ID, loginResult.getUserId());
                         return null;
                     }
