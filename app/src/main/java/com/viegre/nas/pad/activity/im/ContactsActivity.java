@@ -64,6 +64,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     public static Boolean Token_valid = true;
     private TextView textView2;
     private TextView textRecord;
+    private ContactsRvRecordAdapter contactsRvRecordAdapter;
 
     @Override
     protected void initialize() {
@@ -81,7 +82,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         mViewBinding.homeImg.setOnClickListener(view -> finish());
         textView2.setOnClickListener(this);
         ExpandableViewHoldersUtil.getInstance().init().setNeedExplanedOnlyOne(false);
-        //初始化RecycleViewAdapter
+//      初始化RecycleViewAdapter
         ExpandableViewHoldersUtil.getInstance().resetExpanedList();
 //        initFriendData(mContactsData);
         ifRecordList();
@@ -91,27 +92,26 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     @Override
     protected void onRestart() {
         super.onRestart();
-        ifRecordList();
+        contactsRvRecordAdapter.notifyDataSetChanged();
     }
 
     private void ifRecordList() {
         mRecordData = getRecordData();
+        initRecordData(mRecordData);
         if (mRecordData.size() == 0) {
-            initRecordData(mRecordData);
-        } else {
-            initRecordData(mRecordData);
+            contactsRv1.setVisibility(View.GONE);//无数据隐藏列表
         }
     }
 
-    private List<String> getRecordData() {
-        mRecordData.clear();
+    public List<String> getRecordData() {
+        ArrayList<String> data = new ArrayList<>();
         File file = new File(getFilesDir().toString() + PathConfig.CONTACTS_RECOMDING);
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(file));
             String textOnLineString;
             while ((textOnLineString = reader.readLine()) != null) {
-                mRecordData.add(textOnLineString);
+                data.add(textOnLineString);
             }
             reader.close();
         } catch (IOException e) {
@@ -125,7 +125,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                 }
             }
         }
-        return mRecordData;
+        return data;
     }
 
 
@@ -160,7 +160,8 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         contactsRv1.setLayoutManager(linearLayoutManager);
         //创建适配器，将数据传递给适配器
         //设置适配器adapter
-        contactsRv1.setAdapter(new ContactsRvRecordAdapter(this, mRecordData));
+        contactsRvRecordAdapter = new ContactsRvRecordAdapter(this);
+        contactsRv1.setAdapter(contactsRvRecordAdapter);
     }
 
     private void getContactsDatas() {
@@ -197,13 +198,13 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                                     }
                                     mFriendData.add(new ContactsBean(userid, "", nickName, phone));
                                 }
-//                                mFriendData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
-//                                mFriendData.add(new ContactsBean("anaOaOjj", "", "设备pad", "191"));
-//                                mFriendData.add(new ContactsBean("ISIFIF99", "", "oppo-pad", "191"));
-//                                mFriendData.add(new ContactsBean("agahahss", "", "华为AL00-pad", "456"));
-//                                mFriendData.add(new ContactsBean("ZoZcZcKK", "", "夜神模拟器-pad", "666"));
-//                                mFriendData.add(new ContactsBean("RlRbRbGG", "", "设备2-pad", "666"));
-//                                mFriendData.add(new ContactsBean("OkORORNN", "", "设备3-oppo", "1313"));
+                                mFriendData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
+                                mFriendData.add(new ContactsBean("anaOaOjj", "", "设备pad", "191"));
+                                mFriendData.add(new ContactsBean("ISIFIF99", "", "oppo-pad", "191"));
+                                mFriendData.add(new ContactsBean("agahahss", "", "华为AL00-pad", "456"));
+                                mFriendData.add(new ContactsBean("ZoZcZcKK", "", "夜神模拟器-pad", "666"));
+                                mFriendData.add(new ContactsBean("RlRbRbGG", "", "设备2-pad", "666"));
+                                mFriendData.add(new ContactsBean("OkORORNN", "", "设备3-oppo", "1313"));
                             }
                             TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
                             initFriendData(mFriendData);
@@ -278,7 +279,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
             e.printStackTrace();
         }
         initRecordData(mRecordData);
-        contactsRv1.setVisibility(View.GONE);//无数据隐藏列表
+
         textRecord.setVisibility(View.VISIBLE);//显示提示信息
     }
 }

@@ -17,12 +17,19 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.activity.im.ContactsActivity;
+import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.entity.RecordListBean2;
 import com.viegre.nas.pad.util.ExpandableViewHoldersUtil;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -30,16 +37,18 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
     private ExpandableViewHoldersUtil.KeepOneHolder<ViewHolder> keepOne;
     private final Context mcontext;
     boolean isClick = false;
-    private final List<String> data;
+    private List<String> data;
     private Gson gs = new Gson();
 
-    public ContactsRvRecordAdapter(Context context, List<String> languages) {
+    public ContactsRvRecordAdapter(Context context) {
         mcontext = context;
-        data = languages;
+        data = getRecordData();
     }
 
     @Override
     public int getItemCount() {
+        List<String> recordData = getRecordData();
+        data = recordData;
         return data.size();
     }
 
@@ -115,6 +124,31 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
                 notifyDataSetChanged();
             }
         });
+    }
+    public List<String> getRecordData() {
+//        mRecordData.clear();
+        ArrayList<String> data = new ArrayList<>();
+        File file = new File(mcontext.getFilesDir().toString() + PathConfig.CONTACTS_RECOMDING);
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(file));
+            String textOnLineString;
+            while ((textOnLineString = reader.readLine()) != null) {
+                data.add(textOnLineString);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        return data;
     }
 
     private String setTimeText(RecordListBean2 mdata, ViewHolder holder) {

@@ -132,6 +132,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         WaitDialog.show(this, "请稍候...");
         String ANDROID_ID = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
         String authCode = "66666";
+        //需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
+        ChatManagerHolder.gChatManager.disconnect(true, true);
         AppService.Instance().smsLogin(ANDROID_ID, authCode, new AppService.LoginCallback() {
             @Override
             public void onUiSuccess(LoginResult loginResult) {
@@ -139,8 +141,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                     TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
                     return;
                 }
-                //需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
-                ChatManagerHolder.gChatManager.disconnect(true, true);
                 ThreadUtils.executeByCachedWithDelay(new VoidTask() {
                     @Override
                     public Void doInBackground() {
