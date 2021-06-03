@@ -40,6 +40,7 @@ import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.entity.ExternalDriveEntity;
+import com.viegre.nas.pad.entity.FtpBanListEntity;
 import com.viegre.nas.pad.entity.FtpCategoryEntity;
 import com.viegre.nas.pad.entity.FtpCmdEntity;
 import com.viegre.nas.pad.entity.FtpFavoritesEntity;
@@ -482,8 +483,9 @@ public class MQTTService extends Service {
 						sendMQTTMsg(reboot(mqttMsgEntity.getFromId()));
 						break;
 
-					//ftp复制
-					case MQTTMsgEntity.MSG_FTP_COPY:
+					//ftp复制/移动
+					case MQTTMsgEntity.MSG_FTP_LOCATION:
+						String type = JSON.parseObject(mqttMsgEntity.getParam()).getString("type");
 						String destPath = JSON.parseObject(mqttMsgEntity.getParam()).getString("destPath");
 						List<FtpCmdEntity> srcPathList = JSON.parseObject(mqttMsgEntity.getParam())
 						                                     .getJSONArray("srcPathList")
@@ -498,11 +500,20 @@ public class MQTTService extends Service {
 									if (!FileUtils.isFileExists(ftpCmdEntity.getPath())) {
 										continue;
 									}
-									FileUtils.copy(ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
-									MediaScannerConnection.scanFile(Utils.getApp(),
-									                                new String[]{destPath + FileUtils.getFileName(ftpCmdEntity.getPath())},
-									                                null,
-									                                null);
+									if ("cp".equals(type)) {
+										FileUtils.copy(ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
+										MediaScannerConnection.scanFile(Utils.getApp(),
+										                                new String[]{destPath + FileUtils.getFileName(ftpCmdEntity.getPath())},
+										                                null,
+										                                null);
+									} else {
+										FileUtils.move(ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
+										MediaScannerConnection.scanFile(Utils.getApp(),
+										                                new String[]{ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(
+												                                ftpCmdEntity.getPath())},
+										                                null,
+										                                null);
+									}
 								}
 								return true;
 							}
@@ -511,7 +522,7 @@ public class MQTTService extends Service {
 							public void onSuccess(Boolean result) {
 								Map<String, Object> ftpCopyParamMap = new HashMap<>();
 								ftpCopyParamMap.put("result", result);
-								MQTTMsgEntity ftpCopyMsg = ftpCopy(mqttMsgEntity.getFromId());
+								MQTTMsgEntity ftpCopyMsg = ftpLocation(mqttMsgEntity.getFromId());
 								ftpCopyMsg.setParam(new JSONObject(ftpCopyParamMap).toJSONString());
 								sendMQTTMsg(ftpCopyMsg);
 							}
@@ -735,10 +746,10 @@ public class MQTTService extends Service {
 								List<FtpFileQueryEntity> ftpFileList = new ArrayList<>();
 								ContentResolver contentResolver = getContentResolver();
 								Cursor cursor = contentResolver.query(MediaStore.Files.getContentUri("external"),
-								                                      new String[]{MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.DATE_MODIFIED, MediaStore.Files.FileColumns.TITLE},
+								                                      new String[]{MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.DATE_ADDED, MediaStore.Files.FileColumns.TITLE},
 								                                      selection,
 								                                      selectionArgs,
-								                                      MediaStore.Files.FileColumns.DATE_MODIFIED + " desc");
+								                                      MediaStore.Files.FileColumns.DATE_ADDED + " desc");
 								if (null != cursor) {
 									while (cursor.moveToNext()) {
 										String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
@@ -749,7 +760,7 @@ public class MQTTService extends Service {
 										ftpFileQueryEntity.setName(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE)));
 										ftpFileQueryEntity.setPath(path);
 										ftpFileQueryEntity.setType(FileUtils.isDir(path) ? "dir" : "file");
-										long time = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED));
+										long time = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_ADDED));
 										ftpFileQueryEntity.setCreateTime(TimeUtils.millis2String(time,
 										                                                         new SimpleDateFormat("yyyy-MM-dd HH:mm",
 										                                                                              Locale.getDefault())));
@@ -792,10 +803,11 @@ public class MQTTService extends Service {
 					case MQTTMsgEntity.MSG_FTP_CATEGORY_LIST:
 						boolean privateOnly = JSON.parseObject(mqttMsgEntity.getParam()).getBoolean("privateOnly");
 						String category = JSON.parseObject(mqttMsgEntity.getParam()).getString("category");
+						String phoneNum = mqttMsgEntity.getFromId();
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<FtpCategoryEntity>>() {
 							@Override
 							public List<FtpCategoryEntity> doInBackground() {
-								return queryFtpCategory(privateOnly, category);
+								return queryFtpCategory(privateOnly, category, phoneNum);
 							}
 
 							@Override
@@ -831,6 +843,52 @@ public class MQTTService extends Service {
 										sendMQTTMsg(ftpRefreshPathMsg);
 									});
 								}
+								return null;
+							}
+						});
+						break;
+
+					//ftp禁止访问列表
+					case MQTTMsgEntity.MSG_FTP_BAN_LIST:
+						boolean isBan = JSON.parseObject(mqttMsgEntity.getParam()).getBoolean("isBan");
+						List<FtpBanListEntity> banList = JSON.parseObject(mqttMsgEntity.getParam())
+						                                     .getJSONArray("banList")
+						                                     .toJavaList(FtpBanListEntity.class);
+						ThreadUtils.executeByCached(new VoidTask() {
+							@Override
+							public Void doInBackground() {
+								if (isBan) {
+									LitePal.saveAll(banList);
+								} else {
+									for (FtpBanListEntity ftpBanListEntity : banList) {
+										LitePal.deleteAll(FtpBanListEntity.class,
+										                  "path = ? and phoneNum = ?",
+										                  ftpBanListEntity.getPath(),
+										                  ftpBanListEntity.getPhoneNum());
+									}
+								}
+								Map<String, Object> ftpBanListParamMap = new HashMap<>();
+								ftpBanListParamMap.put("result", true);
+								MQTTMsgEntity ftpBanListMsg = ftpBanList(mqttMsgEntity.getFromId());
+								ftpBanListMsg.setParam(new JSONObject(ftpBanListParamMap).toJSONString());
+								sendMQTTMsg(ftpBanListMsg);
+								return null;
+							}
+						});
+						break;
+
+					//ftp获取禁止访问列表
+					case MQTTMsgEntity.MSG_FTP_GET_BAN_LIST:
+						ThreadUtils.executeByCached(new VoidTask() {
+							@Override
+							public Void doInBackground() {
+								Map<String, Object> ftpGetBanListMap = new HashMap<>();
+								ftpGetBanListMap.put("banList",
+								                     LitePal.where("phoneNum = ?", JSON.parseObject(mqttMsgEntity.getParam()).getString("phoneNum"))
+								                            .find(FtpBanListEntity.class));
+								MQTTMsgEntity ftpGetBanListMsg = ftpGetBanList(mqttMsgEntity.getFromId());
+								ftpGetBanListMsg.setParam(new JSONObject(ftpGetBanListMap).toJSONString());
+								sendMQTTMsg(ftpGetBanListMsg);
 								return null;
 							}
 						});
@@ -988,13 +1046,13 @@ public class MQTTService extends Service {
 	}
 
 	/**
-	 * ftp复制
+	 * ftp复制/移动
 	 *
 	 * @param toId 目标ClientId
 	 * @return MQTT消息
 	 */
-	private MQTTMsgEntity ftpCopy(String toId) {
-		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_COPY, toId);
+	private MQTTMsgEntity ftpLocation(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_LOCATION, toId);
 	}
 
 	/**
@@ -1088,6 +1146,26 @@ public class MQTTService extends Service {
 	}
 
 	/**
+	 * ftp禁止访问列表
+	 *
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
+	 */
+	private MQTTMsgEntity ftpBanList(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_BAN_LIST, toId);
+	}
+
+	/**
+	 * ftp获取禁止访问列表
+	 *
+	 * @param toId 目标ClientId
+	 * @return MQTT消息
+	 */
+	private MQTTMsgEntity ftpGetBanList(String toId) {
+		return new MQTTMsgEntity(MQTTMsgEntity.TYPE_CMD, MQTTMsgEntity.MSG_FTP_GET_BAN_LIST, toId);
+	}
+
+	/**
 	 * 生成一个startNum 到 endNum之间的随机数(不包含endNum的随机数)
 	 *
 	 * @param startNum
@@ -1130,42 +1208,36 @@ public class MQTTService extends Service {
 		return keyWord;
 	}
 
-	private List<FtpCategoryEntity> queryFtpCategory(boolean privateOnly, String category) {
+	private List<FtpCategoryEntity> queryFtpCategory(boolean privateOnly, String category, String phoneNum) {
 		Uri uri;
 		String pathProjection, timeProjection, sizeProjection;
 		switch (category) {
 			case "image":
 				uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 				pathProjection = MediaStore.Images.Media.DATA;
-				timeProjection = MediaStore.Images.Media.DATE_MODIFIED;
 				sizeProjection = MediaStore.Images.Media.SIZE;
 				break;
 
 			case "video":
 				uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 				pathProjection = MediaStore.Video.Media.DATA;
-				timeProjection = MediaStore.Video.Media.DATE_MODIFIED;
 				sizeProjection = MediaStore.Video.Media.SIZE;
 				break;
 
 			case "audio":
 				uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 				pathProjection = MediaStore.Audio.Media.DATA;
-				timeProjection = MediaStore.Audio.Media.DATE_MODIFIED;
 				sizeProjection = MediaStore.Audio.Media.SIZE;
 				break;
 
 			default:
 				uri = MediaStore.Files.getContentUri("external");
 				pathProjection = MediaStore.Files.FileColumns.DATA;
-				timeProjection = MediaStore.Files.FileColumns.DATE_MODIFIED;
 				sizeProjection = MediaStore.Files.FileColumns.SIZE;
 				break;
 		}
 		List<FtpCategoryEntity> list = new ArrayList<>();
-		Cursor cursor = Utils.getApp()
-		                     .getContentResolver()
-		                     .query(uri, new String[]{pathProjection, timeProjection, sizeProjection}, null, null, null);
+		Cursor cursor = Utils.getApp().getContentResolver().query(uri, new String[]{pathProjection, sizeProjection}, null, null, null);
 		while (cursor.moveToNext()) {
 			String path = cursor.getString(cursor.getColumnIndexOrThrow(pathProjection));
 			if (FileUtils.isDir(path)) {
@@ -1173,11 +1245,11 @@ public class MQTTService extends Service {
 			}
 
 			if (privateOnly) {
-				if (!path.startsWith(PathConfig.PRIVATE)) {
+				if (!path.startsWith(PathConfig.PRIVATE + phoneNum + File.separator)) {
 					continue;
 				}
 			} else {
-				if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
+				if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE + phoneNum + File.separator)) {
 					continue;
 				}
 			}
@@ -1194,7 +1266,7 @@ public class MQTTService extends Service {
 				}
 			}
 
-			long time = cursor.getLong(cursor.getColumnIndexOrThrow(timeProjection));
+			long time = FileUtils.getFileLastModified(path);
 			String createTime = TimeUtils.millis2String(time, new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()));
 			long size = cursor.getLong(cursor.getColumnIndexOrThrow(sizeProjection));
 			list.add(new FtpCategoryEntity(name, path, createTime, ConvertUtils.byte2FitMemorySize(size, 2)));
