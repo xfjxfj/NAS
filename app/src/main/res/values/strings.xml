@@ -202,7 +202,7 @@
     <string name="contacts_record_text">联系人</string>
     <string name="contacts_record_tips2">已绑定本设备用户</string>
     <string name="contacts_add_devices">添加NAS设备</string>
-    <string name="contacts_add_devices2">接受邀请</string>
+    <string name="contacts_add_devices2">发送邀请</string>
     <string name="contacts_add_devices3">请输入设备序列号</string>
     <string name="contacts_add_devices4">请输入联系人名称</string>
     <string name="contacts_add_devices5">暂无通话记录</string>
