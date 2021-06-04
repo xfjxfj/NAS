@@ -1,6 +1,7 @@
 package com.viegre.nas.pad.activity.im;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -231,6 +232,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
+
         switch (v.getId()) {
             case R.id.textView2:
                 MessageDialog.show(this, "提示", "确定删除通话记录吗", "是", "取消")
@@ -255,8 +257,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                                         });
                                     }
                                 }, 1000);
-
-
                                 return false;
                             }
                         })
