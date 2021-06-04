@@ -75,6 +75,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -260,7 +261,7 @@ public class MQTTService extends Service {
 	private final MqttCallbackExtended mMqttCallbackExtended = new MqttCallbackExtended() {
 		@Override
 		public void connectComplete(boolean reconnect, String serverURI) {
-			LogUtils.iTag(TAG, "connectComplete", SPUtils.getInstance().getString(SPConfig.ANDROID_ID), serverURI);
+			LogUtils.iTag(TAG, "Mqtt连接成功, sn = " + SPUtils.getInstance().getString(SPConfig.ANDROID_ID) + ", serverUri = " + serverURI);
 			try {
 				mMqttAndroidClient.subscribe("nas/device/" + SPUtils.getInstance().getString(SPConfig.ANDROID_ID), 1);
 			} catch (MqttException e) {
@@ -277,11 +278,12 @@ public class MQTTService extends Service {
 		public void messageArrived(String topic, MqttMessage message) {
 			try {
 				if (null != message) {
-					String json = new String(message.getPayload());
-					LogUtils.iTag(TAG, "messageArrived", " topic: " + topic, "message: " + json);
+					String json = new String(message.getPayload(), StandardCharsets.UTF_8);
+					LogUtils.iTag(TAG, "收到消息, topic = " + topic);
+					LogUtils.json(TAG, json);
 					parseMessage(json);
 				} else {
-					LogUtils.eTag(TAG, "messageArrived: 消息为空");
+					LogUtils.eTag(TAG, "消息为空");
 				}
 			} catch (Exception e) {
 				LogUtils.eTag(TAG, e.toString());
@@ -292,9 +294,10 @@ public class MQTTService extends Service {
 		public void deliveryComplete(IMqttDeliveryToken token) {
 			if (null != token) {
 				try {
-					LogUtils.iTag(TAG, "deliveryComplete", new String(token.getMessage().getPayload()));
+					LogUtils.iTag(TAG, "消息发送完毕");
+					LogUtils.json(TAG, new String(token.getMessage().getPayload()));
 				} catch (MqttException e) {
-					LogUtils.eTag(TAG, "connectionLost", e.toString());
+					LogUtils.eTag(TAG, "deliveryComplete: connectionLost", e.toString());
 				}
 			} else {
 				LogUtils.eTag(TAG, "deliveryComplete: token为空");
