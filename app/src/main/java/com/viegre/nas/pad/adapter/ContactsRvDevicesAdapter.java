@@ -48,7 +48,6 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
         holder.de_laytou.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "123", Toast.LENGTH_LONG).show();
 //                DialogSettings.use_blur = true;
                 DialogSettings.isUseBlur = true;
                 CustomDialog.build((AppCompatActivity) mContext, R.layout.contacts_add_devices_dialog, new CustomDialog.OnBindView() {

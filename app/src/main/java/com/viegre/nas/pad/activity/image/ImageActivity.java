@@ -43,7 +43,6 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
     private volatile boolean mIsPublic = true;
     private List<ImageEntity> imageList;
     private ImageListAdapter mImageListAdapter;
-
     private RightPopupWindows rightpopuwindows;
 
     @Override
@@ -164,43 +163,3 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
         }
     };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
