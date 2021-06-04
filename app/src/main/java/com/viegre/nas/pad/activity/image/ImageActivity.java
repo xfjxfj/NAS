@@ -92,7 +92,6 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
     }
 
     private void getImageList() {
-
         ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<ImageEntity>>() {
             @Override
             public List<ImageEntity> doInBackground() {
