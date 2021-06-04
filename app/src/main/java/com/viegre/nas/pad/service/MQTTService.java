@@ -1304,6 +1304,7 @@ public class MQTTService extends Service {
 	private boolean isAudio(String name) {
 		List<String> nameList = new ArrayList<>();
 		nameList.add("3gp");
+		nameList.add("mp3");
 		nameList.add("m4a");
 		nameList.add("aac");
 		nameList.add("flac");
