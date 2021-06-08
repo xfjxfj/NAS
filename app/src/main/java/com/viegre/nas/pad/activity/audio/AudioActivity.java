@@ -35,7 +35,7 @@ import nl.changer.audiowife.AudioWife;
  * 音频管理页
  * Created by レインマン on 2021/01/18 16:36 with Android Studio.
  */
-public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
+public class  	AudioActivity extends BaseActivity<ActivityAudioBinding> {
 
 	private AudioListAdapter mAudioListAdapter;
 	private volatile boolean mIsPublic = true;
@@ -147,11 +147,13 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
 			@Override
 			public List<AudioEntity> doInBackground() {
 				List<AudioEntity> audioList = new ArrayList<>();
-				Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-				                                           new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID, MediaStore.Audio.Media.DURATION},
-				                                           MediaStore.Audio.Media.DATA + " like ?",
-				                                           new String[]{(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE) + "%"},
-				                                           MediaStore.Audio.Media.DISPLAY_NAME + " desc");
+//				Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+//				                                           new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID, MediaStore.Audio.Media.DURATION},
+//				                                           MediaStore.Audio.Media.DATA + " like ?",
+//				                                           new String[]{(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE) + "%"},
+//				                                           MediaStore.Audio.Media.DISPLAY_NAME + " desc");
+
+				Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
 				if (null != cursor) {
 					while (cursor.moveToNext()) {
 						String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
