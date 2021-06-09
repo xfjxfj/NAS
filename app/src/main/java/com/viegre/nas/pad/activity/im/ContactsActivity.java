@@ -100,7 +100,8 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         mRecordData = getRecordData();
         initRecordData(mRecordData);
         if (mRecordData.size() == 0) {
-            contactsRv1.setVisibility(View.GONE);//无数据隐藏列表
+//            contactsRv1.setVisibility(View.GONE);//无数据隐藏列表
+            ResetRecord();
         }
     }
 
@@ -206,6 +207,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                                 mFriendData.add(new ContactsBean("ZoZcZcKK", "", "夜神模拟器-pad", "666"));
                                 mFriendData.add(new ContactsBean("RlRbRbGG", "", "设备2-pad", "666"));
                                 mFriendData.add(new ContactsBean("OkORORNN", "", "设备3-oppo", "1313"));
+                                mFriendData.add(new ContactsBean("-a-X-Xoo", "", "设备4-小米re", "1313"));
                             }
                             TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
                             initFriendData(mFriendData);
@@ -279,7 +281,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
             e.printStackTrace();
         }
         initRecordData(mRecordData);
-
         textRecord.setVisibility(View.VISIBLE);//显示提示信息
     }
 }

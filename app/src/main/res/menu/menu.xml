@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/send" android:title="语音呼叫" ></item>
+    <item android:id="@+id/look" android:title="视频呼叫"></item>
+    <item android:id="@+id/setname" android:title="修改名称"></item>
+    <item android:id="@+id/delete" android:title="删除设备"></item>
+</menu>

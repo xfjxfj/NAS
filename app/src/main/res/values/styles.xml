@@ -93,4 +93,8 @@
 		<item name="android:textSize">16px</item>
 		<item name="android:singleLine">true</item>
 	</style>
+	<style name="contacts_popmenu">
+		<item name="android:textColor">@color/image_puwind_button_text_1</item>
+		<item name="android:popupBackground">@color/ignore_this_network</item>
+	</style>
 </resources>
