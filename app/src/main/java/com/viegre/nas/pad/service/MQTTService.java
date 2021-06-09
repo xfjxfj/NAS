@@ -182,12 +182,13 @@ public class MQTTService extends Service {
 			ListenerFactory listenerFactory = new ListenerFactory();
 			listenerFactory.setPort(2121);//设置端口号，非ROOT不可使用1024以下的端口
 			DataConnectionConfigurationFactory dataConnectionConfigurationFactory = new DataConnectionConfigurationFactory();
-			dataConnectionConfigurationFactory.setPassivePorts("23210-23219");
+			dataConnectionConfigurationFactory.setPassivePorts("20000-30000");
 			listenerFactory.setIdleTimeout(0);
 			dataConnectionConfigurationFactory.setIdleTime(0);
 			listenerFactory.setDataConnectionConfiguration(dataConnectionConfigurationFactory.createDataConnectionConfiguration());
 
 			ConnectionConfigFactory connectionConfigFactory = new ConnectionConfigFactory();
+			connectionConfigFactory.setMaxLogins(10000);
 			connectionConfigFactory.setAnonymousLoginEnabled(false);
 			connectionConfigFactory.setMaxLoginFailures(5);
 			connectionConfigFactory.setLoginFailureDelay(2000);
@@ -348,6 +349,7 @@ public class MQTTService extends Service {
 //                        PopupManager.INSTANCE.showCustomXPopup(this, new LoginTimePopup(this));
 						ActivityUtils.finishActivity(LoginActivity.class);
 						break;
+
 					//设备信息
 					case MQTTMsgEntity.MSG_DEVICE_INFO:
 						sendMQTTMsg(deviceInfo(mqttMsgEntity.getFromId()));
@@ -749,22 +751,21 @@ public class MQTTService extends Service {
 								List<FtpFileQueryEntity> ftpFileList = new ArrayList<>();
 								ContentResolver contentResolver = getContentResolver();
 								Cursor cursor = contentResolver.query(MediaStore.Files.getContentUri("external"),
-								                                      new String[]{MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.DATE_ADDED, MediaStore.Files.FileColumns.TITLE},
+								                                      new String[]{MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.TITLE},
 								                                      selection,
 								                                      selectionArgs,
-								                                      MediaStore.Files.FileColumns.DATE_ADDED + " desc");
+								                                      null);
 								if (null != cursor) {
 									while (cursor.moveToNext()) {
 										String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
-										if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
+										if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE + mqttMsgEntity.getFromId() + File.separator)) {
 											continue;
 										}
 										FtpFileQueryEntity ftpFileQueryEntity = new FtpFileQueryEntity();
 										ftpFileQueryEntity.setName(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE)));
 										ftpFileQueryEntity.setPath(path);
 										ftpFileQueryEntity.setType(FileUtils.isDir(path) ? "dir" : "file");
-										long time = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_ADDED));
-										ftpFileQueryEntity.setCreateTime(TimeUtils.millis2String(time,
+										ftpFileQueryEntity.setCreateTime(TimeUtils.millis2String(FileUtils.getFileLastModified(path),
 										                                                         new SimpleDateFormat("yyyy-MM-dd HH:mm",
 										                                                                              Locale.getDefault())));
 										ftpFileQueryEntity.setSrc(path.startsWith(PathConfig.PUBLIC) ? "public" : "private");
@@ -1257,6 +1258,8 @@ public class MQTTService extends Service {
 				}
 			}
 
+			String src = path.startsWith(PathConfig.PUBLIC) ? "public" : path.startsWith(PathConfig.PRIVATE) ? "private" : "unknown";
+
 			String name = FileUtils.getFileName(path);
 			if ("document".equals(category) && !isDocument(FileUtils.getFileExtension(name))) {
 				continue;
@@ -1272,7 +1275,7 @@ public class MQTTService extends Service {
 			long time = FileUtils.getFileLastModified(path);
 			String createTime = TimeUtils.millis2String(time, new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()));
 			long size = cursor.getLong(cursor.getColumnIndexOrThrow(sizeProjection));
-			list.add(new FtpCategoryEntity(name, path, createTime, ConvertUtils.byte2FitMemorySize(size, 2)));
+			list.add(new FtpCategoryEntity(name, path, createTime, ConvertUtils.byte2FitMemorySize(size, 2), src));
 		}
 		cursor.close();
 		return list;

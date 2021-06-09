@@ -11,8 +11,15 @@ public class FtpBanListEntity extends LitePalSupport implements Serializable {
 
 	private String path;
 	private String phoneNum;
+	private String type;
 
 	public FtpBanListEntity() {}
+
+	public FtpBanListEntity(String path, String phoneNum, String type) {
+		this.path = path;
+		this.phoneNum = phoneNum;
+		this.type = type;
+	}
 
 	public FtpBanListEntity(String path, String phoneNum) {
 		this.path = path;
@@ -33,5 +40,13 @@ public class FtpBanListEntity extends LitePalSupport implements Serializable {
 
 	public void setPhoneNum(String phoneNum) {
 		this.phoneNum = phoneNum;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }
