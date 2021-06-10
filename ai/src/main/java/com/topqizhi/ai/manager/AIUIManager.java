@@ -36,7 +36,7 @@ public enum AIUIManager {
 
 	INSTANCE;
 
-	public static final boolean IS_HARD_WAKEUP = false;
+	public static final boolean IS_HARD_WAKEUP = true;
 
 	private static final String TAG = AIUIManager.class.getSimpleName();
 
@@ -215,6 +215,10 @@ public enum AIUIManager {
 			@Override
 			public void onSuccess(Void result) {}
 		}, delay, TimeUnit.MILLISECONDS);
+	}
+
+	public void startTTS(String text) {
+		startTTS(text, null);
 	}
 
 	private final AIUIListener mAIUIListener = new AIUIListener() {

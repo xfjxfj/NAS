@@ -63,9 +63,6 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	private NetworkFragment mNetworkFragment;
 	private NetworkDetailFragment mNetworkDetailFragment;
 	private CountDownTimer mGuideSkipCountDownTimer;
-//	private PrefsBean prefsBean;
-//	private final Logger logger = LoggerFactory.getLogger(getClass());
-//	private final KeyFingerprintProvider keyFingerprintProvider = new KeyFingerprintProvider();
 
 	@Override
 	protected void initialize() {
