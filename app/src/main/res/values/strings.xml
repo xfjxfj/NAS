@@ -206,6 +206,10 @@
     <string name="contacts_add_devices3">请输入设备序列号</string>
     <string name="contacts_add_devices4">请输入联系人名称</string>
     <string name="contacts_add_devices5">暂无通话记录</string>
+    <string name="contacts_add_devices6">语音呼叫</string>
+    <string name="contacts_add_devices7">视频呼叫</string>
+    <string name="contacts_add_devices8">修改设备</string>
+    <string name="contacts_add_devices9">删除设备</string>
     <!--    WebView界面-->
     <string name="webview_back">返回</string>
 
