@@ -18,6 +18,8 @@ public class AudioEntity extends LitePalSupport {
 	private String path;
 	@Column(ignore = true) private boolean isChecked;
 
+	public AudioEntity() {}
+
 	public AudioEntity(String name, String path) {
 		this.name = name;
 		this.path = path;

@@ -171,6 +171,7 @@ dependencies {
 	//https://github.com/kongzue/DialogV3
 	implementation 'com.kongzue.dialog_v3x:dialog:3.2.4'
 	//https://github.com/liujingxing/okhttp-RxHttp
+	//https://github.com/liujingxing/rxhttp/wiki
 	implementation 'com.github.liujingxing.rxhttp:rxhttp:2.6.1'
 	annotationProcessor 'com.github.liujingxing.rxhttp:rxhttp-compiler:2.6.1'
 	implementation 'com.github.liujingxing.rxlife:rxlife-coroutine:2.1.0'

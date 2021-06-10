@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
@@ -39,11 +41,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import androidx.annotation.RequiresApi;
 import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 import hdp.http.APIConstant;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -64,7 +67,8 @@ public enum SkillManager {
 	public static final String MUSIC_PLAY_URL = "http://music.163.com/song/media/outer/url?id=";
 
 	private final Set<TvChannelInfoEntity> mTvChannelInfoSet = new HashSet<>();
-	private volatile boolean mIsQueryMusicTtsPlayEnd = true;
+	private final List<AudioEntity> mPlayList = new CopyOnWriteArrayList<>();
+	private boolean mIsPlayFirst;
 
 	public void parseSkillMsg(String message) {
 		ThreadUtils.executeByCached(new VoidTask() {
@@ -91,8 +95,7 @@ public enum SkillManager {
 
 					case SkillEntity.APP:
 						SkillSemanticArrayEntity appEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
-						parseApp(appEntity.getSemantic().get(0).getIntent(),
-						         appEntity.getSemantic().get(0).getSlots().get(0).getValue());
+						parseApp(appEntity.getSemantic().get(0).getIntent(), appEntity.getSemantic().get(0).getSlots().get(0).getValue());
 						break;
 
 					case SkillEntity.MUSIC_PRO:
@@ -156,8 +159,7 @@ public enum SkillManager {
 
 					case "TOPQIZHI.eyecare":
 						SkillSemanticArrayEntity iotControlEntity = JSON.parseObject(message, SkillSemanticArrayEntity.class);
-						AIUIManager.INSTANCE.startTTS(iotControlEntity.getAnswer().getText(),
-						                              () -> parseIotControl(iotControlEntity));
+						AIUIManager.INSTANCE.startTTS(iotControlEntity.getAnswer().getText(), () -> parseIotControl(iotControlEntity));
 						break;
 
 					default:
@@ -257,17 +259,16 @@ public enum SkillManager {
 					//打开电视
 					case "live":
 						WlMusic.getInstance().stop();
-						AIUIManager.INSTANCE.startTTS(StringUtils.getString(R.string.initial_response),
-						                              () -> ThreadUtils.runOnUiThread(() -> {
-							                              Intent liveIntent = new Intent();
-							                              liveIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
-							                              liveIntent.putExtra(APIConstant.HIDE_EXIT_DIAG, true);
-							                              liveIntent.setAction("com.hdpfans.live.start");
-							                              liveIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-							                              liveIntent.putExtra("ChannelNum", 1);
-							                              ActivityUtils.startActivity(liveIntent);
-							                              AIUIManager.INSTANCE.startListening();
-						                              }));
+						AIUIManager.INSTANCE.startTTS(StringUtils.getString(R.string.initial_response), () -> ThreadUtils.runOnUiThread(() -> {
+							Intent liveIntent = new Intent();
+							liveIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
+							liveIntent.putExtra(APIConstant.HIDE_EXIT_DIAG, true);
+							liveIntent.setAction("com.hdpfans.live.start");
+							liveIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+							liveIntent.putExtra("ChannelNum", 1);
+							ActivityUtils.startActivity(liveIntent);
+							AIUIManager.INSTANCE.startListening();
+						}));
 						break;
 
 					default:
@@ -296,17 +297,16 @@ public enum SkillManager {
 					}
 				}
 				String finalTvchannelPlayId = tvchannelPlayId;
-				AIUIManager.INSTANCE.startTTS(StringUtils.getString(R.string.initial_response),
-				                              () -> ThreadUtils.runOnUiThread(() -> {
-					                              Intent playIntent = new Intent();
-					                              playIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
-					                              playIntent.putExtra(APIConstant.HIDE_EXIT_DIAG, true);
-					                              playIntent.setAction("com.hdpfans.live.start");
-					                              playIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					                              playIntent.putExtra("ChannelNum", Integer.parseInt(finalTvchannelPlayId));
-					                              ActivityUtils.startActivity(playIntent);
-					                              AIUIManager.INSTANCE.startListening();
-				                              }));
+				AIUIManager.INSTANCE.startTTS(StringUtils.getString(R.string.initial_response), () -> ThreadUtils.runOnUiThread(() -> {
+					Intent playIntent = new Intent();
+					playIntent.putExtra(APIConstant.HIDE_LOADING_DEFAULT, true);
+					playIntent.putExtra(APIConstant.HIDE_EXIT_DIAG, true);
+					playIntent.setAction("com.hdpfans.live.start");
+					playIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					playIntent.putExtra("ChannelNum", Integer.parseInt(finalTvchannelPlayId));
+					ActivityUtils.startActivity(playIntent);
+					AIUIManager.INSTANCE.startListening();
+				}));
 				break;
 
 			default:
@@ -326,23 +326,17 @@ public enum SkillManager {
 								                              () -> ThreadUtils.runOnUiThread(() -> {
 									                              //获取ActivityManager
 									                              ActivityManager mAm = (ActivityManager) Utils.getApp()
-									                                                                           .getSystemService(
-											                                                                           Context.ACTIVITY_SERVICE);
+									                                                                           .getSystemService(Context.ACTIVITY_SERVICE);
 									                              // 获得当前运行的task
-									                              List<ActivityManager.RunningTaskInfo> taskList = mAm.getRunningTasks(
-											                              100);
+									                              List<ActivityManager.RunningTaskInfo> taskList = mAm.getRunningTasks(100);
 									                              for (ActivityManager.RunningTaskInfo rti : taskList) {
 										                              //找到当前应用的task，并启动task的栈顶activity，达到程序切换到前台
-										                              if (rti.topActivity.getPackageName()
-										                                                 .equals(Utils.getApp()
-										                                                              .getPackageName())) {
+										                              if (rti.topActivity.getPackageName().equals(Utils.getApp().getPackageName())) {
 											                              //判断app进程是否存活
-											                              Log.i("NotificationReceiver",
-											                                    "the app process is alive");
+											                              Log.i("NotificationReceiver", "the app process is alive");
 											                              try {
 												                              Intent resultIntent = new Intent(Utils.getApp(),
-												                                                               Class.forName(rti.topActivity
-														                                                                             .getClassName()));
+												                                                               Class.forName(rti.topActivity.getClassName()));
 												                              resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 												                              Utils.getApp().startActivity(resultIntent);
 											                              } catch (ClassNotFoundException e) {
@@ -353,15 +347,13 @@ public enum SkillManager {
 										                              }
 									                              }
 									                              //若没有找到运行的task，用户结束了task或被系统释放，则重新启动mainactivity
-									                              ActivityUtils.startLauncherActivity(Utils.getApp()
-									                                                                       .getPackageName());
+									                              ActivityUtils.startLauncherActivity(Utils.getApp().getPackageName());
 									                              AIUIManager.INSTANCE.startListening();
 								                              }));
 								break;
 
 							default:
-								AIUIManager.INSTANCE.startTTS(skillSemanticObjectEntity.getText(),
-								                              AIUIManager.INSTANCE::startListening);
+								AIUIManager.INSTANCE.startTTS(skillSemanticObjectEntity.getText(), AIUIManager.INSTANCE::startListening);
 								break;
 						}
 						break;
@@ -424,14 +416,11 @@ public enum SkillManager {
 			return;
 		}
 
-		mIsQueryMusicTtsPlayEnd = false;
-		AIUIManager.INSTANCE.startTTS("正在查询，请稍候。", () -> mIsQueryMusicTtsPlayEnd = true);
-
-		StringBuilder keywords = new StringBuilder();
+		StringBuffer keywords = new StringBuffer();
 		if (slots == null || slots.size() == 0) {
-			keywords = new StringBuilder(musicProEntity.getText());
+			keywords = new StringBuffer(musicProEntity.getText());
 			if ("RANDOM_SEARCH".equals(intent)) {
-				keywords = new StringBuilder("中文歌曲");
+				keywords = new StringBuffer("中文歌曲");
 			}
 		} else {
 			for (int i = 0; i < slots.size(); i++) {
@@ -463,20 +452,8 @@ public enum SkillManager {
 						}
 						cursor.close();
 						if (!audioList.isEmpty()) {
-							if (mIsQueryMusicTtsPlayEnd) {
-								AIUIManager.INSTANCE.startTTS("即将为您播放" + audioList.get(0).getName(),
-								                              () -> playMusic(audioList),
-								                              200L);
-							} else {
-								while (true) {
-									if (mIsQueryMusicTtsPlayEnd) {
-										AIUIManager.INSTANCE.startTTS("即将为您播放" + audioList.get(0).getName(),
-										                              () -> playMusic(audioList),
-										                              200L);
-										break;
-									}
-								}
-							}
+							AIUIManager.INSTANCE.startTTS("即将为您播放" + audioList.get(0).getName());
+							playMusic(audioList);
 							return;
 						}
 					}
@@ -491,9 +468,7 @@ public enum SkillManager {
 		}
 
 		//网络查询歌曲
-		RxHttp.get(MUSIC_SERVER + "search")
-		      .setAssemblyEnabled(false)
-		      .add("limit", 5)
+		RxHttp.get(MUSIC_SERVER + "search").setAssemblyEnabled(false).add("limit", 10)
 		      .add("keywords", keywords.toString())
 		      .asString()
 		      .subscribe(new Observer<String>() {
@@ -504,76 +479,25 @@ public enum SkillManager {
 			      public void onNext(@NonNull String s) {
 				      LogUtils.iTag("parseMusicPro", "查询歌曲");
 				      JSONObject resultObj = JSON.parseObject(s);
-				      List<JSONObject> musicObjList = JSONObject.parseArray(resultObj.getJSONObject("result")
-				                                                                     .getJSONArray("songs")
-				                                                                     .toJSONString(), JSONObject.class);
-				      //乱序排列
-				      Collections.shuffle(musicObjList);
-				      List<AudioEntity> audioList = new ArrayList<>();
-				      //遍历检查歌曲是否能播放
-				      for (JSONObject musicObj : musicObjList) {
-					      String id = musicObj.getString("id");
-					      String name = musicObj.getString("name");
-					      //同步请求
-					      RxHttp.get(MUSIC_SERVER + "check/music")
-					            .setAssemblyEnabled(false)
-					            .add("id", id)
-					            .setSync()
-					            .asString()
-					            .subscribe(new Observer<String>() {
-						            @Override
-						            public void onSubscribe(@NonNull Disposable d) {}
-
-						            @Override
-						            public void onNext(@NonNull String s) {
-							            LogUtils.iTag("parseMusicPro", "遍历检查歌曲是否能播放");
-							            JSONObject checkJson = JSON.parseObject(s);
-							            if (checkJson.getBoolean("success")) {
-								            audioList.add(new AudioEntity(name, MUSIC_PLAY_URL + id + ".mp3"));
-							            }
-						            }
-
-						            @Override
-						            public void onError(@NonNull Throwable e) {
-							            e.printStackTrace();
-							            LogUtils.iTag("parseMusicPro", "遍历歌曲报错", e);
-						            }
-
-						            @Override
-						            public void onComplete() {
-							            LogUtils.iTag("parseMusicPro", "遍历完毕");
-						            }
-					            });
+				      List<JSONObject> musicObjList = JSONObject.parseArray(resultObj.getJSONObject("result").getJSONArray("songs").toJSONString(),
+				                                                            JSONObject.class);
+				      if (null == musicObjList || musicObjList.isEmpty()) {
+					      AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。");
+					      return;
 				      }
 
-				      if (!audioList.isEmpty()) {
-					      if (mIsQueryMusicTtsPlayEnd) {
-						      AIUIManager.INSTANCE.startTTS("即将为您播放" + audioList.get(0).getName(),
-						                                    () -> playMusic(audioList),
-						                                    200L);
-					      } else {
-						      while (true) {
-							      if (mIsQueryMusicTtsPlayEnd) {
-								      AIUIManager.INSTANCE.startTTS("即将为您播放" + audioList.get(0).getName(),
-								                                    () -> playMusic(audioList),
-								                                    200L);
-								      break;
-							      }
-						      }
-					      }
-				      } else {
-					      WlMusic.getInstance().stop();
-					      if (mIsQueryMusicTtsPlayEnd) {
-						      AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。", null, 200L);
-					      } else {
-						      while (true) {
-							      if (mIsQueryMusicTtsPlayEnd) {
-								      AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。", null, 200L);
-								      break;
-							      }
-						      }
-					      }
+				      List<String[]> playList = new ArrayList<>();
+				      for (JSONObject jsonObject : musicObjList) {
+					      playList.add(new String[]{jsonObject.getString("name"), jsonObject.getString("id")});
 				      }
+				      ThreadUtils.cancel(ThreadUtils.getCachedPool());
+				      ThreadUtils.executeByCached(new VoidTask() {
+					      @Override
+					      public Void doInBackground() {
+						      queryFirstMusic(playList);
+						      return null;
+					      }
+				      });
 			      }
 
 			      @Override
@@ -581,16 +505,7 @@ public enum SkillManager {
 				      e.printStackTrace();
 				      WlMusic.getInstance().stop();
 				      LogUtils.iTag("parseMusicPro", "查询歌曲报错", e);
-				      if (mIsQueryMusicTtsPlayEnd) {
-					      AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。", null, 200L);
-				      } else {
-					      while (true) {
-						      if (mIsQueryMusicTtsPlayEnd) {
-							      AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。", null, 200L);
-							      break;
-						      }
-					      }
-				      }
+				      AIUIManager.INSTANCE.startTTS("对不起，没有查询到歌曲，请再说一遍。");
 			      }
 
 			      @Override
@@ -647,8 +562,7 @@ public enum SkillManager {
 			JSONObject jsonObject = JSON.parseObject(xmlString);
 			JSONObject channel_list = jsonObject.getJSONObject("channel_list");
 			JSONArray classArr = channel_list.getJSONArray("class");
-			List<TvChannelInfoEntityClassEntity> tvInfoClassList = JSON.parseArray(classArr.toJSONString(),
-			                                                                       TvChannelInfoEntityClassEntity.class);
+			List<TvChannelInfoEntityClassEntity> tvInfoClassList = JSON.parseArray(classArr.toJSONString(), TvChannelInfoEntityClassEntity.class);
 			for (TvChannelInfoEntityClassEntity tvInfoClass : tvInfoClassList) {
 				mTvChannelInfoSet.addAll(tvInfoClass.getChannel());
 			}
@@ -665,11 +579,7 @@ public enum SkillManager {
 				                     .query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
 				                            new String[]{MediaStore.Video.VideoColumns.DATA, MediaStore.Video.VideoColumns.DISPLAY_NAME, MediaStore.Video.VideoColumns.DATE_MODIFIED},
 				                            MediaStore.Video.Media.DISPLAY_NAME + " LIKE ? ",
-				                            new String[]{"%" + videoEntity.getSemantic()
-				                                                          .get(0)
-				                                                          .getSlots()
-				                                                          .get(0)
-				                                                          .getValue() + "%"},
+				                            new String[]{"%" + videoEntity.getSemantic().get(0).getSlots().get(0).getValue() + "%"},
 				                            MediaStore.Video.Media.DATE_MODIFIED + " desc");
 
 				if (null != cursor) {
@@ -699,19 +609,11 @@ public enum SkillManager {
 			@Override
 			public void onSuccess(List<VideoEntity> result) {
 				if (result.isEmpty()) {
-					AIUIManager.INSTANCE.startTTS("以下是" + videoEntity.getSemantic()
-					                                                 .get(0)
-					                                                 .getSlots()
-					                                                 .get(0)
-					                                                 .getValue() + "的搜索结果。",
+					AIUIManager.INSTANCE.startTTS("以下是" + videoEntity.getSemantic().get(0).getSlots().get(0).getValue() + "的搜索结果。",
 					                              () -> ThreadUtils.runOnUiThread(() -> {
 						                              Intent searchIntent = new Intent("myvst.intent.action.SearchActivity");
 						                              searchIntent.putExtra("search_word",
-						                                                    videoEntity.getSemantic()
-						                                                               .get(0)
-						                                                               .getSlots()
-						                                                               .get(0)
-						                                                               .getValue());
+						                                                    videoEntity.getSemantic().get(0).getSlots().get(0).getValue());
 						                              searchIntent.putExtra("check_back_home", false);
 						                              ActivityUtils.startActivity(searchIntent);
 						                              AIUIManager.INSTANCE.startListening();
@@ -759,5 +661,34 @@ public enum SkillManager {
 		WlMusic.getInstance().setOnPreparedListener(() -> WlMusic.getInstance().start());
 		WlMusic.getInstance().prePared();
 		AIUIManager.INSTANCE.startListening();
+	}
+
+	@RequiresApi(api = Build.VERSION_CODES.N)
+	private void queryFirstMusic(List<String[]> playList) {
+		mIsPlayFirst = false;
+		mPlayList.clear();
+		playList.parallelStream().forEach(strings -> {
+			String result = "";
+			try {
+				result = RxHttp.get(MUSIC_SERVER + "check/music").setAssemblyEnabled(false).add("id", strings[1]).executeString();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (!TextUtils.isEmpty(result)) {
+				JSONObject jsonObject = JSON.parseObject(result);
+				if (jsonObject.containsKey("success") && jsonObject.getBoolean("success")) {
+					ThreadUtils.runOnUiThread(() -> {
+						if (!mIsPlayFirst) {
+							mIsPlayFirst = true;
+							mPlayList.add(new AudioEntity(strings[0], MUSIC_PLAY_URL + strings[1] + ".mp3"));
+							AIUIManager.INSTANCE.startTTS("即将为您播放" + mPlayList.get(0).getName());
+							playMusic(mPlayList);
+						} else {
+							mPlayList.add(new AudioEntity(strings[0], MUSIC_PLAY_URL + strings[1] + ".mp3"));
+						}
+					});
+				}
+			}
+		});
 	}
 }
