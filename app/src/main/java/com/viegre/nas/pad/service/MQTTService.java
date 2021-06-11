@@ -587,7 +587,10 @@ public class MQTTService extends Service {
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<RecycleBinEntity>>() {
 							@Override
 							public List<RecycleBinEntity> doInBackground() {
-								return LitePal.findAll(RecycleBinEntity.class);
+								return LitePal.where("pathBeforeDelete LIKE ? OR pathBeforeDelete LIKE ?",
+								                     PathConfig.PUBLIC + "%",
+								                     PathConfig.PRIVATE + mqttMsgEntity.getFromId() + File.separator + "%")
+								              .find(RecycleBinEntity.class);
 							}
 
 							@Override
@@ -641,16 +644,26 @@ public class MQTTService extends Service {
 						List<FtpCmdEntity> erasePathList = JSON.parseObject(mqttMsgEntity.getParam())
 						                                       .getJSONArray("erasePathList")
 						                                       .toJavaList(FtpCmdEntity.class);
-						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
+						ThreadUtils.executeByCached(new VoidTask() {
+							@SuppressLint("NewApi")
 							@Override
-							public Boolean doInBackground() {
+							public Void doInBackground() {
 								if (erase) {
-									FileUtils.deleteAllInDir(PathConfig.RECYCLE_BIN);
-									LitePal.deleteAll(RecycleBinEntity.class);
-									return true;
+									List<RecycleBinEntity> eraseList = LitePal.where("pathBeforeDelete LIKE ? OR pathBeforeDelete LIKE ?",
+									                                                 PathConfig.PUBLIC + "%",
+									                                                 PathConfig.PRIVATE + mqttMsgEntity.getFromId() + File.separator + "%")
+									                                          .find(RecycleBinEntity.class);
+									if (!eraseList.isEmpty()) {
+										eraseList.forEach(recycleBinEntity -> {
+											FileUtils.delete(recycleBinEntity.getPathAfterDelete());
+											recycleBinEntity.delete();
+										});
+									}
+									return null;
 								}
+
 								if (null == erasePathList || erasePathList.isEmpty()) {
-									return false;
+									return null;
 								} else {
 									for (FtpCmdEntity ftpCmdEntity : erasePathList) {
 										FileUtils.delete(ftpCmdEntity.getPath());
@@ -661,16 +674,13 @@ public class MQTTService extends Service {
 										}
 									}
 								}
-								return true;
-							}
 
-							@Override
-							public void onSuccess(Boolean result) {
 								Map<String, Object> ftpEraseParamMap = new HashMap<>();
-								ftpEraseParamMap.put("result", result);
+								ftpEraseParamMap.put("result", true);
 								MQTTMsgEntity ftpEraseMsg = ftpErase(mqttMsgEntity.getFromId());
 								ftpEraseMsg.setParam(new JSONObject(ftpEraseParamMap).toJSONString());
 								sendMQTTMsg(ftpEraseMsg);
+								return null;
 							}
 						});
 						break;
@@ -722,7 +732,10 @@ public class MQTTService extends Service {
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<FtpFavoritesEntity>>() {
 							@Override
 							public List<FtpFavoritesEntity> doInBackground() {
-								return LitePal.findAll(FtpFavoritesEntity.class);
+								return LitePal.where("path LIKE ? OR path LIKE ?",
+								                     PathConfig.PUBLIC + "%",
+								                     PathConfig.PRIVATE + mqttMsgEntity.getFromId() + File.separator + "%")
+								              .find(FtpFavoritesEntity.class);
 							}
 
 							@Override
@@ -738,22 +751,19 @@ public class MQTTService extends Service {
 
 					//ftp文件查询
 					case MQTTMsgEntity.MSG_FTP_QUERY_LIST:
+						String queryPath = JSON.parseObject(mqttMsgEntity.getParam()).getString("path");
 						String name = JSON.parseObject(mqttMsgEntity.getParam()).getString("name");
 						int page = JSON.parseObject(mqttMsgEntity.getParam()).getInteger("page");
 						int size = JSON.parseObject(mqttMsgEntity.getParam()).getInteger("size");
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<FtpFileQueryPaginationEntity>() {
 							@Override
 							public FtpFileQueryPaginationEntity doInBackground() {
-								String searchTxt = sqliteEscape(name);
-								String selection = MediaStore.Files.FileColumns.TITLE + " LIKE ? escape '/' ";
-								String searchStr = "%" + searchTxt + "%";
-								String[] selectionArgs = new String[]{searchStr};
 								List<FtpFileQueryEntity> ftpFileList = new ArrayList<>();
 								ContentResolver contentResolver = getContentResolver();
 								Cursor cursor = contentResolver.query(MediaStore.Files.getContentUri("external"),
-								                                      new String[]{MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.TITLE},
-								                                      selection,
-								                                      selectionArgs,
+								                                      new String[]{MediaStore.Files.FileColumns.DATA},
+								                                      MediaStore.Files.FileColumns.DATA + " LIKE ?",
+								                                      new String[]{queryPath + "%" + name + "%"},
 								                                      null);
 								if (null != cursor) {
 									while (cursor.moveToNext()) {
@@ -762,7 +772,7 @@ public class MQTTService extends Service {
 											continue;
 										}
 										FtpFileQueryEntity ftpFileQueryEntity = new FtpFileQueryEntity();
-										ftpFileQueryEntity.setName(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE)));
+										ftpFileQueryEntity.setName(FileUtils.getFileName(path));
 										ftpFileQueryEntity.setPath(path);
 										ftpFileQueryEntity.setType(FileUtils.isDir(path) ? "dir" : "file");
 										ftpFileQueryEntity.setCreateTime(TimeUtils.millis2String(FileUtils.getFileLastModified(path),
@@ -1197,19 +1207,6 @@ public class MQTTService extends Service {
 			}
 		}
 		return len;
-	}
-
-	private String sqliteEscape(String keyWord) {
-		keyWord = keyWord.replace("/", "//");
-		keyWord = keyWord.replace("'", "''");
-		keyWord = keyWord.replace("[", "/[");
-		keyWord = keyWord.replace("]", "/]");
-		keyWord = keyWord.replace("%", "/%");
-		keyWord = keyWord.replace("&", "/&");
-		keyWord = keyWord.replace("_", "/_");
-		keyWord = keyWord.replace("(", "/(");
-		keyWord = keyWord.replace(")", "/)");
-		return keyWord;
 	}
 
 	private List<FtpCategoryEntity> queryFtpCategory(boolean privateOnly, String category, String phoneNum) {

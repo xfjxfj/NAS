@@ -1,11 +1,11 @@
 package com.viegre.nas.pad.manager;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.database.Cursor;
-import android.os.Build;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import androidx.annotation.RequiresApi;
 import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 import hdp.http.APIConstant;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -430,10 +429,10 @@ public enum SkillManager {
 					Cursor cursor = Utils.getApp()
 					                     .getContentResolver()
 					                     .query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-					                            new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DATE_MODIFIED},
+					                            new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.TITLE},
 					                            MediaStore.Audio.Media.TITLE + " LIKE ?",
 					                            new String[]{"%" + value + "%"},
-					                            MediaStore.Audio.Media.DATE_MODIFIED + " desc");
+					                            null);
 					if (null != cursor) {
 						List<AudioEntity> audioList = new ArrayList<>();
 						while (cursor.moveToNext()) {
@@ -468,7 +467,9 @@ public enum SkillManager {
 		}
 
 		//网络查询歌曲
-		RxHttp.get(MUSIC_SERVER + "search").setAssemblyEnabled(false).add("limit", 10)
+		RxHttp.get(MUSIC_SERVER + "search")
+		      .setAssemblyEnabled(false)
+		      .add("limit", 10)
 		      .add("keywords", keywords.toString())
 		      .asString()
 		      .subscribe(new Observer<String>() {
@@ -577,10 +578,10 @@ public enum SkillManager {
 				Cursor cursor = Utils.getApp()
 				                     .getContentResolver()
 				                     .query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-				                            new String[]{MediaStore.Video.VideoColumns.DATA, MediaStore.Video.VideoColumns.DISPLAY_NAME, MediaStore.Video.VideoColumns.DATE_MODIFIED},
-				                            MediaStore.Video.Media.DISPLAY_NAME + " LIKE ? ",
-				                            new String[]{"%" + videoEntity.getSemantic().get(0).getSlots().get(0).getValue() + "%"},
-				                            MediaStore.Video.Media.DATE_MODIFIED + " desc");
+				                            new String[]{MediaStore.Video.VideoColumns.DATA},
+				                            MediaStore.Video.Media.DATA + " LIKE ?",
+				                            new String[]{PathConfig.NAS + "%" + videoEntity.getSemantic().get(0).getSlots().get(0).getValue() + "%"},
+				                            null);
 
 				if (null != cursor) {
 					while (cursor.moveToNext()) {
@@ -593,10 +594,7 @@ public enum SkillManager {
 						}
 						String name;
 						String suffix;
-						String displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME));
-						if (null == displayName) {
-							continue;
-						}
+						String displayName = FileUtils.getFileName(path);
 						name = FileUtils.getFileNameNoExtension(displayName);
 						suffix = FileUtils.getFileExtension(displayName);
 						videoList.add(new VideoEntity(name, suffix, path));
@@ -663,7 +661,7 @@ public enum SkillManager {
 		AIUIManager.INSTANCE.startListening();
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.N)
+	@SuppressLint("NewApi")
 	private void queryFirstMusic(List<String[]> playList) {
 		mIsPlayFirst = false;
 		mPlayList.clear();

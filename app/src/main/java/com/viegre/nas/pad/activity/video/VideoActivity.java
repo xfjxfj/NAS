@@ -6,7 +6,6 @@ import android.provider.MediaStore;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
@@ -86,10 +85,10 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 			public List<VideoEntity> doInBackground() {
 				List<VideoEntity> videoList = new ArrayList<>();
 				Cursor cursor = getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-				                                           new String[]{MediaStore.Video.VideoColumns.DATA, MediaStore.Video.VideoColumns.DISPLAY_NAME, MediaStore.Video.VideoColumns.DURATION, MediaStore.Video.VideoColumns.DATE_ADDED},
-				                                           MediaStore.Video.Media.DATA + " like ?",
+				                                           new String[]{MediaStore.Video.VideoColumns.DATA},
+				                                           MediaStore.Video.Media.DATA + " LIKE ?",
 				                                           new String[]{(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE) + "%"},
-				                                           MediaStore.Video.Media.DATE_MODIFIED + " desc");
+				                                           null);
 
 				if (null != cursor) {
 					while (cursor.moveToNext()) {
@@ -97,15 +96,8 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 						if (null == path) {
 							continue;
 						}
-						String name;
-						String suffix;
-						String displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME));
-						if (null == displayName) {
-							name = suffix = StringUtils.getString(R.string.unknown);
-						} else {
-							name = FileUtils.getFileNameNoExtension(displayName);
-							suffix = FileUtils.getFileExtension(displayName);
-						}
+						String name = FileUtils.getFileNameNoExtension(path);
+						String suffix = FileUtils.getFileExtension(path);
 						videoList.add(new VideoEntity(name, suffix, path));
 					}
 					cursor.close();

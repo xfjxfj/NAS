@@ -5,11 +5,8 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.View;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
 import com.blankj.utilcode.util.ColorUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.fragment.BaseFragment;
@@ -32,6 +29,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 /**
  * Created by レインマン on 2021/03/11 11:45 with Android Studio.
@@ -103,9 +104,7 @@ public class ScreenCustomImageFragment extends BaseFragment<FragmentScreenCustom
 		mViewBinding.rvScreenCustomImageList.setLayoutManager(new GridLayoutManager(mActivity, 4));
 		mViewBinding.rvScreenCustomImageList.addItemDecoration(new GridSpaceItemDecoration(4, 12, 12));
 		mScreenCustomImageAdapter.setOnItemClickListener((adapter, view, position) -> {
-			mScreenCustomImageAdapter.getData()
-			                         .get(position)
-			                         .setCheck(!mScreenCustomImageAdapter.getData().get(position).isCheck());
+			mScreenCustomImageAdapter.getData().get(position).setCheck(!mScreenCustomImageAdapter.getData().get(position).isCheck());
 			mScreenCustomImageAdapter.notifyItemChanged(position);
 		});
 		mViewBinding.rvScreenCustomImageList.setAdapter(mScreenCustomImageAdapter);
@@ -164,8 +163,8 @@ public class ScreenCustomImageFragment extends BaseFragment<FragmentScreenCustom
 			public void onSuccess(List<ImageAlbumEntity> result) {
 				mScreenCustomAlbumAdapter = new ScreenCustomAlbumAdapter();
 				mViewBinding.rvScreenCustomAlbumList.setLayoutManager(new LinearLayoutManager(mActivity));
-				mViewBinding.rvScreenCustomAlbumList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(
-						ColorUtils.getColor(R.color.screen_custom_album_list_divider)).size(1).margin(25, 25).build());
+				mViewBinding.rvScreenCustomAlbumList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(
+						R.color.screen_custom_album_list_divider)).size(1).margin(25, 25).build());
 				mViewBinding.rvScreenCustomAlbumList.setAdapter(mScreenCustomAlbumAdapter);
 				//禁用动画以防止更新列表时产生闪烁
 				SimpleItemAnimator simpleItemAnimator = (SimpleItemAnimator) mViewBinding.rvScreenCustomAlbumList.getItemAnimator();
@@ -194,15 +193,15 @@ public class ScreenCustomImageFragment extends BaseFragment<FragmentScreenCustom
 				List<ImageEntity> imageList = new ArrayList<>();
 				Cursor cursor = mActivity.getContentResolver()
 				                         .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-				                                new String[]{MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_ADDED},
+				                                new String[]{MediaStore.Images.ImageColumns.DATA},
 				                                null,
 				                                null,
-				                                MediaStore.Images.Media.DATE_MODIFIED + " desc");
+				                                null);
 
 				if (null != cursor) {
 					while (cursor.moveToNext()) {
 						String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DATA));
-						if (null == path) {
+						if (null == path || !FileUtils.isFileExists(path)) {
 							continue;
 						}
 						imageList.add(new ImageEntity(path));
