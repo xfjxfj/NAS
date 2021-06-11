@@ -168,6 +168,8 @@ public enum AIUIManager {
 	}
 
 	private void playTTS(String url, Runnable onComplete) {
+		mAIUIAgent.sendMessage(new AIUIMessage(AIUIConstant.CMD_TTS, AIUIConstant.PAUSE, 0, null, null));
+		mTTSCallback = onComplete;
 		mMediaPlayer = new MediaPlayer();
 		try {
 			mMediaPlayer.setDataSource(url);
@@ -175,6 +177,7 @@ public enum AIUIManager {
 			mMediaPlayer.setLooping(false);
 			mMediaPlayer.setOnCompletionListener(mp -> {
 				mMediaPlayer.release();
+				mMediaPlayer = null;
 				onComplete.run();
 			});
 			mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
@@ -182,6 +185,7 @@ public enum AIUIManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 			mMediaPlayer.release();
+			mMediaPlayer = null;
 			onComplete.run();
 		}
 	}

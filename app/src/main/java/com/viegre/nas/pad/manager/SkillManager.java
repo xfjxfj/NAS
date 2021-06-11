@@ -429,9 +429,9 @@ public enum SkillManager {
 					Cursor cursor = Utils.getApp()
 					                     .getContentResolver()
 					                     .query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-					                            new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.TITLE},
-					                            MediaStore.Audio.Media.TITLE + " LIKE ?",
-					                            new String[]{"%" + value + "%"},
+					                            new String[]{MediaStore.Audio.Media.DATA},
+					                            MediaStore.Audio.Media.DATA + " LIKE ?",
+					                            new String[]{PathConfig.NAS + "%" + value + "%"},
 					                            null);
 					if (null != cursor) {
 						List<AudioEntity> audioList = new ArrayList<>();
@@ -443,11 +443,7 @@ public enum SkillManager {
 							if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
 								continue;
 							}
-							String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
-							if (null == name) {
-								continue;
-							}
-							audioList.add(new AudioEntity(name, path));
+							audioList.add(new AudioEntity(FileUtils.getFileName(path), path));
 						}
 						cursor.close();
 						if (!audioList.isEmpty()) {
@@ -519,7 +515,7 @@ public enum SkillManager {
 
 	private void parseAnswerText(String answer) {
 		WlMusic.getInstance().stop();
-		AIUIManager.INSTANCE.startTTS(answer, null);
+		AIUIManager.INSTANCE.startTTS(answer);
 		AIUIManager.INSTANCE.startListening();
 	}
 

@@ -1211,7 +1211,8 @@ public class MQTTService extends Service {
 
 	private List<FtpCategoryEntity> queryFtpCategory(boolean privateOnly, String category, String phoneNum) {
 		Uri uri;
-		String pathProjection, timeProjection, sizeProjection;
+		String pathProjection, sizeProjection, selection;
+		String[] selectionArgs;
 		switch (category) {
 			case "image":
 				uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
@@ -1237,25 +1238,22 @@ public class MQTTService extends Service {
 				sizeProjection = MediaStore.Files.FileColumns.SIZE;
 				break;
 		}
+		if (privateOnly) {
+			selection = MediaStore.Files.FileColumns.DATA + " LIKE ?";
+			selectionArgs = new String[]{PathConfig.PRIVATE + phoneNum + File.separator + "%"};
+		} else {
+			selection = MediaStore.Files.FileColumns.DATA + " LIKE ? OR " + MediaStore.Files.FileColumns.DATA + " LIKE ?";
+			selectionArgs = new String[]{PathConfig.PUBLIC + "%", PathConfig.PRIVATE + phoneNum + File.separator + "%"};
+		}
 		List<FtpCategoryEntity> list = new ArrayList<>();
-		Cursor cursor = Utils.getApp().getContentResolver().query(uri, new String[]{pathProjection, sizeProjection}, null, null, null);
+		Cursor cursor = Utils.getApp().getContentResolver().query(uri, new String[]{pathProjection, sizeProjection}, selection, selectionArgs, null);
 		while (cursor.moveToNext()) {
 			String path = cursor.getString(cursor.getColumnIndexOrThrow(pathProjection));
 			if (FileUtils.isDir(path)) {
 				continue;
 			}
 
-			if (privateOnly) {
-				if (!path.startsWith(PathConfig.PRIVATE + phoneNum + File.separator)) {
-					continue;
-				}
-			} else {
-				if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE + phoneNum + File.separator)) {
-					continue;
-				}
-			}
-
-			String src = path.startsWith(PathConfig.PUBLIC) ? "public" : path.startsWith(PathConfig.PRIVATE) ? "private" : "unknown";
+			String src = path.startsWith(PathConfig.PUBLIC) ? "public" : "private";
 
 			String name = FileUtils.getFileName(path);
 			if ("document".equals(category) && !isDocument(FileUtils.getFileExtension(name))) {
