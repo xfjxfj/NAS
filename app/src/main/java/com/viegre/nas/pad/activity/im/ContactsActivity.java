@@ -1,7 +1,6 @@
 package com.viegre.nas.pad.activity.im;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -32,10 +31,8 @@ import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.ExpandableViewHoldersUtil;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +45,8 @@ import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import rxhttp.RxHttp;
+
+import static android.app.PendingIntent.getActivity;
 
 /**
  * 联系人相关类
@@ -142,7 +141,8 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         contactsRv3.setLayoutManager(linearLayoutManager2);
         //创建适配器，将数据传递给适配器
         //设置适配器adapter
-        contactsRv3.setAdapter(new ContactsRvDevicesAdapter(this, wwwww));
+        View inflate = getLayoutInflater().inflate(R.layout.contacts_devices_popup, null);
+        contactsRv3.setAdapter(new ContactsRvDevicesAdapter(this, wwwww,inflate));
     }
 
     private void initFriendData(List<ContactsBean> mContactsData) {

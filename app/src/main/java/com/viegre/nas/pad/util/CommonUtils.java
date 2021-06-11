@@ -1,10 +1,12 @@
 package com.viegre.nas.pad.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.view.Gravity;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -38,6 +40,16 @@ public class CommonUtils {
 		return start + "****" + end;
 	}
 
+	/**
+	 * 调节activity透明度
+	 * @param activity
+	 * @param bgAlpha 0.3f
+	 */
+	public static void setBackgroundAlpha(Activity activity, float bgAlpha) {
+		WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+		lp.alpha = bgAlpha;
+		activity.getWindow().setAttributes(lp);
+	}
 	/**
 	 * 弹出普通Toast
 	 *

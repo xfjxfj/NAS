@@ -1,10 +1,15 @@
 package com.viegre.nas.pad.activity;
 
+import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Toast;
 
 import com.blankj.utilcode.util.ColorUtils;
 import com.blankj.utilcode.util.RegexUtils;
@@ -86,6 +91,16 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
         mViewBinding.acivLoginExit.setOnClickListener(this);
         mViewBinding.actvLoginPhoneGetCode.setOnClickListener(this);
         mViewBinding.actvLoginPhoneBtn.setOnClickListener(this);
+        ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        mViewBinding.acivLoginExit.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                ClipData mClipData = ClipData.newPlainText("Label", SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
+                cm.setPrimaryClip(mClipData);
+                Toast.makeText(LoginActivity.this, SPUtils.getInstance().getString(SPConfig.ANDROID_ID) + "-----已复制到剪切板", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });
     }
 
     @Override
