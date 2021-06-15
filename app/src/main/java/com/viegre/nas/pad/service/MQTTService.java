@@ -202,7 +202,7 @@ public class MQTTService extends Service {
 	}
 
 	private void initFileWatcher() {
-		mFileWatcher = new FileWatcher(PathConfig.NAS, true, FileWatcher.ALL_EVENTS);
+		mFileWatcher = new FileWatcher(PathConfig.NAS.substring(0, PathConfig.NAS.length() - 1), true, FileWatcher.ALL_EVENTS);
 		mFileWatcher.setFileListener(new FileListener() {
 			@Override
 			public void onFileOpen(String path) {
