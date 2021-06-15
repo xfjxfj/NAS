@@ -4,22 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.kongzue.dialog.util.DialogSettings;
 import com.kongzue.dialog.v3.CustomDialog;
 import com.viegre.nas.pad.R;
@@ -27,7 +20,6 @@ import com.viegre.nas.pad.activity.im.popupwindow.HorizontalPosition;
 import com.viegre.nas.pad.activity.im.popupwindow.SmartPopupWindow;
 import com.viegre.nas.pad.activity.im.popupwindow.TestPopupWindow;
 import com.viegre.nas.pad.activity.im.popupwindow.VerticalPosition;
-import com.viegre.nas.pad.entity.ContactsBean;
 import com.viegre.nas.pad.util.CommonUtils;
 
 import java.util.List;
@@ -66,6 +58,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
             holder.de_laytou.setVisibility(View.GONE);
             holder.de_laytou1.setVisibility(View.VISIBLE);
         }
+
         holder.de_laytou.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -74,6 +67,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                 return false;
             }
         });
+
         holder.de_laytou1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +87,6 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                 }).setFullScreen(true).show();
             }
         });
-
     }
 
 
@@ -103,6 +96,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
     }
 
     private void mypopupmenu(View v) {
+
         TestPopupWindow mWindow = new TestPopupWindow(mContext);
         mGravity = Gravity.START;
         mOffsetX = Math.abs(mWindow.getContentView().getMeasuredWidth() - v.getWidth()) / 2;
@@ -112,7 +106,9 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
             SmartPopupWindow popupWindow = SmartPopupWindow.Builder
                     .build((Activity) mContext, mPopupContentView)
                     .createPopupWindow();
+
             popupWindow.showAtAnchorView(v, VerticalPosition.ABOVE, HorizontalPosition.CENTER);
+
             popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
