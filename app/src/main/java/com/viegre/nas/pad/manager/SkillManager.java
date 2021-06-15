@@ -603,15 +603,11 @@ public enum SkillManager {
 			@Override
 			public void onSuccess(List<VideoEntity> result) {
 				if (result.isEmpty()) {
-					AIUIManager.INSTANCE.startTTS("以下是" + videoEntity.getSemantic().get(0).getSlots().get(0).getValue() + "的搜索结果。",
-					                              () -> ThreadUtils.runOnUiThread(() -> {
-						                              Intent searchIntent = new Intent("myvst.intent.action.SearchActivity");
-						                              searchIntent.putExtra("search_word",
-						                                                    videoEntity.getSemantic().get(0).getSlots().get(0).getValue());
-						                              searchIntent.putExtra("check_back_home", false);
-						                              ActivityUtils.startActivity(searchIntent);
-						                              AIUIManager.INSTANCE.startListening();
-					                              }));
+					Intent searchIntent = new Intent("com.ktcp.voice.SEARCH");
+					searchIntent.putExtra("_vr_context", videoEntity.getSemantic().get(0).getSlots().get(0).getValue());
+					Utils.getApp().sendBroadcast(searchIntent);
+					AIUIManager.INSTANCE.startListening();
+					AIUIManager.INSTANCE.startTTS("以下是" + videoEntity.getSemantic().get(0).getSlots().get(0).getValue() + "的搜索结果。");
 				} else {
 					Intent intent = new Intent(Utils.getApp(), VideoPlayerActivity.class);
 					intent.putExtra("video", result.get(0));
