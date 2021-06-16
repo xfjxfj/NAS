@@ -3,16 +3,14 @@
 
 	<dbname value="viegre_nas_pad" />
 
-	<version value="19" />
+	<version value="20" />
 
 	<list>
 		<mapping class="com.viegre.nas.pad.entity.DeviceResourceEntity" />
 		<mapping class="com.viegre.nas.pad.entity.GuideResourceEntity" />
 		<mapping class="com.viegre.nas.pad.entity.ImageEntity" />
 		<mapping class="com.viegre.nas.pad.entity.AudioEntity" />
-		<mapping class="com.viegre.nas.pad.entity.RecycleBinEntity" />
-		<mapping class="com.viegre.nas.pad.entity.FtpFavoritesEntity" />
+		<mapping class="com.viegre.nas.pad.entity.FtpFileEntity" />
 		<mapping class="com.viegre.nas.pad.entity.FtpFileObserverEntity" />
-		<mapping class="com.viegre.nas.pad.entity.FtpBanListEntity" />
 	</list>
 </litepal>

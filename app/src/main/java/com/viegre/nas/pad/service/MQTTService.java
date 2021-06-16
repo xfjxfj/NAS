@@ -40,15 +40,14 @@ import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.entity.ExternalDriveEntity;
-import com.viegre.nas.pad.entity.FtpBanListEntity;
 import com.viegre.nas.pad.entity.FtpCategoryEntity;
 import com.viegre.nas.pad.entity.FtpCmdEntity;
-import com.viegre.nas.pad.entity.FtpFavoritesEntity;
+import com.viegre.nas.pad.entity.FtpFileEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
-import com.viegre.nas.pad.entity.RecycleBinEntity;
 import com.viegre.nas.pad.task.VoidTask;
+import com.viegre.nas.pad.util.MediaScanner;
 import com.yanzhenjie.andserver.AndServer;
 import com.yanzhenjie.andserver.Server;
 
@@ -334,6 +333,7 @@ public class MQTTService extends Service {
 		}
 	}
 
+	@SuppressLint("NewApi")
 	private void parseMessage(String message) {
 		MQTTMsgEntity mqttMsgEntity = JSON.parseObject(message, MQTTMsgEntity.class);
 		switch (mqttMsgEntity.getMsgType()) {
@@ -445,8 +445,7 @@ public class MQTTService extends Service {
 							@Override
 							public MQTTMsgEntity doInBackground() throws ZipException {
 								String backupDirPath = JSON.parseObject(mqttMsgEntity.getParam()).getString("path");
-								String backupFileName = "备份" + TimeUtils.getNowString(new SimpleDateFormat("yyyyMMddHHmmss",
-								                                                                           Locale.getDefault())) + ".zip";
+								String backupFileName = "备份" + TimeUtils.getNowString(new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault())) + ".zip";
 								MQTTMsgEntity backupMsg = getBackupMsg(mqttMsgEntity.getFromId());
 								ZipFile zipFile = new ZipFile(backupDirPath + backupFileName);
 								zipFile.addFolder(FileUtils.getFileByPath(PathConfig.PRIVATE));
@@ -488,7 +487,7 @@ public class MQTTService extends Service {
 						sendMQTTMsg(reboot(mqttMsgEntity.getFromId()));
 						break;
 
-					//ftp复制/移动
+					//ftp复制/移动/重命名
 					case MQTTMsgEntity.MSG_FTP_LOCATION:
 						String type = JSON.parseObject(mqttMsgEntity.getParam()).getString("type");
 						String destPath = JSON.parseObject(mqttMsgEntity.getParam()).getString("destPath");
@@ -498,28 +497,55 @@ public class MQTTService extends Service {
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
 							@Override
 							public Boolean doInBackground() {
-								if (!FileUtils.isFileExists(destPath) || !FileUtils.isDir(destPath)) {
-									return false;
-								}
-								for (FtpCmdEntity ftpCmdEntity : srcPathList) {
-									if (!FileUtils.isFileExists(ftpCmdEntity.getPath())) {
-										continue;
+//								if (!FileUtils.isFileExists(destPath) || !FileUtils.isDir(destPath)) {
+//									return false;
+//								}
+								srcPathList.forEach(ftpCmdEntity -> {
+									if (FileUtils.isFileExists(ftpCmdEntity.getPath())) {
+										switch (type) {
+											case FtpFileEntity.CP:
+												FileUtils.copy(ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
+												MediaScannerConnection.scanFile(Utils.getApp(),
+												                                new String[]{destPath + FileUtils.getFileName(ftpCmdEntity.getPath())},
+												                                null,
+												                                null);
+												break;
+
+											case FtpFileEntity.MV:
+												FileUtils.move(ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
+												MediaScannerConnection.scanFile(Utils.getApp(),
+												                                new String[]{ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(
+														                                ftpCmdEntity.getPath())},
+												                                null,
+												                                null);
+												FtpFileEntity ftpFileEntity = LitePal.where("path = ? AND state = ?",
+												                                            ftpCmdEntity.getPath(),
+												                                            FtpFileEntity.State.NORMAL)
+												                                     .findFirst(FtpFileEntity.class);
+												if (null != ftpFileEntity) {
+													ftpFileEntity.setPath(destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
+													ftpFileEntity.saveOrUpdate();
+												}
+												break;
+
+											case FtpFileEntity.RE:
+												FileUtils.rename(ftpCmdEntity.getPath(), FileUtils.getFileName(destPath));
+												new MediaScanner(Utils.getApp(), null).scanFile(new File(ftpCmdEntity.getPath()));
+												new MediaScanner(Utils.getApp(), null).scanFile(new File(destPath));
+												FtpFileEntity ffe = LitePal.where("path = ? AND state = ?",
+												                                  ftpCmdEntity.getPath(),
+												                                  FtpFileEntity.State.NORMAL).findFirst(FtpFileEntity.class);
+												if (null != ffe) {
+													ffe.setPath(destPath);
+													ffe.saveOrUpdate();
+												}
+												break;
+
+											default:
+												break;
+										}
 									}
-									if ("cp".equals(type)) {
-										FileUtils.copy(ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
-										MediaScannerConnection.scanFile(Utils.getApp(),
-										                                new String[]{destPath + FileUtils.getFileName(ftpCmdEntity.getPath())},
-										                                null,
-										                                null);
-									} else {
-										FileUtils.move(ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
-										MediaScannerConnection.scanFile(Utils.getApp(),
-										                                new String[]{ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(
-												                                ftpCmdEntity.getPath())},
-										                                null,
-										                                null);
-									}
-								}
+								});
 								return true;
 							}
 
@@ -536,38 +562,49 @@ public class MQTTService extends Service {
 
 					//ftp删除
 					case MQTTMsgEntity.MSG_FTP_DELETE:
-						List<FtpCmdEntity> delPathList = JSON.parseObject(mqttMsgEntity.getParam())
-						                                     .getJSONArray("delPathList")
-						                                     .toJavaList(FtpCmdEntity.class);
+						List<FtpCmdEntity> delPathList = JSON.parseObject(mqttMsgEntity.getParam()).getJSONArray("delPathList").toJavaList(FtpCmdEntity.class);
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
 							@Override
 							public Boolean doInBackground() {
-								for (FtpCmdEntity ftpCmdEntity : delPathList) {
-									File deleteFile = FileUtils.getFileByPath(ftpCmdEntity.getPath());
-									if (!FileUtils.isFileExists(deleteFile)) {
-										continue;
+								delPathList.forEach(ftpCmdEntity -> {
+									if (FileUtils.isFileExists(ftpCmdEntity.getPath())) {
+										FtpFileEntity ffe = LitePal.where("path = ? AND phoneNum = ?",
+										                                  ftpCmdEntity.getPath(),
+										                                  mqttMsgEntity.getFromId()).findFirst(FtpFileEntity.class);
+										String recycledPath = PathConfig.RECYCLE_BIN + FileUtils.getFileName(ftpCmdEntity.getPath());
+										SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+										String createTime = TimeUtils.millis2String(FileUtils.getFileLastModified(ftpCmdEntity.getPath()), sdf);
+										String deleteTime = TimeUtils.getNowString(sdf);
+										String type = getFtpFileType(ftpCmdEntity.getPath());
+										if (null == ffe) {
+											FtpFileEntity ftpFileEntity = new FtpFileEntity(ftpCmdEntity.getPath(),
+											                                                recycledPath,
+											                                                createTime,
+											                                                deleteTime,
+											                                                mqttMsgEntity.getFromId(),
+											                                                type,
+											                                                FtpFileEntity.State.RECYCLED);
+											ftpFileEntity.save();
+											FileUtils.move(ftpFileEntity.getPath(), ftpFileEntity.getRecycledPath());
+											MediaScannerConnection.scanFile(Utils.getApp(),
+											                                new String[]{ftpFileEntity.getPath(), ftpFileEntity.getRecycledPath()},
+											                                null,
+											                                null);
+										} else {
+											ffe.setRecycledPath(recycledPath);
+											ffe.setCreateTime(TimeUtils.getNowString(sdf));
+											ffe.setDeleteTime(deleteTime);
+											ffe.setType(type);
+											ffe.setState(FtpFileEntity.State.RECYCLED);
+											ffe.saveOrUpdate();
+											FileUtils.move(ffe.getPath(), ffe.getRecycledPath());
+											MediaScannerConnection.scanFile(Utils.getApp(),
+											                                new String[]{ffe.getPath(), ffe.getRecycledPath()},
+											                                null,
+											                                null);
+										}
 									}
-									SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-									String deleteTime = TimeUtils.getNowString(sdf);
-									String createTime = TimeUtils.millis2String(FileUtils.getFileLastModified(deleteFile), sdf);
-									String type;
-									if (ftpCmdEntity.getPath().startsWith(PathConfig.PRIVATE)) {
-										type = "private";
-									} else if (ftpCmdEntity.getPath().startsWith(PathConfig.PUBLIC)) {
-										type = "public";
-									} else {
-										type = "unknown";
-									}
-									RecycleBinEntity recycleBinEntity = new RecycleBinEntity(deleteTime,
-									                                                         createTime,
-									                                                         type,
-									                                                         ftpCmdEntity.getPath(),
-									                                                         PathConfig.RECYCLE_BIN + FileUtils.getFileName(
-											                                                         ftpCmdEntity.getPath()));
-									FileUtils.move(recycleBinEntity.getPathBeforeDelete(), recycleBinEntity.getPathAfterDelete());
-									MediaScannerConnection.scanFile(Utils.getApp(), new String[]{recycleBinEntity.getPathBeforeDelete()}, null, null);
-									recycleBinEntity.save();
-								}
+								});
 								return true;
 							}
 
@@ -584,17 +621,15 @@ public class MQTTService extends Service {
 
 					//ftp删除列表
 					case MQTTMsgEntity.MSG_FTP_DELETE_LIST:
-						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<RecycleBinEntity>>() {
+						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<FtpFileEntity>>() {
 							@Override
-							public List<RecycleBinEntity> doInBackground() {
-								return LitePal.where("pathBeforeDelete LIKE ? OR pathBeforeDelete LIKE ?",
-								                     PathConfig.PUBLIC + "%",
-								                     PathConfig.PRIVATE + mqttMsgEntity.getFromId() + File.separator + "%")
-								              .find(RecycleBinEntity.class);
+							public List<FtpFileEntity> doInBackground() {
+								return LitePal.where("phoneNum = ? AND state = ?", mqttMsgEntity.getFromId(), FtpFileEntity.State.RECYCLED)
+								              .find(FtpFileEntity.class);
 							}
 
 							@Override
-							public void onSuccess(List<RecycleBinEntity> result) {
+							public void onSuccess(List<FtpFileEntity> result) {
 								Map<String, Object> ftpDeleteListMap = new HashMap<>();
 								ftpDeleteListMap.put("delPathList", result);
 								MQTTMsgEntity ftpDeleteListMsg = ftpDeleteList(mqttMsgEntity.getFromId());
@@ -615,15 +650,17 @@ public class MQTTService extends Service {
 								if (rstPathList.isEmpty()) {
 									return false;
 								}
-								for (FtpCmdEntity ftpCmdEntity : rstPathList) {
-									RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?", ftpCmdEntity.getPath())
-									                                           .findFirst(RecycleBinEntity.class);
-									if (null == recycleBinEntity) {
-										continue;
+								rstPathList.forEach(ftpCmdEntity -> {
+									FtpFileEntity ftpFileEntity = LitePal.where("path = ? AND phoneNum = ? AND state = ?",
+									                                            ftpCmdEntity.getPath(),
+									                                            mqttMsgEntity.getFromId(),
+									                                            FtpFileEntity.State.RECYCLED).findFirst(FtpFileEntity.class);
+									if (null != ftpFileEntity) {
+										FileUtils.move(ftpFileEntity.getRecycledPath(), ftpFileEntity.getPath());
+										ftpFileEntity.setState(FtpFileEntity.State.NORMAL);
+										ftpFileEntity.saveOrUpdate();
 									}
-									FileUtils.move(recycleBinEntity.getPathAfterDelete(), recycleBinEntity.getPathBeforeDelete());
-									recycleBinEntity.delete();
-								}
+								});
 								return true;
 							}
 
@@ -641,37 +678,30 @@ public class MQTTService extends Service {
 					//ftp文件清除
 					case MQTTMsgEntity.MSG_FTP_ERASE:
 						boolean erase = JSON.parseObject(mqttMsgEntity.getParam()).getBoolean("erase");
-						List<FtpCmdEntity> erasePathList = JSON.parseObject(mqttMsgEntity.getParam())
-						                                       .getJSONArray("erasePathList")
-						                                       .toJavaList(FtpCmdEntity.class);
+						List<FtpCmdEntity> erasePathList = JSON.parseObject(mqttMsgEntity.getParam()).getJSONArray("erasePathList").toJavaList(FtpCmdEntity.class);
 						ThreadUtils.executeByCached(new VoidTask() {
-							@SuppressLint("NewApi")
 							@Override
 							public Void doInBackground() {
 								if (erase) {
-									List<RecycleBinEntity> eraseList = LitePal.where("pathBeforeDelete LIKE ? OR pathBeforeDelete LIKE ?",
-									                                                 PathConfig.PUBLIC + "%",
-									                                                 PathConfig.PRIVATE + mqttMsgEntity.getFromId() + File.separator + "%")
-									                                          .find(RecycleBinEntity.class);
+									List<FtpFileEntity> eraseList = LitePal.where("phoneNum = ? AND state = ?",
+									                                              mqttMsgEntity.getFromId(),
+									                                              FtpFileEntity.State.RECYCLED).find(FtpFileEntity.class);
 									if (!eraseList.isEmpty()) {
-										eraseList.forEach(recycleBinEntity -> {
-											FileUtils.delete(recycleBinEntity.getPathAfterDelete());
-											recycleBinEntity.delete();
+										eraseList.forEach(ftpFileEntity -> {
+											FileUtils.delete(ftpFileEntity.getRecycledPath());
+											ftpFileEntity.delete();
 										});
 									}
-									return null;
-								}
-
-								if (null == erasePathList || erasePathList.isEmpty()) {
-									return null;
 								} else {
-									for (FtpCmdEntity ftpCmdEntity : erasePathList) {
-										FileUtils.delete(ftpCmdEntity.getPath());
-										RecycleBinEntity recycleBinEntity = LitePal.where("pathBeforeDelete = ?", ftpCmdEntity.getPath())
-										                                           .findFirst(RecycleBinEntity.class);
-										if (null != recycleBinEntity) {
-											recycleBinEntity.delete();
-										}
+									if (null != erasePathList && !erasePathList.isEmpty()) {
+										erasePathList.forEach(ftpCmdEntity -> {
+											FileUtils.delete(ftpCmdEntity.getPath());
+											LitePal.deleteAll(FtpFileEntity.class,
+											                  "path = ? AND phoneNum = ? AND state = ?",
+											                  ftpCmdEntity.getPath(),
+											                  mqttMsgEntity.getFromId(),
+											                  FtpFileEntity.State.RECYCLED);
+										});
 									}
 								}
 
@@ -688,30 +718,53 @@ public class MQTTService extends Service {
 					//ftp文件收藏
 					case MQTTMsgEntity.MSG_FTP_FAVORITES:
 						boolean isAdd = JSON.parseObject(mqttMsgEntity.getParam()).getBoolean("isAdd");
-						List<FtpFavoritesEntity> favoritesPathList = JSON.parseObject(mqttMsgEntity.getParam())
-						                                                 .getJSONArray("favoritesPathList")
-						                                                 .toJavaList(FtpFavoritesEntity.class);
+						List<FtpFileEntity> ftpFileEntityList = JSON.parseObject(mqttMsgEntity.getParam())
+						                                            .getJSONArray("favoritesPathList")
+						                                            .toJavaList(FtpFileEntity.class);
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
 							@Override
 							public Boolean doInBackground() {
-								if (null == favoritesPathList || favoritesPathList.isEmpty()) {
+								if (null == ftpFileEntityList || ftpFileEntityList.isEmpty()) {
 									return false;
 								} else {
 									SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-									for (FtpFavoritesEntity ftpFavoritesEntity : favoritesPathList) {
+									ftpFileEntityList.forEach(ftpFileEntity -> {
 										if (isAdd) {
-											ftpFavoritesEntity.setTime(TimeUtils.millis2String(FileUtils.getFileLastModified(ftpFavoritesEntity.getPath()),
-											                                                   sdf));
-											ftpFavoritesEntity.setSize(FileUtils.getSize(ftpFavoritesEntity.getPath()));
-											ftpFavoritesEntity.save();
+											FtpFileEntity ffe = LitePal.where("path = ? AND pick = ? AND phoneNum = ?",
+											                                  ftpFileEntity.getPath(),
+											                                  FtpFileEntity.BanPick.FALSE,
+											                                  mqttMsgEntity.getFromId()).findFirst(FtpFileEntity.class);
+											if (null == ffe) {
+												ftpFileEntity.setCreateTime(TimeUtils.millis2String(FileUtils.getFileLastModified(ftpFileEntity.getPath()),
+												                                                    sdf));
+												ftpFileEntity.setSize(FileUtils.getSize(ftpFileEntity.getPath()));
+												ftpFileEntity.setState(FtpFileEntity.State.NORMAL);
+												ftpFileEntity.setPick(FtpFileEntity.BanPick.TRUE);
+												ftpFileEntity.setPhoneNum(mqttMsgEntity.getFromId());
+												ftpFileEntity.save();
+											} else {
+												ffe.setPick(FtpFileEntity.BanPick.TRUE);
+												ffe.saveOrUpdate();
+											}
 										} else {
-											FtpFavoritesEntity ftpFavorites = LitePal.where("path = ?", ftpFavoritesEntity.getPath())
-											                                         .findFirst(FtpFavoritesEntity.class);
-											if (null != ftpFavorites) {
-												ftpFavorites.delete();
+											FtpFileEntity ffe = LitePal.where("path = ? AND pick = ? AND phoneNum = ?",
+											                                  ftpFileEntity.getPath(),
+											                                  FtpFileEntity.BanPick.TRUE,
+											                                  mqttMsgEntity.getFromId()).findFirst(FtpFileEntity.class);
+											if (null == ffe) {
+												ftpFileEntity.setCreateTime(TimeUtils.millis2String(FileUtils.getFileLastModified(ftpFileEntity.getPath()),
+												                                                    sdf));
+												ftpFileEntity.setSize(FileUtils.getSize(ftpFileEntity.getPath()));
+												ftpFileEntity.setState(FtpFileEntity.State.NORMAL);
+												ftpFileEntity.setPick(FtpFileEntity.BanPick.FALSE);
+												ftpFileEntity.setPhoneNum(mqttMsgEntity.getFromId());
+												ftpFileEntity.save();
+											} else {
+												ffe.setPick(FtpFileEntity.BanPick.FALSE);
+												ffe.saveOrUpdate();
 											}
 										}
-									}
+									});
 								}
 								return true;
 							}
@@ -729,22 +782,19 @@ public class MQTTService extends Service {
 
 					//ftp收藏列表
 					case MQTTMsgEntity.MSG_FTP_FAVORITES_LIST:
-						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<FtpFavoritesEntity>>() {
+						ThreadUtils.executeByCached(new VoidTask() {
 							@Override
-							public List<FtpFavoritesEntity> doInBackground() {
-								return LitePal.where("path LIKE ? OR path LIKE ?",
-								                     PathConfig.PUBLIC + "%",
-								                     PathConfig.PRIVATE + mqttMsgEntity.getFromId() + File.separator + "%")
-								              .find(FtpFavoritesEntity.class);
-							}
-
-							@Override
-							public void onSuccess(List<FtpFavoritesEntity> result) {
+							public Void doInBackground() {
 								Map<String, Object> ftpFavoritesListMap = new HashMap<>();
-								ftpFavoritesListMap.put("favoritesPathList", result);
+								ftpFavoritesListMap.put("favoritesPathList",
+								                        LitePal.where("phoneNum = ? AND pick = ? AND state = ?",
+								                                      mqttMsgEntity.getFromId(),
+								                                      FtpFileEntity.BanPick.TRUE,
+								                                      FtpFileEntity.State.NORMAL).find(FtpFileEntity.class));
 								MQTTMsgEntity ftpFavoritesListMsg = ftpFavoritesList(mqttMsgEntity.getFromId());
 								ftpFavoritesListMsg.setParam(new JSONObject(ftpFavoritesListMap).toJSONString());
 								sendMQTTMsg(ftpFavoritesListMsg);
+								return null;
 							}
 						});
 						break;
@@ -838,9 +888,7 @@ public class MQTTService extends Service {
 
 					//ftp文件状态刷新
 					case MQTTMsgEntity.MSG_FTP_STATUS_REFRESH:
-						List<FtpCmdEntity> refreshPathList = JSON.parseObject(mqttMsgEntity.getParam())
-						                                         .getJSONArray("refreshPathList")
-						                                         .toJavaList(FtpCmdEntity.class);
+						List<FtpCmdEntity> refreshPathList = JSON.parseObject(mqttMsgEntity.getParam()).getJSONArray("refreshPathList").toJavaList(FtpCmdEntity.class);
 						ThreadUtils.executeByCached(new VoidTask() {
 							@Override
 							public Void doInBackground() {
@@ -865,22 +913,51 @@ public class MQTTService extends Service {
 					//ftp禁止访问列表
 					case MQTTMsgEntity.MSG_FTP_BAN_LIST:
 						boolean isBan = JSON.parseObject(mqttMsgEntity.getParam()).getBoolean("isBan");
-						List<FtpBanListEntity> banList = JSON.parseObject(mqttMsgEntity.getParam())
-						                                     .getJSONArray("banList")
-						                                     .toJavaList(FtpBanListEntity.class);
+						List<FtpFileEntity> banList = JSON.parseObject(mqttMsgEntity.getParam())
+						                                  .getJSONArray("banList")
+						                                  .toJavaList(FtpFileEntity.class);
 						ThreadUtils.executeByCached(new VoidTask() {
 							@Override
 							public Void doInBackground() {
-								if (isBan) {
-									LitePal.saveAll(banList);
-								} else {
-									for (FtpBanListEntity ftpBanListEntity : banList) {
-										LitePal.deleteAll(FtpBanListEntity.class,
-										                  "path = ? and phoneNum = ?",
-										                  ftpBanListEntity.getPath(),
-										                  ftpBanListEntity.getPhoneNum());
-									}
+								if (null != banList && !banList.isEmpty()) {
+									SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+									banList.forEach(ftpFileEntity -> {
+										if (isBan) {
+											FtpFileEntity ffe = LitePal.where("path = ? AND ban = ? AND phoneNum = ?",
+											                                  ftpFileEntity.getPath(),
+											                                  FtpFileEntity.BanPick.FALSE,
+											                                  ftpFileEntity.getPhoneNum()).findFirst(FtpFileEntity.class);
+											if (null == ffe) {
+												ftpFileEntity.setCreateTime(TimeUtils.millis2String(FileUtils.getFileLastModified(ftpFileEntity.getPath()),
+												                                                    sdf));
+												ftpFileEntity.setSize(FileUtils.getSize(ftpFileEntity.getPath()));
+												ftpFileEntity.setState(FtpFileEntity.State.NORMAL);
+												ftpFileEntity.setBan(FtpFileEntity.BanPick.TRUE);
+												ftpFileEntity.save();
+											} else {
+												ffe.setBan(FtpFileEntity.BanPick.TRUE);
+												ffe.saveOrUpdate();
+											}
+										} else {
+											FtpFileEntity ffe = LitePal.where("path = ? AND ban = ? AND phoneNum = ?",
+											                                  ftpFileEntity.getPath(),
+											                                  FtpFileEntity.BanPick.TRUE,
+											                                  ftpFileEntity.getPhoneNum()).findFirst(FtpFileEntity.class);
+											if (null == ffe) {
+												ftpFileEntity.setCreateTime(TimeUtils.millis2String(FileUtils.getFileLastModified(ftpFileEntity.getPath()),
+												                                                    sdf));
+												ftpFileEntity.setSize(FileUtils.getSize(ftpFileEntity.getPath()));
+												ftpFileEntity.setState(FtpFileEntity.State.NORMAL);
+												ftpFileEntity.setBan(FtpFileEntity.BanPick.FALSE);
+												ftpFileEntity.save();
+											} else {
+												ffe.setBan(FtpFileEntity.BanPick.FALSE);
+												ffe.saveOrUpdate();
+											}
+										}
+									});
 								}
+
 								Map<String, Object> ftpBanListParamMap = new HashMap<>();
 								ftpBanListParamMap.put("result", true);
 								MQTTMsgEntity ftpBanListMsg = ftpBanList(mqttMsgEntity.getFromId());
@@ -893,13 +970,16 @@ public class MQTTService extends Service {
 
 					//ftp获取禁止访问列表
 					case MQTTMsgEntity.MSG_FTP_GET_BAN_LIST:
+						String banPhoneNum = JSON.parseObject(mqttMsgEntity.getParam()).getString("phoneNum");
 						ThreadUtils.executeByCached(new VoidTask() {
 							@Override
 							public Void doInBackground() {
 								Map<String, Object> ftpGetBanListMap = new HashMap<>();
 								ftpGetBanListMap.put("banList",
-								                     LitePal.where("phoneNum = ?", JSON.parseObject(mqttMsgEntity.getParam()).getString("phoneNum"))
-								                            .find(FtpBanListEntity.class));
+								                     LitePal.where("phoneNum = ? AND ban = ? AND state = ?",
+								                                   banPhoneNum,
+								                                   FtpFileEntity.BanPick.TRUE,
+								                                   FtpFileEntity.State.NORMAL).find(FtpFileEntity.class));
 								MQTTMsgEntity ftpGetBanListMsg = ftpGetBanList(mqttMsgEntity.getFromId());
 								ftpGetBanListMsg.setParam(new JSONObject(ftpGetBanListMap).toJSONString());
 								sendMQTTMsg(ftpGetBanListMsg);
@@ -1322,5 +1402,15 @@ public class MQTTService extends Service {
 		nameList.add("pdf");
 		nameList.add("txt");
 		return nameList.contains(name.toLowerCase());
+	}
+
+	private String getFtpFileType(String path) {
+		if (path.startsWith(PathConfig.PRIVATE)) {
+			return FtpFileEntity.Type.PRIVATE;
+		} else if (path.startsWith(PathConfig.PUBLIC)) {
+			return FtpFileEntity.Type.PUBLIC;
+		} else {
+			return FtpFileEntity.Type.UNKNOWN;
+		}
 	}
 }
