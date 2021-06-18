@@ -95,7 +95,7 @@ public enum AIUIManager {
 	}
 
 	public void startListening() {
-		MscManager.INSTANCE.setListenHardWakeup(true);
+		MscManager.INSTANCE.setListenHardWakeup(IS_HARD_WAKEUP);
 		if (!mIsPauseMusicManually && !WlMusic.getInstance().isPlaying()) {
 			WlMusic.getInstance().resume();
 		}

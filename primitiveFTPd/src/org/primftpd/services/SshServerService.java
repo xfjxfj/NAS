@@ -66,7 +66,7 @@ public class SshServerService extends AbstractServerService {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		initNotificationChannel();
+		createNotificationChannel();
 	}
 
 	@Override
@@ -261,7 +261,7 @@ public class SshServerService extends AbstractServerService {
 		return keyPairList;
 	}
 
-	private void initNotificationChannel() {
+	private void createNotificationChannel() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			String CHANNEL_ID = "nas_channel_ftp_ssh";
 			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_NONE);

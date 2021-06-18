@@ -1,16 +1,17 @@
 package com.viegre.nas.pad.service;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.IBinder;
 
 import com.topqizhi.ai.manager.AIUIManager;
 import com.topqizhi.ai.manager.MscManager;
+import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.manager.SkillManager;
 import com.viegre.nas.pad.util.IotGateway;
@@ -37,13 +38,13 @@ public class MscService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		EventBus.getDefault().register(this);
-		initNotificationChannel();
-		AIUIManager.INSTANCE.addAIUIResultListener(SkillManager.INSTANCE::parseSkillMsg);
-		AIUIManager.INSTANCE.startListening();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		createNotificationChannel();
+		AIUIManager.INSTANCE.addAIUIResultListener(SkillManager.INSTANCE::parseSkillMsg);
+		AIUIManager.INSTANCE.startListening();
 		return START_STICKY;
 	}
 
@@ -92,13 +93,16 @@ public class MscService extends Service {
 		}
 	}
 
-	private void initNotificationChannel() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			String CHANNEL_ID = "nas_channel_msc";
-			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_NONE);
-			((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
-			Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("").setContentText("").build();
-			startForeground(1, notification);
-		}
+	@SuppressLint("NewApi")
+	private void createNotificationChannel() {
+		String CHANNEL_ID = "nas_channel_msc";
+		NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_NONE);
+		((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(notificationChannel);
+		Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("")
+		                                                                            .setContentText("")
+		                                                                            .setSmallIcon(R.drawable.ic_launcher_foreground)
+		                                                                            .setChannelId(CHANNEL_ID)
+		                                                                            .build();
+		startForeground(0x01, notification);
 	}
 }

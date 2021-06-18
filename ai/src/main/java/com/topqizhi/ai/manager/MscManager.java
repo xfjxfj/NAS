@@ -2,8 +2,8 @@ package com.topqizhi.ai.manager;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.iflytek.cloud.Setting;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
@@ -79,7 +79,7 @@ public enum MscManager {
 		String param = SpeechConstant.APPID + "=" + applicationContext.getString(R.string.app_id) + "," + SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC;
 		SpeechUtility.createUtility(applicationContext, param);
 		Setting.setShowLog(false);
-		mVoiceWakeuper = VoiceWakeuper.createWakeuper(applicationContext, i -> Log.i(TAG, "createWakeuper: " + i));
+		mVoiceWakeuper = VoiceWakeuper.createWakeuper(applicationContext, i -> LogUtils.i(TAG, "createWakeuper: " + i));
 		if (null != mVoiceWakeuper) {
 			//清空参数
 			mVoiceWakeuper.setParameter(SpeechConstant.PARAMS, null);
@@ -104,11 +104,13 @@ public enum MscManager {
 			mIsVoiceWakeuperRunning = true;
 			mVoiceWakeuper.startListening(new WakeuperListener() {
 				@Override
-				public void onBeginOfSpeech() {}
+				public void onBeginOfSpeech() {
+//					LogUtils.d(TAG, "onBeginOfSpeech");
+				}
 
 				@Override
 				public void onResult(WakeuperResult wakeuperResult) {
-					Log.d(TAG, "onResult");
+					LogUtils.d(TAG, "onResult");
 					try {
 						String text = wakeuperResult.getResultString();
 						JSONObject object;
@@ -133,16 +135,21 @@ public enum MscManager {
 
 				@Override
 				public void onError(SpeechError speechError) {
+//					LogUtils.e(TAG, "speechError", speechError.getErrorCode(), speechError.getErrorDescription());
 					WakeuperResultEntity wakeuperResultEntity = new WakeuperResultEntity(false, speechError.getPlainDescription(true));
 					wakeuperResultListener.result(wakeuperResultEntity);
 					mIsVoiceWakeuperRunning = false;
 				}
 
 				@Override
-				public void onEvent(int i, int i1, int i2, Bundle bundle) {}
+				public void onEvent(int i, int i1, int i2, Bundle bundle) {
+//					LogUtils.d(TAG, "onEvent", i, i1, i2);
+				}
 
 				@Override
-				public void onVolumeChanged(int i) {}
+				public void onVolumeChanged(int i) {
+//					LogUtils.d(TAG, "onVolumeChanged", i);
+				}
 			});
 		} else {
 			mIsVoiceWakeuperRunning = false;

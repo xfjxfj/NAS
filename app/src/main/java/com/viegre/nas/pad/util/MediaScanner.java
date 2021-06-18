@@ -42,7 +42,9 @@ public class MediaScanner {
 
 		public void onScanCompleted(String path, Uri uri) {
 			mConn.disconnect();
-			mAddOnScanCompleted.onCompleted();
+			if (null != mAddOnScanCompleted) {
+				mAddOnScanCompleted.onCompleted();
+			}
 		}
 
 		/**
