@@ -120,6 +120,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
             if (!(Boolean) mViewBinding.acivLoginAccountCode.getTag()) {
                 getCodeImage();
             }
+
             mViewBinding.actvLoginTabScan.setTextColor(ColorUtils.getColor(R.color.network_password_popup_hint));
             mViewBinding.actvLoginTabScan.setBackgroundResource(0);
             mViewBinding.clLoginScan.setVisibility(View.GONE);

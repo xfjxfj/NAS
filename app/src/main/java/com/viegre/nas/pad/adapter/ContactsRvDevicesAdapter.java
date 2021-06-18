@@ -7,12 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.blankj.utilcode.util.SPUtils;
 import com.kongzue.dialog.util.DialogSettings;
 import com.kongzue.dialog.v3.CustomDialog;
 import com.viegre.nas.pad.R;
@@ -20,9 +24,11 @@ import com.viegre.nas.pad.activity.im.popupwindow.HorizontalPosition;
 import com.viegre.nas.pad.activity.im.popupwindow.SmartPopupWindow;
 import com.viegre.nas.pad.activity.im.popupwindow.TestPopupWindow;
 import com.viegre.nas.pad.activity.im.popupwindow.VerticalPosition;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.util.CommonUtils;
 
 import java.util.List;
+import java.util.Random;
 
 public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDevicesAdapter.MyHolder> {
 
@@ -33,6 +39,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
     private int mOffsetX = 0;
     private int mOffsetY = 0;
     private boolean useSmartPopup = true;
+    private AddDevicesFriend addDevicesFriend;
 
     public ContactsRvDevicesAdapter(Context context, List<String> languages, View inflate) {
         this.languages = languages;
@@ -57,6 +64,9 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
         if (languages.size() - 1 == position) {
             holder.de_laytou.setVisibility(View.GONE);
             holder.de_laytou1.setVisibility(View.VISIBLE);
+        } else {
+            holder.de_laytou.setVisibility(View.VISIBLE);
+            holder.de_laytou1.setVisibility(View.GONE);
         }
 
         holder.de_laytou.setOnLongClickListener(new View.OnLongClickListener() {
@@ -76,8 +86,27 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                 CustomDialog.build((AppCompatActivity) mContext, R.layout.contacts_add_devices_dialog, new CustomDialog.OnBindView() {
                     @Override
                     public void onBind(final CustomDialog dialog, View v) {
-                        Button btnOk = v.findViewById(R.id.cancle_bt);
-                        btnOk.setOnClickListener(new View.OnClickListener() {
+                        /**
+                         * 测试数据
+                         */
+                        EditText viewById = v.findViewById(R.id.add_device_dialog_edittext);
+                        EditText viewById1 = v.findViewById(R.id.add_device_username_dialog_edittext);
+                        Button cancle_bt = v.findViewById(R.id.cancle_bt);
+                        Button button_ok = v.findViewById(R.id.button_ok);
+
+                        viewById.setText(SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
+                        viewById1.setText(new Random().nextInt(1000) + "---魏格设备");
+
+                        button_ok.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+//                                addFriends(viewById.getText().toString(),viewById1.getText().toString());
+                                if (addDevicesFriend != null) {
+                                    addDevicesFriend.onAddDevicesFriendClick(button_ok,viewById.getText().toString(), viewById1.getText().toString());
+                                }
+                            }
+                        });
+                        cancle_bt.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 dialog.doDismiss();
@@ -88,7 +117,15 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
             }
         });
     }
+    //回调接口  添加设备好友
+    public interface AddDevicesFriend {
+        void onAddDevicesFriendClick(Button bt, String friendId, String friendName);
+    }
 
+    //定义回调方法 添加设备好友
+    public void setaddDevicesFriend(AddDevicesFriend addDevicesFriend) {
+        this.addDevicesFriend = addDevicesFriend;
+    }
 
     @Override
     public int getItemCount() {
