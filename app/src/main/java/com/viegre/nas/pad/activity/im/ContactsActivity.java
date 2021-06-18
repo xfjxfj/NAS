@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.djangoogle.framework.activity.BaseActivity;
@@ -25,6 +27,7 @@ import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivityContactsBinding;
+import com.viegre.nas.pad.entity.AddDevicesFriend;
 import com.viegre.nas.pad.entity.ContactsBean;
 import com.viegre.nas.pad.entity.DevicesFollowEntity;
 import com.viegre.nas.pad.util.CommonUtils;
@@ -40,6 +43,8 @@ import java.util.List;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
@@ -52,7 +57,7 @@ import static android.app.PendingIntent.getActivity;
  * 联系人相关类
  */
 
-public class ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.OnClickListener {
+public class ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.OnClickListener, ContactsRvDevicesAdapter.AddDevicesFriend {
 
     private RecyclerView contactsRv1;
     private RecyclerView contactsRv2;
@@ -64,7 +69,9 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     public static Boolean Token_valid = true;
     private TextView textView2;
     private TextView textRecord;
+    boolean isLoading = false;
     private ContactsRvRecordAdapter contactsRvRecordAdapter;
+    private ContactsRvDevicesAdapter adapter;
 
     @Override
     protected void initialize() {
@@ -87,6 +94,35 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
 //        initFriendData(mContactsData);
         ifRecordList();
         initDevicesData(mDevicesData);
+
+        contactsRv3.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@androidx.annotation.NonNull @NotNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (recyclerView != null && recyclerView.getChildCount() > 0) {
+                    try {
+                        int currentPosition = ((RecyclerView.LayoutParams) recyclerView.getChildAt(0).getLayoutParams()).getViewAdapterPosition();
+                        Log.e("=====currentPosition", "" + currentPosition);
+                    } catch (Exception e) {
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(@androidx.annotation.NonNull @NotNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                RecyclerView.LayoutManager linearLayoutManager = contactsRv3.getLayoutManager();
+                int itemCount = linearLayoutManager.getItemCount();
+                int baseline = linearLayoutManager.getBaseline();
+                Log.d("=====itemCount=", itemCount + "");
+                Log.d("=====dx=", dx + "");
+                Log.d("=====dy=", dy + "");
+
+                if (!recyclerView.canScrollVertically(1)) {
+
+                }
+            }
+        });
     }
 
     @Override
@@ -142,7 +178,9 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         //创建适配器，将数据传递给适配器
         //设置适配器adapter
         View inflate = getLayoutInflater().inflate(R.layout.contacts_devices_popup, null);
-        contactsRv3.setAdapter(new ContactsRvDevicesAdapter(this, wwwww,inflate));
+        adapter = new ContactsRvDevicesAdapter(this, wwwww, inflate);
+        contactsRv3.setAdapter(adapter);
+        adapter.setaddDevicesFriend(this);
     }
 
     private void initFriendData(List<ContactsBean> mContactsData) {
@@ -227,9 +265,9 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                     @Override
                     public void onComplete() {
                         Log.d("", "");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+                    }
+                });
+    }
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -266,6 +304,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
 
                 break;
         }
+
     }
 
     private void ResetRecord() {
@@ -282,6 +321,55 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         }
         initRecordData(mRecordData);
         textRecord.setVisibility(View.VISIBLE);//显示提示信息
+    }
+
+    @Override
+    public void onAddDevicesFriendClick(Button bt, String friendId, String friendName) {
+        bt.setText("请稍等....");
+        RxHttp.postForm(UrlConfig.Device.GET_ADDFRIENDREQUEST)
+                .addHeader("token", SPUtils.getInstance().getString("token"))
+                .add("requestedSn", friendId)
+                .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+                .asString()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.d("onSubscribe", d.toString());
+                    }
+
+                    //                    {"msg":"token verify fail","code":"4111"}   2021年5月21日
+                    @Override
+                    public void onNext(@NonNull String s) {
+//                        {"code":0,"msg":"OK","data":null}
+                        Gson gson = new Gson();
+                        AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
+                        if (addDevicesFriend.msg.equals("OK")) {
+                            Toast.makeText(ContactsActivity.this, "添加请求发送成功，等待对方接受。", Toast.LENGTH_LONG).show();
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            bt.setText("发送邀请");
+                                        }
+                                    });
+                                }
+                            }, 1500);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        CommonUtils.showErrorToast(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("", "");
+                    }
+                });
     }
 }
 

@@ -85,7 +85,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/button_ok"
                 android:layout_width="128px"
                 android:layout_height="56px"
                 android:background="@drawable/contacts_add_button_ok_bg"
@@ -106,9 +106,9 @@
                 android:text="@string/cancel"
                 android:textColor="@color/white"
                 android:textSize="24px"
-                app:layout_constraintBottom_toBottomOf="@+id/button2"
-                app:layout_constraintEnd_toStartOf="@+id/button2"
-                app:layout_constraintTop_toTopOf="@+id/button2"
+                app:layout_constraintBottom_toBottomOf="@+id/button_ok"
+                app:layout_constraintEnd_toStartOf="@+id/button_ok"
+                app:layout_constraintTop_toTopOf="@+id/button_ok"
                 tools:ignore="MissingConstraints" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
