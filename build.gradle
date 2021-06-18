@@ -8,12 +8,9 @@ buildscript {
 	}
 	dependencies {
 		classpath 'com.android.tools.build:gradle:4.2.1+'
-//		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10"
-//		classpath 'com.github.nrudenko:gradle-android-cq-plugin:0.1.7'
 		classpath 'com.huawei.agconnect:agcp:1.4.2.301'
 		classpath 'com.jakewharton:butterknife-gradle-plugin:10.2.3'
 		classpath 'com.google.gms:google-services:4.3.5'
-		classpath 'com.yanzhenjie.andserver:plugin:2.1.9'
 	}
 }
 

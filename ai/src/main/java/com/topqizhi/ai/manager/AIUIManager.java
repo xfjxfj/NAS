@@ -36,7 +36,7 @@ public enum AIUIManager {
 
 	INSTANCE;
 
-	public static final boolean IS_HARD_WAKEUP = false;
+	public static final boolean IS_HARD_WAKEUP = true;
 
 	private static final String TAG = AIUIManager.class.getSimpleName();
 
@@ -94,7 +94,7 @@ public enum AIUIManager {
 	}
 
 	public void startListening() {
-		MscManager.INSTANCE.setListenHardWakeup(true);
+		MscManager.INSTANCE.setListenHardWakeup(IS_HARD_WAKEUP);
 		if (!mIsPauseMusicManually && !WlMusic.getInstance().isPlaying()) {
 			WlMusic.getInstance().resume();
 		}

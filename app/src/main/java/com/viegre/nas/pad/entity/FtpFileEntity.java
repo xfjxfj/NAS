@@ -5,6 +5,8 @@ import org.litepal.crud.LitePalSupport;
 import java.io.Serializable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.Set;
+import java.util.TreeSet;
 
 import androidx.annotation.StringDef;
 
@@ -37,35 +39,27 @@ public class FtpFileEntity extends LitePalSupport implements Serializable {
 		String RECYCLED = "recycled";
 	}
 
-	@Retention(SOURCE)
-	@Target({PARAMETER})
-	@StringDef(value = {BanPick.TRUE, BanPick.FALSE})
-	public @interface BanPick {
-		String TRUE = "true";
-		String FALSE = "false";
-	}
-
 	private String path;
 	private String recycledPath;
 	private String createTime;
 	private String deleteTime;
-	private String phoneNum;
+	private String deletePhoneNum;
 	private String size;
 	private String type;
 	private String state;
-	private String extra;
-	private String pick = BanPick.FALSE;
-	private String ban = BanPick.FALSE;
+	private String ext;
+	private final Set<String> pickSet = new TreeSet<>();
+	private final Set<String> banSet = new TreeSet<>();
 
 	public FtpFileEntity() {}
 
-	public FtpFileEntity(String path, String recycledPath, String createTime, String deleteTime, String phoneNum,
+	public FtpFileEntity(String path, String recycledPath, String createTime, String deleteTime, String deletePhoneNum,
 	                     @Type String type, @State String state) {
 		this.path = path;
 		this.recycledPath = recycledPath;
 		this.createTime = createTime;
 		this.deleteTime = deleteTime;
-		this.phoneNum = phoneNum;
+		this.deletePhoneNum = deletePhoneNum;
 		this.type = type;
 		this.state = state;
 	}
@@ -102,12 +96,12 @@ public class FtpFileEntity extends LitePalSupport implements Serializable {
 		this.deleteTime = deleteTime;
 	}
 
-	public String getPhoneNum() {
-		return phoneNum;
+	public String getDeletePhoneNum() {
+		return deletePhoneNum;
 	}
 
-	public void setPhoneNum(String phoneNum) {
-		this.phoneNum = phoneNum;
+	public void setDeletePhoneNum(String deletePhoneNum) {
+		this.deletePhoneNum = deletePhoneNum;
 	}
 
 	public String getSize() {
@@ -134,27 +128,19 @@ public class FtpFileEntity extends LitePalSupport implements Serializable {
 		this.state = state;
 	}
 
-	public String getExtra() {
-		return extra;
+	public String getExt() {
+		return ext;
 	}
 
-	public void setExtra(String extra) {
-		this.extra = extra;
+	public void setExt(String ext) {
+		this.ext = ext;
 	}
 
-	public String getPick() {
-		return pick;
+	public Set<String> getPickSet() {
+		return pickSet;
 	}
 
-	public void setPick(@BanPick String pick) {
-		this.pick = pick;
-	}
-
-	public String getBan() {
-		return ban;
-	}
-
-	public void setBan(@BanPick String ban) {
-		this.ban = ban;
+	public Set<String> getBanSet() {
+		return banSet;
 	}
 }

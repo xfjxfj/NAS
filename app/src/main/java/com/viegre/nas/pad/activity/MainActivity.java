@@ -292,7 +292,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
 	private void initClick() {
 //		if (BuildConfig.DEBUG) {
-//			mViewBinding.tcMainTime.setOnClickListener(view -> ActivityUtils.startActivity(PrimitiveFtpdActivity.class));
+//			mViewBinding.tcMainTime.setOnClickListener(view -> {
+//			});
 //		}
 		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
 		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
