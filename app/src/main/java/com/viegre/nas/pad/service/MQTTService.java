@@ -1066,12 +1066,14 @@ public class MQTTService extends Service {
 											} else {
 												if (!fileEntity.getBanSet().contains(banPhoneNum)) {
 													fileEntity.getBanSet().add(banPhoneNum);
+													fileEntity.setExt(ftpFileEntity.getExt());
 													fileEntity.save();
 												}
 											}
 										} else {
 											if (null != fileEntity && fileEntity.getBanSet().contains(banPhoneNum)) {
 												fileEntity.getPickSet().remove(banPhoneNum);
+												fileEntity.setExt("");
 												fileEntity.save();
 											}
 										}
