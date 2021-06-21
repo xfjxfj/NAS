@@ -606,53 +606,79 @@ public class MQTTService extends Service {
 
 					//ftp复制/移动/重命名
 					case MQTTMsgEntity.MSG_FTP_LOCATION:
-						String type = JSON.parseObject(mqttMsgEntity.getParam()).getString("type");
-						String destPath = JSON.parseObject(mqttMsgEntity.getParam()).getString("destPath");
-						List<FtpCmdEntity> srcPathList = JSON.parseObject(mqttMsgEntity.getParam())
-						                                     .getJSONArray("srcPathList")
-						                                     .toJavaList(FtpCmdEntity.class);
-						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Boolean>() {
+						ThreadUtils.executeByCached(new VoidTask() {
 							@Override
-							public Boolean doInBackground() {
-								srcPathList.forEach(ftpCmdEntity -> {
-									if (FileUtils.isFileExists(ftpCmdEntity.getPath())) {
+							public Void doInBackground() {
+								String type = JSON.parseObject(mqttMsgEntity.getParam()).getString("type");
+								String destPath = JSON.parseObject(mqttMsgEntity.getParam()).getString("destPath");
+								List<FtpFileEntity> srcPathList = JSON.parseObject(mqttMsgEntity.getParam())
+								                                      .getJSONArray("srcPathList")
+								                                      .toJavaList(FtpFileEntity.class);
+								List<FtpFileEntity> doneList = new ArrayList<>();
+								boolean result = false;
+								FtpFileEntity ftpFile = srcPathList.stream().filter(ftpFileEntity -> {
+									if (FileUtils.isFileExists(ftpFileEntity.getPath())) {
+										String destFilePath = destPath + FileUtils.getFileName(ftpFileEntity.getPath());
 										switch (type) {
 											case FtpFileEntity.CP:
-												FileUtils.copy(ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
-												MediaScannerConnection.scanFile(Utils.getApp(),
-												                                new String[]{destPath + FileUtils.getFileName(ftpCmdEntity.getPath())},
-												                                null,
-												                                null);
+												if (FileUtils.isFileExists(destFilePath)) {
+													if (ftpFileEntity.isCoverageConfirm()) {
+														coverageFile(ftpFileEntity.getPath(), destPath, type, 1);
+													} else {
+														ftpFileEntity.setCoverageConfirm(true);
+														return true;
+													}
+												} else {
+													FileUtils.copy(ftpFileEntity.getPath(), destFilePath);
+													MediaScannerConnection.scanFile(Utils.getApp(), new String[]{destFilePath}, null, null);
+												}
 												break;
 
 											case FtpFileEntity.MV:
-												FileUtils.move(ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
-												MediaScannerConnection.scanFile(Utils.getApp(),
-												                                new String[]{ftpCmdEntity.getPath(), destPath + FileUtils.getFileName(
-														                                ftpCmdEntity.getPath())},
-												                                null,
-												                                null);
-												FtpFileEntity mvFtpFileEntity = LitePal.where("path = ? AND state = ?",
-												                                              ftpCmdEntity.getPath(),
-												                                              FtpFileEntity.State.NORMAL)
-												                                       .findFirst(FtpFileEntity.class);
-												if (null != mvFtpFileEntity) {
-													mvFtpFileEntity.setPath(destPath + FileUtils.getFileName(ftpCmdEntity.getPath()));
-													mvFtpFileEntity.save();
+												if (FileUtils.isFileExists(destFilePath)) {
+													if (ftpFileEntity.isCoverageConfirm()) {
+														coverageFile(ftpFileEntity.getPath(), destPath, type, 1);
+													} else {
+														ftpFileEntity.setCoverageConfirm(true);
+														return true;
+													}
+												} else {
+													FileUtils.move(ftpFileEntity.getPath(), destFilePath);
+													MediaScannerConnection.scanFile(Utils.getApp(),
+													                                new String[]{ftpFileEntity.getPath(), destFilePath},
+													                                null,
+													                                null);
+													FtpFileEntity mvFtpFileEntity = LitePal.where("path = ? AND state = ?",
+													                                              ftpFileEntity.getPath(),
+													                                              FtpFileEntity.State.NORMAL)
+													                                       .findFirst(FtpFileEntity.class);
+													if (null != mvFtpFileEntity) {
+														mvFtpFileEntity.setPath(destFilePath);
+														mvFtpFileEntity.save();
+													}
 												}
 												break;
 
 											case FtpFileEntity.RE:
-												FileUtils.rename(ftpCmdEntity.getPath(), FileUtils.getFileName(destPath));
-												new MediaScanner(Utils.getApp(), null).scanFile(new File(ftpCmdEntity.getPath()));
-												new MediaScanner(Utils.getApp(), null).scanFile(new File(destPath));
-												FtpFileEntity reFtpFileEntity = LitePal.where("path = ? AND state = ?",
-												                                              ftpCmdEntity.getPath(),
-												                                              FtpFileEntity.State.NORMAL)
-												                                       .findFirst(FtpFileEntity.class);
-												if (null != reFtpFileEntity) {
-													reFtpFileEntity.setPath(destPath);
-													reFtpFileEntity.save();
+												if (FileUtils.isFileExists(destFilePath)) {
+													if (ftpFileEntity.isCoverageConfirm()) {
+														coverageFile(ftpFileEntity.getPath(), destPath, type, 1);
+													} else {
+														ftpFileEntity.setCoverageConfirm(true);
+														return true;
+													}
+												} else {
+													FileUtils.rename(ftpFileEntity.getPath(), FileUtils.getFileName(destPath));
+													new MediaScanner(Utils.getApp(), null).scanFile(new File(ftpFileEntity.getPath()));
+													new MediaScanner(Utils.getApp(), null).scanFile(new File(destPath));
+													FtpFileEntity reFtpFileEntity = LitePal.where("path = ? AND state = ?",
+													                                              ftpFileEntity.getPath(),
+													                                              FtpFileEntity.State.NORMAL)
+													                                       .findFirst(FtpFileEntity.class);
+													if (null != reFtpFileEntity) {
+														reFtpFileEntity.setPath(destPath);
+														reFtpFileEntity.save();
+													}
 												}
 												break;
 
@@ -660,19 +686,30 @@ public class MQTTService extends Service {
 												break;
 										}
 									}
-								});
-								return true;
-							}
+									doneList.add(ftpFileEntity);
+									return false;
+								}).findFirst().orElse(null);
 
-							@Override
-							public void onSuccess(Boolean result) {
 								Map<String, Object> ftpCopyParamMap = new HashMap<>();
+								if (null == ftpFile) {
+									result = true;
+								} else {
+
+									ftpCopyParamMap.put("confirmList",
+									                    srcPathList.stream()
+									                               .filter(ftpFileEntity -> !doneList.contains(ftpFileEntity))
+									                               .collect(Collectors.toList()));
+									ftpCopyParamMap.put("destPath", destPath);
+									ftpCopyParamMap.put("type", type);
+								}
+
 								ftpCopyParamMap.put("result", result);
 								MQTTMsgEntity ftpCopyMsg = getMQTTMsg(MQTTMsgEntity.TYPE_CMD,
 								                                      MQTTMsgEntity.MSG_FTP_LOCATION,
 								                                      mqttMsgEntity.getFromId());
 								ftpCopyMsg.setParam(new JSONObject(ftpCopyParamMap).toJSONString());
 								sendMQTTMsg(ftpCopyMsg);
+								return null;
 							}
 						});
 						break;
@@ -1216,7 +1253,14 @@ public class MQTTService extends Service {
 			long time = FileUtils.getFileLastModified(path);
 			String createTime = TimeUtils.millis2String(time, new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()));
 			long size = cursor.getLong(cursor.getColumnIndexOrThrow(sizeProjection));
-			list.add(new FtpCategoryEntity(name, path, createTime, ConvertUtils.byte2FitMemorySize(size, 2), src));
+			boolean isPick;
+			FtpFileEntity ftpFileEntity = LitePal.where("path = ? AND state = ?", path, FtpFileEntity.State.NORMAL).findFirst(FtpFileEntity.class);
+			if (null == ftpFileEntity) {
+				isPick = false;
+			} else {
+				isPick = ftpFileEntity.getPickSet().contains(phoneNum);
+			}
+			list.add(new FtpCategoryEntity(name, path, createTime, ConvertUtils.byte2FitMemorySize(size, 2), src, isPick));
 		}
 		cursor.close();
 		return list;
@@ -1277,6 +1321,57 @@ public class MQTTService extends Service {
 			return FtpFileEntity.Type.PUBLIC;
 		} else {
 			return FtpFileEntity.Type.UNKNOWN;
+		}
+	}
+
+	private void coverageFile(String path, String destPath, String type, int index) {
+		String filename = FileUtils.getFileName(path), name = FileUtils.getFileNameNoExtension(path), extension = FileUtils.getFileExtension(path), newPath;
+		if (name.isEmpty() && extension.isEmpty()) {
+			return;
+		}
+		if (name.isEmpty()) {
+			newPath = destPath + filename + " (" + index + ")";
+		} else if (extension.isEmpty()) {
+			newPath = destPath + name + " (" + index + ")";
+		} else {
+			newPath = destPath + name + " (" + index + ")." + extension;
+		}
+		if (FileUtils.isFileExists(newPath)) {
+			index++;
+			coverageFile(path, destPath, type, index);
+			return;
+		}
+		switch (type) {
+			case FtpFileEntity.CP:
+				FileUtils.copy(path, newPath);
+				MediaScannerConnection.scanFile(Utils.getApp(), new String[]{newPath}, null, null);
+				break;
+
+			case FtpFileEntity.MV:
+				FileUtils.move(path, newPath);
+				MediaScannerConnection.scanFile(Utils.getApp(), new String[]{path, newPath}, null, null);
+				FtpFileEntity mvFtpFileEntity = LitePal.where("path = ? AND state = ?", path, FtpFileEntity.State.NORMAL)
+				                                       .findFirst(FtpFileEntity.class);
+				if (null != mvFtpFileEntity) {
+					mvFtpFileEntity.setPath(newPath);
+					mvFtpFileEntity.save();
+				}
+				break;
+
+			case FtpFileEntity.RE:
+				FileUtils.rename(path, FileUtils.getFileName(newPath));
+				new MediaScanner(Utils.getApp(), null).scanFile(new File(path));
+				new MediaScanner(Utils.getApp(), null).scanFile(new File(newPath));
+				FtpFileEntity reFtpFileEntity = LitePal.where("path = ? AND state = ?", path, FtpFileEntity.State.NORMAL)
+				                                       .findFirst(FtpFileEntity.class);
+				if (null != reFtpFileEntity) {
+					reFtpFileEntity.setPath(newPath);
+					reFtpFileEntity.save();
+				}
+				break;
+
+			default:
+				break;
 		}
 	}
 }

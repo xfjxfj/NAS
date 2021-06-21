@@ -3,7 +3,7 @@
 
 	<dbname value="viegre_nas_pad" />
 
-	<version value="24" />
+	<version value="25" />
 
 	<list>
 		<mapping class="com.viegre.nas.pad.entity.DeviceResourceEntity" />
