@@ -100,6 +100,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                         /**
                          * 测试数据
                          */
+//                        5830e3fbe8c57dd5
                         EditText viewById = v.findViewById(R.id.add_device_dialog_edittext);
                         EditText viewById1 = v.findViewById(R.id.add_device_username_dialog_edittext);
                         Button cancle_bt = v.findViewById(R.id.cancle_bt);
@@ -214,7 +215,6 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                     deleteDevicesFriend.onDeleteDevicesFriend(friendSn,friendName);
                 }
             });
-
         }
     }
 

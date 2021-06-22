@@ -14,7 +14,7 @@ public class FtpCategoryEntity implements Serializable {
 	private String src;
 	private boolean pick = false;
 
-	public FtpCategoryEntity(String name, String path, String createTime, String s, String src) {}
+	public FtpCategoryEntity() {}
 
 	public FtpCategoryEntity(String name, String path, String createTime, String size, String src, boolean pick) {
 		this.name = name;

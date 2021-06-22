@@ -12,9 +12,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -100,13 +102,7 @@ public class MQTTService extends Service {
 	private MqttAndroidClient mMqttAndroidClient;
 	private FileWatcher mFileWatcher;
 	private FtpServer mFtpServer;
-
-	@Nullable
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
-
+	private TipsDevicesFriend tipsdevicesfriend;
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		createNotificationChannel();
@@ -143,6 +139,7 @@ public class MQTTService extends Service {
 			}
 		} catch (FtpException e) {
 			e.printStackTrace();
+			Log.d("MQTTError",e.toString());
 		}
 	}
 
@@ -338,6 +335,16 @@ public class MQTTService extends Service {
 	private void parseMessage(String message) {
 		MQTTMsgEntity mqttMsgEntity = JSON.parseObject(message, MQTTMsgEntity.class);
 		switch (mqttMsgEntity.getMsgType()) {
+			case MQTTMsgEntity.MSG_REQUEST:
+				switch (mqttMsgEntity.getAction()) {
+					case MQTTMsgEntity.MSG_ADDFRIENDREQUEST:
+						String requesterID = JSON.parseObject(mqttMsgEntity.getParam()).getString("requester");
+						if (tipsdevicesfriend != null) {
+							tipsdevicesfriend.onTipsdevicesFriend(requesterID);
+						}
+						break;
+				}
+				break;
 			case MQTTMsgEntity.TYPE_NOTIFY:
 				switch (mqttMsgEntity.getAction()) {
 					//登录设备
@@ -1372,6 +1379,22 @@ public class MQTTService extends Service {
 
 			default:
 				break;
+		}
+	}
+	public interface TipsDevicesFriend {
+		void onTipsdevicesFriend(String requestID);
+	}
+
+	public void setTipsDevicesFriend(TipsDevicesFriend tipsdevicesfriend) {
+		this.tipsdevicesfriend = tipsdevicesfriend;
+	}
+	public IBinder onBind(Intent intent) {
+		return new DownLoadBinder();
+	}
+
+	public class DownLoadBinder extends Binder {
+		public MQTTService getService() {
+			return MQTTService.this;
 		}
 	}
 }
