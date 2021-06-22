@@ -36,8 +36,8 @@ public enum AIUIManager {
 
 	INSTANCE;
 
-//	public static final boolean IS_HARD_WAKEUP = true;
-	public static final boolean IS_HARD_WAKEUP = false;
+	public static final boolean IS_HARD_WAKEUP = true;
+//	public static final boolean IS_HARD_WAKEUP = false;
 
 	private static final String TAG = AIUIManager.class.getSimpleName();
 

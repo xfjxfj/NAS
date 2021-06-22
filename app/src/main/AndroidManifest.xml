@@ -61,7 +61,6 @@
 
         <activity
             android:name=".activity.SplashActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/SplashTheme">
             <intent-filter>

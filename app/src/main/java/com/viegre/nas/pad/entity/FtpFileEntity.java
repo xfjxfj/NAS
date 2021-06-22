@@ -1,5 +1,6 @@
 package com.viegre.nas.pad.entity;
 
+import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
 import java.io.Serializable;
@@ -50,6 +51,7 @@ public class FtpFileEntity extends LitePalSupport implements Serializable {
 	private String ext;
 	private final Set<String> pickSet = new TreeSet<>();
 	private final Set<String> banSet = new TreeSet<>();
+	@Column(ignore = true) private boolean coverageConfirm = false;
 
 	public FtpFileEntity() {}
 
@@ -142,5 +144,13 @@ public class FtpFileEntity extends LitePalSupport implements Serializable {
 
 	public Set<String> getBanSet() {
 		return banSet;
+	}
+
+	public boolean isCoverageConfirm() {
+		return coverageConfirm;
+	}
+
+	public void setCoverageConfirm(boolean coverageConfirm) {
+		this.coverageConfirm = coverageConfirm;
 	}
 }

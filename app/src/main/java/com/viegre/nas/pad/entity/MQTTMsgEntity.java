@@ -23,6 +23,7 @@ public class MQTTMsgEntity implements Serializable {
 	public final static String TYPE_CMD = "cmd";
 
 	public final static String MSG_DISK_DEFRAGMENT = "diskDefragment";//磁盘整理
+	public final static String MSG_RESTORE_LIST = "restoreList";//还原列表
 	public final static String MSG_RESTORE = "restore";//还原
 	public final static String MSG_BACKUP = "backup";//备份
 	public final static String MSG_LIFE_TEST = "lifeTest";//使用寿命检测

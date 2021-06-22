@@ -128,11 +128,11 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 			}
 
 			@Override
-			public void onSuccess(Void v) {
-				super.onSuccess(v);
-				ActivityUtils.startActivity(MainActivity.class);
-				finish();
-//				getDeviceBoundstatus();
+			protected void onDone() {
+				super.onDone();
+//				ActivityUtils.startActivity(MainActivity.class);
+//				finish();
+				getDeviceBoundstatus();
 			}
 		});
 	}

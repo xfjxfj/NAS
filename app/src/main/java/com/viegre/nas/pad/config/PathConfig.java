@@ -26,25 +26,4 @@ public class PathConfig {
 	public static final String UPLOAD_CACHE = NAS + ".uploadCache" + File.separator;
 
 	public static final String CONTACTS_RECOMDING = "/Recomding.txt";
-
-//	//图片目录
-//	public static class IMAGE {
-//		private static final String IMAGE = "image";
-//		public static final String PRI = PRIVATE + IMAGE;
-//		public static final String PUB = PUBLIC + IMAGE;
-//	}
-//
-//	//音频目录
-//	public static class AUDIO {
-//		private static final String AUDIO = "audio";
-//		public static final String PRI = PRIVATE + AUDIO;
-//		public static final String PUB = PUBLIC + AUDIO;
-//	}
-//
-//	//视频目录
-//	public static class VIDEO {
-//		private static final String VIDEO = "video";
-//		public static final String PRI = PRIVATE + VIDEO;
-//		public static final String PUB = PUBLIC + VIDEO;
-//	}
 }
