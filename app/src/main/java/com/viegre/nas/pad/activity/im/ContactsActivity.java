@@ -130,12 +130,12 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     };
     private TipDialog dialog;
 
-    //请求网络
+    //接受或者拒绝好友申请
     @SuppressLint("UseValueOf")
     private void AccectRequest(int status, String friendId) {
         RxHttp.postForm(UrlConfig.Device.GET_ADDFRIENDRESULT)
                 .addHeader("token", SPUtils.getInstance().getString("token"))
-                .add("requestedSn", friendId)
+                .add("requesterSn", friendId)
                 .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
                 .add("status", new Integer(status))
                 .asString()
@@ -151,6 +151,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                     public void onNext(@NonNull String s) {
 //                        {"code":0,"msg":"OK","data":null}
                         Gson gson = new Gson();
+//                        {"code":4000,"msg":"参数不正确","data":null}
                         AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
                         if (addDevicesFriend.msg.equals("OK")) {
                             Toast.makeText(ContactsActivity.this, "添加请求发送成功，等待对方接受。", Toast.LENGTH_LONG).show();
@@ -166,6 +167,8 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                                     });
                                 }
                             }, 1500);
+                        } else {
+                            CommonUtils.showErrorToast(addDevicesFriend.msg);
                         }
                     }
 
@@ -555,7 +558,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                 button_ok.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        posNetWork(newFriendName.getText().toString(),callId,devicesSn);
+                        posNetWork(newFriendName.getText().toString(), callId, devicesSn);
                     }
                 });
                 cancle_bt.setOnClickListener(new View.OnClickListener() {
@@ -609,7 +612,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     }
 
     @Override
-    public void onDeleteDevicesFriend(String friendSn,String friendName) {
+    public void onDeleteDevicesFriend(String friendSn, String friendName) {
         CustomDialog.build(ContactsActivity.this, R.layout.contacts_delete_devices_friend_dialog, new CustomDialog.OnBindView() {
             @Override
             public void onBind(final CustomDialog dialog, View v) {
@@ -620,7 +623,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                 button_ok.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        postDeleteNetWork(friendSn,friendName);
+                        postDeleteNetWork(friendSn, friendName);
                     }
                 });
                 cancle_bt.setOnClickListener(new View.OnClickListener() {
@@ -633,6 +636,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         }).setFullScreen(true).show();
     }
 
+    //6fa8295f4764b429
     private void postDeleteNetWork(String friendSn, String friendName) {
 
     }
