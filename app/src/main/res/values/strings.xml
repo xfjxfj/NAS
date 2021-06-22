@@ -210,6 +210,15 @@
     <string name="contacts_add_devices7">视频呼叫</string>
     <string name="contacts_add_devices8">修改设备</string>
     <string name="contacts_add_devices9">删除设备</string>
+    <string name="contacts_add_devices10">NAS设备联系邀请</string>
+    <string name="contacts_add_devices11">收到来自</string>
+    <string name="contacts_add_devices12">设备发出的联系人添加邀请，是否接受邀请？</string>
+    <string name="contacts_add_devices13">确定</string>
+    <string name="contacts_add_devices14">请输入修改的名称</string>
+    <string name="contacts_add_devices15">名称</string>
+    <string name="contacts_add_devices16">修改名称</string>
+    <string name="contacts_add_devices18">删除此联系设备</string>
+    <string name="contacts_add_devices19">是否要删除联系设备</string>
     <!--    WebView界面-->
     <string name="webview_back">返回</string>
 

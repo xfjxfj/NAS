@@ -25,23 +25,28 @@ import com.viegre.nas.pad.activity.im.popupwindow.SmartPopupWindow;
 import com.viegre.nas.pad.activity.im.popupwindow.TestPopupWindow;
 import com.viegre.nas.pad.activity.im.popupwindow.VerticalPosition;
 import com.viegre.nas.pad.config.SPConfig;
+import com.viegre.nas.pad.entity.DevicesFriendsListBean;
 import com.viegre.nas.pad.util.CommonUtils;
 
 import java.util.List;
 import java.util.Random;
 
+import cn.wildfire.chat.kit.WfcUIKit;
+
 public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDevicesAdapter.MyHolder> {
 
-    private final List<String> languages;
+    private final List<DevicesFriendsListBean> languages;
     private final Context mContext;
     private final View mPopupContentView;
     private int mGravity = Gravity.START;
     private int mOffsetX = 0;
     private int mOffsetY = 0;
     private boolean useSmartPopup = true;
-    private AddDevicesFriend addDevicesFriend;
+    private ContactsRvDevicesAdapter.addDevicesFriend addDevicesFriend;
+    private ContactsRvDevicesAdapter.editDevicesName editDevicesName;
+    private ContactsRvDevicesAdapter.deleteDevicesFriend deleteDevicesFriend;
 
-    public ContactsRvDevicesAdapter(Context context, List<String> languages, View inflate) {
+    public ContactsRvDevicesAdapter(Context context, List<DevicesFriendsListBean> languages, View inflate) {
         this.languages = languages;
         this.mContext = context;
         this.mPopupContentView = inflate;
@@ -60,11 +65,11 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
 
     @Override
     public void onBindViewHolder(@NonNull ContactsRvDevicesAdapter.MyHolder holder, int position) {
-        holder.textdv.setText(languages.get(position));
         if (languages.size() - 1 == position) {
             holder.de_laytou.setVisibility(View.GONE);
             holder.de_laytou1.setVisibility(View.VISIBLE);
         } else {
+            holder.textdv.setText(languages.get(position).getName() + languages.get(position).getCallId());
             holder.de_laytou.setVisibility(View.VISIBLE);
             holder.de_laytou1.setVisibility(View.GONE);
         }
@@ -73,8 +78,14 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
             @Override
             public boolean onLongClick(View v) {
                 CommonUtils.setBackgroundAlpha((Activity) mContext, 0.2f);
-                mypopupmenu(v);
+                mypopupmenu(v, languages.get(position).getCallId(), languages.get(position).getSn(),languages.get(position).getName());
                 return false;
+            }
+        });
+        holder.de_laytou.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RunCall(languages.get(position).getCallId(), false);
             }
         });
 
@@ -100,9 +111,8 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                         button_ok.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-//                                addFriends(viewById.getText().toString(),viewById1.getText().toString());
                                 if (addDevicesFriend != null) {
-                                    addDevicesFriend.onAddDevicesFriendClick(button_ok,viewById.getText().toString(), viewById1.getText().toString());
+                                    addDevicesFriend.onAddDevicesFriendClick(button_ok, viewById.getText().toString(), viewById1.getText().toString());
                                 }
                             }
                         });
@@ -117,14 +127,40 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
             }
         });
     }
+
+    //    RunCall(languages.get(position).getUserid(), false);
+    private void RunCall(String userid, Boolean isAudioOnly) {
+        WfcUIKit.singleCall(mContext, userid, isAudioOnly);
+    }
+
     //回调接口  添加设备好友
-    public interface AddDevicesFriend {
+    public interface addDevicesFriend {
         void onAddDevicesFriendClick(Button bt, String friendId, String friendName);
     }
 
+    //回调接口 修改名称
+    public interface editDevicesName {
+        void onEditDevicesNameClick(String callId, String devicesSn);
+    }
+
+    //    回调接口删除设备
+    public interface deleteDevicesFriend {
+        void onDeleteDevicesFriend(String friendSn,String friendName);
+    }
+
+    //定义回调方法 修改名称
+    public void setEditDevicesName(editDevicesName editDevicesName) {
+        this.editDevicesName = editDevicesName;
+    }
+
     //定义回调方法 添加设备好友
-    public void setaddDevicesFriend(AddDevicesFriend addDevicesFriend) {
+    public void setaddDevicesFriend(addDevicesFriend addDevicesFriend) {
         this.addDevicesFriend = addDevicesFriend;
+    }
+
+    //定义回调方法，删除设备好友
+    public void setDeleteFriend(deleteDevicesFriend deleteFriend) {
+        this.deleteDevicesFriend = deleteFriend;
     }
 
     @Override
@@ -132,8 +168,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
         return languages.size();
     }
 
-    private void mypopupmenu(View v) {
-
+    private void mypopupmenu(View v, String callId, String friendSn, String friendName) {
         TestPopupWindow mWindow = new TestPopupWindow(mContext);
         mGravity = Gravity.START;
         mOffsetX = Math.abs(mWindow.getContentView().getMeasuredWidth() - v.getWidth()) / 2;
@@ -143,37 +178,43 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
             SmartPopupWindow popupWindow = SmartPopupWindow.Builder
                     .build((Activity) mContext, mPopupContentView)
                     .createPopupWindow();
-
             popupWindow.showAtAnchorView(v, VerticalPosition.ABOVE, HorizontalPosition.CENTER);
-
             popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
                     CommonUtils.setBackgroundAlpha((Activity) mContext, 1f);
                 }
             });
+            mPopupContentView.findViewById(R.id.call_view).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    语音呼叫
+                    RunCall(callId, true);
+                }
+            });
+            mPopupContentView.findViewById(R.id.video_view).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    视频呼叫
+                    RunCall(callId, false);
+                }
+            });
+            mPopupContentView.findViewById(R.id.edit_devices_view).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    修改设备名称
+                    editDevicesName.onEditDevicesNameClick(callId, friendSn);
+                }
+            });
+            mPopupContentView.findViewById(R.id.delete_devices_view).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    删除设备呼叫
+                    deleteDevicesFriend.onDeleteDevicesFriend(friendSn,friendName);
+                }
+            });
+
         }
-//        //定义popupmenu对象
-//        PopupMenu popupmenu = new PopupMenu(mContext, v);
-//        //设置popupmenu对象的布局
-//        popupmenu.getMenuInflater().inflate(R.menu.menu, popupmenu.getMenu());
-//        //设置popupmenu的点击事件
-//        popupmenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                Toast.makeText(mContext, "点击了----" + item.getTitle(), Toast.LENGTH_SHORT).show();
-//                return false;
-//            }
-//        });
-//
-//        popupmenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
-//            @Override
-//            public void onDismiss(PopupMenu menu) {
-//                CommonUtils.setBackgroundAlpha((Activity) mContext, 1f);
-//            }
-//        });
-//        //显示菜单
-//        popupmenu.show();
     }
 
     /**

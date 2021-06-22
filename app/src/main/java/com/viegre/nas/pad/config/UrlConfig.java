@@ -49,6 +49,10 @@ public class UrlConfig {
         public static final String GET_DEVICESTOKEN = DEVICE + "token";
         //		添加设备好友
         public static final String GET_ADDFRIENDREQUEST = DEVICE + "addFriendRequest";
+        //是否接受请求
+        public static final String GET_ADDFRIENDRESULT = DEVICE + "addFriendResult";
+        //        修改设备好友名称
+        public static final String GET_SETFRIENDNAME = DEVICE + "setFriendName";
 
     }
 

@@ -72,6 +72,7 @@
             android:layout_marginTop="33px"
             android:layout_marginBottom="19px"
             android:text="123456789"
+            android:visibility="gone"
             android:textColor="@color/black10"
             android:textSize="16px"
             app:layout_constraintEnd_toEndOf="@+id/image_dv1"

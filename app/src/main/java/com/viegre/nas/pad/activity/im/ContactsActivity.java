@@ -1,10 +1,16 @@
 package com.viegre.nas.pad.activity.im;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,6 +22,8 @@ import com.google.gson.Gson;
 import com.kongzue.dialog.interfaces.OnDialogButtonClickListener;
 import com.kongzue.dialog.interfaces.OnDismissListener;
 import com.kongzue.dialog.util.BaseDialog;
+import com.kongzue.dialog.util.DialogSettings;
+import com.kongzue.dialog.v3.CustomDialog;
 import com.kongzue.dialog.v3.MessageDialog;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
@@ -30,6 +38,9 @@ import com.viegre.nas.pad.databinding.ActivityContactsBinding;
 import com.viegre.nas.pad.entity.AddDevicesFriend;
 import com.viegre.nas.pad.entity.ContactsBean;
 import com.viegre.nas.pad.entity.DevicesFollowEntity;
+import com.viegre.nas.pad.entity.DevicesFriendList;
+import com.viegre.nas.pad.entity.DevicesFriendsListBean;
+import com.viegre.nas.pad.service.MQTTService;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.ExpandableViewHoldersUtil;
 
@@ -39,7 +50,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,14 +70,14 @@ import static android.app.PendingIntent.getActivity;
  * 联系人相关类
  */
 
-public class ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.OnClickListener, ContactsRvDevicesAdapter.AddDevicesFriend {
+public class ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.OnClickListener, ContactsRvDevicesAdapter.addDevicesFriend, ContactsRvDevicesAdapter.editDevicesName, ContactsRvDevicesAdapter.deleteDevicesFriend {
 
     private RecyclerView contactsRv1;
     private RecyclerView contactsRv2;
     private RecyclerView contactsRv3;
     private ImageView homeImg;
     private final List<ContactsBean> mFriendData = new ArrayList<>();
-    private final List<String> mDevicesData = new ArrayList<>();
+    private List<DevicesFriendsListBean> mDevicesData = new ArrayList<>();
     private List<String> mRecordData = new ArrayList<>();
     public static Boolean Token_valid = true;
     private TextView textView2;
@@ -72,6 +85,101 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     boolean isLoading = false;
     private ContactsRvRecordAdapter contactsRvRecordAdapter;
     private ContactsRvDevicesAdapter adapter;
+    private MQTTService myService;
+    //处理mqtt那边传递过来的消息
+    ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            myService = ((MQTTService.DownLoadBinder) service).getService();
+            // 回调接口
+            myService.setTipsDevicesFriend(new MQTTService.TipsDevicesFriend() {
+                @Override
+                public void onTipsdevicesFriend(String requestID) {
+                    DialogSettings.isUseBlur = true;
+                    CustomDialog.build(ContactsActivity.this, R.layout.contacts_add_devices_invitation_dialog, new CustomDialog.OnBindView() {
+                        @SuppressLint("SetTextI18n")
+                        @Override
+                        public void onBind(final CustomDialog dialog, View v) {
+                            TextView invitation_tips = v.findViewById(R.id.invitation_tips);
+                            Button cancle_bt = v.findViewById(R.id.cancle_bt);
+                            Button button_ok = v.findViewById(R.id.button_ok);
+
+                            invitation_tips.setText(getResources().getString(R.string.contacts_add_devices11) + "\"" + requestID + "\"" + getResources().getString(R.string.contacts_add_devices12));
+                            button_ok.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    AccectRequest(1, requestID);
+                                }
+                            });
+                            cancle_bt.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.doDismiss();
+                                }
+                            });
+                        }
+                    }).setFullScreen(true).show();
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+    private TipDialog dialog;
+
+    //请求网络
+    @SuppressLint("UseValueOf")
+    private void AccectRequest(int status, String friendId) {
+        RxHttp.postForm(UrlConfig.Device.GET_ADDFRIENDRESULT)
+                .addHeader("token", SPUtils.getInstance().getString("token"))
+                .add("requestedSn", friendId)
+                .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+                .add("status", new Integer(status))
+                .asString()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.d("onSubscribe", d.toString());
+                    }
+
+                    //                    {"msg":"token verify fail","code":"4111"}   2021年5月21日
+                    @Override
+                    public void onNext(@NonNull String s) {
+//                        {"code":0,"msg":"OK","data":null}
+                        Gson gson = new Gson();
+                        AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
+                        if (addDevicesFriend.msg.equals("OK")) {
+                            Toast.makeText(ContactsActivity.this, "添加请求发送成功，等待对方接受。", Toast.LENGTH_LONG).show();
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+//                                            bt.setText("发送邀请");
+                                        }
+                                    });
+                                }
+                            }, 1500);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        CommonUtils.showErrorToast(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("", "");
+                    }
+                });
+    }
 
     @Override
     protected void initialize() {
@@ -80,6 +188,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     }
 
     private void initView() {
+        getDevicesfriend();
         contactsRv1 = findViewById(R.id.contactsRv1);
         contactsRv2 = findViewById(R.id.contactsRv2);
         contactsRv3 = findViewById(R.id.contactsRv3);
@@ -88,6 +197,10 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         textView2 = findViewById(R.id.textView2);
         mViewBinding.homeImg.setOnClickListener(view -> finish());
         textView2.setOnClickListener(this);
+        Intent intent = new Intent(this, MQTTService.class);
+        // 标志位BIND_AUTO_CREATE是的服务中onCreate得到执行,onStartCommand不会执行
+        bindService(intent, conn, Context.BIND_AUTO_CREATE);
+
         ExpandableViewHoldersUtil.getInstance().init().setNeedExplanedOnlyOne(false);
 //      初始化RecycleViewAdapter
         ExpandableViewHoldersUtil.getInstance().resetExpanedList();
@@ -166,11 +279,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     }
 
 
-    private void initDevicesData(List<String> mDevicesData) {
-        List<String> wwwww = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            wwwww.add(i + "");
-        }
+    private void initDevicesData(List<DevicesFriendsListBean> mDevicesData) {
         //初始化数据
         LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         //设置布局管理器
@@ -178,9 +287,12 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         //创建适配器，将数据传递给适配器
         //设置适配器adapter
         View inflate = getLayoutInflater().inflate(R.layout.contacts_devices_popup, null);
-        adapter = new ContactsRvDevicesAdapter(this, wwwww, inflate);
+        mDevicesData.add(new DevicesFriendsListBean());
+        adapter = new ContactsRvDevicesAdapter(this, mDevicesData, inflate);
         contactsRv3.setAdapter(adapter);
         adapter.setaddDevicesFriend(this);
+        adapter.setEditDevicesName(this);
+        adapter.setDeleteFriend(this);
     }
 
     private void initFriendData(List<ContactsBean> mContactsData) {
@@ -204,8 +316,60 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         contactsRv1.setAdapter(contactsRvRecordAdapter);
     }
 
+    private void getDevicesfriend() {
+        if (dialog == null) {
+            dialog = WaitDialog.show(this, "请稍候...");
+        }
+        RxHttp.get("http://39.108.98.92:8708/device/getFriends")
+                .addHeader("token", SPUtils.getInstance().getString("token"))
+                .add("pageNum", new Integer(0))
+                .add("pageSize", new Integer(100))
+                .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+                .asString()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.d("onSubscribe", d.toString());
+                    }
+
+                    @Override
+                    public void onNext(@NonNull String s) {
+//                        {"code":0,"msg":"OK","data":{"total":1,"friends":[{"friendId":1169,"createTime":"2021-06-18T17:05:17.138","boundTime":"2021-06-21T15:22:01.584","name":"杭州","updateTime":"2021-06-21T15:22:01.584","model":"杭州","id":8,"sn":"6fa8295f4764b429","deviceId":1279,"status":{"desc":"同意(普通角色)","code":1}}]}}
+//                        {"code":0,"msg":"OK","data":{"total":1,"friends":[{"callId":"BiBkBkmm","friendId":1169,"createTime":"2021-06-18T17:05:17.138","boundTime":"2021-06-21T15:22:01.584","name":"杭州","updateTime":"2021-06-21T15:22:01.584","model":"杭州","id":8,"sn":"6fa8295f4764b429","deviceId":1279,"status":{"desc":"同意(普通角色)","code":1}}]}}
+                        Gson gson = new Gson();
+                        DevicesFriendList DevicesFriendList = gson.fromJson(s, DevicesFriendList.class);
+                        if (DevicesFriendList.getMsg().equals("OK")) {//返回数据正确
+                            List<com.viegre.nas.pad.entity.DevicesFriendList.FriendsBean> friends = DevicesFriendList.getData().getFriends();
+                            mDevicesData = new ArrayList<>();
+                            for (int i = 0; i < friends.size(); i++) {
+                                DevicesFriendsListBean devicesFriendsListBean = new DevicesFriendsListBean();
+                                devicesFriendsListBean.setCallId(friends.get(i).getCallId());
+                                devicesFriendsListBean.setName(friends.get(i).getName());
+                                devicesFriendsListBean.setSn(friends.get(i).getSn());
+                                mDevicesData.add(devicesFriendsListBean);
+                            }
+                            initDevicesData(mDevicesData);
+                        } else {
+
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        TipDialog.show(ContactsActivity.this, e.getMessage(), TipDialog.TYPE.SUCCESS).doDismiss();
+                        CommonUtils.showErrorToast(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("onSubscribe", "1231456");
+                    }
+                });
+    }
+
     private void getContactsDatas() {
-        TipDialog show = WaitDialog.show(this, "请稍候...");
+        dialog = WaitDialog.show(this, "请稍候...");
         RxHttp.postForm(UrlConfig.Device.GET_GETALLFOLLOWS)
                 .addHeader("token", SPUtils.getInstance().getString("token"))
                 .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
@@ -258,7 +422,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                     @Override
                     public void onError(@NonNull Throwable e) {
                         TipDialog.show(ContactsActivity.this, e.getMessage(), TipDialog.TYPE.SUCCESS).doDismiss();
-
                         CommonUtils.showErrorToast(e.getMessage());
                     }
 
@@ -346,17 +509,10 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                         AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
                         if (addDevicesFriend.msg.equals("OK")) {
                             Toast.makeText(ContactsActivity.this, "添加请求发送成功，等待对方接受。", Toast.LENGTH_LONG).show();
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            bt.setText("发送邀请");
-                                        }
-                                    });
-                                }
-                            }, 1500);
+                            tips(bt);
+                        } else {
+                            Toast.makeText(ContactsActivity.this, addDevicesFriend.msg, Toast.LENGTH_LONG).show();
+                            tips(bt);
                         }
                     }
 
@@ -370,6 +526,115 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                         Log.d("", "");
                     }
                 });
+    }
+
+    private void tips(Button bt) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bt.setText("发送邀请");
+                    }
+                });
+            }
+        }, 1500);
+    }
+
+    //修改好友名称
+    @Override
+    public void onEditDevicesNameClick(String callId, String devicesSn) {
+        CustomDialog.build(ContactsActivity.this, R.layout.contacts_edit_devices__name_dialog, new CustomDialog.OnBindView() {
+            @Override
+            public void onBind(final CustomDialog dialog, View v) {
+                EditText newFriendName = v.findViewById(R.id.add_device_dialog_edittext);
+                Button cancle_bt = v.findViewById(R.id.cancle_bt);
+                Button button_ok = v.findViewById(R.id.button_ok);
+
+                button_ok.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        posNetWork(newFriendName.getText().toString(),callId,devicesSn);
+                    }
+                });
+                cancle_bt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.doDismiss();
+                    }
+                });
+            }
+        }).setFullScreen(true).show();
+    }
+
+    private void posNetWork(String newFriendName, String callId, String devicesSn) {
+
+        RxHttp.postForm(UrlConfig.Device.GET_SETFRIENDNAME)
+                .addHeader("token", SPUtils.getInstance().getString("token"))
+                .add("name", newFriendName)
+                .add("requestedSn", devicesSn)
+                .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+                .asString()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.d("onSubscribe", d.toString());
+                    }
+
+                    //                    {"msg":"token verify fail","code":"4111"}   2021年5月21日
+                    @Override
+                    public void onNext(@NonNull String s) {
+//                        {"code":0,"msg":"OK","data":null}
+                        Gson gson = new Gson();
+                        AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
+                        if (addDevicesFriend.msg.equals("OK")) {
+                            Toast.makeText(ContactsActivity.this, "添加请求发送成功，等待对方接受。", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(ContactsActivity.this, addDevicesFriend.msg, Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        CommonUtils.showErrorToast(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("", "");
+                    }
+                });
+    }
+
+    @Override
+    public void onDeleteDevicesFriend(String friendSn,String friendName) {
+        CustomDialog.build(ContactsActivity.this, R.layout.contacts_delete_devices_friend_dialog, new CustomDialog.OnBindView() {
+            @Override
+            public void onBind(final CustomDialog dialog, View v) {
+                TextView tipsTextView = v.findViewById(R.id.invitation_tips);
+                Button cancle_bt = v.findViewById(R.id.cancle_bt);
+                Button button_ok = v.findViewById(R.id.button_ok);
+
+                button_ok.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        postDeleteNetWork(friendSn,friendName);
+                    }
+                });
+                cancle_bt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.doDismiss();
+                    }
+                });
+            }
+        }).setFullScreen(true).show();
+    }
+
+    private void postDeleteNetWork(String friendSn, String friendName) {
+
     }
 }
 
