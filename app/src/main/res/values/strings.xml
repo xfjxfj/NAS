@@ -43,7 +43,8 @@
     <string name="login_Phonet_Er_tips">请输入手机号</string>
 
     <!--首页-->
-    <string name="main_click_to_login">未登录请点击登录</string>
+    <string name="main_click_to_login">未检测外部存储</string>
+    <string name="main_click_to_login1">未登录请点击登录</string>
     <string name="main_usb_drive_not_connected">未连接存储设备</string>
 
     <!--天气-->

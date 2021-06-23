@@ -363,6 +363,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                         CommonUtils.showErrorToast(e.getMessage());
                     }
 
+
                     @Override
                     public void onComplete() {
                         Log.d("onSubscribe", "1231456");
