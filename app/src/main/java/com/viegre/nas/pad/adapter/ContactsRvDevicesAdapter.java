@@ -78,7 +78,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
             @Override
             public boolean onLongClick(View v) {
                 CommonUtils.setBackgroundAlpha((Activity) mContext, 0.2f);
-                mypopupmenu(v, languages.get(position).getCallId(), languages.get(position).getSn(),languages.get(position).getName());
+                mypopupmenu(v, languages.get(position).getCallId(), languages.get(position).getSn(), languages.get(position).getName());
                 return false;
             }
         });
@@ -147,7 +147,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
 
     //    回调接口删除设备
     public interface deleteDevicesFriend {
-        void onDeleteDevicesFriend(String friendSn,String friendName);
+        void onDeleteDevicesFriend(String friendSn, String friendName);
     }
 
     //定义回调方法 修改名称
@@ -205,6 +205,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                 @Override
                 public void onClick(View v) {
 //                    修改设备名称
+                    popupWindow.dismiss();
                     editDevicesName.onEditDevicesNameClick(callId, friendSn);
                 }
             });
@@ -212,7 +213,8 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                 @Override
                 public void onClick(View v) {
 //                    删除设备呼叫
-                    deleteDevicesFriend.onDeleteDevicesFriend(friendSn,friendName);
+                    popupWindow.dismiss();
+                    deleteDevicesFriend.onDeleteDevicesFriend(friendSn, friendName);
                 }
             });
         }

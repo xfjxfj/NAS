@@ -557,7 +557,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                 button_ok.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        posNetWork(newFriendName.getText().toString(), callId, devicesSn,dialog);
+                        posNetWork(newFriendName.getText().toString(),  devicesSn,dialog);
                     }
                 });
                 cancle_bt.setOnClickListener(new View.OnClickListener() {
@@ -570,8 +570,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         }).setFullScreen(true).show();
     }
 
-    private void posNetWork(String newFriendName, String callId, String devicesSn, CustomDialog dialog) {
-
+    private void posNetWork(String newFriendName, String devicesSn, CustomDialog dialog) {
         RxHttp.postForm(UrlConfig.Device.GET_SETFRIENDNAME)
                 .addHeader("token", SPUtils.getInstance().getString("token"))
                 .add("name", newFriendName)
@@ -594,6 +593,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                         if (addDevicesFriend.msg.equals("OK")) {
                             Toast.makeText(ContactsActivity.this, "修改成功", Toast.LENGTH_LONG).show();
                             dialog.doDismiss();
+                            getDevicesfriend();
                         } else {
                             Toast.makeText(ContactsActivity.this, addDevicesFriend.msg, Toast.LENGTH_LONG).show();
                         }
@@ -661,6 +661,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                         if (addDevicesFriend.msg.equals("OK")) {
                             Toast.makeText(ContactsActivity.this, "删除成功", Toast.LENGTH_LONG).show();
                             dialog.doDismiss();
+                            getDevicesfriend();
                         } else {
                             Toast.makeText(ContactsActivity.this, addDevicesFriend.msg, Toast.LENGTH_LONG).show();
                         }
