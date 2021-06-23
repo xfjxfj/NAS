@@ -1,23 +1,19 @@
 package com.viegre.nas.pad.util;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.WindowManager;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.kongzue.dialog.interfaces.OnDismissListener;
 import com.kongzue.dialog.v3.TipDialog;
 import com.viegre.nas.pad.R;
-import com.viegre.nas.pad.activity.im.ContactsActivity;
 
-import io.reactivex.rxjava3.core.Observer;
+import androidx.appcompat.app.AppCompatActivity;
 
 import static com.blankj.utilcode.util.ViewUtils.runOnUiThread;
 
@@ -42,14 +38,16 @@ public class CommonUtils {
 
 	/**
 	 * 调节activity透明度
+	 *
 	 * @param activity
-	 * @param bgAlpha 0.3f
+	 * @param bgAlpha  0.3f
 	 */
 	public static void setBackgroundAlpha(Activity activity, float bgAlpha) {
 		WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
 		lp.alpha = bgAlpha;
 		activity.getWindow().setAttributes(lp);
 	}
+
 	/**
 	 * 弹出普通Toast
 	 *
@@ -58,6 +56,7 @@ public class CommonUtils {
 	public static void showToast(String msg) {
 		ToastUtils.make().setTextColor(Color.BLACK).show(msg);
 	}
+
 	public static void showSuccessDialog(AppCompatActivity context, String msg) {
 		new Handler().postDelayed(new Runnable() {
 			@Override
@@ -75,7 +74,9 @@ public class CommonUtils {
 				});
 			}
 		}, 1000);
-	}	public static void showErrorDialog(AppCompatActivity context, String msg) {
+	}
+
+	public static void showErrorDialog(AppCompatActivity context, String msg) {
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
@@ -93,7 +94,6 @@ public class CommonUtils {
 			}
 		}, 1000);
 	}
-
 
 	/**
 	 * 弹出失败Toast
@@ -134,5 +134,18 @@ public class CommonUtils {
 			e.printStackTrace();
 		}
 		return duration;
+	}
+
+	public static String sqliteEscape(String keyWord) {
+		keyWord = keyWord.replace("/", "//")
+		                 .replace("'", "''")
+		                 .replace("[", "/[")
+		                 .replace("]", "/]")
+		                 .replace("%", "/%")
+		                 .replace("&", "/&")
+		                 .replace("_", "/_")
+		                 .replace("(", "/(")
+		                 .replace(")", "/)");
+		return keyWord;
 	}
 }

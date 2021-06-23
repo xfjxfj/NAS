@@ -111,7 +111,7 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
         ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<AudioEntity>>() {
             @Override
             public List<AudioEntity> doInBackground() {
-                return LitePal.where("path LIKE ?", (mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE) + "%")
+                return LitePal.where("path like ?", (mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE) + "%")
                               .order("name desc")
                               .find(AudioEntity.class);
             }
@@ -149,7 +149,7 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
                 List<AudioEntity> audioList = new ArrayList<>();
 //				Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 //				                                           new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID, MediaStore.Audio.Media.DURATION},
-//				                                           MediaStore.Audio.Media.DATA + " LIKE ?",
+//				                                           MediaStore.Audio.Media.DATA + " like ?",
 //				                                           new String[]{(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE) + "%"},
 //				                                           MediaStore.Audio.Media.DISPLAY_NAME + " desc");
 

@@ -430,7 +430,7 @@ public enum SkillManager {
 					                     .getContentResolver()
 					                     .query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 					                            new String[]{MediaStore.Audio.Media.DATA},
-					                            MediaStore.Audio.Media.DATA + " LIKE ?",
+					                            MediaStore.Audio.Media.DATA + " like ?",
 					                            new String[]{PathConfig.NAS + "%" + value + "%"},
 					                            null);
 					if (null != cursor) {
@@ -575,7 +575,7 @@ public enum SkillManager {
 				                     .getContentResolver()
 				                     .query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
 				                            new String[]{MediaStore.Video.VideoColumns.DATA},
-				                            MediaStore.Video.Media.DATA + " LIKE ?",
+				                            MediaStore.Video.Media.DATA + " like ?",
 				                            new String[]{PathConfig.NAS + "%" + videoEntity.getSemantic().get(0).getSlots().get(0).getValue() + "%"},
 				                            null);
 

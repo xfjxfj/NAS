@@ -86,7 +86,7 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 				List<VideoEntity> videoList = new ArrayList<>();
 				Cursor cursor = getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
 				                                           new String[]{MediaStore.Video.VideoColumns.DATA},
-				                                           MediaStore.Video.Media.DATA + " LIKE ?",
+				                                           MediaStore.Video.Media.DATA + " like ?",
 				                                           new String[]{(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE) + "%"},
 				                                           null);
 

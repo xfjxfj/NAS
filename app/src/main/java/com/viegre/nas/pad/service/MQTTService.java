@@ -48,6 +48,7 @@ import com.viegre.nas.pad.entity.FtpFileQueryEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
 import com.viegre.nas.pad.task.VoidTask;
+import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.MediaScanner;
 
 import net.lingala.zip4j.ZipFile;
@@ -654,7 +655,7 @@ public class MQTTService extends Service {
 													FileUtils.move(ftpFileEntity.getPath(), destFilePath);
 													new MediaScanner().scanFile(ftpFileEntity.getPath());
 													new MediaScanner().scanFile(destFilePath);
-													FtpFileEntity mvFtpFileEntity = LitePal.where("path = ? AND state = ?",
+													FtpFileEntity mvFtpFileEntity = LitePal.where("path = ? and state = ?",
 													                                              ftpFileEntity.getPath(),
 													                                              FtpFileEntity.State.NORMAL)
 													                                       .findFirst(FtpFileEntity.class);
@@ -677,7 +678,7 @@ public class MQTTService extends Service {
 													FileUtils.rename(ftpFileEntity.getPath(), FileUtils.getFileName(destPath));
 													new MediaScanner().scanFile(ftpFileEntity.getPath());
 													new MediaScanner().scanFile(destPath);
-													FtpFileEntity reFtpFileEntity = LitePal.where("path = ? AND state = ?",
+													FtpFileEntity reFtpFileEntity = LitePal.where("path = ? and state = ?",
 													                                              ftpFileEntity.getPath(),
 													                                              FtpFileEntity.State.NORMAL)
 													                                       .findFirst(FtpFileEntity.class);
@@ -785,7 +786,7 @@ public class MQTTService extends Service {
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<FtpFileEntity>>() {
 							@Override
 							public List<FtpFileEntity> doInBackground() {
-								return LitePal.where("deletePhoneNum = ? AND state = ?", mqttMsgEntity.getFromId(), FtpFileEntity.State.RECYCLED)
+								return LitePal.where("deletePhoneNum = ? and state = ?", mqttMsgEntity.getFromId(), FtpFileEntity.State.RECYCLED)
 								              .find(FtpFileEntity.class);
 							}
 
@@ -814,7 +815,7 @@ public class MQTTService extends Service {
 									return false;
 								}
 								rstPathList.forEach(ftpCmdEntity -> {
-									FtpFileEntity ftpFileEntity = LitePal.where("path = ? AND deletePhoneNum = ? AND state = ?",
+									FtpFileEntity ftpFileEntity = LitePal.where("path = ? and deletePhoneNum = ? and state = ?",
 									                                            ftpCmdEntity.getPath(),
 									                                            mqttMsgEntity.getFromId(),
 									                                            FtpFileEntity.State.RECYCLED).findFirst(FtpFileEntity.class);
@@ -850,7 +851,7 @@ public class MQTTService extends Service {
 							@Override
 							public Void doInBackground() {
 								if (erase) {
-									List<FtpFileEntity> eraseList = LitePal.where("deletePhoneNum = ? AND state = ?",
+									List<FtpFileEntity> eraseList = LitePal.where("deletePhoneNum = ? and state = ?",
 									                                              mqttMsgEntity.getFromId(),
 									                                              FtpFileEntity.State.RECYCLED).find(FtpFileEntity.class);
 									if (!eraseList.isEmpty()) {
@@ -864,7 +865,7 @@ public class MQTTService extends Service {
 										erasePathList.forEach(ftpCmdEntity -> {
 											FileUtils.delete(ftpCmdEntity.getPath());
 											LitePal.deleteAll(FtpFileEntity.class,
-											                  "path = ? AND deletePhoneNum = ? AND state = ?",
+											                  "path = ? and deletePhoneNum = ? and state = ?",
 											                  ftpCmdEntity.getPath(),
 											                  mqttMsgEntity.getFromId(),
 											                  FtpFileEntity.State.RECYCLED);
@@ -898,7 +899,7 @@ public class MQTTService extends Service {
 								} else {
 									SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 									ftpFileEntityList.forEach(ftpFileEntity -> {
-										FtpFileEntity ftpFile = LitePal.where("path = ? AND state = ?",
+										FtpFileEntity ftpFile = LitePal.where("path = ? and state = ?",
 										                                      ftpFileEntity.getPath(),
 										                                      FtpFileEntity.State.NORMAL).findFirst(FtpFileEntity.class);
 										if (isAdd) {
@@ -964,26 +965,34 @@ public class MQTTService extends Service {
 
 					//ftp文件查询
 					case MQTTMsgEntity.MSG_FTP_QUERY_LIST:
-						String queryPath = JSON.parseObject(mqttMsgEntity.getParam()).getString("path");
-						String name = JSON.parseObject(mqttMsgEntity.getParam()).getString("name");
-						int page = JSON.parseObject(mqttMsgEntity.getParam()).getInteger("page");
-						int size = JSON.parseObject(mqttMsgEntity.getParam()).getInteger("size");
 						ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<FtpFileQueryPaginationEntity>() {
 							@Override
 							public FtpFileQueryPaginationEntity doInBackground() {
+								String queryPath = JSON.parseObject(mqttMsgEntity.getParam()).getString("path");
+								String name = JSON.parseObject(mqttMsgEntity.getParam()).getString("name");
+								int page = JSON.parseObject(mqttMsgEntity.getParam()).getInteger("page");
+								int size = JSON.parseObject(mqttMsgEntity.getParam()).getInteger("size");
 								List<FtpFileQueryEntity> ftpFileList = new ArrayList<>();
 								ContentResolver contentResolver = getContentResolver();
+								String selection;
+								String[] selectionArgs;
+								if (PathConfig.NAS.equals(queryPath)) {
+									selection = MediaStore.Files.FileColumns.DATA + " like ? escape '/' or " + MediaStore.Files.FileColumns.DATA + " like ? escape '/'";
+									selectionArgs = new String[]{CommonUtils.sqliteEscape(PathConfig.PUBLIC) + "%" + CommonUtils.sqliteEscape(name) + "%", CommonUtils
+											.sqliteEscape(PathConfig.PRIVATE + mqttMsgEntity.getFromId() + File.separator) + "%" + CommonUtils.sqliteEscape(
+											name) + "%"};
+								} else {
+									selection = MediaStore.Files.FileColumns.DATA + " like ? escape '/'";
+									selectionArgs = new String[]{CommonUtils.sqliteEscape(queryPath) + "%" + CommonUtils.sqliteEscape(name) + "%"};
+								}
 								Cursor cursor = contentResolver.query(MediaStore.Files.getContentUri("external"),
 								                                      new String[]{MediaStore.Files.FileColumns.DATA},
-								                                      MediaStore.Files.FileColumns.DATA + " LIKE ?",
-								                                      new String[]{queryPath + "%" + name + "%"},
+								                                      selection,
+								                                      selectionArgs,
 								                                      null);
 								if (null != cursor) {
 									while (cursor.moveToNext()) {
 										String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
-										if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE + mqttMsgEntity.getFromId() + File.separator)) {
-											continue;
-										}
 										FtpFileQueryEntity ftpFileQueryEntity = new FtpFileQueryEntity();
 										ftpFileQueryEntity.setName(FileUtils.getFileName(path));
 										ftpFileQueryEntity.setPath(path);
@@ -1094,7 +1103,7 @@ public class MQTTService extends Service {
 								if (null != banList && !banList.isEmpty()) {
 									SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 									banList.forEach(ftpFileEntity -> {
-										FtpFileEntity fileEntity = LitePal.where("path = ? AND state = ?",
+										FtpFileEntity fileEntity = LitePal.where("path = ? and state = ?",
 										                                         ftpFileEntity.getPath(),
 										                                         FtpFileEntity.State.NORMAL).findFirst(FtpFileEntity.class);
 										if (isBan) {
@@ -1227,10 +1236,10 @@ public class MQTTService extends Service {
 				break;
 		}
 		if (privateOnly) {
-			selection = MediaStore.Files.FileColumns.DATA + " LIKE ?";
+			selection = MediaStore.Files.FileColumns.DATA + " like ?";
 			selectionArgs = new String[]{PathConfig.PRIVATE + phoneNum + File.separator + "%"};
 		} else {
-			selection = MediaStore.Files.FileColumns.DATA + " LIKE ? OR " + MediaStore.Files.FileColumns.DATA + " LIKE ?";
+			selection = MediaStore.Files.FileColumns.DATA + " like ? or " + MediaStore.Files.FileColumns.DATA + " like ?";
 			selectionArgs = new String[]{PathConfig.PUBLIC + "%", PathConfig.PRIVATE + phoneNum + File.separator + "%"};
 		}
 		List<FtpCategoryEntity> list = new ArrayList<>();
@@ -1259,7 +1268,7 @@ public class MQTTService extends Service {
 			String createTime = TimeUtils.millis2String(time, new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()));
 			long size = cursor.getLong(cursor.getColumnIndexOrThrow(sizeProjection));
 			boolean isPick;
-			FtpFileEntity ftpFileEntity = LitePal.where("path = ? AND state = ?", path, FtpFileEntity.State.NORMAL).findFirst(FtpFileEntity.class);
+			FtpFileEntity ftpFileEntity = LitePal.where("path = ? and state = ?", path, FtpFileEntity.State.NORMAL).findFirst(FtpFileEntity.class);
 			if (null == ftpFileEntity) {
 				isPick = false;
 			} else {
@@ -1359,7 +1368,7 @@ public class MQTTService extends Service {
 				FileUtils.move(path, newPath);
 				new MediaScanner().scanFile(path);
 				new MediaScanner().scanFile(newPath);
-				FtpFileEntity mvFtpFileEntity = LitePal.where("path = ? AND state = ?", path, FtpFileEntity.State.NORMAL)
+				FtpFileEntity mvFtpFileEntity = LitePal.where("path = ? and state = ?", path, FtpFileEntity.State.NORMAL)
 				                                       .findFirst(FtpFileEntity.class);
 				if (null != mvFtpFileEntity) {
 					mvFtpFileEntity.setPath(newPath);
@@ -1371,7 +1380,7 @@ public class MQTTService extends Service {
 				FileUtils.rename(path, FileUtils.getFileName(newPath));
 				new MediaScanner().scanFile(path);
 				new MediaScanner().scanFile(newPath);
-				FtpFileEntity reFtpFileEntity = LitePal.where("path = ? AND state = ?", path, FtpFileEntity.State.NORMAL)
+				FtpFileEntity reFtpFileEntity = LitePal.where("path = ? and state = ?", path, FtpFileEntity.State.NORMAL)
 				                                       .findFirst(FtpFileEntity.class);
 				if (null != reFtpFileEntity) {
 					reFtpFileEntity.setPath(newPath);
