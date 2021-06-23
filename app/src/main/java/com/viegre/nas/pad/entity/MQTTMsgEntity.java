@@ -10,6 +10,9 @@ import java.io.Serializable;
  */
 public class MQTTMsgEntity implements Serializable {
 
+	public final static String TYPE_REQUEST = "request";//好友添加请求
+	public final static String MSG_ADD_FRIEND_REQUEST = "addFriendRequest";//好友添加
+
 	public final static String TYPE_NOTIFY = "notify";
 
 	public final static String MSG_DEVICE_INFO = "deviceInfo";//设备信息
@@ -17,8 +20,6 @@ public class MQTTMsgEntity implements Serializable {
 	public final static String MSG_EXTERNAL_DRIVE_LIST = "externalDriveList";//外部设备列表
 	public final static String MSG_BIND_RESULT = "bindResult";//设备绑定
 	public final static String MSG_SCAN_LOGIN = "scanLogin";//设备登录
-	public final static String MSG_REQUEST = "request";//好友添加请求
-	public final static String MSG_ADDFRIENDREQUEST = "addFriendRequest";//好友添加
 
 	public final static String TYPE_CMD = "cmd";
 

@@ -1,10 +1,11 @@
 package com.viegre.nas.pad.util;
 
-import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.Utils;
 
 import java.io.File;
 
@@ -20,12 +21,21 @@ public class MediaScanner {
 	private File mFile = null;
 	private AddOnScanCompleted mAddOnScanCompleted;
 
-	public MediaScanner(Context context, AddOnScanCompleted addOnScanCompleted) {
+	public MediaScanner() {
 		if (null == mClient) {
 			mClient = new ScannerClient();
 		}
 		if (null == mConn) {
-			mConn = new MediaScannerConnection(context, mClient);
+			mConn = new MediaScannerConnection(Utils.getApp(), mClient);
+		}
+	}
+
+	public MediaScanner(AddOnScanCompleted addOnScanCompleted) {
+		if (null == mClient) {
+			mClient = new ScannerClient();
+		}
+		if (null == mConn) {
+			mConn = new MediaScannerConnection(Utils.getApp(), mClient);
 		}
 		if (null == mAddOnScanCompleted) {
 			mAddOnScanCompleted = addOnScanCompleted;
@@ -70,6 +80,11 @@ public class MediaScanner {
 
 	public void scanFile(File file) {
 		mFile = file;
+		mConn.connect();
+	}
+
+	public void scanFile(String filePath) {
+		mFile = FileUtils.getFileByPath(filePath);
 		mConn.connect();
 	}
 

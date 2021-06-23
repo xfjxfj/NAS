@@ -75,7 +75,7 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 	}
 
 	private void scanMedia() {
-		MediaScanner mediaScanner = new MediaScanner(this, this::getVideoList);
+		MediaScanner mediaScanner = new MediaScanner(this::getVideoList);
 		mediaScanner.scanFile(new File(mIsPublic ? PathConfig.PUBLIC : PathConfig.PRIVATE));
 	}
 

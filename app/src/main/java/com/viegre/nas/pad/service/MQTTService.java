@@ -16,7 +16,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -85,7 +84,6 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import custom.fileobserver.FileListener;
 import custom.fileobserver.FileWatcher;
@@ -103,10 +101,11 @@ public class MQTTService extends Service {
 	private FileWatcher mFileWatcher;
 	private FtpServer mFtpServer;
 	private TipsDevicesFriend tipsdevicesfriend;
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		createNotificationChannel();
-		initFileWatcher();
+//		initFileWatcher();
 		initFtp();
 		startFtpServer();
 		initMqttAndroidClient();
@@ -139,7 +138,6 @@ public class MQTTService extends Service {
 			}
 		} catch (FtpException e) {
 			e.printStackTrace();
-			Log.d("MQTTError",e.toString());
 		}
 	}
 
@@ -166,7 +164,7 @@ public class MQTTService extends Service {
 			ListenerFactory listenerFactory = new ListenerFactory();
 			listenerFactory.setPort(2121);//设置端口号，非ROOT不可使用1024以下的端口
 			DataConnectionConfigurationFactory dataConnectionConfigurationFactory = new DataConnectionConfigurationFactory();
-			dataConnectionConfigurationFactory.setPassivePorts("20000-30000");
+			dataConnectionConfigurationFactory.setPassivePorts("40000-41000");
 			listenerFactory.setIdleTimeout(0);
 			dataConnectionConfigurationFactory.setIdleTime(0);
 			listenerFactory.setDataConnectionConfiguration(dataConnectionConfigurationFactory.createDataConnectionConfiguration());
@@ -335,13 +333,16 @@ public class MQTTService extends Service {
 	private void parseMessage(String message) {
 		MQTTMsgEntity mqttMsgEntity = JSON.parseObject(message, MQTTMsgEntity.class);
 		switch (mqttMsgEntity.getMsgType()) {
-			case MQTTMsgEntity.MSG_REQUEST:
+			case MQTTMsgEntity.TYPE_REQUEST:
 				switch (mqttMsgEntity.getAction()) {
-					case MQTTMsgEntity.MSG_ADDFRIENDREQUEST:
+					case MQTTMsgEntity.MSG_ADD_FRIEND_REQUEST:
 						String requesterID = JSON.parseObject(mqttMsgEntity.getParam()).getString("requester");
-						if (tipsdevicesfriend != null) {
+						if (null != tipsdevicesfriend) {
 							tipsdevicesfriend.onTipsdevicesFriend(requesterID);
 						}
+						break;
+
+					default:
 						break;
 				}
 				break;
@@ -621,8 +622,8 @@ public class MQTTService extends Service {
 								List<FtpFileEntity> srcPathList = JSON.parseObject(mqttMsgEntity.getParam())
 								                                      .getJSONArray("srcPathList")
 								                                      .toJavaList(FtpFileEntity.class);
-								List<FtpFileEntity> deleteList = new ArrayList<>();
-								boolean result = false;
+								List<FtpFileEntity> doneList = new ArrayList<>();
+								boolean result;
 								FtpFileEntity ftpFile = srcPathList.stream().filter(ftpFileEntity -> {
 									if (FileUtils.isFileExists(ftpFileEntity.getPath())) {
 										String destFilePath = destPath + FileUtils.getFileName(ftpFileEntity.getPath());
@@ -633,12 +634,11 @@ public class MQTTService extends Service {
 														coverageFile(ftpFileEntity.getPath(), destPath, type, 1);
 													} else {
 														ftpFileEntity.setCoverageConfirm(true);
-														deleteList.add(ftpFileEntity);
 														return true;
 													}
 												} else {
 													FileUtils.copy(ftpFileEntity.getPath(), destFilePath);
-													MediaScannerConnection.scanFile(Utils.getApp(), new String[]{destFilePath}, null, null);
+													new MediaScanner().scanFile(destFilePath);
 												}
 												break;
 
@@ -648,15 +648,12 @@ public class MQTTService extends Service {
 														coverageFile(ftpFileEntity.getPath(), destPath, type, 1);
 													} else {
 														ftpFileEntity.setCoverageConfirm(true);
-														deleteList.add(ftpFileEntity);
 														return true;
 													}
 												} else {
 													FileUtils.move(ftpFileEntity.getPath(), destFilePath);
-													MediaScannerConnection.scanFile(Utils.getApp(),
-													                                new String[]{ftpFileEntity.getPath(), destFilePath},
-													                                null,
-													                                null);
+													new MediaScanner().scanFile(ftpFileEntity.getPath());
+													new MediaScanner().scanFile(destFilePath);
 													FtpFileEntity mvFtpFileEntity = LitePal.where("path = ? AND state = ?",
 													                                              ftpFileEntity.getPath(),
 													                                              FtpFileEntity.State.NORMAL)
@@ -669,18 +666,17 @@ public class MQTTService extends Service {
 												break;
 
 											case FtpFileEntity.RE:
-												if (FileUtils.isFileExists(destFilePath)) {
+												if (FileUtils.isFileExists(destPath)) {
 													if (ftpFileEntity.isCoverageConfirm()) {
 														coverageFile(ftpFileEntity.getPath(), destPath, type, 1);
 													} else {
 														ftpFileEntity.setCoverageConfirm(true);
-														deleteList.add(ftpFileEntity);
 														return true;
 													}
 												} else {
 													FileUtils.rename(ftpFileEntity.getPath(), FileUtils.getFileName(destPath));
-													new MediaScanner(Utils.getApp(), null).scanFile(new File(ftpFileEntity.getPath()));
-													new MediaScanner(Utils.getApp(), null).scanFile(new File(destPath));
+													new MediaScanner().scanFile(ftpFileEntity.getPath());
+													new MediaScanner().scanFile(destPath);
 													FtpFileEntity reFtpFileEntity = LitePal.where("path = ? AND state = ?",
 													                                              ftpFileEntity.getPath(),
 													                                              FtpFileEntity.State.NORMAL)
@@ -696,7 +692,7 @@ public class MQTTService extends Service {
 												break;
 										}
 									}
-									deleteList.add(ftpFileEntity);
+									doneList.add(ftpFileEntity);
 									return false;
 								}).findFirst().orElse(null);
 
@@ -704,12 +700,14 @@ public class MQTTService extends Service {
 								if (null == ftpFile) {
 									result = true;
 								} else {
-
-									ftpCopyParamMap.put("confirmList", srcPathList);
+									result = false;
+									ftpCopyParamMap.put("confirmList",
+									                    srcPathList.stream()
+									                               .filter(ftpFileEntity -> !doneList.contains(ftpFileEntity))
+									                               .collect(Collectors.toList()));
 									ftpCopyParamMap.put("destPath", destPath);
 									ftpCopyParamMap.put("type", type);
 								}
-
 								ftpCopyParamMap.put("result", result);
 								MQTTMsgEntity ftpCopyMsg = getMQTTMsg(MQTTMsgEntity.TYPE_CMD,
 								                                      MQTTMsgEntity.MSG_FTP_LOCATION,
@@ -1332,16 +1330,19 @@ public class MQTTService extends Service {
 	}
 
 	private void coverageFile(String path, String destPath, String type, int index) {
-		String filename = FileUtils.getFileName(path), name = FileUtils.getFileNameNoExtension(path), extension = FileUtils.getFileExtension(path), newPath;
+		String filePath = FtpFileEntity.RE.equals(type) ? destPath : path;
+		String filename = FileUtils.getFileName(filePath), name = FileUtils.getFileNameNoExtension(filePath), extension = FileUtils.getFileExtension(
+				filePath), newPath;
 		if (name.isEmpty() && extension.isEmpty()) {
 			return;
 		}
+		String destDirPath = FtpFileEntity.RE.equals(type) ? FileUtils.getDirName(destPath) : destPath;
 		if (name.isEmpty()) {
-			newPath = destPath + filename + " (" + index + ")";
+			newPath = destDirPath + filename + " (" + index + ")";
 		} else if (extension.isEmpty()) {
-			newPath = destPath + name + " (" + index + ")";
+			newPath = destDirPath + name + " (" + index + ")";
 		} else {
-			newPath = destPath + name + " (" + index + ")." + extension;
+			newPath = destDirPath + name + " (" + index + ")." + extension;
 		}
 		if (FileUtils.isFileExists(newPath)) {
 			index++;
@@ -1351,12 +1352,13 @@ public class MQTTService extends Service {
 		switch (type) {
 			case FtpFileEntity.CP:
 				FileUtils.copy(path, newPath);
-				MediaScannerConnection.scanFile(Utils.getApp(), new String[]{newPath}, null, null);
+				new MediaScanner().scanFile(newPath);
 				break;
 
 			case FtpFileEntity.MV:
 				FileUtils.move(path, newPath);
-				MediaScannerConnection.scanFile(Utils.getApp(), new String[]{path, newPath}, null, null);
+				new MediaScanner().scanFile(path);
+				new MediaScanner().scanFile(newPath);
 				FtpFileEntity mvFtpFileEntity = LitePal.where("path = ? AND state = ?", path, FtpFileEntity.State.NORMAL)
 				                                       .findFirst(FtpFileEntity.class);
 				if (null != mvFtpFileEntity) {
@@ -1367,8 +1369,8 @@ public class MQTTService extends Service {
 
 			case FtpFileEntity.RE:
 				FileUtils.rename(path, FileUtils.getFileName(newPath));
-				new MediaScanner(Utils.getApp(), null).scanFile(new File(path));
-				new MediaScanner(Utils.getApp(), null).scanFile(new File(newPath));
+				new MediaScanner().scanFile(path);
+				new MediaScanner().scanFile(newPath);
 				FtpFileEntity reFtpFileEntity = LitePal.where("path = ? AND state = ?", path, FtpFileEntity.State.NORMAL)
 				                                       .findFirst(FtpFileEntity.class);
 				if (null != reFtpFileEntity) {
@@ -1381,6 +1383,7 @@ public class MQTTService extends Service {
 				break;
 		}
 	}
+
 	public interface TipsDevicesFriend {
 		void onTipsdevicesFriend(String requestID);
 	}
@@ -1388,6 +1391,7 @@ public class MQTTService extends Service {
 	public void setTipsDevicesFriend(TipsDevicesFriend tipsdevicesfriend) {
 		this.tipsdevicesfriend = tipsdevicesfriend;
 	}
+
 	public IBinder onBind(Intent intent) {
 		return new DownLoadBinder();
 	}
