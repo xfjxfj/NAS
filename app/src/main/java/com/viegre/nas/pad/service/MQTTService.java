@@ -96,7 +96,6 @@ import rxhttp.RxHttpPlugins;
 public class MQTTService extends Service {
 
 	private final String TAG = MQTTService.class.getSimpleName();
-
 	private MqttConnectOptions mMqttConnectOptions;
 	private MqttAndroidClient mMqttAndroidClient;
 	private FileWatcher mFileWatcher;
