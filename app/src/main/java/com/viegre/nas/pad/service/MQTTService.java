@@ -96,6 +96,7 @@ import rxhttp.RxHttpPlugins;
 public class MQTTService extends Service {
 
 	private final String TAG = MQTTService.class.getSimpleName();
+
 	private MqttConnectOptions mMqttConnectOptions;
 	private MqttAndroidClient mMqttAndroidClient;
 	private FileWatcher mFileWatcher;
@@ -976,24 +977,25 @@ public class MQTTService extends Service {
 								String selection;
 								String[] selectionArgs;
 								if (PathConfig.NAS.equals(queryPath)) {
-									selection = MediaStore.Files.FileColumns.DATA + " like ? escape '/' or " + MediaStore.Files.FileColumns.DATA + " like ? escape '/'";
-									selectionArgs = new String[]{CommonUtils.sqliteEscape(PathConfig.PUBLIC) + "%" + CommonUtils.sqliteEscape(name) + "%", CommonUtils
-											.sqliteEscape(PathConfig.PRIVATE + mqttMsgEntity.getFromId() + File.separator) + "%" + CommonUtils.sqliteEscape(
+									selection = "(" + MediaStore.Files.FileColumns.DATA + " like ? escape '/' or " + MediaStore.Files.FileColumns.DATA + " like ? escape '/') and " + MediaStore.Files.FileColumns.DISPLAY_NAME + " like ? escape '/'";
+									selectionArgs = new String[]{CommonUtils.sqliteEscape(PathConfig.PUBLIC) + "%", CommonUtils.sqliteEscape(
+											PathConfig.PRIVATE + mqttMsgEntity.getFromId() + File.separator) + "%", "%" + CommonUtils.sqliteEscape(
 											name) + "%"};
 								} else {
-									selection = MediaStore.Files.FileColumns.DATA + " like ? escape '/'";
-									selectionArgs = new String[]{CommonUtils.sqliteEscape(queryPath) + "%" + CommonUtils.sqliteEscape(name) + "%"};
+									selection = MediaStore.Files.FileColumns.DATA + " like ? escape '/' and " + MediaStore.Files.FileColumns.DISPLAY_NAME + " like ? escape '/'";
+									selectionArgs = new String[]{CommonUtils.sqliteEscape(queryPath) + "%", "%" + CommonUtils.sqliteEscape(name) + "%"};
 								}
 								Cursor cursor = contentResolver.query(MediaStore.Files.getContentUri("external"),
-								                                      new String[]{MediaStore.Files.FileColumns.DATA},
+								                                      new String[]{MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.DISPLAY_NAME},
 								                                      selection,
 								                                      selectionArgs,
 								                                      null);
 								if (null != cursor) {
 									while (cursor.moveToNext()) {
 										String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
+										String displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME));
 										FtpFileQueryEntity ftpFileQueryEntity = new FtpFileQueryEntity();
-										ftpFileQueryEntity.setName(FileUtils.getFileName(path));
+										ftpFileQueryEntity.setName(displayName);
 										ftpFileQueryEntity.setPath(path);
 										ftpFileQueryEntity.setType(FileUtils.isDir(path) ? "dir" : "file");
 										ftpFileQueryEntity.setCreateTime(TimeUtils.millis2String(FileUtils.getFileLastModified(path),
