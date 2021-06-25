@@ -49,16 +49,16 @@ import rxhttp.RxHttpPlugins;
 public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBinding> {
 
 	private MyDeviceFragment mMyDeviceFragment;
-	private NetworkFragment mNetworkFragment;
-	private AutoAnswerFragment mAutoAnswerFragment;
+	private NetworkFragment mNetworkFragment;//网络设置
+	private AutoAnswerFragment mAutoAnswerFragment;//自动接听
 	private ScreenFragment mScreenFragment;
 	private ScreenCustomImageFragment mScreenCustomImageFragment;
 	private IntelligentVoiceFragment mIntelligentVoiceFragment;
 	private TimeFragment mTimeFragment;
 	private SoundFragment mSoundFragment;
-	private ProtocolFragment mProtocolFragment;
+	private ProtocolFragment mProtocolFragment;//协议
 	private InstructionsFragment mInstructionsFragment;
-	private AboutViegreFragment mAboutViegreFragment;
+	private AboutViegreFragment mAboutViegreFragment;//关于
 	private final List<Fragment> mMenuFragmentList = new ArrayList<>();
 
 	@Override

@@ -197,7 +197,6 @@ public class ScreenCustomImageFragment extends BaseFragment<FragmentScreenCustom
 				                                null,
 				                                null,
 				                                null);
-
 				if (null != cursor) {
 					while (cursor.moveToNext()) {
 						String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DATA));

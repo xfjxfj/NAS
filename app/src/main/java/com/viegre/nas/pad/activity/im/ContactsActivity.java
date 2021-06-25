@@ -145,7 +145,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                     public void onSubscribe(@NonNull Disposable d) {
                         Log.d("onSubscribe", d.toString());
                     }
-
                     //                    {"msg":"token verify fail","code":"4111"}   2021年5月21日
                     @Override
                     public void onNext(@NonNull String s) {
@@ -438,7 +437,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.textView2:
                 MessageDialog.show(this, "提示", "确定删除通话记录吗", "是", "取消")

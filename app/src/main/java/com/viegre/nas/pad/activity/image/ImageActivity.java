@@ -9,11 +9,13 @@ import android.view.View;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.ImageListAdapter;
 import com.viegre.nas.pad.config.PathConfig;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.ActivityImageBinding;
 import com.viegre.nas.pad.entity.ImageEntity;
 import com.viegre.nas.pad.manager.TextStyleManager;
@@ -50,9 +52,13 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
     private void initRadioGroup() {
         mViewBinding.rgImageTag.setOnCheckedChangeListener((radioGroup, i) -> {
             if (R.id.acrbImageTagPrivate == i) {
-                mIsPublic = false;
-
+                if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
+                    mIsPublic = false;
+                } else {
+                    mViewBinding.rvImageList.setVisibility(View.GONE);
+                }
             } else if (R.id.acrbImageTagPublic == i) {
+                mViewBinding.rvImageList.setVisibility(View.VISIBLE);
                 mIsPublic = true;
             }
             scanMedia();
@@ -126,8 +132,8 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
     }
 
     private void setPupwind() {
-        rightpopuwindows = new RightPopupWindows(this,rightonclick );
-        rightpopuwindows.showAtLocation(mViewBinding.mainlayout, Gravity.RIGHT,0,0);
+        rightpopuwindows = new RightPopupWindows(this, rightonclick);
+        rightpopuwindows.showAtLocation(mViewBinding.mainlayout, Gravity.RIGHT, 0, 0);
         rightpopuwindows.setWindowAlpa(true);
 
         rightpopuwindows.setOnDismissListener(new PopupWindow.OnDismissListener() {
