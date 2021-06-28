@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -99,6 +100,12 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
                 cm.setPrimaryClip(mClipData);
                 Toast.makeText(LoginActivity.this, SPUtils.getInstance().getString(SPConfig.ANDROID_ID) + "-----已复制到剪切板", Toast.LENGTH_LONG).show();
                 return false;
+            }
+        });
+        mViewBinding.acivLoginExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, WelcomeActivity.class));
             }
         });
     }

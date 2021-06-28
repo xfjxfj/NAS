@@ -125,6 +125,7 @@
     <string name="about_viegre_version">当前版本V%s</string>
     <string name="about_viegre_version_check">检查更新</string>
     <string name="about_viegre_copyright">巍格智能公司版本所有 Copyright © 2021</string>
+    <string name="about_textview_tips">暂无好友</string>
 
     <!--声音-->
     <string name="sound_modulation">音量调节</string>

@@ -53,21 +53,40 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
 		initList();
 	}
 
-	private void initRadioGroup() {
-		mViewBinding.rgImageTag.setOnCheckedChangeListener((radioGroup, i) -> {
-			if (R.id.acrbImageTagPrivate == i) {
-				if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
-					queryImage("", Type.PRIVATE, TIME.ALL);
-				} else {
-					mViewBinding.rvImageList.setVisibility(View.GONE);
-				}
-			} else if (R.id.acrbImageTagPublic == i) {
-				mViewBinding.rvImageList.setVisibility(View.VISIBLE);
-				queryImage("", Type.PUBLIC, TIME.ALL);
-			}
-		});
-		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbImageTagPrivate, mViewBinding.acrbImageTagPublic);
-	}
+    private void initRadioGroup() {
+        mViewBinding.rgImageTag.setOnCheckedChangeListener((radioGroup, i) -> {
+            if (R.id.acrbImageTagPrivate == i) {
+                if (!SPUtils.getInstance().contains(SPConfig.PHONE)) {
+//                    mIsPublic = false;
+                    mViewBinding.rvImageList.setVisibility(View.GONE);
+                    mViewBinding.srlImageRefresh.setVisibility(View.GONE);
+                    mViewBinding.imageActivityButtonBt.setVisibility(View.VISIBLE);
+                }
+            } else if (R.id.acrbImageTagPublic == i) {
+                mViewBinding.rvImageList.setVisibility(View.VISIBLE);
+                mViewBinding.srlImageRefresh.setVisibility(View.VISIBLE);
+                mViewBinding.imageActivityButtonBt.setVisibility(View.GONE);
+//                mIsPublic = true;
+            }
+//            scanMedia();
+        });
+        TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbImageTagPrivate, mViewBinding.acrbImageTagPublic);
+    }
+//	private void initRadioGroup() {
+//		mViewBinding.rgImageTag.setOnCheckedChangeListener((radioGroup, i) -> {
+//			if (R.id.acrbImageTagPrivate == i) {
+//				if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
+//					queryImage("", Type.PRIVATE, TIME.ALL);
+//				} else {
+//					mViewBinding.rvImageList.setVisibility(View.GONE);
+//				}
+//			} else if (R.id.acrbImageTagPublic == i) {
+//				mViewBinding.rvImageList.setVisibility(View.VISIBLE);
+//				queryImage("", Type.PUBLIC, TIME.ALL);
+//			}
+//		});
+//		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbImageTagPrivate, mViewBinding.acrbImageTagPublic);
+//	}
 
 	private void initList() {
 		mImageListAdapter = new ImageListAdapter();

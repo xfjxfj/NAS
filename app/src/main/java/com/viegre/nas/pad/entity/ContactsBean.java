@@ -6,12 +6,21 @@ public class ContactsBean{
     private String userimg;
     private String username;
     private String userphone;
+    private String sn;
 
     public ContactsBean(String userid, String userimg, String username, String userphone) {
         this.userid = userid;
         this.userimg = userimg;
         this.username = username;
         this.userphone = userphone;
+    }
+
+    public String getSn() {
+        return sn;
+    }
+
+    public void setSn(String sn) {
+        this.sn = sn;
     }
 
     public String getUserid() {

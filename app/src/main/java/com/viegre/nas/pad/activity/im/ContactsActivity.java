@@ -108,7 +108,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                             button_ok.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    AccectRequest(1, requestID,dialog);
+                                    AccectRequest(1, requestID, dialog);
                                 }
                             });
                             cancle_bt.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +145,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                     public void onSubscribe(@NonNull Disposable d) {
                         Log.d("onSubscribe", d.toString());
                     }
+
                     //                    {"msg":"token verify fail","code":"4111"}   2021年5月21日
                     @Override
                     public void onNext(@NonNull String s) {
@@ -322,7 +323,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         if (dialog == null) {
             dialog = WaitDialog.show(this, "请稍候...");
         }
-        RxHttp.get("http://39.108.98.92:8708/device/getFriends")
+        RxHttp.get(UrlConfig.Device.GET_GETFRIENDS)
                 .addHeader("token", SPUtils.getInstance().getString("token"))
                 .add("pageNum", new Integer(0))
                 .add("pageSize", new Integer(100))
@@ -356,6 +357,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
 
                         }
                     }
+
                     @Override
                     public void onError(@NonNull Throwable e) {
                         TipDialog.show(ContactsActivity.this, e.getMessage(), TipDialog.TYPE.SUCCESS).doDismiss();
@@ -556,7 +558,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                 button_ok.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        posNetWork(newFriendName.getText().toString(),  devicesSn,dialog);
+                        posNetWork(newFriendName.getText().toString(), devicesSn, dialog);
                     }
                 });
                 cancle_bt.setOnClickListener(new View.OnClickListener() {
@@ -619,7 +621,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                 Button cancle_bt = v.findViewById(R.id.cancle_bt);
                 Button button_ok = v.findViewById(R.id.button_ok);
 
-                tipsTextView.setText(getResources().getString(R.string.contacts_add_devices19)+"\""+friendName+"\"？");
+                tipsTextView.setText(getResources().getString(R.string.contacts_add_devices19) + "\"" + friendName + "\"？");
 
                 button_ok.setOnClickListener(new View.OnClickListener() {
                     @Override

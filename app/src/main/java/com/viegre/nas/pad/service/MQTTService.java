@@ -135,9 +135,9 @@ public class MQTTService extends Service {
 	private void startFtpServer() {
 		try {
 			if (null != mFtpServer && mFtpServer.isStopped()) {
-				mFtpServer.start();
+//				mFtpServer.start();
 			}
-		} catch (FtpException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

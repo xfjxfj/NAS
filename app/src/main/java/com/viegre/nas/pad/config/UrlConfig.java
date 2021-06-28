@@ -55,6 +55,8 @@ public class UrlConfig {
         public static final String GET_SETFRIENDNAME = DEVICE + "setFriendName";
         //        删除设备好友
         public static final String GET_DELFRIEND = DEVICE + "delFriend";
+        //        获取设备好友
+        public static final String GET_GETFRIENDS = DEVICE + "getFriends";
 
     }
 

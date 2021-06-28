@@ -14,6 +14,7 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseData;
 import android.bluetooth.le.AdvertiseSettings;
+import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -39,6 +40,7 @@ import com.viegre.nas.pad.util.VerifyDevice;
 import com.viegre.nas.pad.util.ZxingUtils;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,6 +61,7 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 	private ConstraintLayout Layout1;
 	private ConstraintLayout Layout2;
 	//    private BlueToothValueReceiver blueToothValueReceiver;
+	private BluetoothLeAdvertiser mBluetoothLeAdvertiser; // BLE广播
 	private BluetoothGattServer mBluetoothGattServer; // BLE服务端
 	private TextView next_to;
 	private int id;
@@ -108,8 +111,9 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 			                    characteristic.getUuid()));
 //            String response = "CHAR_" + (int) (Math.random() * 100); //模拟数据
 //            String macAddress = DeviceUtils.getMacAddress();//获取本地Mac地址
-			String macAddress = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
-			mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, macAddress.getBytes());// 响应客户端
+//			String macAddress = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
+//			JSONObject jsonBind = getJsonBind();
+			mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, getJsonBind().toString().getBytes());// 响应客户端
 //            CommonUtils.showToast("客户端读取Characteristic[" + characteristic.getUuid() + "]:\n" + response);
 			if (true) {
 				EventBus.getDefault().postSticky(BusConfig.DEVICE_BOUND);
@@ -303,17 +307,23 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 
 	private void createQRCode() {
 		try {
-			JSONObject jsonObject = new JSONObject();
-			try {
-				jsonObject.put("bind", SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
+			JSONObject jsonObject = getJsonBind();
 			Bitmap bitmapSN = ZxingUtils.createQRCode(jsonObject.toString(), 500, 500, true);
 			Glide.with(this).load(bitmapSN).into(mQRCodeImg);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@NotNull
+	private JSONObject getJsonBind() {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("bind", SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
 	}
 
 	@Override
@@ -345,54 +355,60 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 		Layout1.setVisibility(View.GONE);
 		Layout2.setVisibility(View.GONE);
 		layout3.setVisibility(View.VISIBLE);
-		if (!isEmulator(getApplicationContext())) {
+//		if (!isEmulator(getApplicationContext())) {
 			runBle();
-		}
+//		}
 	}
 
 	@SuppressLint("NewApi")
 	private void runBle() {
-		@SuppressLint("WrongConstant")
 		BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-//        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
 		BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
 		// ============启动BLE蓝牙广播(广告) =================================================================================
 		//广播设置(必须)
-		AdvertiseSettings settings = new AdvertiseSettings.Builder().setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY) //广播模式: 低功耗,平衡,低延迟
-		                                                            .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH) //发射功率级别: 极低,低,中,高
-		                                                            .setConnectable(true) //能否连接,广播分为可连接广播和不可连接广播
-		                                                            .build();
+		AdvertiseSettings settings = new AdvertiseSettings.Builder()
+				.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY) //广播模式: 低功耗,平衡,低延迟
+				.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH) //发射功率级别: 极低,低,中,高
+				.setConnectable(true) //能否连接,广播分为可连接广播和不可连接广播
+				.build();
 		//广播数据(必须，广播启动就会发送)
-		AdvertiseData advertiseData = new AdvertiseData.Builder().setIncludeDeviceName(true) //包含蓝牙名称
-		                                                         .setIncludeTxPowerLevel(true) //包含发射功率级别
-		                                                         .addManufacturerData(1, new byte[]{23, 33}) //设备厂商数据，自定义
-		                                                         .build();
+		AdvertiseData advertiseData = new AdvertiseData.Builder()
+				.setIncludeDeviceName(true) //包含蓝牙名称
+				.setIncludeTxPowerLevel(true) //包含发射功率级别
+				.addManufacturerData(1, new byte[]{23, 33}) //设备厂商数据，自定义
+				.build();
 		//扫描响应数据(可选，当客户端扫描时才发送)
-		AdvertiseData scanResponse = new AdvertiseData.Builder().addManufacturerData(2, new byte[]{66, 66}) //设备厂商数据，自定义
-		                                                        .addServiceUuid(new ParcelUuid(UUID_SERVICE)) //服务UUID
+		AdvertiseData scanResponse = new AdvertiseData.Builder()
+				.addManufacturerData(2, new byte[]{66, 66}) //设备厂商数据，自定义
+				.addServiceUuid(new ParcelUuid(UUID_SERVICE)) //服务UUID
 //                .addServiceData(new ParcelUuid(UUID_SERVICE), new byte[]{2}) //服务数据，自定义
-                                                                .build();
-//        BluetoothLeAdvertiser mBluetoothLeAdvertiser = bluetoothAdapter.getBluetoothLeAdvertiser();
-		bluetoothAdapter.getBluetoothLeAdvertiser().startAdvertising(settings, advertiseData, scanResponse, mAdvertiseCallback);
+				.build();
+		mBluetoothLeAdvertiser = bluetoothAdapter.getBluetoothLeAdvertiser();
+		if (mBluetoothLeAdvertiser == null) {
+			Log.e(TAG, "mBluetoothLeAdvertiser == null;Failed to create advertiser");
+			return;
+		}
+		try {
+			mBluetoothLeAdvertiser.startAdvertising(settings, advertiseData, scanResponse, mAdvertiseCallback);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.d("startAdvertising",e.toString());
+		}
 
 		// 注意：必须要开启可连接的BLE广播，其它设备才能发现并连接BLE服务端!
 		// =============启动BLE蓝牙服务端=====================================================================================
 		BluetoothGattService service = new BluetoothGattService(UUID_SERVICE, BluetoothGattService.SERVICE_TYPE_PRIMARY);
 		//添加可读+通知characteristic
 		BluetoothGattCharacteristic characteristicRead = new BluetoothGattCharacteristic(UUID_CHAR_READ_NOTIFY,
-		                                                                                 BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_NOTIFY,
-		                                                                                 BluetoothGattCharacteristic.PERMISSION_READ);
+				BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_NOTIFY, BluetoothGattCharacteristic.PERMISSION_READ);
 		characteristicRead.addDescriptor(new BluetoothGattDescriptor(UUID_DESC_NOTITY, BluetoothGattCharacteristic.PERMISSION_WRITE));
 		service.addCharacteristic(characteristicRead);
 		//添加可写characteristic
 		BluetoothGattCharacteristic characteristicWrite = new BluetoothGattCharacteristic(UUID_CHAR_WRITE,
-		                                                                                  BluetoothGattCharacteristic.PROPERTY_WRITE,
-		                                                                                  BluetoothGattCharacteristic.PERMISSION_WRITE);
+				BluetoothGattCharacteristic.PROPERTY_WRITE, BluetoothGattCharacteristic.PERMISSION_WRITE);
 		service.addCharacteristic(characteristicWrite);
-		if (bluetoothManager != null) {
+		if (bluetoothManager != null)
 			mBluetoothGattServer = bluetoothManager.openGattServer(this, mBluetoothGattServerCallback);
-		}
 		mBluetoothGattServer.addService(service);
 	}
 }

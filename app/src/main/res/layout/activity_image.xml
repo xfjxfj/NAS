@@ -1,62 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:id="@+id/mainlayout"
-	android:background="@android:color/black">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
 
-	<include
-		android:id="@+id/iImageTitle"
-		layout="@layout/title_file_manager" />
+    <include
+        android:id="@+id/iImageTitle"
+        layout="@layout/title_file_manager" />
 
-	<RadioGroup
-		android:id="@+id/rgImageTag"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="49px"
-		android:orientation="vertical"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/iImageTitle">
+    <RadioGroup
+        android:id="@+id/rgImageTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="49px"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iImageTitle">
 
-		<androidx.appcompat.widget.AppCompatRadioButton
-			android:id="@+id/acrbImageTagPrivate"
-			style="@style/file_manager_tag"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:button="@drawable/file_manager_tag_private_image"
-			android:text="@string/image_private" />
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/acrbImageTagPrivate"
+            style="@style/file_manager_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/file_manager_tag_private_image"
+            android:text="@string/image_private" />
 
-		<androidx.appcompat.widget.AppCompatRadioButton
-			android:id="@+id/acrbImageTagPublic"
-			style="@style/file_manager_tag"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="40px"
-			android:button="@drawable/file_manager_tag_public_image"
-			android:checked="true"
-			android:text="@string/image" />
-	</RadioGroup>
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/acrbImageTagPublic"
+            style="@style/file_manager_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40px"
+            android:button="@drawable/file_manager_tag_public_image"
+            android:checked="true"
+            android:text="@string/image" />
+    </RadioGroup>
 
-	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-		android:id="@+id/srlImageRefresh"
-		android:layout_width="708px"
-		android:layout_height="0dp"
-		android:layout_marginEnd="45px"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/iImageTitle">
+    <Button
+        android:id="@+id/image_activity_button_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/imageactivity_button_tips_bg"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="请登录"
+        android:textColor="#f00"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/rgImageTag"
+        app:layout_constraintTop_toBottomOf="@+id/iImageTitle"
+        tools:ignore="MissingConstraints" />
 
-		<Button
-			android:layout_width="wrap_content"
-			android:text=""
-			android:layout_height="wrap_content">
-		</Button>
-		<androidx.recyclerview.widget.RecyclerView
-			android:id="@+id/rvImageList"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:visibility="gone"
-			android:overScrollMode="never" />
-	</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/srlImageRefresh"
+        android:layout_width="708px"
+        android:layout_height="0dp"
+        android:layout_marginEnd="45px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iImageTitle">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvImageList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            />
+        <!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
