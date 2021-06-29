@@ -1,6 +1,7 @@
 package com.viegre.nas.pad.activity.image;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.view.Gravity;
@@ -13,6 +14,7 @@ import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.activity.LoginActivity;
 import com.viegre.nas.pad.adapter.ImageListAdapter;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
@@ -49,44 +51,47 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
 		mViewBinding.iImageTitle.actvFileManagerTitle.setText(R.string.image);
 		mViewBinding.iImageTitle.llcFileManagerTitleBack.setOnClickListener(view -> finish());
 		mViewBinding.iImageTitle.acivFileManagerFilter.setOnClickListener(this);
+		mViewBinding.imageActivityButtonBt.setOnClickListener(this);
 		initRadioGroup();
 		initList();
 	}
 
-    private void initRadioGroup() {
-        mViewBinding.rgImageTag.setOnCheckedChangeListener((radioGroup, i) -> {
-            if (R.id.acrbImageTagPrivate == i) {
-                if (!SPUtils.getInstance().contains(SPConfig.PHONE)) {
-//                    mIsPublic = false;
-                    mViewBinding.rvImageList.setVisibility(View.GONE);
-                    mViewBinding.srlImageRefresh.setVisibility(View.GONE);
-                    mViewBinding.imageActivityButtonBt.setVisibility(View.VISIBLE);
-                }
-            } else if (R.id.acrbImageTagPublic == i) {
-                mViewBinding.rvImageList.setVisibility(View.VISIBLE);
-                mViewBinding.srlImageRefresh.setVisibility(View.VISIBLE);
-                mViewBinding.imageActivityButtonBt.setVisibility(View.GONE);
-//                mIsPublic = true;
-            }
-//            scanMedia();
-        });
-        TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbImageTagPrivate, mViewBinding.acrbImageTagPublic);
-    }
-//	private void initRadioGroup() {
-//		mViewBinding.rgImageTag.setOnCheckedChangeListener((radioGroup, i) -> {
-//			if (R.id.acrbImageTagPrivate == i) {
-//				if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
-//					queryImage("", Type.PRIVATE, TIME.ALL);
-//				} else {
+//    private void initRadioGroup() {
+//        mViewBinding.rgImageTag.setOnCheckedChangeListener((radioGroup, i) -> {
+//            if (R.id.acrbImageTagPrivate == i) {
+//				if (!SPUtils.getInstance().contains(SPConfig.PHONE)) {
+////                    mIsPublic = false;
 //					mViewBinding.rvImageList.setVisibility(View.GONE);
+//					mViewBinding.srlImageRefresh.setVisibility(View.GONE);
+//					mViewBinding.imageActivityButtonBt.setVisibility(View.VISIBLE);
+//				} else {
+//
 //				}
-//			} else if (R.id.acrbImageTagPublic == i) {
-//				mViewBinding.rvImageList.setVisibility(View.VISIBLE);
-//				queryImage("", Type.PUBLIC, TIME.ALL);
-//			}
-//		});
-//		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbImageTagPrivate, mViewBinding.acrbImageTagPublic);
-//	}
+//            } else if (R.id.acrbImageTagPublic == i) {
+//                mViewBinding.rvImageList.setVisibility(View.VISIBLE);
+//                mViewBinding.srlImageRefresh.setVisibility(View.VISIBLE);
+//                mViewBinding.imageActivityButtonBt.setVisibility(View.GONE);
+////                mIsPublic = true;
+//            }
+//            scanMedia();
+//        });
+//        TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbImageTagPrivate, mViewBinding.acrbImageTagPublic);
+//    }
+	private void initRadioGroup() {
+		mViewBinding.rgImageTag.setOnCheckedChangeListener((radioGroup, i) -> {
+			if (R.id.acrbImageTagPrivate == i) {
+				if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
+					queryImage("", Type.PRIVATE, TIME.ALL);
+				} else {
+					mViewBinding.rvImageList.setVisibility(View.GONE);
+				}
+			} else if (R.id.acrbImageTagPublic == i) {
+				mViewBinding.rvImageList.setVisibility(View.VISIBLE);
+				queryImage("", Type.PUBLIC, TIME.ALL);
+			}
+		});
+		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbImageTagPrivate, mViewBinding.acrbImageTagPublic);
+	}
 
 	private void initList() {
 		mImageListAdapter = new ImageListAdapter();
@@ -102,7 +107,7 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
 		mViewBinding.srlImageRefresh.setProgressBackgroundColorSchemeResource(R.color.file_manager_tag_unpressed);
 		mViewBinding.srlImageRefresh.setOnRefreshListener(this::queryImage);
 		mViewBinding.srlImageRefresh.setRefreshing(true);
-		queryImage("", Type.PUBLIC, TIME.ALL);
+		queryImage("", Type.PUBLIC, TIME.MONTH_3);
 	}
 
 	private void queryImage(String keywords, @Type String type, @TIME String time) {
@@ -200,6 +205,9 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
 		switch (v.getId()) {
 			case R.id.acivFileManagerFilter:
 				setPupwind();
+				break;
+			case R.id.image_activity_button_bt:
+				startActivity(new Intent(ImageActivity.this, LoginActivity.class));
 				break;
 		}
 	}
