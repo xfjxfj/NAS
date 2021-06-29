@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16px"
             android:includeFontPadding="false"
-            android:text="@string/main_click_to_login"
+            android:text="@string/main_click_to_login1"
             android:textColor="@color/tip"
             android:textSize="18px" />
 

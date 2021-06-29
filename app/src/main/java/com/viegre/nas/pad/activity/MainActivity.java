@@ -284,7 +284,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 			     .load(R.mipmap.main_unlogin)
 			     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
 			     .into(mViewBinding.acivMainUserIcon);
-			mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
+//			mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
+			mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login1);
 			mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
 		}
 		mViewBinding.llcMainUser.setVisibility(View.VISIBLE);

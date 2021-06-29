@@ -1,4 +1,4 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
@@ -19,8 +19,8 @@
 
         <ImageView
             android:id="@+id/image_dv"
-            android:layout_width="83px"
-            android:layout_height="90px"
+            android:layout_width="46px"
+            android:layout_height="49px"
             android:src="@mipmap/test_settings_my_device_icon"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -33,13 +33,50 @@
             android:id="@+id/text_dv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="33px"
             android:layout_marginBottom="19px"
             android:text="@string/exo_controls_hide"
             android:textColor="@color/black10"
+            android:textSize="16px"
             app:layout_constraintEnd_toEndOf="@+id/image_dv"
             app:layout_constraintStart_toStartOf="@+id/image_dv"
             app:layout_constraintTop_toBottomOf="@+id/image_dv"
             tools:ignore="MissingConstraints" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/de_laytou1"
+        android:layout_width="144px"
+        android:layout_height="180px"
+        android:background="@color/black1"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/image_dv1"
+            android:layout_width="46px"
+            android:layout_height="49px"
+            android:src="@mipmap/add_devices"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/text_dv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="33px"
+            android:layout_marginBottom="19px"
+            android:text="123456789"
+            android:visibility="gone"
+            android:textColor="@color/black10"
+            android:textSize="16px"
+            app:layout_constraintEnd_toEndOf="@+id/image_dv1"
+            app:layout_constraintStart_toStartOf="@+id/image_dv1"
+            app:layout_constraintTop_toBottomOf="@+id/image_dv1"
+            tools:ignore="MissingConstraints" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -48,7 +48,6 @@
         android:layout_width="144px"
         android:layout_height="180px"
         android:background="@color/black1"
-        android:visibility="gone"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         tools:ignore="MissingConstraints">

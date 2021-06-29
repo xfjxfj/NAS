@@ -70,7 +70,8 @@ import static android.app.PendingIntent.getActivity;
  * 联系人相关类
  */
 
-public class ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.OnClickListener, ContactsRvDevicesAdapter.addDevicesFriend, ContactsRvDevicesAdapter.editDevicesName, ContactsRvDevicesAdapter.deleteDevicesFriend {
+public class
+ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.OnClickListener, ContactsRvDevicesAdapter.addDevicesFriend, ContactsRvDevicesAdapter.editDevicesName, ContactsRvDevicesAdapter.deleteDevicesFriend {
 
     private RecyclerView contactsRv1;
     private RecyclerView contactsRv2;

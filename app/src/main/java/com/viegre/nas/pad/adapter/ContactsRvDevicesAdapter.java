@@ -56,7 +56,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
     @Override
     public ContactsRvDevicesAdapter.MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         //将我们自定义的item布局R.layout.item_one转换为View
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contacts_devices_rv_add_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contacts_devices_rv_item, parent, false);
         //将view传递给我们自定义的ViewHolder
         ContactsRvDevicesAdapter.MyHolder holder = new ContactsRvDevicesAdapter.MyHolder(view);
         //返回这个MyHolder实体
