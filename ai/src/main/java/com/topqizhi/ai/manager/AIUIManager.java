@@ -33,9 +33,7 @@ import java.util.concurrent.TimeUnit;
  * Created by レインマン on 2021/04/13 18:00 with Android Studio.
  */
 public enum AIUIManager {
-
 	INSTANCE;
-
 	public static final boolean IS_HARD_WAKEUP = true;
 //	public static final boolean IS_HARD_WAKEUP = false;
 

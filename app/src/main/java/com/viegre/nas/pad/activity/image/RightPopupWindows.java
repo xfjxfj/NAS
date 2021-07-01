@@ -122,6 +122,8 @@ public class RightPopupWindows extends PopupWindow {
         ValueAnimator animator;
         if (isopen) {
             animator = ValueAnimator.ofFloat(1.0f, 0.5f);
+
+
         } else {
             animator = ValueAnimator.ofFloat(0.5f, 1.0f);
         }

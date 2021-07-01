@@ -40,6 +40,7 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 /**
  * 2021年5月18日
  */
+
 public class ImageActivity extends BaseActivity<ActivityImageBinding> implements View.OnClickListener {
 
 	private ImageListAdapter mImageListAdapter;
