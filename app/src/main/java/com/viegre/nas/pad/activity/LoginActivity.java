@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.CountDownTimer;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -50,6 +52,7 @@ import rxhttp.RxHttpPlugins;
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements View.OnClickListener {
 
     private CountDownTimer timer;
+    private Boolean passwrodShow = false;
 
     @Override
     protected void initialize() {
@@ -69,7 +72,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 
         mViewBinding.acetLoginPhone.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);//控制键盘不全屏
         mViewBinding.acetLoginPhoneCode.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);//控制键盘不全屏
-//        mViewBinding.acetLoginAccountPassword.setText("abcd123456");
         initListener();
     }
 
@@ -77,7 +79,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
     protected void onDestroy() {
         super.onDestroy();
         //取消获取图片验证码任务
-
         ThreadUtils.cancel(ThreadUtils.getSinglePool());
         //清除验证码sessionId缓存
         SPUtils.getInstance().remove(SPConfig.LOGIN_CODE_SESSION_ID);
@@ -92,6 +93,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
         mViewBinding.acivLoginExit.setOnClickListener(this);
         mViewBinding.actvLoginPhoneGetCode.setOnClickListener(this);
         mViewBinding.actvLoginPhoneBtn.setOnClickListener(this);
+        mViewBinding.passwordon.setOnClickListener(this);
+
         ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 //        mViewBinding.acivLoginExit.setOnLongClickListener(new View.OnLongClickListener() {
 //            @Override
@@ -127,7 +130,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
             if (!(Boolean) mViewBinding.acivLoginAccountCode.getTag()) {
                 getCodeImage();
             }
-
+//            drawableRight
             mViewBinding.actvLoginTabScan.setTextColor(ColorUtils.getColor(R.color.network_password_popup_hint));
             mViewBinding.actvLoginTabScan.setBackgroundResource(0);
             mViewBinding.clLoginScan.setVisibility(View.GONE);
@@ -162,6 +165,20 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
             timeStart(60000);
         } else if (R.id.actvLoginPhoneBtn == view.getId()) {
             phoneCodeLogin(mViewBinding.acetLoginPhone.getText().toString(), mViewBinding.acetLoginPhoneCode.getText().toString());
+        } else if (R.id.passwordon == view.getId()) {
+            passwordShow();
+        }
+    }
+
+    private void passwordShow() {
+        if (passwrodShow) {
+            mViewBinding.acetLoginAccountPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            mViewBinding.passwordon.setImageResource(R.mipmap.password_on);
+            passwrodShow = false;
+        } else {
+            mViewBinding.acetLoginAccountPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            mViewBinding.passwordon.setImageResource(R.mipmap.password_off);
+            passwrodShow = true;
         }
     }
 
@@ -226,8 +243,9 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
         if (judgePhone(phoneString)) {
             return;
         }
-        RxHttp.postForm(UrlConfig.User.GET_PHONENUMBER).add("phoneNumber", phoneString).asString()
-//                .asResponse(LoglinCodeEntity.class)
+        RxHttp.postForm(UrlConfig.User.GET_PHONENUMBER)
+                .add("phoneNumber", phoneString)
+                .asString()
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<String>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
@@ -297,8 +315,9 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
      */
     private void loginbyAccount() {
 //        mViewBinding.actvLoginAccountBtn.setClickable(false);
-        String phone = String.valueOf(mViewBinding.acetLoginAccountPhone.getText()), password = String.valueOf(mViewBinding.acetLoginAccountPassword.getText()), code = String
-                .valueOf(mViewBinding.acetLoginAccountCode.getText());
+        String phone = String.valueOf(mViewBinding.acetLoginAccountPhone.getText());
+        String password = String.valueOf(mViewBinding.acetLoginAccountPassword.getText());
+        String code = String.valueOf(mViewBinding.acetLoginAccountCode.getText());
         if (judgePhone(phone)) {
             return;
         }

@@ -1,239 +1,262 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/login_bg">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@drawable/login_bg">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/acivLoginLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="61px"
-        android:layout_marginTop="50px"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/login_logo" />
+	<androidx.appcompat.widget.AppCompatImageView
+		android:id="@+id/acivLoginLogo"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="61px"
+		android:layout_marginTop="50px"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:srcCompat="@mipmap/login_logo" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/acivLoginExit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="55px"
-        android:layout_marginEnd="38px"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/login_exit" />
+	<androidx.appcompat.widget.AppCompatImageView
+		android:id="@+id/acivLoginExit"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="55px"
+		android:layout_marginEnd="38px"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:srcCompat="@mipmap/login_exit" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/llcLoginTab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30px"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/acivLoginLogo">
+	<androidx.appcompat.widget.LinearLayoutCompat
+		android:id="@+id/llcLoginTab"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="30px"
+		android:orientation="horizontal"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/acivLoginLogo">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/actvLoginTabScan"
-            style="@style/login_tab_text"
-            android:background="@drawable/login_tab_bg"
-            android:text="@string/login_scan"
-            android:textColor="@android:color/white" />
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/actvLoginTabScan"
+			style="@style/login_tab_text"
+			android:background="@drawable/login_tab_bg"
+			android:text="@string/login_scan"
+			android:textColor="@android:color/white" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/actvLoginTabAccount"
-            style="@style/login_tab_text"
-            android:text="@string/login_account" />
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/actvLoginTabAccount"
+			style="@style/login_tab_text"
+			android:text="@string/login_account" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/actvLoginTabPhoneCode"
-            style="@style/login_tab_text"
-            android:text="@string/login_phone_code" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/actvLoginTabPhoneCode"
+			style="@style/login_tab_text"
+			android:text="@string/login_phone_code" />
+	</androidx.appcompat.widget.LinearLayoutCompat>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clLoginScan"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="40px"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/llcLoginTab">
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/clLoginScan"
+		android:layout_width="wrap_content"
+		android:layout_height="0dp"
+		android:layout_marginTop="40px"
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/llcLoginTab">
 
-        <RelativeLayout
-            android:id="@+id/rlLoginQRCode"
-            android:layout_width="234px"
-            android:layout_height="234px"
-            android:background="@drawable/login_qr_code_bg"
-            app:layout_constraintEnd_toStartOf="@id/acivLoginScanImage"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+		<RelativeLayout
+			android:id="@+id/rlLoginQRCode"
+			android:layout_width="234px"
+			android:layout_height="234px"
+			android:background="@drawable/login_qr_code_bg"
+			app:layout_constraintEnd_toStartOf="@id/acivLoginScanImage"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/acivLoginQRCode"
-                android:layout_width="191px"
-                android:layout_height="191px"
-                android:layout_centerInParent="true"
-                android:scaleType="fitXY"
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/acivLoginQRCode"
+				android:layout_width="191px"
+				android:layout_height="191px"
+				android:layout_centerInParent="true"
+				android:scaleType="fitXY"
 
-                app:srcCompat="@mipmap/test_login_qr_code" />
-        </RelativeLayout>
+				app:srcCompat="@mipmap/test_login_qr_code" />
+		</RelativeLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/acivLoginScanImage"
-            android:layout_width="267px"
-            android:layout_height="234px"
-            android:layout_marginStart="42px"
-            android:scaleType="fitXY"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/rlLoginQRCode"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@mipmap/login_scan_image" />
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/acivLoginScanImage"
+			android:layout_width="267px"
+			android:layout_height="234px"
+			android:layout_marginStart="42px"
+			android:scaleType="fitXY"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@id/rlLoginQRCode"
+			app:layout_constraintTop_toTopOf="parent"
+			app:srcCompat="@mipmap/login_scan_image" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="62px"
-            android:includeFontPadding="false"
-            android:text="@string/login_tip"
-            android:textColor="@color/network_password_popup_hint"
-            android:textSize="20px"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+		<androidx.appcompat.widget.AppCompatTextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="62px"
+			android:includeFontPadding="false"
+			android:text="@string/login_tip"
+			android:textColor="@color/network_password_popup_hint"
+			android:textSize="20px"
+			android:textStyle="bold"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent" />
+	</androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clLoginAccount"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="36px"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/llcLoginTab">
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/clLoginAccount"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_marginTop="36px"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/llcLoginTab">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/acetLoginAccountPhone"
-            style="@style/login_input_edit_text"
-            android:hint="@string/login_enter_phone"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="number"
-            android:maxLength="11"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+		<androidx.appcompat.widget.AppCompatEditText
+			android:id="@+id/acetLoginAccountPhone"
+			style="@style/login_input_edit_text"
+			android:hint="@string/login_enter_phone"
+			android:imeOptions="flagNoExtractUi"
+			android:inputType="number"
+			android:maxLength="11"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+		//密码框
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:id="@+id/ConstraintLayout1"
+			android:layout_width="508px"
+			android:layout_height="88px"
+			android:layout_marginTop="16px"
+			android:background="@drawable/login_input_bg"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/acetLoginAccountPhone">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/acetLoginAccountPassword"
-            style="@style/login_input_edit_text"
-            android:layout_marginTop="16px"
-            android:hint="@string/login_enter_password"
-            android:inputType="textPassword"
-            android:maxLength="30"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/acetLoginAccountPhone" />
+			<androidx.appcompat.widget.AppCompatEditText
+				android:id="@+id/acetLoginAccountPassword"
+				style="@style/login_input_edit_text"
+				android:layout_width="300px"
+				android:background="@null"
+				android:hint="@string/login_enter_password"
+				android:maxLength="16"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="508px"
-            android:layout_height="88px"
-            android:layout_marginTop="16px"
-            android:background="@drawable/login_input_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/acetLoginAccountPassword">
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/passwordon"
+				android:layout_width="60px"
+				android:layout_height="60px"
+				android:layout_marginEnd="40px"
+				android:src="@mipmap/password_off"
+				android:scaleType="fitXY"
+				app:layout_constraintBottom_toBottomOf="@id/acetLoginAccountPassword"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toTopOf="@id/acetLoginAccountPassword" />
+		</androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/acetLoginAccountCode"
-                style="@style/login_input_edit_text"
-                android:layout_width="300px"
-                android:background="@null"
-                android:hint="@string/login_enter_code"
-                android:maxLength="4"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="508px"
+			android:layout_height="88px"
+			android:layout_marginTop="16px"
+			android:background="@drawable/login_input_bg"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/ConstraintLayout1">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/acivLoginAccountCode"
-                android:layout_width="101px"
-                android:layout_height="42px"
-                android:layout_marginEnd="40px"
-                android:scaleType="fitXY"
-                app:layout_constraintBottom_toBottomOf="@id/acetLoginAccountCode"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/acetLoginAccountCode" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+			<androidx.appcompat.widget.AppCompatEditText
+				android:id="@+id/acetLoginAccountCode"
+				style="@style/login_input_edit_text"
+				android:layout_width="300px"
+				android:background="@null"
+				android:hint="@string/login_enter_code"
+				android:maxLength="4"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/actvLoginAccountBtn"
-            style="@style/login_btn"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+			<androidx.appcompat.widget.AppCompatImageView
+				android:id="@+id/acivLoginAccountCode"
+				android:layout_width="101px"
+				android:layout_height="42px"
+				android:layout_marginEnd="40px"
+				android:scaleType="fitXY"
+				app:layout_constraintBottom_toBottomOf="@id/acetLoginAccountCode"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toTopOf="@id/acetLoginAccountCode" />
+		</androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clLoginPhoneCode"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="36px"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/llcLoginTab">
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/actvLoginAccountBtn"
+			style="@style/login_btn"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" />
+	</androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/acetLoginPhone"
-            style="@style/login_input_edit_text"
-            android:hint="@string/login_enter_phone"
-            android:inputType="number"
-            android:maxLength="11"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/clLoginPhoneCode"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_marginTop="36px"
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/llcLoginTab">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/acetLoginPhoneCode"
-            style="@style/login_input_edit_text"
-            android:layout_marginTop="16px"
-            android:hint="@string/login_enter_code"
-            android:inputType="number"
-            android:maxLength="6"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/acetLoginPhone" />
+		<androidx.appcompat.widget.AppCompatEditText
+			android:id="@+id/acetLoginPhone"
+			style="@style/login_input_edit_text"
+			android:hint="@string/login_enter_phone"
+			android:inputType="number"
+			android:maxLength="11"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
 
-        <View
-            android:layout_width="2px"
-            android:layout_height="0dp"
-            android:layout_marginTop="18px"
-            android:layout_marginEnd="180px"
-            android:layout_marginBottom="18px"
-            android:background="@color/login_qr_code"
-            app:layout_constraintBottom_toBottomOf="@id/acetLoginPhoneCode"
-            app:layout_constraintEnd_toEndOf="@id/acetLoginPhoneCode"
-            app:layout_constraintTop_toTopOf="@id/acetLoginPhoneCode" />
+		<androidx.appcompat.widget.AppCompatEditText
+			android:id="@+id/acetLoginPhoneCode"
+			style="@style/login_input_edit_text"
+			android:layout_marginTop="16px"
+			android:hint="@string/login_enter_code"
+			android:inputType="number"
+			android:maxLength="6"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/acetLoginPhone" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/actvLoginPhoneGetCode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="37px"
-            android:includeFontPadding="false"
-            android:text="@string/login_get_code"
-            android:textColor="@color/login_get_code"
-            android:textSize="24px"
-            app:layout_constraintBottom_toBottomOf="@id/acetLoginPhoneCode"
-            app:layout_constraintEnd_toEndOf="@id/acetLoginPhoneCode"
-            app:layout_constraintTop_toTopOf="@id/acetLoginPhoneCode" />
+		<View
+			android:layout_width="2px"
+			android:layout_height="0dp"
+			android:layout_marginTop="18px"
+			android:layout_marginEnd="180px"
+			android:layout_marginBottom="18px"
+			android:background="@color/login_qr_code"
+			app:layout_constraintBottom_toBottomOf="@id/acetLoginPhoneCode"
+			app:layout_constraintEnd_toEndOf="@id/acetLoginPhoneCode"
+			app:layout_constraintTop_toTopOf="@id/acetLoginPhoneCode" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/actvLoginPhoneBtn"
-            style="@style/login_btn"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/actvLoginPhoneGetCode"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginEnd="37px"
+			android:includeFontPadding="false"
+			android:text="@string/login_get_code"
+			android:textColor="@color/login_get_code"
+			android:textSize="24px"
+			app:layout_constraintBottom_toBottomOf="@id/acetLoginPhoneCode"
+			app:layout_constraintEnd_toEndOf="@id/acetLoginPhoneCode"
+			app:layout_constraintTop_toTopOf="@id/acetLoginPhoneCode" />
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/actvLoginPhoneBtn"
+			style="@style/login_btn"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent" />
+	</androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
