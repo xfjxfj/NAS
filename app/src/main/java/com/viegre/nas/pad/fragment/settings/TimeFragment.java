@@ -19,6 +19,7 @@ import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.FragmentTimeBinding;
 import com.viegre.nas.pad.util.SntpClient;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import androidx.appcompat.widget.AppCompatTextView;
@@ -95,7 +96,14 @@ public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 		//设置日期
 		mViewBinding.rlTimeDate.setOnClickListener(view -> {
 			mDatePickerView = new TimePickerBuilder(mActivity, (date, v) -> {
-
+				Calendar calendar = Calendar.getInstance();
+				calendar.set(Calendar.YEAR, date.getYear());
+				calendar.set(Calendar.MONTH, date.getMonth());
+				calendar.set(Calendar.DATE, date.getDate());
+				long millis = calendar.getTimeInMillis();
+				if ((millis / 1000) < Integer.MAX_VALUE) {
+					SystemClock.setCurrentTimeMillis(millis);
+				}
 			}).setLayoutRes(R.layout.picker_view_time, v -> {
 				AppCompatTextView actvPickerViewTimeTitle = v.findViewById(R.id.actvPickerViewTimeTitle);
 				AppCompatTextView actvPickerViewTimeConfirm = v.findViewById(R.id.actvPickerViewTimeConfirm);
@@ -124,7 +132,14 @@ public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 		//设置时间
 		mViewBinding.rlTime.setOnClickListener(view -> {
 			mTimePickerView = new TimePickerBuilder(mActivity, (date, v) -> {
-
+				Calendar calendar = Calendar.getInstance();
+				calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+				calendar.set(Calendar.MINUTE, date.getMinutes());
+				calendar.set(Calendar.SECOND, date.getSeconds());
+				long millis = calendar.getTimeInMillis();
+				if ((millis / 1000) < Integer.MAX_VALUE) {
+					SystemClock.setCurrentTimeMillis(millis);
+				}
 			}).setLayoutRes(R.layout.picker_view_time, v -> {
 				AppCompatTextView actvPickerViewTimeTitle = v.findViewById(R.id.actvPickerViewTimeTitle);
 				AppCompatTextView actvPickerViewTimeConfirm = v.findViewById(R.id.actvPickerViewTimeConfirm);
