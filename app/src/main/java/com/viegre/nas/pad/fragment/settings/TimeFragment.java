@@ -2,6 +2,7 @@ package com.viegre.nas.pad.fragment.settings;
 
 import android.graphics.Color;
 import android.os.SystemClock;
+import android.provider.Settings;
 
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.view.TimePickerView;
@@ -10,6 +11,7 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.blankj.utilcode.util.Utils;
 import com.djangoogle.framework.fragment.BaseFragment;
 import com.github.iielse.switchbutton.SwitchView;
 import com.viegre.nas.pad.R;
@@ -17,7 +19,6 @@ import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.FragmentTimeBinding;
 import com.viegre.nas.pad.util.SntpClient;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import androidx.appcompat.widget.AppCompatTextView;
@@ -27,7 +28,6 @@ import androidx.appcompat.widget.AppCompatTextView;
  */
 public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 
-	private SimpleDateFormat mDateFormat, mTimeFormat;
 	private TimePickerView mDatePickerView, mTimePickerView;
 
 	@Override
@@ -88,6 +88,10 @@ public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 	}
 
 	private void timeSyncOff(SwitchView switchView) {
+		//关闭系统自动确定时间
+		if (1 == Settings.Global.getInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME, 1)) {
+			Settings.Global.putInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME, 0);
+		}
 		//设置日期
 		mViewBinding.rlTimeDate.setOnClickListener(view -> {
 			mDatePickerView = new TimePickerBuilder(mActivity, (date, v) -> {

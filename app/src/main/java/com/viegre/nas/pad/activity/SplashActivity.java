@@ -1,5 +1,6 @@
 package com.viegre.nas.pad.activity;
 
+import android.app.AlarmManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -102,12 +103,24 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				FileUtils.createOrExistsDir(PathConfig.UPLOAD_CACHE);
 				//开启MQTT服务
 				ServiceUtils.startService(MQTTService.class);
-				//开启无障碍服务
+				//生产版本配置
 				if ("official".equals(BuildConfig.FLAVOR)) {
+					//开启无障碍服务
 					Settings.Secure.putString(getContentResolver(),
 					                          Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
 					                          getPackageName() + "/com.viegre.nas.pad.service.WakeupService");
 					Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
+					//关闭系统自动确定时区
+					if (1 == Settings.Global.getInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 1)) {
+						Settings.Global.putInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
+					}
+					//设置24小时制
+					if (24 != Settings.System.getInt(Utils.getApp().getContentResolver(), Settings.System.TIME_12_24, 12)) {
+						Settings.System.putInt(Utils.getApp().getContentResolver(), Settings.System.TIME_12_24, 24);
+					}
+					//设置时区为东八区
+					AlarmManager alarmManager = (AlarmManager) Utils.getApp().getSystemService(Context.ALARM_SERVICE);
+					alarmManager.setTimeZone("Asia/Shanghai");
 				}
 				//执行command
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
