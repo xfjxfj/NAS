@@ -115,7 +115,45 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                             cancle_bt.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    AccectRequest(2, requestID, dialog);
+//                                    dialog.doDismiss();
+                                }
+                            });
+                        }
+                    }).setFullScreen(true).show();
+                }
+
+                @Override
+                public void onTipsdevicesFriendStatus(String requestID) {
+                    String status = "";
+                    switch (requestID) {
+                        case "1":
+                            status = "接受";
+                            break;
+                        case "2":
+                            status = "拒绝";
+                            break;
+                    }
+                    String finalStatus = status;
+                    CustomDialog.build(ContactsActivity.this, R.layout.contacts_add_devices_invitation_dialog, new CustomDialog.OnBindView() {
+                        @SuppressLint("SetTextI18n")
+                        @Override
+                        public void onBind(final CustomDialog dialog, View v) {
+                            TextView dialogTips = v.findViewById(R.id.dialogtips);
+                            TextView invitation_tips = v.findViewById(R.id.invitation_tips);
+                            Button cancle_bt = v.findViewById(R.id.cancle_bt);
+                            Button button_ok = v.findViewById(R.id.button_ok);
+
+                            dialogTips.setText("好友请求提示");
+                            invitation_tips.setText("对方已经"+ finalStatus +"了你的好友请求");
+                            cancle_bt.setVisibility(View.GONE);
+                            button_ok.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
                                     dialog.doDismiss();
+                                    if (requestID.equals("1")) {
+                                        getDevicesfriend();
+                                    }
                                 }
                             });
                         }
@@ -156,21 +194,11 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                         AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
                         if (addDevicesFriend.msg.equals("OK")) {
                             Toast.makeText(ContactsActivity.this, "添加成功", Toast.LENGTH_LONG).show();
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-//                                            bt.setText("发送邀请");
-                                            dialog.doDismiss();
-                                        }
-                                    });
-                                }
-                            }, 1500);
+                            getDevicesfriend();
                         } else {
                             CommonUtils.showErrorToast(addDevicesFriend.msg);
                         }
+                        dismiss(dialog);
                     }
 
                     @Override
@@ -183,6 +211,22 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                         Log.d("", "");
                     }
                 });
+    }
+
+    private void dismiss(CustomDialog dialog) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                                            bt.setText("发送邀请");
+                        dialog.doDismiss();
+
+                    }
+                });
+            }
+        }, 1500);
     }
 
     @Override
@@ -355,7 +399,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                             }
                             initDevicesData(mDevicesData);
                         } else {
-
+                            CommonUtils.showErrorDialog(ContactsActivity.this, DevicesFriendList.getMsg());
                         }
                     }
 
@@ -364,7 +408,6 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                         TipDialog.show(ContactsActivity.this, e.getMessage(), TipDialog.TYPE.SUCCESS).doDismiss();
                         CommonUtils.showErrorToast(e.getMessage());
                     }
-
 
                     @Override
                     public void onComplete() {
@@ -407,14 +450,14 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                                     }
                                     mFriendData.add(new ContactsBean(userid, "", nickName, phone));
                                 }
-                                mFriendData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
-                                mFriendData.add(new ContactsBean("anaOaOjj", "", "设备pad", "191"));
-                                mFriendData.add(new ContactsBean("ISIFIF99", "", "oppo-pad", "191"));
-                                mFriendData.add(new ContactsBean("agahahss", "", "华为AL00-pad", "456"));
-                                mFriendData.add(new ContactsBean("ZoZcZcKK", "", "夜神模拟器-pad", "666"));
-                                mFriendData.add(new ContactsBean("RlRbRbGG", "", "设备2-pad", "666"));
-                                mFriendData.add(new ContactsBean("OkORORNN", "", "设备3-oppo", "1313"));
-                                mFriendData.add(new ContactsBean("-a-X-Xoo", "", "设备4-小米re", "1313"));
+//                                mFriendData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
+//                                mFriendData.add(new ContactsBean("anaOaOjj", "", "设备pad", "191"));
+//                                mFriendData.add(new ContactsBean("ISIFIF99", "", "oppo-pad", "191"));
+//                                mFriendData.add(new ContactsBean("agahahss", "", "华为AL00-pad", "456"));
+//                                mFriendData.add(new ContactsBean("ZoZcZcKK", "", "夜神模拟器-pad", "666"));
+//                                mFriendData.add(new ContactsBean("RlRbRbGG", "", "设备2-pad", "666"));
+//                                mFriendData.add(new ContactsBean("OkORORNN", "", "设备3-oppo", "1313"));
+//                                mFriendData.add(new ContactsBean("-a-X-Xoo", "", "设备4-小米re", "1313"));
                             }
                             TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
                             initFriendData(mFriendData);
@@ -572,6 +615,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
         }).setFullScreen(true).show();
     }
 
+    //修改设备名称
     private void posNetWork(String newFriendName, String devicesSn, CustomDialog dialog) {
         RxHttp.postForm(UrlConfig.Device.GET_SETFRIENDNAME)
                 .addHeader("token", SPUtils.getInstance().getString("token"))
@@ -613,6 +657,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                 });
     }
 
+    //删除设备好友弹框提示
     @Override
     public void onDeleteDevicesFriend(String friendSn, String friendName) {
         CustomDialog.build(ContactsActivity.this, R.layout.contacts_delete_devices_friend_dialog, new CustomDialog.OnBindView() {
@@ -627,6 +672,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                 button_ok.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        dialog.doDismiss();
                         postDeleteNetWork(friendSn);
                     }
                 });

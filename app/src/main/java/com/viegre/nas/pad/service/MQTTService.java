@@ -16,6 +16,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -332,6 +333,7 @@ public class MQTTService extends Service {
 
 	@SuppressLint("NewApi")
 	private void parseMessage(String message) {
+//		{"action":"addFriendResult","fromId":"appService","itemType":0,"msgType":"notify","param":{"handleTime":"2021-07-05T15:17:06.509","requestedSn":"5830e3fbe8c57dd5","status":1},"timeStamp":1625469426,"toId":"6fa8295f4764b429"}
 		MQTTMsgEntity mqttMsgEntity = JSON.parseObject(message, MQTTMsgEntity.class);
 		switch (mqttMsgEntity.getMsgType()) {
 			case MQTTMsgEntity.TYPE_REQUEST:
@@ -349,6 +351,13 @@ public class MQTTService extends Service {
 				break;
 			case MQTTMsgEntity.TYPE_NOTIFY:
 				switch (mqttMsgEntity.getAction()) {
+					case MQTTMsgEntity.MSG_ADDFRIENDRESULT:
+						String status = JSON.parseObject(mqttMsgEntity.getParam()).getString("status");
+						if (null != tipsdevicesfriend) {
+							tipsdevicesfriend.onTipsdevicesFriendStatus(status);
+						}
+						Log.d("ADDFRIENDRESULT：",message);
+						break;
 					//登录设备
 					case MQTTMsgEntity.MSG_SCAN_LOGIN:
 						String token = JSON.parseObject(mqttMsgEntity.getParam()).getString("token");
@@ -1396,6 +1405,7 @@ public class MQTTService extends Service {
 
 	public interface TipsDevicesFriend {
 		void onTipsdevicesFriend(String requestID);
+		void onTipsdevicesFriendStatus(String statusid);
 	}
 
 	public void setTipsDevicesFriend(TipsDevicesFriend tipsdevicesfriend) {

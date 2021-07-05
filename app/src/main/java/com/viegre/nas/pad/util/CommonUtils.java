@@ -1,9 +1,12 @@
 package com.viegre.nas.pad.util;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
+import android.util.Base64;
 import android.view.Gravity;
 import android.view.WindowManager;
 
@@ -24,6 +27,22 @@ public class CommonUtils {
 
 	public static final long DEFAULT_SPLASH_GUIDE_DURATION = 5 * 1000L;
 
+	/**
+	 * Base64字符串转换成图片
+	 *
+	 * @param string
+	 * @return
+	 */
+	public static Bitmap stringToBitmap(String string) {
+		Bitmap bitmap = null;
+		try {
+			byte[] bitmapArray = Base64.decode(string, Base64.DEFAULT);
+			bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bitmap;
+	}
 	/**
 	 * 标记手机号中间4位为*
 	 *

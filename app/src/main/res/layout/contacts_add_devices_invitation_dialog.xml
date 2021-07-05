@@ -17,6 +17,7 @@
         tools:ignore="MissingDefaultResource,RedundantNamespace">
 
         <TextView
+            android:id="@+id/dialogtips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/contacts_add_devices10"

@@ -19,6 +19,8 @@ public class SPConfig {
 
 	//手机号
 	public static final String PHONE = "phone";
+	//	头像
+	public static final String USERICON = "user_icon";
 
 	//自动更新时间
 	public static final String TIME_SYNC = "time_sync";
