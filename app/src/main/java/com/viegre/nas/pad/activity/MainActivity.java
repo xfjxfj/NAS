@@ -274,7 +274,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 	private void initUser() {
 		if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
 			Glide.with(mActivity)
-			     .load(R.mipmap.main_unlogin)
+			     .load(CommonUtils.stringToBitmap(SPUtils.getInstance().getString(SPConfig.USERICON)))
 			     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
 			     .into(mViewBinding.acivMainUserIcon);
 			mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE)));

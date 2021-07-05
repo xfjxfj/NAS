@@ -83,7 +83,9 @@ public class LoginTimePopup extends CenterPopupView {
 
 	private void refreshToken() {
 		RxHttp.postForm(UrlConfig.User.REFRESH_TOKEN)
+//				.addHeader("Cookie", SPUtils.getInstance().getString(SPConfig.LOGIN_CODE_SESSION_ID))
 		      .add("hour", mHour)
+
 		      .asResponse(LoginEntity.class)
 		      .observeOn(AndroidSchedulers.mainThread())
 		      .subscribe(new Observer<LoginEntity>() {

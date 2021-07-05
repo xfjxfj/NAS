@@ -20,6 +20,7 @@ public class MQTTMsgEntity implements Serializable {
 	public final static String MSG_EXTERNAL_DRIVE_LIST = "externalDriveList";//外部设备列表
 	public final static String MSG_BIND_RESULT = "bindResult";//设备绑定
 	public final static String MSG_SCAN_LOGIN = "scanLogin";//设备登录
+	public final static String MSG_ADDFRIENDRESULT = "addFriendResult";//拒绝或者同意设备添加好友
 
 	public final static String TYPE_CMD = "cmd";
 

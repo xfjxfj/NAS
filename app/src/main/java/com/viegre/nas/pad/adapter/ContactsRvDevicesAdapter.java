@@ -210,6 +210,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                 }
             });
             mPopupContentView.findViewById(R.id.delete_devices_view).setOnClickListener(new View.OnClickListener() {
+//            mPopupContentView.findViewById(R.id.edit_devices_view).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 //                    删除设备呼叫
