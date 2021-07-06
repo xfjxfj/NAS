@@ -103,6 +103,7 @@ public class MQTTService extends Service {
 	private FileWatcher mFileWatcher;
 	private FtpServer mFtpServer;
 	private TipsDevicesFriend tipsdevicesfriend;
+	private welcomebind welcomeBindStr;
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -462,7 +463,11 @@ public class MQTTService extends Service {
 							ToastUtils.showShort("管理员拒绝绑定");
 						} else if (1 == state || 3 == state) {
 							EventBus.getDefault().postSticky(BusConfig.DEVICE_BOUND);
-							ActivityUtils.finishActivity(WelcomeActivity.class);
+//							ActivityUtils.finishActivity(WelcomeActivity.class);
+							if (welcomeBindStr!=null) {
+//								tipsdevicesfriend.onTipsdevicesFriend(requesterID);
+								welcomeBindStr.onWelcomeBind("绑定成功");
+							}
 						}
 						break;
 
@@ -1410,6 +1415,12 @@ public class MQTTService extends Service {
 
 	public void setTipsDevicesFriend(TipsDevicesFriend tipsdevicesfriend) {
 		this.tipsdevicesfriend = tipsdevicesfriend;
+	}
+	public interface welcomebind{
+		Void onWelcomeBind(String bindStr);
+	}
+	public void setWelcomeserver(welcomebind welcomeBindStr){
+		this.welcomeBindStr = welcomeBindStr;
 	}
 
 	public IBinder onBind(Intent intent) {

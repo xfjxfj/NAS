@@ -107,8 +107,8 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                         Button button_ok = v.findViewById(R.id.button_ok);
 
 //                        viewById.setText(SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
-                        viewById.setText("6fa8295f4764b429");
-                        viewById1.setText(new Random().nextInt(1000) + "---魏格设备");
+//                        viewById.setText("6fa8295f4764b429");
+//                        viewById1.setText(new Random().nextInt(1000) + "---魏格设备");
 
                         button_ok.setOnClickListener(new View.OnClickListener() {
                             @Override

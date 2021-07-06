@@ -13,6 +13,7 @@ import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.PopupLoginTimeBinding;
 import com.viegre.nas.pad.entity.LoginEntity;
+import com.viegre.nas.pad.manager.PopupManager;
 import com.viegre.nas.pad.manager.TextStyleManager;
 import com.viegre.nas.pad.util.CommonUtils;
 
@@ -83,7 +84,6 @@ public class LoginTimePopup extends CenterPopupView {
 
 	private void refreshToken() {
 		RxHttp.postForm(UrlConfig.User.REFRESH_TOKEN)
-//				.addHeader("Cookie", SPUtils.getInstance().getString(SPConfig.LOGIN_CODE_SESSION_ID))
 		      .add("hour", mHour)
 
 		      .asResponse(LoginEntity.class)

@@ -101,6 +101,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
         mViewBinding.actvLoginPhoneBtn.setOnClickListener(this);
         mViewBinding.passwordon.setOnClickListener(this);
 
+        mViewBinding.acetLoginAccountPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        mViewBinding.passwordon.setImageResource(R.mipmap.password_off);
         ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 //        mViewBinding.acivLoginExit.setOnLongClickListener(new View.OnLongClickListener() {
 //            @Override
@@ -111,12 +113,12 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 //                return false;
 //            }
 //        });
-//        mViewBinding.acivLoginExit.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(new Intent(LoginActivity.this, WelcomeActivity.class));
-//            }
-//        });
+        mViewBinding.acivLoginExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, WelcomeActivity.class));
+            }
+        });
     }
 
     @Override
@@ -178,12 +180,12 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 
     private void passwordShow() {
         if (passwrodShow) {
-            mViewBinding.acetLoginAccountPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-            mViewBinding.passwordon.setImageResource(R.mipmap.password_on);
+
             passwrodShow = false;
-        } else {
             mViewBinding.acetLoginAccountPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
             mViewBinding.passwordon.setImageResource(R.mipmap.password_off);
+        } else { mViewBinding.acetLoginAccountPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            mViewBinding.passwordon.setImageResource(R.mipmap.password_on);
             passwrodShow = true;
         }
     }
@@ -424,6 +426,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
      * 设置登录有效时间
      */
     private void setLoginTime() {
-        PopupManager.INSTANCE.showCustomXPopup(this, new LoginTimePopup(this));
+        LoginTimePopup loginTimePopup = new LoginTimePopup(this);
+        PopupManager.INSTANCE.showCustomXPopup(this,loginTimePopup);
     }
 }

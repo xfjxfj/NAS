@@ -461,6 +461,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                             }
                             TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
                             initFriendData(mFriendData);
+                            Token_valid = true;
                         } else {
                             Token_valid = false;
                             TipDialog.show(ContactsActivity.this, devicesFollowEntity.getMsg(), TipDialog.TYPE.ERROR).doDismiss();

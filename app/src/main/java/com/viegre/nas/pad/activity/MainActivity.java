@@ -172,7 +172,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
 	private void getDevicesToken(String android_id, String userid) {
 		String url = UrlConfig.Device.GET_DEVICESTOKEN;
-		RxHttp.postForm(url).add("sn", android_id).asString().observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<String>() {
+		RxHttp.postForm(url)
+				.add("sn", android_id)
+				.asString()
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Observer<String>() {
 			@Override
 			public void onSubscribe(@NonNull Disposable d) {
 				Log.d("", "");
