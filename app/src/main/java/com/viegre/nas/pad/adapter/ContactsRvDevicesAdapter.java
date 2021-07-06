@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -69,7 +70,8 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
             holder.de_laytou.setVisibility(View.GONE);
             holder.de_laytou1.setVisibility(View.VISIBLE);
         } else {
-            holder.textdv.setText(languages.get(position).getName() + languages.get(position).getCallId());
+//            holder.textdv.setText(languages.get(position).getName() + languages.get(position).getCallId());
+            holder.textdv.setText(languages.get(position).getName());
             holder.de_laytou.setVisibility(View.VISIBLE);
             holder.de_laytou1.setVisibility(View.GONE);
         }
@@ -113,9 +115,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                         button_ok.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (addDevicesFriend != null) {
-                                    addDevicesFriend.onAddDevicesFriendClick(button_ok, viewById.getText().toString(), viewById1.getText().toString());
-                                }
+                                addDevicesFriend.onAddDevicesFriendClick(button_ok, viewById.getText().toString(), viewById1.getText().toString());
                             }
                         });
                         cancle_bt.setOnClickListener(new View.OnClickListener() {
@@ -210,7 +210,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                 }
             });
             mPopupContentView.findViewById(R.id.delete_devices_view).setOnClickListener(new View.OnClickListener() {
-//            mPopupContentView.findViewById(R.id.edit_devices_view).setOnClickListener(new View.OnClickListener() {
+                //            mPopupContentView.findViewById(R.id.edit_devices_view).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 //                    删除设备呼叫

@@ -21,6 +21,8 @@ public class SPConfig {
 	public static final String PHONE = "phone";
 	//	头像
 	public static final String USERICON = "user_icon";
+//	存储上次选择的登录有效时间
+	public static final String TOKEN_TIME = "token_time";
 
 	//自动更新时间
 	public static final String TIME_SYNC = "time_sync";

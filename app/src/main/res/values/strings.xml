@@ -221,6 +221,7 @@
     <string name="contacts_add_devices16">修改名称</string>
     <string name="contacts_add_devices18">删除此联系设备</string>
     <string name="contacts_add_devices19">是否要删除联系设备</string>
+    <string name="contacts_add_devices20">序列号</string>
     <!--    WebView界面-->
     <string name="webview_back">返回</string>
 

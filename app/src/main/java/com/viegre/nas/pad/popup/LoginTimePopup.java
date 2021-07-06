@@ -62,23 +62,67 @@ public class LoginTimePopup extends CenterPopupView {
 //				mHour = popupLoginTimeBinding.acsbPopupLoginTimeCustom.getProgress() + 2;
 //			}
 //		});
-        popupLoginTimeBinding.acrbPopupLoginTime2hours.setChecked(true);
+        switch (SPUtils.getInstance().getString(SPConfig.TOKEN_TIME)) {
+            case "1":
+                SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "1");
+                mHour = 2;
+                setPopupView(popupLoginTimeBinding, false);
+                popupLoginTimeBinding.acrbPopupLoginTime2hours.setChecked(true);
+                break;
+            case "2":
+                SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "2");
+                mHour = 24;
+                setPopupView(popupLoginTimeBinding, false);
+                popupLoginTimeBinding.acrbPopupLoginTime24hours.setChecked(true);
+                break;
+            case "3":
+                SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "3");
+                mHour = 24 * 7;
+                setPopupView(popupLoginTimeBinding, false);
+                popupLoginTimeBinding.acrbPopupLoginTimeAWeek.setChecked(true);
+                break;
+            case "4":
+                SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "4");
+                mHour = 24 * 365 * 99;
+                setPopupView(popupLoginTimeBinding, false);
+                popupLoginTimeBinding.acrbPopupLoginTimePermanent.setChecked(true);
+                break;
+            case "":
+            case "5":
+                SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "5");
+                mHour = popupLoginTimeBinding.acsbPopupLoginTimeCustom.getProgress() + 2;
+                setPopupView(popupLoginTimeBinding, true);
+                popupLoginTimeBinding.acrbPopupLoginTimeCustom.setChecked(true);
+                break;
+        }
         popupLoginTimeBinding.rgPopupLoginTime.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                /**
+                 * 1为2个小时的按钮
+                 * 2为24小时的按钮
+                 * 3为一周的按钮
+                 * 4为永久的按钮
+                 * 5为自定义的按钮
+                 * */
                 if (R.id.acrbPopupLoginTime2hours == checkedId) {
+                    SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "1");
                     mHour = 2;
                     setPopupView(popupLoginTimeBinding, false);
                 } else if (R.id.acrbPopupLoginTime24hours == checkedId) {
+                    SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "2");
                     mHour = 24;
                     setPopupView(popupLoginTimeBinding, false);
                 } else if (R.id.acrbPopupLoginTimeAWeek == checkedId) {
+                    SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "3");
                     mHour = 24 * 7;
                     setPopupView(popupLoginTimeBinding, false);
                 } else if (R.id.acrbPopupLoginTimePermanent == checkedId) {
+                    SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "4");
                     mHour = 24 * 365 * 99;
                     setPopupView(popupLoginTimeBinding, false);
                 } else if (R.id.acrbPopupLoginTimeCustom == checkedId) {
+                    SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "5");
                     mHour = popupLoginTimeBinding.acsbPopupLoginTimeCustom.getProgress() + 2;
                     setPopupView(popupLoginTimeBinding, true);
                 }

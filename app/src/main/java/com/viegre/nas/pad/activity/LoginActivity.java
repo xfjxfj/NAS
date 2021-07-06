@@ -104,15 +104,15 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
         mViewBinding.acetLoginAccountPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
         mViewBinding.passwordon.setImageResource(R.mipmap.password_off);
         ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-//        mViewBinding.acivLoginExit.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                ClipData mClipData = ClipData.newPlainText("Label", SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
-//                cm.setPrimaryClip(mClipData);
-//                Toast.makeText(LoginActivity.this, SPUtils.getInstance().getString(SPConfig.ANDROID_ID) + "-----已复制到剪切板", Toast.LENGTH_LONG).show();
-//                return false;
-//            }
-//        });
+        mViewBinding.acivLoginExit.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                ClipData mClipData = ClipData.newPlainText("Label", SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
+                cm.setPrimaryClip(mClipData);
+                Toast.makeText(LoginActivity.this, SPUtils.getInstance().getString(SPConfig.ANDROID_ID) + "-----已复制到剪切板", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });
 //        mViewBinding.acivLoginExit.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
