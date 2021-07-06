@@ -2,6 +2,7 @@ package com.viegre.nas.pad.fragment.settings;
 
 import android.graphics.Color;
 import android.os.SystemClock;
+import android.provider.Settings;
 
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.view.TimePickerView;
@@ -10,6 +11,7 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.blankj.utilcode.util.Utils;
 import com.djangoogle.framework.fragment.BaseFragment;
 import com.github.iielse.switchbutton.SwitchView;
 import com.viegre.nas.pad.R;
@@ -17,7 +19,7 @@ import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.FragmentTimeBinding;
 import com.viegre.nas.pad.util.SntpClient;
 
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import androidx.appcompat.widget.AppCompatTextView;
@@ -27,7 +29,6 @@ import androidx.appcompat.widget.AppCompatTextView;
  */
 public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 
-	private SimpleDateFormat mDateFormat, mTimeFormat;
 	private TimePickerView mDatePickerView, mTimePickerView;
 
 	@Override
@@ -88,10 +89,21 @@ public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 	}
 
 	private void timeSyncOff(SwitchView switchView) {
+		//关闭系统自动确定时间
+		if (1 == Settings.Global.getInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME, 1)) {
+			Settings.Global.putInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME, 0);
+		}
 		//设置日期
 		mViewBinding.rlTimeDate.setOnClickListener(view -> {
 			mDatePickerView = new TimePickerBuilder(mActivity, (date, v) -> {
-
+				Calendar calendar = Calendar.getInstance();
+				calendar.set(Calendar.YEAR, date.getYear());
+				calendar.set(Calendar.MONTH, date.getMonth());
+				calendar.set(Calendar.DATE, date.getDate());
+				long millis = calendar.getTimeInMillis();
+				if ((millis / 1000) < Integer.MAX_VALUE) {
+					SystemClock.setCurrentTimeMillis(millis);
+				}
 			}).setLayoutRes(R.layout.picker_view_time, v -> {
 				AppCompatTextView actvPickerViewTimeTitle = v.findViewById(R.id.actvPickerViewTimeTitle);
 				AppCompatTextView actvPickerViewTimeConfirm = v.findViewById(R.id.actvPickerViewTimeConfirm);
@@ -120,7 +132,14 @@ public class TimeFragment extends BaseFragment<FragmentTimeBinding> {
 		//设置时间
 		mViewBinding.rlTime.setOnClickListener(view -> {
 			mTimePickerView = new TimePickerBuilder(mActivity, (date, v) -> {
-
+				Calendar calendar = Calendar.getInstance();
+				calendar.set(Calendar.HOUR_OF_DAY, date.getHours());
+				calendar.set(Calendar.MINUTE, date.getMinutes());
+				calendar.set(Calendar.SECOND, date.getSeconds());
+				long millis = calendar.getTimeInMillis();
+				if ((millis / 1000) < Integer.MAX_VALUE) {
+					SystemClock.setCurrentTimeMillis(millis);
+				}
 			}).setLayoutRes(R.layout.picker_view_time, v -> {
 				AppCompatTextView actvPickerViewTimeTitle = v.findViewById(R.id.actvPickerViewTimeTitle);
 				AppCompatTextView actvPickerViewTimeConfirm = v.findViewById(R.id.actvPickerViewTimeConfirm);
