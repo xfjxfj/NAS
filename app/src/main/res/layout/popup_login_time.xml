@@ -91,6 +91,7 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/rgPopupLoginTime" />
 
+
 	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/actvPopupLoginTimeCustomHourNumber"
 		android:layout_width="wrap_content"
@@ -133,6 +134,7 @@
 		app:layout_constraintTop_toBottomOf="@id/acsbPopupLoginTimeCustom" />
 
 	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPopupLoginTimeCustom24HoursPrompt"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="3px"

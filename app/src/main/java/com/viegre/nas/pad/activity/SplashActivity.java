@@ -1,5 +1,6 @@
 package com.viegre.nas.pad.activity;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -95,6 +96,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	 */
 	private void grantPermission() {
 		ThreadUtils.executeByCached(new VoidTask() {
+			@SuppressLint("MissingPermission")
 			@Override
 			public Void doInBackground() {
 				//创建文件夹

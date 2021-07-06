@@ -113,12 +113,12 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 //                return false;
 //            }
 //        });
-        mViewBinding.acivLoginExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, WelcomeActivity.class));
-            }
-        });
+//        mViewBinding.acivLoginExit.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(LoginActivity.this, WelcomeActivity.class));
+//            }
+//        });
     }
 
     @Override
