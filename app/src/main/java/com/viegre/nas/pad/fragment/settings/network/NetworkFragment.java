@@ -10,9 +10,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.alibaba.fastjson.JSON;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ColorUtils;
@@ -48,6 +45,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 /**
  * 网络设置
@@ -107,8 +107,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 		}
 		mWiFiEntity = mNetworkListAdapter.getItem(position);
 		if (StringUtils.isEmpty(mWiFiEntity.getPassword())) {
-			PopupManager.INSTANCE.showCustomXPopup(mContext,
-			                                       new NetworkPasswordPopup(mContext, mWiFiEntity.getScanResult().SSID));
+			PopupManager.INSTANCE.showCustomXPopup(mContext, new NetworkPasswordPopup(mContext, mWiFiEntity.getScanResult().SSID));
 		} else {
 			getPassword(new String[]{BusConfig.NETWORK_PASSWORD, mWiFiEntity.getPassword()});
 		}
@@ -176,8 +175,10 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 		mNetworkListAdapter.setOnItemClickListener(this);
 		mNetworkListAdapter.setOnItemChildClickListener(this);
 		mViewBinding.rvNetworkOtherNetworkList.setLayoutManager(new LinearLayoutManager(mActivity));
-		mViewBinding.rvNetworkOtherNetworkList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(
-				ColorUtils.getColor(R.color.divider_line)).size(1).margin(40, 25).build());
+		mViewBinding.rvNetworkOtherNetworkList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(R.color.divider_line))
+		                                                                                                               .size(1)
+		                                                                                                               .margin(40, 25)
+		                                                                                                               .build());
 		mViewBinding.rvNetworkOtherNetworkList.setAdapter(mNetworkListAdapter);
 	}
 
@@ -256,26 +257,24 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 	 * 开始扫描WiFi
 	 */
 	private void scanWiFi() {
-		WifiUtils.withContext(Utils.getApp())
-		         .scanWifi(scanResults -> ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<WiFiEntity>>() {
-			         @Override
-			         public List<WiFiEntity> doInBackground() {
-				         List<WiFiEntity> wifiList = new ArrayList<>();
-				         for (ScanResult scanResult : scanResults) {
-					         wifiList.add(new WiFiEntity(scanResult, ""));
-				         }
-				         return updateWiFiList(wifiList);
-			         }
+		WifiUtils.withContext(Utils.getApp()).scanWifi(scanResults -> ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<List<WiFiEntity>>() {
+			@Override
+			public List<WiFiEntity> doInBackground() {
+				List<WiFiEntity> wifiList = new ArrayList<>();
+				for (ScanResult scanResult : scanResults) {
+					wifiList.add(new WiFiEntity(scanResult, ""));
+				}
+				return updateWiFiList(wifiList);
+			}
 
-			         @Override
-			         public void onSuccess(List<WiFiEntity> result) {
-				         if (!result.isEmpty()) {
-					         mNetworkListAdapter.setList(result);
-				         }
-				         mViewBinding.acivNetworkRefresh.setClickable(true);
-			         }
-		         }))
-		         .start();
+			@Override
+			public void onSuccess(List<WiFiEntity> result) {
+				if (!result.isEmpty()) {
+					mNetworkListAdapter.setList(result);
+				}
+				mViewBinding.acivNetworkRefresh.setClickable(true);
+			}
+		})).start();
 	}
 
 	/**
@@ -288,8 +287,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 		List<WiFiEntity> processWiFiList = new ArrayList<>(wifiList);
 		for (WiFiEntity scanResult : processWiFiList) {
 			for (WiFiEntity wifiEntity : mSavedWiFiList) {
-				if (scanResult.getScanResult().SSID.equals(wifiEntity.getScanResult().SSID) && scanResult.getScanResult().BSSID.equals(
-						wifiEntity.getScanResult().BSSID)) {
+				if (scanResult.getScanResult().SSID.equals(wifiEntity.getScanResult().SSID) && scanResult.getScanResult().BSSID.equals(wifiEntity.getScanResult().BSSID)) {
 					scanResult.setPassword(wifiEntity.getPassword());
 				}
 			}
@@ -340,6 +338,7 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 			                 public void failed(@NonNull ConnectionErrorCode errorCode) {
 				                 mIsConnecting = false;
 				                 mWifiUtilsBuilder = null;
+				                 mViewBinding.ilNetworkSelected.acivItemNetworkStatus.clearAnimation();
 				                 hideSelectedWiFi();
 				                 mNetworkListAdapter.notifyDataSetChanged();
 				                 SPUtils.getInstance().remove(SPConfig.CURRENT_WIFI_SSID);
@@ -384,8 +383,8 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 			boolean hasWiFi = false;
 			for (int i = 0; i < mSavedWiFiList.size(); i++) {
 				if (mSavedWiFiList.get(i).getScanResult().SSID.equals(wifiEntity.getScanResult().SSID) && mSavedWiFiList.get(i)
-				                                                                                                        .getScanResult().BSSID
-						.equals(wifiEntity.getScanResult().BSSID)) {
+				                                                                                                        .getScanResult().BSSID.equals(
+								wifiEntity.getScanResult().BSSID)) {
 					if (!mSavedWiFiList.get(i).getPassword().equals(wifiEntity.getPassword())) {
 						index = i;
 					}

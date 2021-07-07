@@ -45,6 +45,12 @@ public class NetworkListAdapter extends BaseQuickAdapter<WiFiEntity, BaseViewHol
 		              .setText(R.id.actvItemNetworkName,
 		                       StringUtils.isEmpty(wiFiEntity.getScanResult().SSID) ? wiFiEntity.getScanResult().BSSID : wiFiEntity.getScanResult().SSID)
 		              .setGone(R.id.actvItemNetworkTip, StringUtils.isEmpty(wiFiEntity.getPassword()));
+		String capabilities = null;
+		if (null != wiFiEntity.getScanResult().capabilities) {
+			capabilities = wiFiEntity.getScanResult().capabilities.trim();
+		}
+		baseViewHolder.setImageResource(R.id.acivItemNetworkLock, R.mipmap.network_wifi_locked)
+		              .setGone(R.id.acivItemNetworkLock, ("".equals(capabilities) || "[ESS]".equals(capabilities)));
 		if (wiFiEntity.getScanResult().level >= -50) {
 			baseViewHolder.setImageResource(R.id.acivItemNetworkSignal, R.mipmap.network_wifi_signal_4);
 		} else if (wiFiEntity.getScanResult().level < -50 && wiFiEntity.getScanResult().level >= -70) {

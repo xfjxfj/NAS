@@ -35,7 +35,6 @@ import com.blankj.utilcode.util.Utils;
 import com.google.common.collect.Lists;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.LoginActivity;
-import com.viegre.nas.pad.activity.WelcomeActivity;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
@@ -172,13 +171,13 @@ public class MQTTService extends Service {
 			dataConnectionConfigurationFactory.setIdleTime(0);
 			listenerFactory.setDataConnectionConfiguration(dataConnectionConfigurationFactory.createDataConnectionConfiguration());
 
+			ftpServerFactory.addListener("default", listenerFactory.createListener());
 			ConnectionConfigFactory connectionConfigFactory = new ConnectionConfigFactory();
 			connectionConfigFactory.setMaxLogins(10000);
 			connectionConfigFactory.setAnonymousLoginEnabled(false);
 			connectionConfigFactory.setMaxLoginFailures(5);
 			connectionConfigFactory.setLoginFailureDelay(2000);
 			ftpServerFactory.setConnectionConfig(connectionConfigFactory.createConnectionConfig());
-			ftpServerFactory.addListener("default", listenerFactory.createListener());
 			mFtpServer = ftpServerFactory.createServer();
 		} catch (FtpException e) {
 			e.printStackTrace();

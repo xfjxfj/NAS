@@ -187,7 +187,10 @@ dependencies {
 	//https://github.com/SusionSuc/DraggableImageViewer
 	implementation 'com.susion:image-viewer:1.0.2'
 	//https://mina.apache.org/ftpserver-project
+	//https://github.com/apache/mina-ftpserver
 	implementation 'org.apache.ftpserver:ftpserver-core:1.1.1'
+	//https://mvnrepository.com/artifact/org.apache.mina/mina-core
+	implementation'org.apache.mina:mina-core:2.1.4'
 	//http://www.slf4j.org
 	//noinspection GradleDependency
 	implementation 'org.slf4j:slf4j-android:1.6.1-RC1'
