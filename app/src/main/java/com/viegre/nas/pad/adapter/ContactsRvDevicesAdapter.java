@@ -115,7 +115,9 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                         button_ok.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                if (addDevicesFriend!=null) {
                                 addDevicesFriend.onAddDevicesFriendClick(button_ok, viewById.getText().toString(), viewById1.getText().toString());
+                                }
                             }
                         });
                         cancle_bt.setOnClickListener(new View.OnClickListener() {

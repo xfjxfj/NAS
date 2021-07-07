@@ -361,11 +361,11 @@ public class MQTTService extends Service {
 						break;
 					//登录设备
 					case MQTTMsgEntity.MSG_SCAN_LOGIN:
-						String token = JSON.parseObject(mqttMsgEntity.getParam()).getString("token");
-						String phone = JSON.parseObject(mqttMsgEntity.getParam()).getString("phone");
-						RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient()).setOnParamAssembly(param -> param.addHeader("token", token));
+						String token = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.TOKEN);
+						String phone = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.PHONE);
+						RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient()).setOnParamAssembly(param -> param.addHeader(SPConfig.TOKEN, token));
 						SPUtils.getInstance().put(SPConfig.PHONE, phone);
-						SPUtils.getInstance().put("token", token);
+						SPUtils.getInstance().put(SPConfig.TOKEN, token);
 //                        PopupManager.INSTANCE.showCustomXPopup(this, new LoginTimePopup(this));
 						ActivityUtils.finishActivity(LoginActivity.class);
 						break;

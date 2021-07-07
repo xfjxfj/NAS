@@ -85,7 +85,6 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
     private TextView textRecord;
     boolean isLoading = false;
     private ContactsRvRecordAdapter contactsRvRecordAdapter;
-    private ContactsRvDevicesAdapter adapter;
     private MQTTService myService;
     //处理mqtt那边传递过来的消息
     ServiceConnection conn = new ServiceConnection() {
@@ -326,7 +325,6 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
         return data;
     }
 
-
     private void initDevicesData(List<DevicesFriendsListBean> mDevicesData) {
         //初始化数据
         LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -336,7 +334,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
         //设置适配器adapter
         View inflate = getLayoutInflater().inflate(R.layout.contacts_devices_popup, null);
         mDevicesData.add(new DevicesFriendsListBean());
-        adapter = new ContactsRvDevicesAdapter(this, mDevicesData, inflate);
+        ContactsRvDevicesAdapter adapter = new ContactsRvDevicesAdapter(mActivity, mDevicesData, inflate);
         contactsRv3.setAdapter(adapter);
         adapter.setaddDevicesFriend(this);
         adapter.setEditDevicesName(this);
@@ -513,7 +511,6 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                             }
                         })
                         .setButtonOrientation(LinearLayout.VERTICAL);
-
                 break;
         }
 

@@ -231,10 +231,10 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
                         if (loginStr.getMsg().equals("OK")) {
                             RxHttpPlugins
                                     .init(RxHttpPlugins.getOkHttpClient())
-                                    .setOnParamAssembly(param -> param.addHeader("token", loginStr.getData().getToken()));
+                                    .setOnParamAssembly(param -> param.addHeader(SPConfig.TOKEN, loginStr.getData().getToken()));
                             SPUtils.getInstance().put(SPConfig.PHONE, phone);
                             SPUtils.getInstance().put(SPConfig.USERICON, loginStr.getData().getUser().getPicData());
-                            SPUtils.getInstance().put("token", loginStr.getData().getToken());
+                            SPUtils.getInstance().put(SPConfig.TOKEN, loginStr.getData().getToken());
                             setLoginTime();
                         } else {
                             CommonUtils.showErrorToast(loginStr.getMsg());
@@ -373,10 +373,10 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
                         LoginUserPwdEntity loginUserPwdEntity = new Gson().fromJson(loginStr, LoginUserPwdEntity.class);
                         if (loginUserPwdEntity.getMsg().equals("OK")) {
                             RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient())
-                                    .setOnParamAssembly(param -> param.addHeader("token", loginUserPwdEntity.getData().getToken()));
+                                    .setOnParamAssembly(param -> param.addHeader(SPConfig.TOKEN, loginUserPwdEntity.getData().getToken()));
                             SPUtils.getInstance().put(SPConfig.PHONE, phone);
                             SPUtils.getInstance().put(SPConfig.USERICON, loginUserPwdEntity.getData().getUser().getPicData());
-                            SPUtils.getInstance().put("token", loginUserPwdEntity.getData().getToken());
+                            SPUtils.getInstance().put(SPConfig.TOKEN, loginUserPwdEntity.getData().getToken());
                             TipDialog.show(LoginActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
                             setLoginTime();
                         } else {
