@@ -23,6 +23,7 @@ import com.viegre.nas.pad.fragment.settings.MyDeviceFragment;
 import com.viegre.nas.pad.fragment.settings.ProtocolFragment;
 import com.viegre.nas.pad.fragment.settings.SoundFragment;
 import com.viegre.nas.pad.fragment.settings.TimeFragment;
+import com.viegre.nas.pad.fragment.settings.network.NetworkDetailFragment;
 import com.viegre.nas.pad.fragment.settings.network.NetworkFragment;
 import com.viegre.nas.pad.fragment.settings.screen.ScreenCustomImageFragment;
 import com.viegre.nas.pad.fragment.settings.screen.ScreenFragment;
@@ -53,6 +54,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 
 	private MyDeviceFragment mMyDeviceFragment;
 	private NetworkFragment mNetworkFragment;//网络设置
+	private NetworkDetailFragment mNetworkDetailFragment;//网络详情
 	private AutoAnswerFragment mAutoAnswerFragment;//自动接听
 	private ScreenFragment mScreenFragment;
 	private ScreenCustomImageFragment mScreenCustomImageFragment;
@@ -141,6 +143,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 		mMenuFragmentList.add(mInstructionsFragment);
 		mMenuFragmentList.add(mAboutViegreFragment);
 
+		mNetworkDetailFragment = NetworkDetailFragment.newInstance();
 		mScreenCustomImageFragment = ScreenCustomImageFragment.newInstance();
 	}
 
@@ -172,6 +175,26 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 			      @Override
 			      public void onComplete() {}
 		      });
+	}
+
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void networkDetailOperation(String[] events) {
+		if (!BusConfig.NETWORK_DETAIL.equals(events[0])) {
+			return;
+		}
+		switch (events[1]) {
+			case BusConfig.SHOW_NETWORK_DETAIL:
+				FragmentUtils.add(getSupportFragmentManager(), mNetworkDetailFragment, R.id.flSettingsFragment);
+				FragmentUtils.show(mNetworkDetailFragment);
+				break;
+
+			case BusConfig.HIDE_NETWORK_DETAIL:
+				FragmentUtils.remove(mNetworkDetailFragment);
+				break;
+
+			default:
+				break;
+		}
 	}
 
 	@Subscribe(threadMode = ThreadMode.MAIN)
