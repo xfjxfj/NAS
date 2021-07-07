@@ -107,6 +107,7 @@ public class MQTTService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		createNotificationChannel();
+		registerNetworkStatusChangedListener();
 //		initFileWatcher();
 		initFtp();
 		startFtpServer();
@@ -129,6 +130,9 @@ public class MQTTService extends Service {
 				e.printStackTrace();
 			}
 			mMqttAndroidClient.close();
+		}
+		if (null != mOnNetworkStatusChangedListener) {
+			NetworkUtils.unregisterNetworkStatusChangedListener(mOnNetworkStatusChangedListener);
 		}
 		super.onDestroy();
 	}
@@ -356,7 +360,7 @@ public class MQTTService extends Service {
 						if (null != tipsdevicesfriend) {
 							tipsdevicesfriend.onTipsdevicesFriendStatus(status);
 						}
-						Log.d("ADDFRIENDRESULT：",message);
+						Log.d("ADDFRIENDRESULT：", message);
 						break;
 					//登录设备
 					case MQTTMsgEntity.MSG_SCAN_LOGIN:
@@ -463,7 +467,7 @@ public class MQTTService extends Service {
 						} else if (1 == state || 3 == state) {
 							EventBus.getDefault().postSticky(BusConfig.DEVICE_BOUND);
 //							ActivityUtils.finishActivity(WelcomeActivity.class);
-							if (welcomeBindStr!=null) {
+							if (welcomeBindStr != null) {
 //								tipsdevicesfriend.onTipsdevicesFriend(requesterID);
 								welcomeBindStr.onWelcomeBind("绑定成功");
 							}
@@ -1409,16 +1413,19 @@ public class MQTTService extends Service {
 
 	public interface TipsDevicesFriend {
 		void onTipsdevicesFriend(String requestID);
+
 		void onTipsdevicesFriendStatus(String statusid);
 	}
 
 	public void setTipsDevicesFriend(TipsDevicesFriend tipsdevicesfriend) {
 		this.tipsdevicesfriend = tipsdevicesfriend;
 	}
-	public interface welcomebind{
+
+	public interface welcomebind {
 		Void onWelcomeBind(String bindStr);
 	}
-	public void setWelcomeserver(welcomebind welcomeBindStr){
+
+	public void setWelcomeserver(welcomebind welcomeBindStr) {
 		this.welcomeBindStr = welcomeBindStr;
 	}
 
@@ -1431,4 +1438,22 @@ public class MQTTService extends Service {
 			return MQTTService.this;
 		}
 	}
+
+	private void registerNetworkStatusChangedListener() {
+		if (!NetworkUtils.isRegisteredNetworkStatusChangedListener(mOnNetworkStatusChangedListener)) {
+			NetworkUtils.registerNetworkStatusChangedListener(mOnNetworkStatusChangedListener);
+		}
+	}
+
+	private final NetworkUtils.OnNetworkStatusChangedListener mOnNetworkStatusChangedListener = new NetworkUtils.OnNetworkStatusChangedListener() {
+		@Override
+		public void onDisconnected() {
+			EventBus.getDefault().post(BusConfig.NETWORK_DISCONNECTED);
+		}
+
+		@Override
+		public void onConnected(NetworkUtils.NetworkType networkType) {
+			EventBus.getDefault().post(BusConfig.NETWORK_CONNECTED);
+		}
+	};
 }

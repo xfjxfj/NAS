@@ -43,7 +43,7 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
     @Override
     protected void initialize() {
         mViewBinding.iAudioTitle.actvFileManagerTitle.setText(R.string.audio);
-        mViewBinding.iAudioTitle.llcFileManagerTitleBack.setOnClickListener(view -> finish());
+        mViewBinding.iAudioTitle.acivFileManagerTitleBack.setOnClickListener(view -> finish());
         initRadioGroup();
         initList();
         mViewBinding.srlAudioRefresh.setRefreshing(true);

@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:id="@+id/clFileManagerTitleRoot"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:paddingStart="60px"
-	android:paddingTop="64px"
+	android:paddingStart="35px"
+	android:paddingTop="39px"
 	android:paddingEnd="60px"
-	android:paddingBottom="64px">
+	android:paddingBottom="39px">
 
 	<androidx.appcompat.widget.LinearLayoutCompat
-		android:id="@+id/llcFileManagerTitleBack"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:gravity="center_vertical"
@@ -20,15 +18,15 @@
 
 		<androidx.appcompat.widget.AppCompatImageView
 			android:id="@+id/acivFileManagerTitleBack"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_width="71px"
+			android:layout_height="86px"
+			android:padding="25px"
 			app:srcCompat="@mipmap/file_manager_back" />
 
 		<androidx.appcompat.widget.AppCompatTextView
 			android:id="@+id/actvFileManagerTitle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginStart="25px"
 			android:ellipsize="end"
 			android:includeFontPadding="false"
 			android:singleLine="true"

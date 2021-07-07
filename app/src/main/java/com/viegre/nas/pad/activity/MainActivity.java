@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -36,6 +37,7 @@ import com.viegre.nas.pad.activity.audio.AudioActivity;
 import com.viegre.nas.pad.activity.im.ContactsActivity;
 import com.viegre.nas.pad.activity.image.ImageActivity;
 import com.viegre.nas.pad.activity.video.VideoActivity;
+import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
@@ -106,6 +108,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         initWeather();
 //        loginIM();
 //		getUsbPaths();
+        if (NetworkUtils.isConnected()) {
+            mViewBinding.llcMainUnconnected.setVisibility(View.GONE);
+        } else {
+            mViewBinding.llcMainUnconnected.setVisibility(View.VISIBLE);
+        }
     }
 
     private void getUsbPaths() {
@@ -132,7 +139,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         super.onRestart();
         getLoginIM();
     }
-//判断是否出现token错误的情况，如果没有则不需要重新登录
+
+    //判断是否出现token错误的情况，如果没有则不需要重新登录
     private void getLoginIM() {
         if (!ContactsActivity.Token_valid) {
             loginIM();
@@ -167,10 +175,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                         ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
                         SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
                         sp.edit()
-                                .putString("id", loginResult.getUserId())
-                                .putString("token", loginResult.getUserId())
-                                .putString("mToken", loginResult.getToken())
-                                .apply();
+                          .putString("id", loginResult.getUserId())
+                          .putString("token", loginResult.getUserId())
+                          .putString("mToken", loginResult.getToken())
+                          .apply();
                         Log.d("MainInfo:", ANDROID_ID + "," + loginResult.getUserId());
                         getDevicesToken(ANDROID_ID, loginResult.getUserId());
                         return null;
@@ -192,94 +200,89 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
     private void getDevicesToken(String android_id, String userid) {
         String url = UrlConfig.Device.GET_DEVICESTOKEN;
-        RxHttp.postForm(url)
-                .add("sn", android_id)
-                .asString()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                        Log.d("", "");
-                    }
+        RxHttp.postForm(url).add("sn", android_id).asString().observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<String>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                Log.d("", "");
+            }
 
-                    @Override
-                    public void onNext(@NonNull String s) {
-                        //添加公共请求头
+            @Override
+            public void onNext(@NonNull String s) {
+                //添加公共请求头
 //                        {"code":0,"msg":"OK","data":{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpdGVtIjp7Iml0ZW1JZCI6ImY2ZmUyNTkyMmZhMjAyOGEiLCJpdGVtVHlwZSI6IjIifSwiaXNzIjoiYXV0aDAiLCJleHAiOjE2MjA0MjA4ODh9.DJk9tVcaIK62PQbR_c8zwkyHxDB0zP3Mvc_In7pcrac"}}
 //                        {"code":0,"msg":"OK","data":null}
 //                        {"code":1000,"msg":"设备不存在","data":null}
-                        Gson gson = new Gson();
-                        DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
-                        if (loglinCodeEntity.getMsg().equals("OK")) {
-                            String token = loglinCodeEntity.getData().getToken();
-                            SPUtils.getInstance().put("token", token);
-                            postCallId(token, android_id, userid);
-                        } else {
-                            mViewBinding.mainError.setText("提示：ID " + android_id + ", " + loglinCodeEntity.getMsg() + "!");
-                            Log.e("提示：ID ", android_id + ", " + loglinCodeEntity.getMsg() + "!");
-                            TipDialog.show(MainActivity.this, loglinCodeEntity.getMsg(), TipDialog.TYPE.ERROR).doDismiss();
-                        }
-                    }
+                Gson gson = new Gson();
+                DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
+                if (loglinCodeEntity.getMsg().equals("OK")) {
+                    String token = loglinCodeEntity.getData().getToken();
+                    SPUtils.getInstance().put("token", token);
+                    postCallId(token, android_id, userid);
+                } else {
+                    mViewBinding.mainError.setText("提示：ID " + android_id + ", " + loglinCodeEntity.getMsg() + "!");
+                    Log.e("提示：ID ", android_id + ", " + loglinCodeEntity.getMsg() + "!");
+                    TipDialog.show(MainActivity.this, loglinCodeEntity.getMsg(), TipDialog.TYPE.ERROR).doDismiss();
+                }
+            }
 
-                    @Override
-                    public void onError(@NonNull Throwable e) {
+            @Override
+            public void onError(@NonNull Throwable e) {
 //                        CommonUtils.showErrorToast(e.getMessage());
-                        TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
-                    }
+                TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
+            }
 
-                    @Override
-                    public void onComplete() {
-                        Log.d("", "");
+            @Override
+            public void onComplete() {
+                Log.d("", "");
 //                        SPUtils.getInstance().remove(SPConfig.LOGIN_CODE_SESSION_ID);
 ////                        mViewBinding.actvLoginAccountBtn.setClickable(true);
-                    }
-                });
+            }
+        });
 
 //        postCallId(android_id,android_id);
     }
 
     private void postCallId(String token, String Callid, String sn) {
         RxHttp.postForm(UrlConfig.Call.GET_REPORTINFO)
-                .addHeader("token", token)
-                .add("itemId", Callid)
-                .add("callId", sn)
-                .add("itemType", 2)
-                .asString()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                        Log.d("", "");
-                    }
+              .addHeader("token", token)
+              .add("itemId", Callid)
+              .add("callId", sn)
+              .add("itemType", 2)
+              .asString()
+              .observeOn(AndroidSchedulers.mainThread())
+              .subscribe(new Observer<String>() {
+                  @Override
+                  public void onSubscribe(@NonNull Disposable d) {
+                      Log.d("", "");
+                  }
 
-                    @Override
-                    public void onNext(@NonNull String s) {
-                        //添加公共请求头
+                  @Override
+                  public void onNext(@NonNull String s) {
+                      //添加公共请求头
 //                        {"code":0,"msg":"OK","data":null}
-                        Gson gson = new Gson();
-                        LoglinCodeEntity loglinCodeEntity = gson.fromJson(s, LoglinCodeEntity.class);
-                        String msg = loglinCodeEntity.getMsg();
-                        Log.d("postCallId：", msg);
-                        TipDialog.show(MainActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
+                      Gson gson = new Gson();
+                      LoglinCodeEntity loglinCodeEntity = gson.fromJson(s, LoglinCodeEntity.class);
+                      String msg = loglinCodeEntity.getMsg();
+                      Log.d("postCallId：", msg);
+                      TipDialog.show(MainActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
 //                        CommonUtils.showErrorToast(msg);
 //                        {"code":500,"msg":"服务器内部异常","data":null}
-                    }
+                  }
 
-                    @Override
-                    public void onError(@NonNull Throwable e) {
+                  @Override
+                  public void onError(@NonNull Throwable e) {
 //                        CommonUtils.showErrorToast(e.getMessage());
-                        TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
-                    }
+                      TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
+                  }
 
-                    @Override
-                    public void onComplete() {
-                        Log.d("", "");
+                  @Override
+                  public void onComplete() {
+                      Log.d("", "");
 //                        SPUtils.getInstance().remove(SPConfig.LOGIN_CODE_SESSION_ID);
 ////                        mViewBinding.actvLoginAccountBtn.setClickable(true);
-                    }
-                });
+                  }
+              });
     }
-
 
     @Override
     protected void onDestroy() {
@@ -292,9 +295,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     private void initUserInfo() {
         if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
             Glide.with(mActivity)
-                    .load(CommonUtils.stringToBitmap(SPUtils.getInstance().getString(SPConfig.USERICON)))
-                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                    .into(mViewBinding.acivMainUserIcon);
+                 .load(CommonUtils.stringToBitmap(SPUtils.getInstance().getString(SPConfig.USERICON)))
+                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                 .into(mViewBinding.acivMainUserIcon);
             mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE)));
             mViewBinding.llcMainUser.setOnClickListener(null);
 //			计算token是否过期
@@ -311,12 +314,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                     showTips();//过期token，提示
                 }
             }
-
         } else {
             Glide.with(mActivity)
-                    .load(R.mipmap.main_unlogin)
-                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                    .into(mViewBinding.acivMainUserIcon);
+                 .load(R.mipmap.main_unlogin)
+                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                 .into(mViewBinding.acivMainUserIcon);
 //			mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
             mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login1);
             mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
@@ -327,86 +329,82 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     private void refreshToken(int token_hour_time) {
         TipDialog show = WaitDialog.show(this, "请稍候...");
         RxHttp.postForm(UrlConfig.User.REFRESH_TOKEN)
-                .addHeader("token", SPUtils.getInstance().getString(SPConfig.TOKEN))
-                .add("hour", token_hour_time)
-                .asResponse(LoginEntity.class)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<LoginEntity>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
-                    }
+              .addHeader("token", SPUtils.getInstance().getString(SPConfig.TOKEN))
+              .add("hour", token_hour_time)
+              .asResponse(LoginEntity.class)
+              .observeOn(AndroidSchedulers.mainThread())
+              .subscribe(new Observer<LoginEntity>() {
+                  @Override
+                  public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
+                  }
 
-                    @Override
-                    public void onNext(@io.reactivex.rxjava3.annotations.NonNull LoginEntity loginEntity) {
+                  @Override
+                  public void onNext(@io.reactivex.rxjava3.annotations.NonNull LoginEntity loginEntity) {
 //                        token_hour_time
-                        SPUtils.getInstance().put(SPConfig.TOKEN, loginEntity.getToken());
-                        RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient())
-                                .setOnParamAssembly(param -> param.addHeader("token", loginEntity.getToken()));
-                        loginIM();
-                    }
+                      SPUtils.getInstance().put(SPConfig.TOKEN, loginEntity.getToken());
+                      RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient())
+                                   .setOnParamAssembly(param -> param.addHeader("token", loginEntity.getToken()));
+                      loginIM();
+                  }
 
-                    @Override
-                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                  @Override
+                  public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
 //                        token verify fail
-                        if (e.getMessage().equals("token verify fail")) {
-                            show.doDismiss();
-                            showTips();//提示信息
-                        } else {
-                            CommonUtils.showErrorToast(e.getMessage());
-                            SPUtils.getInstance().remove(SPConfig.PHONE);
-                        }
-                    }
+                      if (e.getMessage().equals("token verify fail")) {
+                          show.doDismiss();
+                          showTips();//提示信息
+                      } else {
+                          CommonUtils.showErrorToast(e.getMessage());
+                          SPUtils.getInstance().remove(SPConfig.PHONE);
+                      }
+                  }
 
-                    @Override
-                    public void onComplete() {
+                  @Override
+                  public void onComplete() {
 
-                    }
-                });
+                  }
+              });
     }
 
-
     private void showTips() {
-        MessageDialog.show(this, "提示", "登录已经过期,请重新登录！", "是", "取消")
-                .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
+        MessageDialog.show(this, "提示", "登录已经过期,请重新登录！", "是", "取消").setOnOkButtonClickListener(new OnDialogButtonClickListener() {
+            @Override
+            public boolean onClick(BaseDialog baseDialog, View v) {
+                WaitDialog.show(MainActivity.this, "请稍候...");
+                new Handler().postDelayed(new Runnable() {
                     @Override
-                    public boolean onClick(BaseDialog baseDialog, View v) {
-                        WaitDialog.show(MainActivity.this, "请稍候...");
-                        new Handler().postDelayed(new Runnable() {
+                    public void run() {
+                        runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
 //                                        ResetRecord();
-                                        TipDialog.show(MainActivity.this, "成功！", TipDialog.TYPE.SUCCESS).setOnDismissListener(new OnDismissListener() {
-                                            @Override
-                                            public void onDismiss() {
-                                                //清空手机号
-                                                SPUtils.getInstance().remove(SPConfig.PHONE);
-                                                //清空token
-                                                SPUtils.getInstance().remove(SPConfig.TOKEN);
-                                                //跳转到登录界面
-                                                ActivityUtils.startActivity(LoginActivity.class);
-                                            }
-                                        });
+                                TipDialog.show(MainActivity.this, "成功！", TipDialog.TYPE.SUCCESS).setOnDismissListener(new OnDismissListener() {
+                                    @Override
+                                    public void onDismiss() {
+                                        //清空手机号
+                                        SPUtils.getInstance().remove(SPConfig.PHONE);
+                                        //清空token
+                                        SPUtils.getInstance().remove(SPConfig.TOKEN);
+                                        //跳转到登录界面
+                                        ActivityUtils.startActivity(LoginActivity.class);
                                     }
                                 });
                             }
-                        }, 300);
-                        return false;
+                        });
                     }
-                })
-                .setOnCancelButtonClickListener(new OnDialogButtonClickListener() {
-                    @Override
-                    public boolean onClick(BaseDialog baseDialog, View v) {
-                        //清空手机号
-                        SPUtils.getInstance().remove(SPConfig.PHONE);
-                        //清空token
-                        SPUtils.getInstance().remove(SPConfig.TOKEN);
-                        return false;
-                    }
-                })
-                .setButtonOrientation(LinearLayout.VERTICAL);
+                }, 300);
+                return false;
+            }
+        }).setOnCancelButtonClickListener(new OnDialogButtonClickListener() {
+            @Override
+            public boolean onClick(BaseDialog baseDialog, View v) {
+                //清空手机号
+                SPUtils.getInstance().remove(SPConfig.PHONE);
+                //清空token
+                SPUtils.getInstance().remove(SPConfig.TOKEN);
+                return false;
+            }
+        }).setButtonOrientation(LinearLayout.VERTICAL);
     }
 
     private void initClick() {
@@ -421,23 +419,23 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     private void initIcon() {
         //图片
         Glide.with(this)
-                .load(R.mipmap.main_icon_image)
-                .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-                .into(mViewBinding.acivMainIconImage);
+             .load(R.mipmap.main_icon_image)
+             .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+             .into(mViewBinding.acivMainIconImage);
         mViewBinding.acivMainIconImage.setOnClickListener(view -> ActivityUtils.startActivity(ImageActivity.class));
 
         //音频
         Glide.with(this)
-                .load(R.mipmap.main_icon_audio)
-                .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-                .into(mViewBinding.acivMainIconAudio);
+             .load(R.mipmap.main_icon_audio)
+             .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+             .into(mViewBinding.acivMainIconAudio);
         mViewBinding.acivMainIconAudio.setOnClickListener(view -> ActivityUtils.startActivity(AudioActivity.class));
 
         //视频
         Glide.with(this)
-                .load(R.mipmap.main_icon_video)
-                .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
-                .into(mViewBinding.acivMainIconVideo);
+             .load(R.mipmap.main_icon_video)
+             .apply(RequestOptions.bitmapTransform(new RoundedCorners(24)))
+             .into(mViewBinding.acivMainIconVideo);
         mViewBinding.acivMainIconVideo.setOnClickListener(view -> ActivityUtils.startActivity(VideoActivity.class));
 
         Glide.with(this).load(R.mipmap.test_icon_3).apply(RequestOptions.bitmapTransform(new RoundedCorners(24))).into(mViewBinding.acivMainIcon3);
@@ -519,7 +517,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                 if (name.contains(weatherEntity.getWeather())) {
                     mViewBinding.acivMainWeather.setImageResource(entry.getValue());
                     mViewBinding.actvMainTemperature.setText(StringUtils.getString(R.string.weather_unknown_temperature,
-                            weatherEntity.getCurtemperature()));
+                                                                                   weatherEntity.getCurtemperature()));
                     return;
                 }
             }
@@ -663,4 +661,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
             }
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void networkConnected(String event) {
+        if (BusConfig.NETWORK_CONNECTED.equals(event)) {
+            mViewBinding.llcMainUnconnected.setVisibility(View.GONE);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void networkDisconnected(String event) {
+        if (BusConfig.NETWORK_DISCONNECTED.equals(event)) {
+            mViewBinding.llcMainUnconnected.setVisibility(View.VISIBLE);
+		}
+	}
 }

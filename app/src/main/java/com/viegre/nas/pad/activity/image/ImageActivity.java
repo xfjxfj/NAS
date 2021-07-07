@@ -50,7 +50,7 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
 	@Override
 	protected void initialize() {
 		mViewBinding.iImageTitle.actvFileManagerTitle.setText(R.string.image);
-		mViewBinding.iImageTitle.llcFileManagerTitleBack.setOnClickListener(view -> finish());
+		mViewBinding.iImageTitle.acivFileManagerTitleBack.setOnClickListener(view -> finish());
 		mViewBinding.iImageTitle.acivFileManagerFilter.setOnClickListener(this);
 		mViewBinding.imageActivityButtonBt.setOnClickListener(this);
 		initRadioGroup();

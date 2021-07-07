@@ -52,4 +52,10 @@ public class BusConfig {
 	 */
 	public static final String START_MSC = "start_msc";
 	public static final String STOP_MSC = "stop_msc";
+
+	/**
+	 * 网络连接状态
+	 */
+	public static final String NETWORK_CONNECTED = "network_connected";
+	public static final String NETWORK_DISCONNECTED = "network_disconnected";
 }

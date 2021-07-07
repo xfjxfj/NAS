@@ -25,7 +25,7 @@ public class AudioPlayerActivity extends BaseActivity<ActivityAudioPlayerBinding
 
 	@Override
 	protected void initialize() {
-		mViewBinding.iAudioPlayerTitle.llcFileManagerTitleBack.setOnClickListener(view -> finish());
+		mViewBinding.iAudioPlayerTitle.acivFileManagerTitleBack.setOnClickListener(view -> finish());
 		mViewBinding.iAudioPlayerTitle.acivFileManagerFilter.setVisibility(View.GONE);
 		AudioWife.getInstance().addOnPlayClickListener(view -> mViewBinding.acivAudioPlayerAlbum.startAnimation(mAlbumAnimation));
 		AudioWife.getInstance().addOnPauseClickListener(view -> mViewBinding.acivAudioPlayerAlbum.clearAnimation());

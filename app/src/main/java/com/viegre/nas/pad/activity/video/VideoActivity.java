@@ -35,7 +35,7 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 	@Override
 	protected void initialize() {
 		mViewBinding.iVideoTitle.actvFileManagerTitle.setText(R.string.video);
-		mViewBinding.iVideoTitle.llcFileManagerTitleBack.setOnClickListener(view -> finish());
+		mViewBinding.iVideoTitle.acivFileManagerTitleBack.setOnClickListener(view -> finish());
 		initRadioGroup();
 		initList();
 	}
