@@ -5,6 +5,9 @@ import android.view.View;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.SPUtils;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.djangoogle.framework.activity.BaseFragmentActivity;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.SettingsMenuListAdapter;
@@ -90,7 +93,10 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	private void checkLoginStatus() {
 		if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
 			mViewBinding.acivSettingsLogout.setVisibility(View.VISIBLE);
-			mViewBinding.acivSettingsAvatar.setImageResource(R.mipmap.settings_unlogin);
+			Glide.with(mActivity)
+					.load(CommonUtils.stringToBitmap(SPUtils.getInstance().getString(SPConfig.USERICON)))
+					.apply(RequestOptions.bitmapTransform(new CircleCrop()))
+					.into(mViewBinding.acivSettingsAvatar);
 			mViewBinding.actvSettingsUsername.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE)));
 			mViewBinding.clSettingsLoginArea.setOnClickListener(null);
 		} else {
