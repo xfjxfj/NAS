@@ -22,6 +22,7 @@ public class SoundFragment extends BaseFragment<FragmentSoundBinding> {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 				VolumeUtils.setVolume(AudioManager.STREAM_MUSIC, i, AudioManager.FLAG_PLAY_SOUND);
+				VolumeUtils.setVolume(AudioManager.STREAM_ALARM, i, AudioManager.FLAG_PLAY_SOUND);
 			}
 
 			@Override

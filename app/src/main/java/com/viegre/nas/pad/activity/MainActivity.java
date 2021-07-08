@@ -51,6 +51,7 @@ import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.manager.AMapLocationManager;
 import com.viegre.nas.pad.service.AppService;
 import com.viegre.nas.pad.service.MscService;
+import com.viegre.nas.pad.service.ScreenSaverService;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.youth.banner.Banner;
@@ -100,6 +101,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         if ("official".equals(BuildConfig.FLAVOR)) {
             ServiceUtils.startService(MscService.class);
         }
+        ServiceUtils.startService(ScreenSaverService.class);
         ChatManager.Instance().addOnMessageUpdateListener(this);
 //		getUsbPermission();
         initClick();

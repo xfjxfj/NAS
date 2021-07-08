@@ -15,7 +15,7 @@ public class ScreenStatusReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		if (Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {//屏幕休眠
-			LogUtils.d(Intent.ACTION_SCREEN_OFF);
+			LogUtils.dTag("ScreenStatusReceiver", Intent.ACTION_SCREEN_OFF);
 			try {
 				Intent i = new Intent();
 				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

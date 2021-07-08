@@ -322,6 +322,7 @@
 					android:layout_marginEnd="10px"
 					android:layout_toStartOf="@id/acivScreenBrightnessUp"
 					android:layout_toEndOf="@id/acivScreenBrightnessDown"
+					android:max="255"
 					android:maxHeight="3px"
 					android:progressDrawable="@drawable/login_time_seek_bar_bg"
 					android:thumb="@drawable/sound_volume_seek_bar_thumb"
