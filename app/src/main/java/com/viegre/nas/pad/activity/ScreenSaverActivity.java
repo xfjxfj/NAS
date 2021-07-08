@@ -4,20 +4,32 @@ import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.os.PowerManager;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.bumptech.glide.Glide;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.activity.im.ContactsActivity;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.ActivityScreenSaverBinding;
+import com.viegre.nas.pad.entity.WeatherEntity;
+import com.viegre.nas.pad.manager.AMapLocationManager;
 import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -28,6 +40,7 @@ public class ScreenSaverActivity extends BaseActivity<ActivityScreenSaverBinding
 
 	private PowerManager.WakeLock mWakeLock;
 	private KeyguardManager.KeyguardLock mKeyguardLock;
+	private final Map<String, Integer> mWeatherMap = new HashMap<>();
 
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
@@ -38,6 +51,8 @@ public class ScreenSaverActivity extends BaseActivity<ActivityScreenSaverBinding
 			finish();
 			return false;
 		});
+		mViewBinding.acivScreenSaverIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
+		initWeather();
 		initBanner();
 	}
 
@@ -70,6 +85,47 @@ public class ScreenSaverActivity extends BaseActivity<ActivityScreenSaverBinding
 		                                     "nas:screensaver");
 		KeyguardManager keyguardManager = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
 		mKeyguardLock = keyguardManager.newKeyguardLock("nas:keyguardLocker");
+	}
+
+	/**
+	 * 初始化天气
+	 */
+	private void initWeather() {
+		mViewBinding.llcScreenSaverWeather.setOnClickListener(view -> AMapLocationManager.INSTANCE.getLocation());
+		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<HashMap<String, Integer>>() {
+			@Override
+			public HashMap<String, Integer> doInBackground() {
+				String[] weatherNameArr = getResources().getStringArray(R.array.main_weather_name);
+				TypedArray typedArray = getResources().obtainTypedArray(R.array.main_weather_icon);
+				HashMap<String, Integer> weatherMap = new HashMap<>();
+				for (int i = 0; i < weatherNameArr.length; i++) {
+					weatherMap.put(weatherNameArr[i], typedArray.getResourceId(i, 0));
+				}
+				typedArray.recycle();
+				return weatherMap;
+			}
+
+			@Override
+			public void onSuccess(HashMap<String, Integer> result) {
+				mWeatherMap.putAll(result);
+				AMapLocationManager.INSTANCE.getLocation();
+			}
+		});
+	}
+
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void getWeather(WeatherEntity weatherEntity) {
+		if (null != weatherEntity && !mWeatherMap.isEmpty()) {
+			for (Map.Entry<String, Integer> entry : mWeatherMap.entrySet()) {
+				String name = entry.getKey();
+				if (name.contains(weatherEntity.getWeather())) {
+					mViewBinding.acivScreenSaverWeather.setImageResource(entry.getValue());
+					mViewBinding.actvScreenSaverTemperature.setText(StringUtils.getString(R.string.weather_unknown_temperature,
+					                                                                      weatherEntity.getCurtemperature()));
+					return;
+				}
+			}
+		}
 	}
 
 	private void initBanner() {
