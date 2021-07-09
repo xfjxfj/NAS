@@ -122,7 +122,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 	}
 
 	private void initFragment() {
-		mMyDeviceFragment = MyDeviceFragment.newInstance(false);
+		mMyDeviceFragment = MyDeviceFragment.newInstance();
 		mNetworkFragment = NetworkFragment.newInstance(false);
 		mAutoAnswerFragment = AutoAnswerFragment.newInstance();
 		mScreenFragment = ScreenFragment.newInstance();

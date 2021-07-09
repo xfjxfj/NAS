@@ -29,5 +29,6 @@
 	<color name="contacts_dialog_ok">#4452E5</color>
 	<color name="image_puwind_button_text_1">#A6A7B2</color>
 	<color name="image_puwind_button_text_2">#FFFFFF</color>
+	<color name="popup_intelligent_voice_keyword_bg">#485465</color>
 
 </resources>

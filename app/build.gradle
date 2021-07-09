@@ -116,8 +116,6 @@ dependencies {
 	implementation project(':framework')
 	//https://github.com/Bigkoo/Android-PickerView
 	implementation project(':pickerview')
-	//https://github.com/wolpi/prim-ftpd
-//	implementation project(':primitiveFTPd')
 	//https://github.com/wildfirechat/android-chat
 	implementation project(':push')
 	implementation project(':uikit')

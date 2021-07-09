@@ -13,12 +13,105 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
 
-	<androidx.appcompat.widget.AppCompatImageView
+	<RelativeLayout
+		android:id="@+id/rlIntelligentVoiceWakeupKeywords"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="30px"
+		android:layout_marginTop="42px"
+		android:layout_marginEnd="30px"
+		android:background="@drawable/settings_dark_bg"
+		app:layout_constraintTop_toBottomOf="@id/actvIntelligentVoiceTitle">
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_marginStart="31px"
+			android:layout_marginTop="24px"
+			android:layout_marginBottom="24px"
+			android:includeFontPadding="false"
+			android:text="@string/intelligent_voice_wakeup_keywords"
+			android:textColor="#E5E5EB"
+			android:textSize="20px" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/acivIntelligentVoiceArrow"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentEnd="true"
+			android:layout_centerVertical="true"
+			android:layout_marginEnd="28px"
+			app:srcCompat="@mipmap/network_item_arrow" />
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_marginEnd="13px"
+			android:layout_toStartOf="@id/acivIntelligentVoiceArrow"
+			android:includeFontPadding="false"
+			android:text="@string/intelligent_voice_xiao_wei_xiao_wei"
+			android:textColor="#5C5F68"
+			android:textSize="20px" />
+	</RelativeLayout>
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvIntelligentVoiceWakeupKeywordsHint"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"
-		app:layout_constraintEnd_toEndOf="parent"
+		android:layout_marginStart="49px"
+		android:layout_marginTop="12px"
+		android:includeFontPadding="false"
+		android:text="@string/intelligent_voice_wakeup_keywords_hint"
+		android:textColor="#5B5C61"
+		android:textSize="14px"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/actvIntelligentVoiceTitle"
-		app:srcCompat="@mipmap/test_settings_intelligent_voice" />
+		app:layout_constraintTop_toBottomOf="@id/rlIntelligentVoiceWakeupKeywords" />
+
+	<RelativeLayout
+		android:id="@+id/rlIntelligentVoiceFeedback"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="30px"
+		android:layout_marginTop="51px"
+		android:layout_marginEnd="30px"
+		android:background="@drawable/settings_dark_bg"
+		app:layout_constraintTop_toBottomOf="@id/actvIntelligentVoiceWakeupKeywordsHint">
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_marginStart="31px"
+			android:layout_marginTop="24px"
+			android:layout_marginBottom="24px"
+			android:includeFontPadding="false"
+			android:text="@string/intelligent_voice_feedback"
+			android:textColor="#E5E5EB"
+			android:textSize="20px" />
+
+		<com.github.iielse.switchbutton.SwitchView
+			android:id="@+id/svIntelligentVoiceFeedbackSwitch"
+			android:layout_width="56px"
+			android:layout_height="35px"
+			android:layout_alignParentEnd="true"
+			android:layout_centerVertical="true"
+			android:layout_marginEnd="30px"
+			app:isOpened="true" />
+	</RelativeLayout>
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvIntelligentVoiceFeedback"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="49px"
+		android:layout_marginTop="12px"
+		android:layout_marginEnd="75px"
+		android:includeFontPadding="false"
+		android:text="@string/intelligent_voice_feedback_hint"
+		android:textColor="#5B5C61"
+		android:textSize="14px"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/rlIntelligentVoiceFeedback" />
 </androidx.constraintlayout.widget.ConstraintLayout>

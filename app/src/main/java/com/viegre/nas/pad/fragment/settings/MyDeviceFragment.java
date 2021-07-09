@@ -1,13 +1,25 @@
 package com.viegre.nas.pad.fragment.settings;
 
-import android.os.Bundle;
+import android.app.ActivityManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.os.SystemClock;
+import android.view.View;
 
 import com.blankj.utilcode.constant.MemoryConstants;
 import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.DeviceUtils;
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SDCardUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.Utils;
 import com.djangoogle.framework.fragment.BaseFragment;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.config.PathConfig;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.FragmentMyDeviceBinding;
 
 import androidx.core.content.ContextCompat;
@@ -18,19 +30,26 @@ import androidx.core.content.ContextCompat;
  */
 public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 
-	public static final String IS_LOGIN = "isLogin";
+	private ClipboardManager mClipboardManager;
 
 	@Override
 	protected void initialize() {
-		initCurrentlyConnectedDevice();
+		mClipboardManager = (ClipboardManager) Utils.getApp().getSystemService(Context.CLIPBOARD_SERVICE);
 	}
 
-	public static MyDeviceFragment newInstance(boolean isLogin) {
-		MyDeviceFragment myDeviceFragment = new MyDeviceFragment();
-		Bundle bundle = new Bundle();
-		bundle.putBoolean(IS_LOGIN, isLogin);
-		myDeviceFragment.setArguments(bundle);
-		return myDeviceFragment;
+	public static MyDeviceFragment newInstance() {
+		return new MyDeviceFragment();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		initCurrentlyConnectedDevice();
+		if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
+			afterLogin();
+		} else {
+			mViewBinding.llcMyDeviceLogin.setVisibility(View.GONE);
+		}
 	}
 
 	private void initCurrentlyConnectedDevice() {
@@ -46,5 +65,54 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 		mViewBinding.mpbMyDeviceProgress.setProgressDrawable(ContextCompat.getDrawable(mContext, R.drawable.my_device_progress_bar));
 		mViewBinding.mpbMyDeviceProgress.setMax((int) totalSizeD);
 		mViewBinding.mpbMyDeviceProgress.setProgress((int) usedSize);
+	}
+
+	private void afterLogin() {
+		mViewBinding.llcMyDeviceLogin.setVisibility(View.VISIBLE);
+		//固件升级暂未开发
+		mViewBinding.llcMyDeviceFirmware.setVisibility(View.GONE);
+
+		//基础信息
+		//产品型号
+		mViewBinding.actvMyDeviceBasicInformationProductModel.setText("GAS NAS 2020");
+		//序列号(SN)
+		mViewBinding.actvMyDeviceBasicInformationSN.setText(SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
+		mViewBinding.actvMyDeviceBasicInformationSN.setOnClickListener(view -> {
+			ClipData mClipData = ClipData.newPlainText("Label", SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
+			mClipboardManager.setPrimaryClip(mClipData);
+		});
+		//MAC码
+		mViewBinding.actvMyDeviceBasicInformationMac.setText(DeviceUtils.getMacAddress());
+		//CPU
+		mViewBinding.actvMyDeviceBasicInformationCpu.setText("Cortex-A53 8核 1.5GHz");
+		//IP地址
+		mViewBinding.actvMyDeviceBasicInformationIpAddress.setText(NetworkUtils.getIPAddress(true));
+		//内存
+		ActivityManager activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+		ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
+		activityManager.getMemoryInfo(memoryInfo);
+		mViewBinding.actvMyDeviceBasicInformationRam.setText(ConvertUtils.byte2FitMemorySize(memoryInfo.totalMem));
+		//设备状态
+		mViewBinding.actvMyDeviceBasicInformationDeviceState.setText("正常");
+		//运行时间
+		mViewBinding.actvMyDeviceBasicInformationOperationHours.setText(ConvertUtils.millis2FitTimeSpan(SystemClock.elapsedRealtime(), 2));
+		//恢复出厂
+		mViewBinding.actvMyDeviceBasicInformationReset.setOnClickListener(view -> {
+			//暂未处理
+		});
+
+		//硬盘信息
+		//序列号(SN)
+		mViewBinding.actvMyDeviceHardDiskInformationSN.setText("000000000033");
+		mViewBinding.actvMyDeviceBasicInformationSN.setOnClickListener(view -> {
+			ClipData mClipData = ClipData.newPlainText("Label", "000000000033");
+			mClipboardManager.setPrimaryClip(mClipData);
+		});
+		//硬盘型号
+		mViewBinding.actvMyDeviceHardDiskInformationModel.setText("1816");
+		//硬盘状态
+		mViewBinding.actvMyDeviceHardDiskInformationState.setText("正常");
+		//硬盘容量
+		mViewBinding.actvMyDeviceHardDiskInformationCapacity.setText(ConvertUtils.byte2FitMemorySize(FileUtils.getFsTotalSize(PathConfig.NAS)));
 	}
 }

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="670px"
+	android:layout_height="wrap_content"
+	android:background="@drawable/popup_prompt_bg">
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="49px"
+		android:layout_marginTop="29px"
+		android:includeFontPadding="false"
+		android:text="@string/intelligent_voice_wakeup_keywords_select"
+		android:textColor="@android:color/white"
+		android:textSize="30px"
+		android:textStyle="bold"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPopupIntelligentVoiceKeyword1"
+		android:layout_width="match_parent"
+		android:layout_height="80px"
+		android:layout_marginTop="110px"
+		android:background="@color/popup_intelligent_voice_keyword_bg"
+		android:gravity="center"
+		android:text="@string/intelligent_voice_xiao_wei_xiao_wei"
+		android:textColor="#A6A6AD"
+		android:textSize="32px"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPopupIntelligentVoiceKeyword2"
+		android:layout_width="match_parent"
+		android:layout_height="80px"
+		android:gravity="center"
+		android:text="@string/intelligent_voice_xiao_ge_xiao_ge"
+		android:textColor="#A6A6AD"
+		android:textSize="32px"
+		app:layout_constraintTop_toBottomOf="@id/actvPopupIntelligentVoiceKeyword1" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPopupIntelligentVoiceKeyword3"
+		android:layout_width="match_parent"
+		android:layout_height="80px"
+		android:gravity="center"
+		android:text="@string/intelligent_voice_ni_hao_xiao_wei"
+		android:textColor="#A6A6AD"
+		android:textSize="32px"
+		app:layout_constraintTop_toBottomOf="@id/actvPopupIntelligentVoiceKeyword2" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPopupIntelligentVoiceConfirm"
+		android:layout_width="128px"
+		android:layout_height="56px"
+		android:layout_marginTop="35px"
+		android:layout_marginEnd="50px"
+		android:layout_marginBottom="40px"
+		android:background="@drawable/popup_confirm_bg"
+		android:gravity="center"
+		android:includeFontPadding="false"
+		android:text="@string/confirm"
+		android:textColor="@android:color/white"
+		android:textSize="24px"
+		android:textStyle="bold"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/actvPopupIntelligentVoiceKeyword3" />
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/actvPopupIntelligentVoiceCancel"
+		android:layout_width="128px"
+		android:layout_height="56px"
+		android:layout_marginEnd="20px"
+		android:background="@drawable/popup_cancel_bg"
+		android:gravity="center"
+		android:includeFontPadding="false"
+		android:text="@string/cancel"
+		android:textColor="@android:color/white"
+		android:textSize="24px"
+		android:textStyle="bold"
+		app:layout_constraintEnd_toStartOf="@id/actvPopupIntelligentVoiceConfirm"
+		app:layout_constraintTop_toTopOf="@id/actvPopupIntelligentVoiceConfirm" />
+</androidx.constraintlayout.widget.ConstraintLayout>
