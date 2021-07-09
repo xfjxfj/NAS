@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvRecordAdapter.ViewHolder> {
@@ -148,6 +149,7 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
                 }
             }
         }
+        Collections.reverse(data);//倒序list
         return data;
     }
 

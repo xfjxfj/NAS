@@ -36,9 +36,11 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
+
 import cn.wildfire.chat.kit.common.AppScopeViewModel;
 import cn.wildfire.chat.kit.net.OKHttpHelper;
 import cn.wildfire.chat.kit.third.utils.UIUtils;
+import cn.wildfire.chat.kit.utils.BusConfig;
 import cn.wildfire.chat.kit.voip.AsyncPlayer;
 import cn.wildfire.chat.kit.voip.MultiCallActivity;
 import cn.wildfire.chat.kit.voip.SingleCallActivity;
@@ -244,6 +246,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
 
     // pls refer to https://stackoverflow.com/questions/11124119/android-starting-new-activity-from-application-class
     public static void singleCall(Context context, String targetId, boolean isAudioOnly) {
+//        EventBus.getDefault().postSticky(BusConfig.STOP_MSC);
         Conversation conversation = new Conversation(Conversation.ConversationType.Single, targetId);
         AVEngineKit.Instance().startCall(conversation, Collections.singletonList(targetId), isAudioOnly, null);
 
@@ -280,7 +283,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
     }
 
     public static void startActivity(Context context, Intent intent) {
-        EventBus.getDefault().postSticky("stop_msc");
+//        EventBus.getDefault().postSticky("stop_msc");
         if (context instanceof Activity) {
             context.startActivity(intent);
             ((Activity) context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -321,7 +324,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
             while (iterator.hasNext()) {
                 Message message = iterator.next();
                 if (message.content.getPersistFlag() == PersistFlag.No_Persist
-                    || now - (message.serverTime - delta) > 10 * 1000) {
+                        || now - (message.serverTime - delta) > 10 * 1000) {
                     iterator.remove();
                 }
             }

@@ -143,9 +143,11 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 			@Override
 			protected void onDone() {
 				super.onDone();
-//				ActivityUtils.startActivity(MainActivity.class);
-//				finish();
-				getDeviceBoundstatus();
+				ThreadUtils.runOnUiThread(() -> {
+									ActivityUtils.startActivity(MainActivity.class);
+									finish();
+//					getDeviceBoundstatus();
+				});
 			}
 		});
 	}
@@ -167,8 +169,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
 				FragmentUtils.show(mNetworkFragment);
 			} else {//引导用户注册
-//				ActivityUtils.startActivity(WelcomeActivity.class);
-				ActivityUtils.startActivity(MainActivity.class);
+				ActivityUtils.startActivity(WelcomeActivity.class);
+//				ActivityUtils.startActivity(MainActivity.class);
 			}
 		} else {//已绑定
 			//判断网络是否可用

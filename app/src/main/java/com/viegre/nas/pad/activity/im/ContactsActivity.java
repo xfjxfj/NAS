@@ -56,8 +56,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
+import cn.wildfire.chat.kit.utils.BusConfig;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
@@ -83,7 +85,6 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
     public static Boolean Token_valid = true;
     private TextView textView2;
     private TextView textRecord;
-    boolean isLoading = false;
     private ContactsRvRecordAdapter contactsRvRecordAdapter;
     private MQTTService myService;
     //处理mqtt那边传递过来的消息
@@ -235,6 +236,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
     }
 
     private void initView() {
+//        EventBus.getDefault().postSticky(BusConfig.STOP_MSC);
         getDevicesfriend();
         contactsRv1 = findViewById(R.id.contactsRv1);
         contactsRv2 = findViewById(R.id.contactsRv2);

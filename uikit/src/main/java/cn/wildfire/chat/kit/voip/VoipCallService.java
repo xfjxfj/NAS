@@ -37,6 +37,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import cn.wildfire.chat.kit.BuildConfig;
 import cn.wildfire.chat.kit.R;
+import cn.wildfire.chat.kit.utils.BusConfig;
 import cn.wildfirechat.avenginekit.AVEngineKit;
 import cn.wildfirechat.avenginekit.PeerConnectionClient;
 import cn.wildfirechat.model.Conversation;
@@ -123,7 +124,7 @@ public class VoipCallService extends Service {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
         if (session == null || AVEngineKit.CallState.Idle == session.getState()) {
             stopSelf();
-            EventBus.getDefault().postSticky("start_msc");
+//            EventBus.getDefault().postSticky(BusConfig.START_MSC);
         } else {
             updateNotification(session);
             if (showFloatingWindow && session.getState() == AVEngineKit.CallState.Connected) {
