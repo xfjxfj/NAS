@@ -34,6 +34,9 @@ import java.util.Random;
 
 import cn.wildfire.chat.kit.WfcUIKit;
 
+/**
+ * 设备好友adapter
+ */
 public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDevicesAdapter.MyHolder> {
 
     private final List<DevicesFriendsListBean> languages;

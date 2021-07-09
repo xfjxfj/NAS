@@ -25,6 +25,9 @@ import java.util.List;
 
 import cn.wildfire.chat.kit.WfcUIKit;
 
+/**
+ * 联系人好友adapter
+ */
 public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFriendsAdapter.MyHolder> {
 
     private final List<ContactsBean> languages;

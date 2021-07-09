@@ -1,6 +1,7 @@
 package com.viegre.nas.pad.adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -33,7 +35,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+/**
+ * 通话记录adapter
+ */
 public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvRecordAdapter.ViewHolder> {
     private ExpandableViewHoldersUtil.KeepOneHolder<ViewHolder> keepOne;
     private final Context mcontext;
@@ -126,6 +132,8 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
             }
         });
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public List<String> getRecordData() {
 //        mRecordData.clear();
         ArrayList<String> data = new ArrayList<>();
@@ -149,6 +157,7 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
                 }
             }
         }
+        data.stream().distinct().collect(Collectors.toList());//去除重复数据
         Collections.reverse(data);//倒序list
         return data;
     }
