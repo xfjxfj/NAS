@@ -804,6 +804,7 @@ public class MQTTService extends Service {
 							@Override
 							public List<FtpFileEntity> doInBackground() {
 								return LitePal.where("deletePhoneNum = ? and state = ?", mqttMsgEntity.getFromId(), FtpFileEntity.State.RECYCLED)
+								              .order("createTime desc")
 								              .find(FtpFileEntity.class);
 							}
 
@@ -870,7 +871,9 @@ public class MQTTService extends Service {
 								if (erase) {
 									List<FtpFileEntity> eraseList = LitePal.where("deletePhoneNum = ? and state = ?",
 									                                              mqttMsgEntity.getFromId(),
-									                                              FtpFileEntity.State.RECYCLED).find(FtpFileEntity.class);
+									                                              FtpFileEntity.State.RECYCLED)
+									                                       .order("createTime desc")
+									                                       .find(FtpFileEntity.class);
 									if (!eraseList.isEmpty()) {
 										eraseList.forEach(ftpFileEntity -> {
 											FileUtils.delete(ftpFileEntity.getRecycledPath());
@@ -964,7 +967,7 @@ public class MQTTService extends Service {
 							public Void doInBackground() {
 								Map<String, Object> ftpFavoritesListMap = new HashMap<>();
 								ftpFavoritesListMap.put("favoritesPathList",
-								                        LitePal.where("state = ?", FtpFileEntity.State.NORMAL)
+								                        LitePal.where("state = ?", FtpFileEntity.State.NORMAL).order("createTime desc")
 								                               .find(FtpFileEntity.class)
 								                               .stream()
 								                               .filter(ftpFileEntity -> ftpFileEntity.getPickSet()
@@ -1168,12 +1171,11 @@ public class MQTTService extends Service {
 							@Override
 							public Void doInBackground() {
 								Map<String, Object> ftpGetBanListMap = new HashMap<>();
-								ftpGetBanListMap.put("banList",
-								                     LitePal.where("state = ?", FtpFileEntity.State.NORMAL)
-								                            .find(FtpFileEntity.class)
-								                            .stream()
-								                            .filter(ftpFileEntity -> ftpFileEntity.getBanSet().contains(getBanPhoneNum))
-								                            .collect(Collectors.toList()));
+								ftpGetBanListMap.put("banList", LitePal.where("state = ?", FtpFileEntity.State.NORMAL).order("createTime desc")
+								                                       .find(FtpFileEntity.class)
+								                                       .stream()
+								                                       .filter(ftpFileEntity -> ftpFileEntity.getBanSet().contains(getBanPhoneNum))
+								                                       .collect(Collectors.toList()));
 								MQTTMsgEntity ftpGetBanListMsg = getMQTTMsg(MQTTMsgEntity.TYPE_CMD,
 								                                            MQTTMsgEntity.MSG_FTP_GET_BAN_LIST,
 								                                            mqttMsgEntity.getFromId());

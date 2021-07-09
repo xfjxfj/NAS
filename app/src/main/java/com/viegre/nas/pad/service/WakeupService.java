@@ -46,7 +46,7 @@ public class WakeupService extends AccessibilityService {
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				}
-//				AIUIManager.INSTANCE.startListening();
+				AIUIManager.INSTANCE.startListening();
 				return;
 			}
 		}
