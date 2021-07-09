@@ -425,7 +425,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         mViewBinding.acivMainIncomingCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                ActivityUtils.startActivity(ContactsActivity.class);
 ////                返回true就是没有被占用。
 ////                返回false就是被占用。
                 if (validateMicAvailability()) {

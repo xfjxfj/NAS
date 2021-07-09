@@ -48,7 +48,7 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
 
     @Override
     public void onBindViewHolder(@NonNull ContactsRvFriendsAdapter.MyHolder holder, int position) {
-        holder.textfr.setText(languages.get(position).getUsername());
+        holder.textfr.setText(languages.get(position).getUsername().equals("null")?languages.get(position).getUserphone():languages.get(position).getUsername());
             Glide.with(context1)
                     .load(CommonUtils.stringToBitmap(languages.get(position).getUserimg()))
                     .placeholder(R.mipmap.main_unlogin)
