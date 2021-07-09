@@ -1,6 +1,7 @@
 package com.viegre.nas.pad.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.entity.ContactsBean;
+import com.viegre.nas.pad.util.CommonUtils;
 
 import java.util.List;
 
@@ -44,14 +48,12 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
 
     @Override
     public void onBindViewHolder(@NonNull ContactsRvFriendsAdapter.MyHolder holder, int position) {
-        holder.textfr.setText(languages.get(position).getUsername() + languages.get(position).getUserphone());
-//        Glide.with(context1).load(languages.get(position).getUserimg()).placeholder(R.mipmap.ic_launcher).into(holder.img_im1);
-        String ur = "https://t7.baidu.com/it/u=2963767354,870442698&fm=193&f=GIF";
-        Glide.with(context1)
-                .load(ur)
-                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                .placeholder(R.mipmap.ic_launcher)
-                .into(holder.img_im1);
+        holder.textfr.setText(languages.get(position).getUsername().equals("null")?languages.get(position).getUserphone():languages.get(position).getUsername());
+            Glide.with(context1)
+                    .load(CommonUtils.stringToBitmap(languages.get(position).getUserimg()))
+                    .placeholder(R.mipmap.main_unlogin)
+                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                    .into(holder.img_im1);
 
         holder.img_im2.setOnClickListener(new View.OnClickListener() {
             @Override

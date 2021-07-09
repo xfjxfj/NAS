@@ -20,6 +20,7 @@ import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.FragmentAutoAnswerBinding;
 import com.viegre.nas.pad.entity.ContactsBean;
+import com.viegre.nas.pad.entity.DataBeanXX;
 import com.viegre.nas.pad.entity.DevicesFollowEntity;
 import com.viegre.nas.pad.entity.DevicesFriendList;
 import com.viegre.nas.pad.entity.DevicesFriendsListBean;
@@ -68,18 +69,14 @@ public class AutoAnswerFragment extends BaseFragment<FragmentAutoAnswerBinding> 
                         Gson gson = new Gson();
                         DevicesFollowEntity devicesFollowEntity = gson.fromJson(s, DevicesFollowEntity.class);
                         if (devicesFollowEntity.getMsg().equals("OK")) {//返回数据正确
-                            List<DevicesFollowEntity.DataDTO> data = devicesFollowEntity.getData();
+                            List<DataBeanXX> data = devicesFollowEntity.getData();
                             if (null != data) {
-                                for (DevicesFollowEntity.DataDTO datum : data) {
-                                    String userid = datum.getCallId();
+                                for (DataBeanXX datum : data) {
+                                    String nickName = String.valueOf(datum.getNickName());
                                     String phone = datum.getPhone();
-                                    String nickName = "";
-                                    if (datum.getNickName() == null) {
-                                        nickName = "";
-                                    } else {
-                                        nickName = (String) datum.getNickName();
-                                    }
-                                    mFriendData.add(new ContactsBean(userid, "", nickName, phone));
+                                    String picdata = String.valueOf(datum.getPicData());
+                                    String userid = datum.getCallId();
+                                    mFriendData.add(new ContactsBean(userid, picdata, nickName, phone));
                                 }
                                 mFriendData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
                                 mFriendData.add(new ContactsBean("anaOaOjj", "", "设备pad", "191"));
