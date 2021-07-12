@@ -101,6 +101,7 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 		//恢复出厂
 		mViewBinding.actvMyDeviceBasicInformationReset.setOnClickListener(view -> {
 			//暂未处理
+			ToastUtils.showShort("敬请期待");
 		});
 
 		//硬盘信息

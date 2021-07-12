@@ -106,7 +106,7 @@
 	<string name="my_device_basic_information_product_model">产品型号</string>
 	<string name="my_device_basic_information_sn">序列号(SN)</string>
 	<string name="my_device_basic_information_sn_copy">复制</string>
-	<string name="my_device_basic_information_sn_copy_success">复制成功</string>
+	<string name="my_device_basic_information_sn_copy_success">已复制</string>
 	<string name="my_device_basic_information_mac">MAC码</string>
 	<string name="my_device_basic_information_cpu">CPU</string>
 	<string name="my_device_basic_information_ip_address">IP地址</string>
