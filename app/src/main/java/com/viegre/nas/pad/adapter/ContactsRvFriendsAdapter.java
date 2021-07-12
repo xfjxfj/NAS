@@ -2,6 +2,7 @@ package com.viegre.nas.pad.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import com.viegre.nas.pad.util.CommonUtils;
 import java.util.List;
 
 import cn.wildfire.chat.kit.WfcUIKit;
+import cn.wildfirechat.remote.ChatManager;
 
 /**
  * 联系人好友adapter
@@ -51,12 +53,14 @@ public class ContactsRvFriendsAdapter extends RecyclerView.Adapter<ContactsRvFri
 
     @Override
     public void onBindViewHolder(@NonNull ContactsRvFriendsAdapter.MyHolder holder, int position) {
-        holder.textfr.setText(languages.get(position).getUsername().equals("null")?languages.get(position).getUserphone():languages.get(position).getUsername());
-            Glide.with(context1)
-                    .load(CommonUtils.stringToBitmap(languages.get(position).getUserimg()))
-                    .placeholder(R.mipmap.main_unlogin)
-                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                    .into(holder.img_im1);
+        holder.textfr.setText(languages.get(position).getUsername().equals("null") ? languages.get(position).getUserphone() : languages.get(position).getUsername());
+        String userDisplayName = ChatManager.Instance().getUserDisplayName(languages.get(position).getUserid());
+        Log.d("userDisplayName:",userDisplayName);
+        Glide.with(context1)
+                .load(CommonUtils.stringToBitmap(languages.get(position).getUserimg()))
+                .placeholder(R.mipmap.main_unlogin)
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                .into(holder.img_im1);
 
         holder.img_im2.setOnClickListener(new View.OnClickListener() {
             @Override

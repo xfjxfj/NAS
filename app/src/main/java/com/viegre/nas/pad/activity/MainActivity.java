@@ -183,7 +183,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                         SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
                         sp.edit()
                                 .putString("id", loginResult.getUserId())
-//                          .putString("token", loginResult.getUserId())
+//                              .putString("token", loginResult.getUserId())
                                 .putString("token", loginResult.getToken())
                                 .putString("mToken", loginResult.getToken())
                                 .apply();
@@ -421,21 +421,21 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 //			});
 //		}
         mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
-//        mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
-        mViewBinding.acivMainIncomingCall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-////                返回true就是没有被占用。
-////                返回false就是被占用。
-                if (validateMicAvailability()) {
-                    Log.d("xfj"+CommonUtils.getFileName()+CommonUtils.getLineNumber(),"麦克风没有被占用");
-                    ActivityUtils.startActivity(ContactsActivity.class);
-                } else {
-                    Toast.makeText(mActivity,"麦克风被占用",Toast.LENGTH_LONG).show();
-                    Log.d("xfj"+CommonUtils.getFileName()+CommonUtils.getLineNumber(),"麦克风被占用");
-                }
-            }
-        });
+        mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
+//        mViewBinding.acivMainIncomingCall.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//////                返回true就是没有被占用。
+//////                返回false就是被占用。
+//                if (validateMicAvailability()) {
+//                    Log.d("xfj"+CommonUtils.getFileName()+CommonUtils.getLineNumber(),"麦克风没有被占用");
+//                    ActivityUtils.startActivity(ContactsActivity.class);
+//                } else {
+//                    Toast.makeText(mActivity,"麦克风被占用",Toast.LENGTH_LONG).show();
+//                    Log.d("xfj"+CommonUtils.getFileName()+CommonUtils.getLineNumber(),"麦克风被占用");
+//                }
+//            }
+//        });
     }
 
     private boolean validateMicAvailability() {

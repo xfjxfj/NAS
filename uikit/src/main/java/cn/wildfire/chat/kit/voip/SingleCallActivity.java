@@ -43,7 +43,6 @@ public class SingleCallActivity extends VoipBaseActivity {
         EventBus.getDefault().postSticky(BusConfig.STOP_MSC);
         super.onCreate(savedInstanceState);
         final Intent intent = getIntent();
-
         init();
     }
 
