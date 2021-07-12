@@ -15,6 +15,7 @@ import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SDCardUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.djangoogle.framework.fragment.BaseFragment;
 import com.viegre.nas.pad.R;
@@ -77,9 +78,10 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 		mViewBinding.actvMyDeviceBasicInformationProductModel.setText("GAS NAS 2020");
 		//序列号(SN)
 		mViewBinding.actvMyDeviceBasicInformationSN.setText(SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
-		mViewBinding.actvMyDeviceBasicInformationSN.setOnClickListener(view -> {
+		mViewBinding.actvMyDeviceBasicInformationSnCopy.setOnClickListener(view -> {
 			ClipData mClipData = ClipData.newPlainText("Label", SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
 			mClipboardManager.setPrimaryClip(mClipData);
+			ToastUtils.showShort(R.string.my_device_basic_information_sn_copy_success);
 		});
 		//MAC码
 		mViewBinding.actvMyDeviceBasicInformationMac.setText(DeviceUtils.getMacAddress());
@@ -104,9 +106,10 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 		//硬盘信息
 		//序列号(SN)
 		mViewBinding.actvMyDeviceHardDiskInformationSN.setText("000000000033");
-		mViewBinding.actvMyDeviceBasicInformationSN.setOnClickListener(view -> {
+		mViewBinding.actvMyDeviceHardDiskInformationSnCopy.setOnClickListener(view -> {
 			ClipData mClipData = ClipData.newPlainText("Label", "000000000033");
 			mClipboardManager.setPrimaryClip(mClipData);
+			ToastUtils.showShort(R.string.my_device_basic_information_sn_copy_success);
 		});
 		//硬盘型号
 		mViewBinding.actvMyDeviceHardDiskInformationModel.setText("1816");
