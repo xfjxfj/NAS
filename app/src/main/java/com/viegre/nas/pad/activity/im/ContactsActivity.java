@@ -61,6 +61,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 import cn.wildfire.chat.kit.utils.BusConfig;
+import cn.wildfirechat.remote.ChatManager;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
@@ -448,6 +449,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                                     String userid = datum.getCallId();
                                     mFriendData.add(new ContactsBean(userid, picdata, nickName, phone));
                                 }
+
 //                                mFriendData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
 //                                mFriendData.add(new ContactsBean("anaOaOjj", "", "设备pad", "191"));
 //                                mFriendData.add(new ContactsBean("ISIFIF99", "", "oppo-pad", "191"));
