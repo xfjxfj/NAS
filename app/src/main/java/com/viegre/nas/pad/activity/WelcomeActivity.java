@@ -35,10 +35,19 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.SPUtils;
 import com.bumptech.glide.Glide;
 import com.djangoogle.framework.activity.BaseActivity;
+import com.google.gson.Gson;
+import com.kongzue.dialog.v3.TipDialog;
+import com.kongzue.dialog.v3.WaitDialog;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.activity.im.ContactsActivity;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.SPConfig;
+import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivityWelcomeBinding;
+import com.viegre.nas.pad.entity.ContactsBean;
+import com.viegre.nas.pad.entity.DataBeanXX;
+import com.viegre.nas.pad.entity.DevicesFollowEntity;
+import com.viegre.nas.pad.entity.DevicesTokenEntity;
 import com.viegre.nas.pad.service.MQTTService;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.VerifyDevice;
@@ -50,10 +59,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import rxhttp.RxHttp;
 
 public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implements View.OnClickListener {
 
@@ -442,6 +458,8 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
             mBluetoothGattServer = bluetoothManager.openGattServer(this, mBluetoothGattServerCallback);
         mBluetoothGattServer.addService(service);
     }
+
+
 }
 
 

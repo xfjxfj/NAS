@@ -40,7 +40,7 @@ public class SingleCallActivity extends VoipBaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        EventBus.getDefault().postSticky(BusConfig.STOP_MSC);
+//        EventBus.getDefault().postSticky(BusConfig.STOP_MSC);
         super.onCreate(savedInstanceState);
         final Intent intent = getIntent();
         init();
@@ -95,7 +95,7 @@ public class SingleCallActivity extends VoipBaseActivity {
 //        if (session != null && session.getState() != AVEngineKit.CallState.Idle) {
 //            session.endCall();
 //        }
-        EventBus.getDefault().postSticky(BusConfig.START_MSC);
+//        EventBus.getDefault().postSticky(BusConfig.START_MSC);
         super.onDestroy();
     }
 

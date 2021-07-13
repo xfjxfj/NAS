@@ -102,9 +102,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
     @Override
     protected void initialize() {
-//        if ("official".equals(BuildConfig.FLAVOR)) {
+        if ("official".equals(BuildConfig.FLAVOR)) {
             ServiceUtils.startService(MscService.class);
-//        }
+        }
         ServiceUtils.startService(ScreenSaverService.class);
         ChatManager.Instance().addOnMessageUpdateListener(this);
 //		getUsbPermission();
@@ -300,6 +300,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     /**
      * 初始化用户区域
      */
+
     private void initUserInfo() {
         if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
             Glide.with(mActivity)
