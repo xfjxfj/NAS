@@ -3,12 +3,15 @@ package com.viegre.nas.pad.activity;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.CountDownTimer;
+import android.os.IBinder;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
@@ -17,6 +20,8 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ColorUtils;
 import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -36,12 +41,15 @@ import com.viegre.nas.pad.entity.LoginEntity;
 import com.viegre.nas.pad.entity.LoginEntityPhoneCode;
 import com.viegre.nas.pad.entity.LoginUserPwdEntity;
 import com.viegre.nas.pad.entity.LoglinCodeEntity;
+import com.viegre.nas.pad.entity.MQTTMsgEntity;
 import com.viegre.nas.pad.manager.PopupManager;
 import com.viegre.nas.pad.popup.LoginTimePopup;
+import com.viegre.nas.pad.service.MQTTService;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.ImageStreamUtils;
 import com.viegre.nas.pad.util.ZxingUtils;
 
+import org.eclipse.paho.android.service.MqttService;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -78,6 +86,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
 
         mViewBinding.acetLoginPhone.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);//控制键盘不全屏
         mViewBinding.acetLoginPhoneCode.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);//控制键盘不全屏
+
+
         initListener();
     }
 
@@ -184,7 +194,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
             passwrodShow = false;
             mViewBinding.acetLoginAccountPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
             mViewBinding.passwordon.setImageResource(R.mipmap.password_off);
-        } else { mViewBinding.acetLoginAccountPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+        } else {
+            mViewBinding.acetLoginAccountPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
             mViewBinding.passwordon.setImageResource(R.mipmap.password_on);
             passwrodShow = true;
         }
@@ -197,6 +208,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
                 mViewBinding.actvLoginPhoneGetCode.setEnabled(false);
                 mViewBinding.actvLoginPhoneGetCode.setTextColor(Color.WHITE);
             }
+
             public void onFinish() {
                 mViewBinding.actvLoginPhoneGetCode.setText("获取验证码");
                 mViewBinding.actvLoginPhoneGetCode.setEnabled(true);
@@ -427,6 +439,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> implements
      */
     private void setLoginTime() {
         LoginTimePopup loginTimePopup = new LoginTimePopup(this);
-        PopupManager.INSTANCE.showCustomXPopup(this,loginTimePopup);
+        PopupManager.INSTANCE.showCustomXPopup(this, loginTimePopup);
     }
 }

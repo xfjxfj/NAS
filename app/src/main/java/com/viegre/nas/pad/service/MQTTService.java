@@ -365,7 +365,7 @@ public class MQTTService extends Service {
                         Log.d("ADDFRIENDRESULT：", message);
                         break;
                     //登录设备
-                    case MQTTMsgEntity.MSG_SCAN_LOGIN:
+                    case MQTTMsgEntity.MSG_SCAN_LOGIN://扫码登录未传头像信息过来
                         String token = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.TOKEN);
                         String phone = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.PHONE);
                         RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient()).setOnParamAssembly(param -> param.addHeader(SPConfig.TOKEN, token));
@@ -459,7 +459,7 @@ public class MQTTService extends Service {
                     //设备解绑
                     case MQTTMsgEntity.MSG_UNBUNDING:
                         String userName1 = JSON.parseObject(mqttMsgEntity.getParam()).getString("userName");
-                        if (upBindStr !=null) {
+                        if (upBindStr != null) {
                             upBindStr.onUpBind(userName1 + "已经解绑成功");
                         }
                         break;
@@ -474,7 +474,6 @@ public class MQTTService extends Service {
                             ToastUtils.showShort("管理员拒绝绑定");
                         } else if (1 == state || 3 == state) {
 //							EventBus.getDefault().postSticky(BusConfig.DEVICE_BOUND);//这边发消息  splashactivity中deviceBound未走
-//							ActivityUtils.finishActivity(WelcomeActivity.class);
                             if (welcomeBindStr != null) {
                                 welcomeBindStr.onWelcomeBind("绑定成功");
                             }
@@ -1426,18 +1425,23 @@ public class MQTTService extends Service {
         void onTipsdevicesFriendStatus(String statusid);
     }
 
-    public void setTipsDevicesFriend(TipsDevicesFriend tipsdevicesfriend) {
-        this.tipsdevicesfriend = tipsdevicesfriend;
-    }
 
     public interface welcomebind {
         Void onWelcomeBind(String bindStr);
     }
-    public interface userUpBind{
+
+    public interface userUpBind {
         Void onUpBind(String bindStr);
     }
-    public void setUserUpBind(userUpBind userupbind){
+
+
+
+    public void setUserUpBind(userUpBind userupbind) {
         this.upBindStr = userupbind;
+    }
+
+    public void setTipsDevicesFriend(TipsDevicesFriend tipsdevicesfriend) {
+        this.tipsdevicesfriend = tipsdevicesfriend;
     }
 
     public void setWelcomeserver(welcomebind welcomeBindStr) {

@@ -195,7 +195,11 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
 //                        {"code":4000,"msg":"参数不正确","data":null}
                         AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
                         if (addDevicesFriend.msg.equals("OK")) {
-                            Toast.makeText(ContactsActivity.this, "添加成功", Toast.LENGTH_LONG).show();
+                            if (status == 1) {
+                                Toast.makeText(ContactsActivity.this, "添加成功", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(ContactsActivity.this, "已拒绝该好友添加请求", Toast.LENGTH_LONG).show();
+                            }
                             getDevicesfriend();
                         } else {
                             CommonUtils.showErrorToast(addDevicesFriend.msg);

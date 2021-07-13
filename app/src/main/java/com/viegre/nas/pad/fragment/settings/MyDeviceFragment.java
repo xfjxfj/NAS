@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 
 import com.blankj.utilcode.constant.MemoryConstants;
@@ -22,6 +23,7 @@ import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.FragmentMyDeviceBinding;
+import com.viegre.nas.pad.util.CommonUtils;
 
 import androidx.core.content.ContextCompat;
 
@@ -117,6 +119,11 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 		//硬盘状态
 		mViewBinding.actvMyDeviceHardDiskInformationState.setText("正常");
 		//硬盘容量
-		mViewBinding.actvMyDeviceHardDiskInformationCapacity.setText(ConvertUtils.byte2FitMemorySize(FileUtils.getFsTotalSize(PathConfig.NAS)));
+		try {
+			mViewBinding.actvMyDeviceHardDiskInformationCapacity.setText(ConvertUtils.byte2FitMemorySize(FileUtils.getFsTotalSize(PathConfig.NAS)));
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e(CommonUtils.getFileName()+CommonUtils.getLineNumber(),e.toString());
+		}
 	}
 }

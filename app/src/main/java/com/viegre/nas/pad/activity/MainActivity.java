@@ -123,8 +123,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         }
     };
 
+
     @Override
     protected void initialize() {
+
         if ("official".equals(BuildConfig.FLAVOR)) {
             ServiceUtils.startService(MscService.class);
         }
@@ -132,12 +134,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         Intent intent = new Intent(this, MQTTService.class);
         bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
+
         ServiceUtils.startService(ScreenSaverService.class);
         ChatManager.Instance().addOnMessageUpdateListener(this);
 //		getUsbPermission();
         initClick();
         initIcon();
-//8e42a826eed81ee7
         initBanner();
         initWeather();
         loginIM();

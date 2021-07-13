@@ -22,7 +22,6 @@ public class MoreAppActivity extends BaseActivity<MoreAppActivityRvBinding> {
 
     private androidx.recyclerview.widget.RecyclerView mRecycleView;
     private MoreAppActivityRvAdapter mAdapter;//适配器
-    private LinearLayoutManager mLinearLayoutManager;//布局管理器
     private ImageView more_ac_img;
 
     @Override
