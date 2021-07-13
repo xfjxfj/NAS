@@ -3,11 +3,15 @@ package com.viegre.nas.pad.activity;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -77,9 +81,31 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
     private CountDownTimer mGuideSkipCountDownTimer;
     private boolean isEthernetConnected;
     private boolean isWiFiConnected;
+    // MQTT服务
+    ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MQTTService myService = ((MQTTService.DownLoadBinder) service).getService();
+            myService.setWelcomeserver(new MQTTService.welcomebind() {
+                @Override
+                public Void onWelcomeBind(String bindStr) {
+                    getDeviceResource();
+                    return null;
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
 
     @Override
     protected void initialize() {
+        Intent intent = new Intent(this, MQTTService.class);
+        bindService(intent, conn, Context.BIND_AUTO_CREATE);
+
         grantPermission();
     }
 
@@ -239,7 +265,6 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
             }
 
         }
-
 
 
     }
@@ -461,7 +486,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 
             @Override
             public void onError(@NonNull Throwable e) {
-                        CommonUtils.showErrorToast(e.getMessage());
+                CommonUtils.showErrorToast(e.getMessage());
 //				TipDialog.show(WelcomeActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
             }
 
@@ -477,7 +502,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 
     private void getContactsDatas(String token, String android_id) {
         RxHttp.postForm(UrlConfig.Device.GET_GETALLFOLLOWS)
-                .addHeader("token",token)
+                .addHeader("token", token)
                 .add("sn", android_id)
                 .asString()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -486,6 +511,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
                     public void onSubscribe(@NonNull Disposable d) {
                         Log.d("onSubscribe", d.toString());
                     }
+
                     @Override
                     public void onNext(@NonNull String s) {
                         Gson gson = new Gson();

@@ -90,24 +90,24 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
     private BluetoothAdapter mBluetoothAdapter;
 
     // MQTT服务
-    ServiceConnection conn = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MQTTService myService = ((MQTTService.DownLoadBinder) service).getService();
-            myService.setWelcomeserver(new MQTTService.welcomebind() {
-                @Override
-                public Void onWelcomeBind(String bindStr) {
-                    Log.e("", "");
-                    return null;
-                }
-            });
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-        }
-    };
+//    ServiceConnection conn = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            MQTTService myService = ((MQTTService.DownLoadBinder) service).getService();
+//            myService.setWelcomeserver(new MQTTService.welcomebind() {
+//                @Override
+//                public Void onWelcomeBind(String bindStr) {
+//                    Log.e("", "");
+//                    return null;
+//                }
+//            });
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//
+//        }
+//    };
 
     // BLE广播Callback
     @SuppressLint("NewApi")
@@ -347,8 +347,8 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
         welcomeSkip.setOnClickListener(this);
         next_to.setOnClickListener(this);
 
-        Intent intent = new Intent(this, MQTTService.class);
-        bindService(intent, conn, Context.BIND_AUTO_CREATE);
+//        Intent intent = new Intent(this, MQTTService.class);
+//        bindService(intent, conn, Context.BIND_AUTO_CREATE);
         createQRCode();
     }
 

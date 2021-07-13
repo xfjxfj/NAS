@@ -1,8 +1,10 @@
 package com.viegre.nas.pad.activity;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.media.AudioFormat;
@@ -10,6 +12,7 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.storage.StorageManager;
 import android.util.Log;
 import android.view.View;
@@ -54,6 +57,7 @@ import com.viegre.nas.pad.entity.UserTokenTime;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.manager.AMapLocationManager;
 import com.viegre.nas.pad.service.AppService;
+import com.viegre.nas.pad.service.MQTTService;
 import com.viegre.nas.pad.service.MscService;
 import com.viegre.nas.pad.service.ScreenSaverService;
 import com.viegre.nas.pad.task.VoidTask;
@@ -99,12 +103,35 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
 
     private final Map<String, Integer> mWeatherMap = new HashMap<>();
+    // MQTT服务
+    ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MQTTService myService = ((MQTTService.DownLoadBinder) service).getService();
+            myService.setUserUpBind(new MQTTService.userUpBind() {
+                @Override
+                public Void onUpBind(String bindStr) {
+                    startActivity(new Intent(MainActivity.this,SplashActivity.class));
+                    return null;
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
 
     @Override
     protected void initialize() {
         if ("official".equals(BuildConfig.FLAVOR)) {
             ServiceUtils.startService(MscService.class);
         }
+
+        Intent intent = new Intent(this, MQTTService.class);
+        bindService(intent, conn, Context.BIND_AUTO_CREATE);
+
         ServiceUtils.startService(ScreenSaverService.class);
         ChatManager.Instance().addOnMessageUpdateListener(this);
 //		getUsbPermission();
