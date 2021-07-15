@@ -324,6 +324,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unbindService(conn);
     }
 
     /**

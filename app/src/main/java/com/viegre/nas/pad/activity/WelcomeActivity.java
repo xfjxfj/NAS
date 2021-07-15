@@ -116,13 +116,11 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
 //            CommonUtils.showToast("BLE广播开启成功");
             CommonUtils.showToast("蓝牙开启成功");
-//            Toast.makeText(MainActivity2.this,"BLE广播开启成功",Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onStartFailure(int errorCode) {
             CommonUtils.showToast("BLE广播开启失败,错误码:" + errorCode);
-
 //            Toast.makeText(MainActivity2.this,"BLE广播开启失败,错误码:" + errorCode,Toast.LENGTH_SHORT).show();
         }
     };
@@ -396,7 +394,11 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 //			startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
 //		}
     }
-
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+        // unbindService(conn);
+    }
     private void initLayout3() {
 //        显示layout3视图 获取蓝牙权限  监控蓝牙
         Layout1.setVisibility(View.GONE);
@@ -458,8 +460,6 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
             mBluetoothGattServer = bluetoothManager.openGattServer(this, mBluetoothGattServerCallback);
         mBluetoothGattServer.addService(service);
     }
-
-
 }
 
 

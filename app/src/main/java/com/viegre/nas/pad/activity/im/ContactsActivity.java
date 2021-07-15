@@ -298,7 +298,10 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
         super.onRestart();
         contactsRvRecordAdapter.notifyDataSetChanged();
     }
-
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(conn);
+    }
     private void ifRecordList() {
         mRecordData = getRecordData();
         initRecordData(mRecordData);

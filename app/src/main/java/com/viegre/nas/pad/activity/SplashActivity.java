@@ -103,8 +103,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 
     @Override
     protected void initialize() {
-        Intent intent = new Intent(this, MQTTService.class);
-        bindService(intent, conn, Context.BIND_AUTO_CREATE);
+        bindService(new Intent(this, MQTTService.class), conn, Context.BIND_AUTO_CREATE);
 
         grantPermission();
     }
@@ -126,6 +125,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
         FragmentUtils.removeAll(getSupportFragmentManager());
         GSYVideoManager.releaseAllVideos();
         super.onDestroy();
+        unbindService(conn);//解绑服务
     }
 
     /**
