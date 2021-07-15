@@ -346,6 +346,7 @@ public class MQTTService extends Service {
                 switch (mqttMsgEntity.getAction()) {
                     case MQTTMsgEntity.MSG_ADD_FRIEND_REQUEST:
                         String requesterID = JSON.parseObject(mqttMsgEntity.getParam()).getString("requester");
+                        Log.d("MSG_ADD_FRIEND_REQUEST：", message);
                         if (null != tipsdevicesfriend) {
                             tipsdevicesfriend.onTipsdevicesFriend(requesterID);
                         }
@@ -354,15 +355,16 @@ public class MQTTService extends Service {
                     default:
                         break;
                 }
+
                 break;
             case MQTTMsgEntity.TYPE_NOTIFY:
                 switch (mqttMsgEntity.getAction()) {
                     case MQTTMsgEntity.MSG_ADDFRIENDRESULT:
                         String status = JSON.parseObject(mqttMsgEntity.getParam()).getString("status");
+                        Log.d("MSG_ADDFRIENDRESULT：", message);
                         if (null != tipsdevicesfriend) {
                             tipsdevicesfriend.onTipsdevicesFriendStatus(status);
                         }
-                        Log.d("ADDFRIENDRESULT：", message);
                         break;
                     //登录设备
                     case MQTTMsgEntity.MSG_SCAN_LOGIN://扫码登录未传头像信息过来
@@ -1433,7 +1435,6 @@ public class MQTTService extends Service {
     public interface userUpBind {
         Void onUpBind(String bindStr);
     }
-
 
 
     public void setUserUpBind(userUpBind userupbind) {

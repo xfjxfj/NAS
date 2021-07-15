@@ -194,6 +194,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                         Gson gson = new Gson();
 //                        {"code":4000,"msg":"参数不正确","data":null}
                         AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
+                        Log.d("GET_ADDFRIENDRESULT:",addDevicesFriend.toString());
                         if (addDevicesFriend.msg.equals("OK")) {
                             if (status == 1) {
                                 Toast.makeText(ContactsActivity.this, "添加成功", Toast.LENGTH_LONG).show();
@@ -565,6 +566,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
 //                        {"code":0,"msg":"OK","data":null}
                             Gson gson = new Gson();
                             AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
+                            Log.d("GET_ADDFRIENDREQUEST：",addDevicesFriend.toString());
                             if (addDevicesFriend.msg.equals("OK")) {
                                 Toast.makeText(ContactsActivity.this, "添加请求发送成功，等待对方接受。", Toast.LENGTH_LONG).show();
                                 tips(bt);
@@ -715,8 +717,8 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                     public void onSubscribe(@NonNull Disposable d) {
                         Log.d("onSubscribe", d.toString());
                     }
-
-                    //                    {"msg":"token verify fail","code":"4111"}   2021年5月21日
+//1794d52b003521f4
+//                    {"msg":"token verify fail","code":"4111"}   2021年5月21日
                     @Override
                     public void onNext(@NonNull String s) {
 //                        {"code":0,"msg":"OK","data":null}

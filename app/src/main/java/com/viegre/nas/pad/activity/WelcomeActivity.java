@@ -155,7 +155,7 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 //            String macAddress = DeviceUtils.getMacAddress();//获取本地Mac地址
 //			String macAddress = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
 //			JSONObject jsonBind = getJsonBind();
-            mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, getJsonBind().toString().getBytes());// 响应客户端
+            mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, getJsonBind().getBytes());// 响应客户端
 //            CommonUtils.showToast("客户端读取Characteristic[" + characteristic.getUuid() + "]:\n" + response);
             if (true) {
                 EventBus.getDefault().postSticky(BusConfig.DEVICE_BOUND);
@@ -221,21 +221,21 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 //            CommonUtils.showToast("客户端写入Descriptor[" + descriptor.getUuid() + "]:\n" + valueStr);
 
             // 简单模拟通知客户端Characteristic变化
-            if (Arrays.toString(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE).equals(valueStr)) { //是否开启通知
-                final BluetoothGattCharacteristic characteristic = descriptor.getCharacteristic();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (int i = 0; i < 5; i++) {
-                            SystemClock.sleep(3000);
-                            String response = "CHAR_" + (int) (Math.random() * 100); //模拟数据
-                            characteristic.setValue(response);
-                            mBluetoothGattServer.notifyCharacteristicChanged(device, characteristic, false);
-                            CommonUtils.showToast("通知客户端改变Characteristic[" + characteristic.getUuid() + "]:\n" + response);
-                        }
-                    }
-                }).start();
-            }
+//            if (Arrays.toString(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE).equals(valueStr)) { //是否开启通知
+//                final BluetoothGattCharacteristic characteristic = descriptor.getCharacteristic();
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        for (int i = 0; i < 5; i++) {
+//                            SystemClock.sleep(3000);
+//                            String response = "CHAR_" + (int) (Math.random() * 100); //模拟数据
+//                            characteristic.setValue(response);
+//                            mBluetoothGattServer.notifyCharacteristicChanged(device, characteristic, false);
+//                            CommonUtils.showToast("通知客户端改变Characteristic[" + characteristic.getUuid() + "]:\n" + response);
+//                        }
+//                    }
+//                }).start();
+//            }
         }
 
         @SuppressLint("MissingPermission")
@@ -352,8 +352,7 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 
     private void createQRCode() {
         try {
-            JSONObject jsonObject = getJsonBind();
-            Bitmap bitmapSN = ZxingUtils.createQRCode(jsonObject.toString(), 500, 500, true);
+            Bitmap bitmapSN = ZxingUtils.createQRCode(getJsonBind(), 500, 500, true);
             Glide.with(this).load(bitmapSN).into(mQRCodeImg);
         } catch (Exception e) {
             e.printStackTrace();
@@ -361,14 +360,14 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
     }
 
     @NotNull
-    private JSONObject getJsonBind() {
-        JSONObject jsonObject = new JSONObject();
+    private String getJsonBind() {
+        String str = "";
         try {
-            jsonObject.put("bind", SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
+            str = new JSONObject().put("bind", SPUtils.getInstance().getString(SPConfig.ANDROID_ID)).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return jsonObject;
+        return str;
     }
 
     @Override

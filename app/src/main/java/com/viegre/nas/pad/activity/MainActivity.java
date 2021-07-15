@@ -111,7 +111,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
             myService.setUserUpBind(new MQTTService.userUpBind() {
                 @Override
                 public Void onUpBind(String bindStr) {
-                    startActivity(new Intent(MainActivity.this,SplashActivity.class));
+                    startActivity(new Intent(MainActivity.this, SplashActivity.class));
                     return null;
                 }
             });
