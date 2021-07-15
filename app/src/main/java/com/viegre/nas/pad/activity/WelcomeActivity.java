@@ -151,16 +151,7 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
                             requestId,
                             offset,
                             characteristic.getUuid()));
-//            String response = "CHAR_" + (int) (Math.random() * 100); //模拟数据
-//            String macAddress = DeviceUtils.getMacAddress();//获取本地Mac地址
-//			String macAddress = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
-//			JSONObject jsonBind = getJsonBind();
-            mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, getJsonBind().getBytes());// 响应客户端
-//            CommonUtils.showToast("客户端读取Characteristic[" + characteristic.getUuid() + "]:\n" + response);
-            if (true) {
-                EventBus.getDefault().postSticky(BusConfig.DEVICE_BOUND);
-//                finish();
-            }
+            mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, getJsonBind().getBytes());// 响应客户端
         }
 
         //写入
@@ -362,11 +353,7 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
     @NotNull
     private String getJsonBind() {
         String str = "";
-        try {
-            str = new JSONObject().put("bind", SPUtils.getInstance().getString(SPConfig.ANDROID_ID)).toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        str =  SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
         return str;
     }
 
