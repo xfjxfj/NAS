@@ -9,13 +9,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.lifecycle.ViewModelProviders;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.lifecycle.ViewModelProviders;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.contact.model.UIUserInfo;
 import cn.wildfirechat.model.GroupMember;

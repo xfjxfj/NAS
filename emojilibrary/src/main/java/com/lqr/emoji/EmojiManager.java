@@ -33,11 +33,11 @@ public class EmojiManager {
     private static final String EMOT_DIR = "emoji/";
 
     private static final int CACHE_MAX_SIZE = 1024;
-    private static final Pattern mPattern;
+    private static Pattern mPattern;
 
     private static final List<Entry> mDefaultEntries = new ArrayList<>();
     private static final Map<Integer, Entry> mText2Entry = new HashMap<>();
-    private static final LruCache<String, Bitmap> mDrawableCache;
+    private static LruCache<String, Bitmap> mDrawableCache;
 
     static {
         Context context = LQREmotionKit.getContext();

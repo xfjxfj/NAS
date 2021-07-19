@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import androidx.viewpager.widget.ViewPager;
 import android.text.format.Formatter;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -15,8 +16,6 @@ import com.lqr.imagepicker.ImagePicker;
 import com.lqr.imagepicker.R;
 import com.lqr.imagepicker.bean.ImageItem;
 import com.lqr.imagepicker.view.SuperCheckBox;
-
-import androidx.viewpager.widget.ViewPager;
 
 public class ImagePreviewActivity extends ImagePreviewBaseActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 

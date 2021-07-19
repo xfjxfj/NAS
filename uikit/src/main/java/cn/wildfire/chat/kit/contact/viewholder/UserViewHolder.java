@@ -9,12 +9,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.wildfire.chat.kit.GlideApp;

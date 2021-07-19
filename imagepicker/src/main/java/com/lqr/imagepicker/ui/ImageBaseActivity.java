@@ -4,15 +4,14 @@ import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.lqr.imagepicker.R;
 import com.lqr.imagepicker.view.SystemBarTintManager;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 public class ImageBaseActivity extends AppCompatActivity {
 

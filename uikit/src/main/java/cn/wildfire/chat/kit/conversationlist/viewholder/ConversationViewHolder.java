@@ -11,13 +11,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.lqr.emoji.MoonUtils;
 
 import java.util.Arrays;
 
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.wildfire.chat.kit.R;
@@ -44,7 +46,7 @@ public abstract class ConversationViewHolder extends RecyclerView.ViewHolder {
     protected ConversationInfo conversationInfo;
     protected RecyclerView.Adapter adapter;
     protected ConversationListViewModel conversationListViewModel;
-    private final ConversationViewModel conversationViewModel;
+    private ConversationViewModel conversationViewModel;
 
     @BindView(R2.id.nameTextView)
     protected TextView nameTextView;

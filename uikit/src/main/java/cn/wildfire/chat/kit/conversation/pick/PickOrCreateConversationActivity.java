@@ -10,11 +10,12 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import butterknife.BindView;
 import butterknife.OnTextChanged;
 import cn.wildfire.chat.kit.R;

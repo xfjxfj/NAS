@@ -15,12 +15,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.webrtc.StatsReport;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+
+import org.webrtc.StatsReport;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -155,9 +156,17 @@ public class SingleAudioFragment extends Fragment implements AVEngineKit.CallSes
     @Override
     public void didAudioDeviceChanged(AVAudioManager.AudioDevice device) {
         AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
-	    spearImageView.setSelected(audioManager.isSpeakerphoneOn());
+        if(audioManager.isSpeakerphoneOn()) {
+            spearImageView.setSelected(true);
+        } else {
+            spearImageView.setSelected(false);
+        }
 
-	    spearImageView.setEnabled(device != AVAudioManager.AudioDevice.WIRED_HEADSET && device != AVAudioManager.AudioDevice.BLUETOOTH);
+        if(device == AVAudioManager.AudioDevice.WIRED_HEADSET || device == AVAudioManager.AudioDevice.BLUETOOTH) {
+            spearImageView.setEnabled(false);
+        } else {
+            spearImageView.setEnabled(true);
+        }
     }
 
     @OnClick(R2.id.muteImageView)
@@ -261,7 +270,7 @@ public class SingleAudioFragment extends Fragment implements AVEngineKit.CallSes
         }
     }
 
-    private final Handler handler = new Handler();
+    private Handler handler = new Handler();
 
     private void updateCallDuration() {
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();

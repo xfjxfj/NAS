@@ -269,6 +269,7 @@ public class AudioPlayManager implements SensorEventListener {
                 this._mediaPlayer.release();
                 this._mediaPlayer = null;
             } catch (IllegalStateException var2) {
+                ;
             }
         }
 

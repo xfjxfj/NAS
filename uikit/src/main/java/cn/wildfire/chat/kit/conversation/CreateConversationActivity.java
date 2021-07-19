@@ -7,14 +7,15 @@ package cn.wildfire.chat.kit.conversation;
 import android.content.Intent;
 import android.widget.Toast;
 
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.contact.model.UIUserInfo;
 import cn.wildfire.chat.kit.contact.pick.PickConversationTargetActivity;

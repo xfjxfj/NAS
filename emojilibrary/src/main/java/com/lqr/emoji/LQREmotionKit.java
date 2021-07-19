@@ -18,7 +18,7 @@ import java.util.List;
 
 public class LQREmotionKit {
 
-    private static final String STICKER_NAME_IN_ASSETS = "sticker";
+    private static String STICKER_NAME_IN_ASSETS = "sticker";
     private static Context mContext;
     private static float density;
     private static float scaleDensity;

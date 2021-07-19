@@ -19,17 +19,18 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 
 import java.util.Map;
 
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Optional;
@@ -308,26 +309,49 @@ public abstract class NormalMessageContentViewHolder extends MessageContentViewH
 
             long delta = ChatManager.Instance().getServerDeltaTime();
             long now = System.currentTimeMillis();
-	        return message.direction != MessageDirection.Send || !TextUtils.equals(message.sender,
-	                                                                               ChatManager.Instance()
-	                                                                                          .getUserId()) || now - (message.serverTime - delta) >= Config.RECALL_TIME_LIMIT * 1000;
+            if (message.direction == MessageDirection.Send
+                && TextUtils.equals(message.sender, ChatManager.Instance().getUserId())
+                && now - (message.serverTime - delta) < Config.RECALL_TIME_LIMIT * 1000) {
+                return false;
+            } else {
+                return true;
+            }
         }
 
         // 只有channel 主可以发起
         if (MessageContextMenuItemTags.TAG_CHANEL_PRIVATE_CHAT.equals(tag)) {
-	        return uiMessage.message.conversation.type != Conversation.ConversationType.Channel || uiMessage.message.direction != MessageDirection.Receive;
+            if (uiMessage.message.conversation.type == Conversation.ConversationType.Channel
+                && uiMessage.message.direction == MessageDirection.Receive) {
+                return false;
+            }
+            return true;
         }
 
         // 只有部分消息支持引用
         if (MessageContextMenuItemTags.TAG_QUOTE.equals(tag)) {
             MessageContent messageContent = message.content;
-	        return !(messageContent instanceof TextMessageContent) && !(messageContent instanceof FileMessageContent) && !(messageContent instanceof VideoMessageContent) && !(messageContent instanceof StickerMessageContent) && !(messageContent instanceof ImageMessageContent);
+            if (messageContent instanceof TextMessageContent
+                || messageContent instanceof FileMessageContent
+                || messageContent instanceof VideoMessageContent
+                || messageContent instanceof StickerMessageContent
+                || messageContent instanceof ImageMessageContent) {
+                return false;
+            }
+            return true;
         }
 
         // 只有部分消息支持引用
         if (MessageContextMenuItemTags.TAG_FAV.equals(tag)) {
             MessageContent messageContent = message.content;
-	        return !(messageContent instanceof TextMessageContent) && !(messageContent instanceof FileMessageContent) && !(messageContent instanceof CompositeMessageContent) && !(messageContent instanceof VideoMessageContent) && !(messageContent instanceof SoundMessageContent) && !(messageContent instanceof ImageMessageContent);
+            if (messageContent instanceof TextMessageContent
+                || messageContent instanceof FileMessageContent
+                || messageContent instanceof CompositeMessageContent
+                || messageContent instanceof VideoMessageContent
+                || messageContent instanceof SoundMessageContent
+                || messageContent instanceof ImageMessageContent) {
+                return false;
+            }
+            return true;
         }
 
         return false;

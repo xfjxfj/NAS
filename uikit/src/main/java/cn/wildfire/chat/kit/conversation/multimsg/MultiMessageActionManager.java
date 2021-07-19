@@ -12,7 +12,7 @@ import cn.wildfirechat.model.Conversation;
 
 public class MultiMessageActionManager {
     private static MultiMessageActionManager instance;
-    private final List<MultiMessageAction> conversationMultiMessageActions;
+    private List<MultiMessageAction> conversationMultiMessageActions;
 
     private MultiMessageActionManager() {
         conversationMultiMessageActions = new ArrayList<>();

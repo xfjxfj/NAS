@@ -17,14 +17,12 @@ package cn.wildfire.chat.kit.voip;
 import android.content.Intent;
 import android.os.Bundle;
 
-import org.greenrobot.eventbus.EventBus;
-import org.webrtc.StatsReport;
-
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import cn.wildfire.chat.kit.utils.BusConfig;
+import org.webrtc.StatsReport;
+
 import cn.wildfirechat.avenginekit.AVAudioManager;
 import cn.wildfirechat.avenginekit.AVEngineKit;
 
@@ -40,9 +38,9 @@ public class SingleCallActivity extends VoipBaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-//        EventBus.getDefault().postSticky(BusConfig.STOP_MSC);
         super.onCreate(savedInstanceState);
         final Intent intent = getIntent();
+
         init();
     }
 
@@ -95,7 +93,6 @@ public class SingleCallActivity extends VoipBaseActivity {
 //        if (session != null && session.getState() != AVEngineKit.CallState.Idle) {
 //            session.endCall();
 //        }
-//        EventBus.getDefault().postSticky(BusConfig.START_MSC);
         super.onDestroy();
     }
 

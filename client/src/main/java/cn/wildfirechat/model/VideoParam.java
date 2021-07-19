@@ -1,5 +1,7 @@
 package cn.wildfirechat.model;
 
+import android.graphics.Bitmap;
+
 /**
  * @ClassName VideoParam
  * @Description 小视频的参数 ，宽 高，时长
@@ -9,10 +11,10 @@ package cn.wildfirechat.model;
  */
 public class VideoParam {
 
-    private final int width ;
-    private final int height;
-    private final long duration ;
-    private final byte[] thumbnailBytes ;
+    private int width ;
+    private int height;
+    private long duration ;
+    private byte[] thumbnailBytes ;
         public VideoParam(int width, int height, long duration, byte[] thumbnailBytes ){
             this.width = width ;
             this.height = height;

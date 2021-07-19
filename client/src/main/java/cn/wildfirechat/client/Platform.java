@@ -14,7 +14,7 @@ public enum Platform {
     PlatformType_WX(6),
     PlatformType_Linux(7);
 
-    private final int value;
+    private int value;
 
     Platform(int value) {
         this.value = value;

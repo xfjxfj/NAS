@@ -18,13 +18,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.webrtc.RendererCommon;
-import org.webrtc.StatsReport;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+
+import org.webrtc.RendererCommon;
+import org.webrtc.StatsReport;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -385,7 +386,7 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
         updateCallDuration();
     }
 
-    private final Handler handler = new Handler();
+    private Handler handler = new Handler();
 
     private void updateCallDuration() {
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();

@@ -35,13 +35,17 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentActivity;
+
+import com.topqizhi.ai.manager.AIUIManager;
+import com.topqizhi.ai.manager.AudioRecordManager;
+
 import org.webrtc.StatsReport;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.FragmentActivity;
 import cn.wildfirechat.avenginekit.AVEngineKit;
 import cn.wildfirechat.client.NotInitializedExecption;
 
@@ -63,7 +67,7 @@ public abstract class VoipBaseActivity extends FragmentActivity implements AVEng
 
     protected AVEngineKit gEngineKit;
     protected PowerManager.WakeLock wakeLock;
-    private final Handler handler = new Handler();
+    private Handler handler = new Handler();
 
     protected boolean isInvitingNewParticipant;
     private String focusVideoUserId;
@@ -335,6 +339,7 @@ public abstract class VoipBaseActivity extends FragmentActivity implements AVEng
     }
 
     protected void finishFadeout() {
+//        AIUIManager.INSTANCE.startListening();
         finish();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }

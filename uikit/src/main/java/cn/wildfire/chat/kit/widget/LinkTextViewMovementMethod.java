@@ -17,7 +17,7 @@ import android.widget.TextView;
 public class LinkTextViewMovementMethod extends LinkMovementMethod {
 
     private long mLastActionDownTime;
-    private final LinkClickListener mListener;
+    private LinkClickListener mListener;
 
     public LinkTextViewMovementMethod(LinkClickListener listener) {
         mListener = listener;

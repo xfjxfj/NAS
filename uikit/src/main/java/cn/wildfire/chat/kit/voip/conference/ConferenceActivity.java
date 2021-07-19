@@ -9,15 +9,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.webrtc.StatsReport;
 
 import java.util.List;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import cn.wildfire.chat.kit.group.PickGroupMemberActivity;
 import cn.wildfire.chat.kit.voip.VoipBaseActivity;
 import cn.wildfirechat.avenginekit.AVAudioManager;
@@ -92,7 +93,7 @@ public class ConferenceActivity extends VoipBaseActivity {
                         .onPositive((dialog, which) -> {
                             finish();
                             new Handler().postDelayed(()->{
-                                AVEngineKit.CallSession newSession = AVEngineKit.Instance().startConference(callId, audioOnly, pin, host, title, desc, audience, advanced, false, this);
+                                AVEngineKit.CallSession newSession = AVEngineKit.Instance().startConference(callId, audioOnly, pin, host, title, desc, audience, advanced, this);
                                 if (newSession == null) {
                                     Toast.makeText(this, "创建会议失败", Toast.LENGTH_SHORT).show();
                                 } else {

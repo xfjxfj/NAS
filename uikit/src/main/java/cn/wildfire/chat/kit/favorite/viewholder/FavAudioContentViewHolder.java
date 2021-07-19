@@ -10,11 +10,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.File;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+
+import java.io.File;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.wildfire.chat.kit.Config;

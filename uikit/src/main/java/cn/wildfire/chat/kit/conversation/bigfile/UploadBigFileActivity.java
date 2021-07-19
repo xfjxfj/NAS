@@ -47,7 +47,7 @@ public class UploadBigFileActivity extends WfcBaseActivity implements View.OnCli
     String filePath;
     String remoteUrl;
     int state; //0 未上传；1 上传中；2 已上传；3 已取消；4 上传失败；5 已发送
-    private final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+    private OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .build();

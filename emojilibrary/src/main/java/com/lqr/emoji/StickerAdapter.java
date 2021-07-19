@@ -15,15 +15,15 @@ import android.widget.RelativeLayout;
 
 public class StickerAdapter extends BaseAdapter {
 
-    private final Context mContext;
-    private final StickerCategory mCategory;
-    private final int startIndex;
+    private Context mContext;
+    private StickerCategory mCategory;
+    private int startIndex;
 
-    private final int mEmotionLayoutWidth;
-    private final int mEmotionLayoutHeight;
-    private final float mPerWidth;
-    private final float mPerHeight;
-    private final float mIvSize;
+    private int mEmotionLayoutWidth;
+    private int mEmotionLayoutHeight;
+    private float mPerWidth;
+    private float mPerHeight;
+    private float mIvSize;
 
     public StickerAdapter(Context context, StickerCategory category, int emotionLayoutWidth, int emotionLayoutHeight, int startIndex) {
         mContext = context;

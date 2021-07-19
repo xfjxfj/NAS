@@ -9,24 +9,11 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-import com.lqr.emoji.LQREmotionKit;
-
-import org.greenrobot.eventbus.EventBus;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
@@ -37,10 +24,25 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.lqr.emoji.LQREmotionKit;
+import com.topqizhi.ai.manager.AIUIManager;
+import com.topqizhi.ai.manager.AudioRecordManager;
+import com.topqizhi.ai.manager.MscManager;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import cn.wildfire.chat.kit.common.AppScopeViewModel;
 import cn.wildfire.chat.kit.net.OKHttpHelper;
 import cn.wildfire.chat.kit.third.utils.UIUtils;
-import cn.wildfire.chat.kit.utils.BusConfig;
 import cn.wildfire.chat.kit.voip.AsyncPlayer;
 import cn.wildfire.chat.kit.voip.MultiCallActivity;
 import cn.wildfire.chat.kit.voip.SingleCallActivity;
@@ -141,14 +143,14 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
                 ChatManagerHolder.gAVEngine.addIceServer(server[0], server[1], server[2]);
             }
 
-//            SharedPreferences sp = application.getSharedPreferences("config", Context.MODE_PRIVATE);
-//            String id = sp.getString("id", null);
-//            String token = sp.getString("token", null);
-//            if (!TextUtils.isEmpty(id) && !TextUtils.isEmpty(token)) {
-//                //需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
-//                //另外不能多次connect，如果需要切换用户请先disconnect，然后3秒钟之后再connect（如果是用户手动登录可以不用等，因为用户操作很难3秒完成，如果程序自动切换请等3秒）
-//                ChatManagerHolder.gChatManager.connect(id, token);
-//            }
+            SharedPreferences sp = application.getSharedPreferences("config", Context.MODE_PRIVATE);
+            String id = sp.getString("id", null);
+            String token = sp.getString("token", null);
+            if (!TextUtils.isEmpty(id) && !TextUtils.isEmpty(token)) {
+                //需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
+                //另外不能多次connect，如果需要切换用户请先disconnect，然后3秒钟之后再connect（如果是用户手动登录可以不用等，因为用户操作很难3秒完成，如果程序自动切换请等3秒）
+                ChatManagerHolder.gChatManager.connect(id, token);
+            }
         } catch (NotInitializedExecption notInitializedExecption) {
             notInitializedExecption.printStackTrace();
         }
@@ -191,6 +193,9 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
     @Override
     public void onReceiveCall(AVEngineKit.CallSession session) {
         ChatManager.Instance().getMainHandler().postDelayed(() -> {
+            //接收到电话停止录音
+//            AIUIManager.INSTANCE.stopVoiceNlp();
+            MscManager.INSTANCE.stopListening();
             AVEngineKit.CallSession callSession = AVEngineKit.Instance().getCurrentSession();
             if (callSession == null || callSession.getState() != AVEngineKit.CallState.Incoming) {
                 return;
@@ -246,7 +251,8 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
 
     // pls refer to https://stackoverflow.com/questions/11124119/android-starting-new-activity-from-application-class
     public static void singleCall(Context context, String targetId, boolean isAudioOnly) {
-//        EventBus.getDefault().postSticky(BusConfig.STOP_MSC);
+//        AIUIManager.INSTANCE.stopVoiceNlp();
+        MscManager.INSTANCE.stopListening();
         Conversation conversation = new Conversation(Conversation.ConversationType.Single, targetId);
         AVEngineKit.Instance().startCall(conversation, Collections.singletonList(targetId), isAudioOnly, null);
 
@@ -283,7 +289,6 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
     }
 
     public static void startActivity(Context context, Intent intent) {
-//        EventBus.getDefault().postSticky("stop_msc");
         if (context instanceof Activity) {
             context.startActivity(intent);
             ((Activity) context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -324,7 +329,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
             while (iterator.hasNext()) {
                 Message message = iterator.next();
                 if (message.content.getPersistFlag() == PersistFlag.No_Persist
-                        || now - (message.serverTime - delta) > 10 * 1000) {
+                    || now - (message.serverTime - delta) > 10 * 1000) {
                     iterator.remove();
                 }
             }

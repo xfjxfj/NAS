@@ -23,11 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
-import java.util.List;
-import java.util.Map;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -39,6 +34,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+
+import java.util.List;
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -146,7 +147,7 @@ public class ConversationFragment extends Fragment implements
     private Observer<List<GroupInfo>> groupInfosUpdateLiveDataObserver;
     private Observer<Object> settingUpdateLiveDataObserver;
 
-    private final Observer<UiMessage> messageLiveDataObserver = new Observer<UiMessage>() {
+    private Observer<UiMessage> messageLiveDataObserver = new Observer<UiMessage>() {
         @Override
         public void onChanged(@Nullable UiMessage uiMessage) {
             if (!isMessageInCurrentConversation(uiMessage)) {
@@ -184,7 +185,7 @@ public class ConversationFragment extends Fragment implements
             }
         }
     };
-    private final Observer<UiMessage> messageUpdateLiveDatObserver = new Observer<UiMessage>() {
+    private Observer<UiMessage> messageUpdateLiveDatObserver = new Observer<UiMessage>() {
         @Override
         public void onChanged(@Nullable UiMessage uiMessage) {
             if (!isMessageInCurrentConversation(uiMessage)) {
@@ -196,7 +197,7 @@ public class ConversationFragment extends Fragment implements
         }
     };
 
-    private final Observer<UiMessage> messageRemovedLiveDataObserver = new Observer<UiMessage>() {
+    private Observer<UiMessage> messageRemovedLiveDataObserver = new Observer<UiMessage>() {
         @Override
         public void onChanged(@Nullable UiMessage uiMessage) {
             // 当通过server api删除消息时，只知道消息的uid
@@ -213,7 +214,7 @@ public class ConversationFragment extends Fragment implements
         return uiMessage.message.messageId != 0;
     }
 
-    private final Observer<Map<String, String>> mediaUploadedLiveDataObserver = new Observer<Map<String, String>>() {
+    private Observer<Map<String, String>> mediaUploadedLiveDataObserver = new Observer<Map<String, String>>() {
         @Override
         public void onChanged(@Nullable Map<String, String> stringStringMap) {
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences("sticker", Context.MODE_PRIVATE);
@@ -226,7 +227,7 @@ public class ConversationFragment extends Fragment implements
         }
     };
 
-    private final Observer<Conversation> clearConversationMessageObserver = new Observer<Conversation>() {
+    private Observer<Conversation> clearConversationMessageObserver = new Observer<Conversation>() {
         @Override
         public void onChanged(Conversation conversation) {
             if (conversation.equals(ConversationFragment.this.conversation)) {
@@ -236,7 +237,7 @@ public class ConversationFragment extends Fragment implements
         }
     };
 
-    private final Observer<List<UserInfo>> userInfoUpdateLiveDataObserver = new Observer<List<UserInfo>>() {
+    private Observer<List<UserInfo>> userInfoUpdateLiveDataObserver = new Observer<List<UserInfo>>() {
         @Override
         public void onChanged(@Nullable List<UserInfo> userInfos) {
             if (conversation == null) {
@@ -839,7 +840,7 @@ public class ConversationFragment extends Fragment implements
         handler.postDelayed(resetConversationTitleRunnable, 5000);
     }
 
-    private final Runnable resetConversationTitleRunnable = this::resetConversationTitle;
+    private Runnable resetConversationTitleRunnable = this::resetConversationTitle;
 
     private void resetConversationTitle() {
         if (getActivity() == null || getActivity().isFinishing()) {

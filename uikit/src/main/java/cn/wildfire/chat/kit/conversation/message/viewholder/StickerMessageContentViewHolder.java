@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
+
 import butterknife.BindView;
 import cn.wildfire.chat.kit.GlideApp;
 import cn.wildfire.chat.kit.R2;

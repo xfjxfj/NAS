@@ -9,12 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.favorite.viewholder.FavAudioContentViewHolder;
 import cn.wildfire.chat.kit.favorite.viewholder.FavCompositeContentViewHolder;
@@ -27,8 +28,8 @@ import cn.wildfire.chat.kit.favorite.viewholder.FavVideoContentViewHolder;
 import cn.wildfirechat.message.core.MessageContentType;
 
 public class FavoriteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final Fragment favListFragment;
-    private final List<FavoriteItem> favoriteItems = new ArrayList<>();
+    private Fragment favListFragment;
+    private List<FavoriteItem> favoriteItems = new ArrayList<>();
 
     public FavoriteListAdapter(Fragment favListFragment) {
         this.favListFragment = favListFragment;

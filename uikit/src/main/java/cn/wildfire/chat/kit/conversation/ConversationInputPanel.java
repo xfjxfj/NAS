@@ -29,6 +29,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.lqr.emoji.EmotionLayout;
 import com.lqr.emoji.IEmotionExtClickListener;
 import com.lqr.emoji.IEmotionSelectedListener;
@@ -39,11 +45,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;

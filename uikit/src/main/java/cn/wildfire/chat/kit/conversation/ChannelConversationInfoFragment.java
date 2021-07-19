@@ -12,16 +12,17 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.kyleduo.switchbutton.SwitchButton;
 
 import java.util.Arrays;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;

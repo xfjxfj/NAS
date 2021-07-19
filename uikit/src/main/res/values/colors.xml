@@ -29,9 +29,6 @@
     <color name="gray21">#DADADA</color>
     <color name="gray22">#F5F6F8</color>
     <color name="gray23">#ADADAD</color>
-    <color name="gray24">#A6A6AD</color>
-    <color name="gray25">#5F626B</color>
-    <color name="gray26">#485465</color>
 
     <color name="red0">#F95569</color>
     <color name="red6">#D54A47</color>
@@ -47,7 +44,6 @@
     <color name="blue1">#3B62E0</color>
     <color name="blue2">#3E65E4</color>
     <color name="blue3">#5B6E8E</color>
-    <color name="blue4">#2094FA</color>
 
     <color name="black0">#000000</color>
     <color name="black1">#1D1D1D</color>
@@ -58,10 +54,6 @@
     <color name="black6">#666666</color>
     <color name="black7">#3A3A3C</color>
     <color name="black8">#313236</color>
-    <color name="black9">#5C5F68</color>
-    <color name="black10">#B5B6BF</color>
-    <color name="black11">#252529</color>
-    <color name="black12">#A6A7B2</color>
 
 
     <!--遮盖层颜色-->

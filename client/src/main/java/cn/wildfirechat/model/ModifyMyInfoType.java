@@ -20,7 +20,7 @@ public enum ModifyMyInfoType {
     Modify_Social(7),
     Modify_Extra(8);
 
-    private final int value;
+    private int value;
 
     ModifyMyInfoType(int value) {
         this.value = value;

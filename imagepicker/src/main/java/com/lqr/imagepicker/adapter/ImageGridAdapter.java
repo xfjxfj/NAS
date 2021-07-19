@@ -28,14 +28,14 @@ public class ImageGridAdapter extends BaseAdapter {
     private static final int ITEM_TYPE_NORMAL = 1;  //第一个条目不是相机
 
     private ImagePicker imagePicker;
-    private final ImagePickStore store;
-    private final Activity mActivity;
+    private ImagePickStore store;
+    private Activity mActivity;
     private ArrayList<ImageItem> images;       //当前需要显示的所有的图片数据
-    private final ArrayList<ImageItem> mSelectedImages; //全局保存的已经选中的图片数据
-    private final boolean showCamera;         //是否显示拍照按钮
-    private final int limit;
-    private final boolean multiMode;
-    private final int mImageSize;               //每个条目的大小
+    private ArrayList<ImageItem> mSelectedImages; //全局保存的已经选中的图片数据
+    private boolean showCamera;         //是否显示拍照按钮
+    private int limit;
+    private boolean multiMode;
+    private int mImageSize;               //每个条目的大小
     private OnImageItemClickListener listener;   //图片被点击的监听
 
     public ImageGridAdapter(Activity activity, boolean showCamera, boolean multiMode, int limit) {

@@ -4,12 +4,13 @@
 
 package cn.wildfire.chat.kit.contact.pick;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import cn.wildfire.chat.kit.contact.model.UIUserInfo;
 import cn.wildfire.chat.kit.utils.PinyinUtils;
 import cn.wildfirechat.model.UserInfo;

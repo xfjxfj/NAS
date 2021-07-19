@@ -4,10 +4,14 @@
 
 package cn.wildfirechat.message;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 
 import cn.wildfirechat.message.core.ContentTag;
 import cn.wildfirechat.message.core.MessagePayload;

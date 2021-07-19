@@ -8,15 +8,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 
-import java.util.Arrays;
-import java.util.List;
-
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
+
+import java.util.Arrays;
+import java.util.List;
+
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.WfcUIKit;
 import cn.wildfire.chat.kit.conversationlist.notification.ConnectionStatusNotification;

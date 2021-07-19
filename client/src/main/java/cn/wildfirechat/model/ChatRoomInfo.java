@@ -20,7 +20,7 @@ public class ChatRoomInfo implements Parcelable {
         // 已结束
         END(2);
 
-        private final int value;
+        private int value;
 
         public int getValue() {
             return value;

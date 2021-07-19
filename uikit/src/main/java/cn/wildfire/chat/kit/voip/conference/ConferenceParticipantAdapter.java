@@ -10,10 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
 import cn.wildfire.chat.kit.GlideApp;
 import cn.wildfire.chat.kit.R;
 import cn.wildfirechat.model.UserInfo;
@@ -55,8 +56,8 @@ public class ConferenceParticipantAdapter extends RecyclerView.Adapter<Participa
 
 
     static class ParticipantViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView portraitImageView;
-        private final TextView nameTextView;
+        private ImageView portraitImageView;
+        private TextView nameTextView;
 
         ParticipantViewHolder(@NonNull View itemView) {
             super(itemView);

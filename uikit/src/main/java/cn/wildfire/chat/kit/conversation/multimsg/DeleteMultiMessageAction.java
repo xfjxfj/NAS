@@ -7,11 +7,12 @@ package cn.wildfire.chat.kit.conversation.multimsg;
 import android.content.Context;
 import android.view.View;
 
+import androidx.lifecycle.ViewModelProvider;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.List;
 
-import androidx.lifecycle.ViewModelProvider;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.conversation.message.model.UiMessage;
 import cn.wildfire.chat.kit.viewmodel.MessageViewModel;

@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.tencent.map.geolocation.TencentLocation;
 import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
@@ -21,7 +23,6 @@ import com.tencent.mapsdk.raster.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.R2;

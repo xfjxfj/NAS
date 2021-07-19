@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
@@ -17,8 +20,6 @@ import com.bumptech.glide.request.RequestOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.contact.model.UIUserInfo;
 
@@ -63,7 +64,7 @@ public class PickedUserAdapter extends RecyclerView.Adapter {
 
     private class Holder extends RecyclerView.ViewHolder {
 
-        private final ImageView imageView;
+        private ImageView imageView;
 
         Holder(@NonNull View itemView) {
             super(itemView);

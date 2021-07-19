@@ -25,7 +25,7 @@ package cn.wildfire.chat.kit;
  */
 public class Event<T> {
 
-    private final T mContent;
+    private T mContent;
 
     private boolean hasBeenHandled = false;
 

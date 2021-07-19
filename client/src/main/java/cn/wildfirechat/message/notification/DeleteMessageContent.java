@@ -5,14 +5,21 @@
 package cn.wildfirechat.message.notification;
 
 import android.os.Parcel;
+import android.text.TextUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import cn.wildfirechat.message.Message;
 import cn.wildfirechat.message.MessageContent;
 import cn.wildfirechat.message.core.ContentTag;
 import cn.wildfirechat.message.core.MessagePayload;
 import cn.wildfirechat.message.core.PersistFlag;
+import cn.wildfirechat.model.Conversation;
+import cn.wildfirechat.remote.ChatManager;
 
 import static cn.wildfirechat.message.core.MessageContentType.ContentType_Delete;
+import static cn.wildfirechat.message.core.MessageContentType.ContentType_Recall;
 
 /**
  * Created by heavyrain lee on 2017/12/6.

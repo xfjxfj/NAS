@@ -6,11 +6,12 @@ package cn.wildfire.chat.kit;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
 import cn.wildfirechat.remote.ChatManager;
 import cn.wildfirechat.remote.OnConnectionStatusChangeListener;
 
 public class IMConnectionStatusViewModel extends ViewModel implements OnConnectionStatusChangeListener {
-    private final MutableLiveData<Integer> connectionStatusLiveData = new MutableLiveData<>();
+    private MutableLiveData<Integer> connectionStatusLiveData = new MutableLiveData<>();
 
     public IMConnectionStatusViewModel() {
         ChatManager.Instance().addConnectionChangeListener(this);

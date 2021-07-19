@@ -9,12 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.wildfire.chat.kit.R2;

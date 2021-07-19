@@ -17,15 +17,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.webrtc.StatsReport;
-
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.gridlayout.widget.GridLayout;
 import androidx.lifecycle.ViewModelProviders;
+
+import org.webrtc.StatsReport;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -299,10 +300,14 @@ public class MultiCallAudioFragment extends Fragment implements AVEngineKit.Call
             speakerImageView.setSelected(false);
         }
 
-	    speakerImageView.setEnabled(device != AVAudioManager.AudioDevice.WIRED_HEADSET && device != AVAudioManager.AudioDevice.BLUETOOTH);
+        if(device == AVAudioManager.AudioDevice.WIRED_HEADSET || device == AVAudioManager.AudioDevice.BLUETOOTH) {
+            speakerImageView.setEnabled(false);
+        } else {
+            speakerImageView.setEnabled(true);
+        }
     }
 
-    private final Handler handler = new Handler();
+    private Handler handler = new Handler();
 
     private void updateCallDuration() {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();

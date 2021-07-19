@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.wildfire.chat.kit.GlideApp;
@@ -34,8 +35,8 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
     @BindView(R2.id.timeTextView)
     protected TextView timeTextView;
 
-    private final Fragment fragment;
-    private final UserViewModel userViewModel;
+    private Fragment fragment;
+    private UserViewModel userViewModel;
 
     public MessageViewHolder(Fragment fragment, View itemView) {
         super(itemView);

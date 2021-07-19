@@ -4,9 +4,10 @@
 
 package cn.wildfire.chat.kit.settings.blacklist;
 
+import androidx.lifecycle.ViewModel;
+
 import java.util.List;
 
-import androidx.lifecycle.ViewModel;
 import cn.wildfirechat.remote.ChatManager;
 
 public class BlacklistViewModel extends ViewModel {

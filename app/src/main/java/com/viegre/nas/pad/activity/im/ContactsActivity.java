@@ -60,7 +60,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
-import cn.wildfire.chat.kit.utils.BusConfig;
 import cn.wildfirechat.remote.ChatManager;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;

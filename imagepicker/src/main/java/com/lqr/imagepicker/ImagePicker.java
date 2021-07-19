@@ -3,12 +3,11 @@ package com.lqr.imagepicker;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import androidx.fragment.app.Fragment;
 
 import com.lqr.imagepicker.ui.ImageGridActivity;
 
 import java.io.Serializable;
-
-import androidx.fragment.app.Fragment;
 
 public class ImagePicker implements Serializable {
 

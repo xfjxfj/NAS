@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
+
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.WfcBaseActivity;
 

@@ -12,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 
@@ -19,8 +22,6 @@ import org.joda.time.DateTime;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -41,8 +42,8 @@ import cn.wildfirechat.remote.ChatManager;
 
 public class CompositeMessageContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final Message message;
-    private final CompositeMessageContent compositeMessageContent;
+    private Message message;
+    private CompositeMessageContent compositeMessageContent;
 
     public CompositeMessageContentAdapter(Message message) {
         this.message = message;

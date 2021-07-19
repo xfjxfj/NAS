@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
+
 import cn.wildfire.chat.kit.contact.pick.PickUserFragment;
 import cn.wildfire.chat.kit.contact.pick.PickUserViewModel;
 import cn.wildfirechat.model.GroupInfo;

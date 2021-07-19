@@ -5,6 +5,7 @@
 package cn.wildfire.chat.kit.contact.pick;
 
 import androidx.lifecycle.ViewModelProviders;
+
 import cn.wildfire.chat.kit.contact.ContactViewModel;
 
 public class PickContactFragment extends PickUserFragment {

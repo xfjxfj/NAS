@@ -83,7 +83,6 @@
         <activity
             android:name="cn.wildfire.chat.kit.mm.MMPreviewActivity"
             android:theme="@style/AppTheme.FullScreen" />
-<!--            android:screenOrientation="portrait">-->
         <activity
             android:name="cn.wildfire.chat.kit.voip.SingleCallActivity"
             android:launchMode="singleInstance"

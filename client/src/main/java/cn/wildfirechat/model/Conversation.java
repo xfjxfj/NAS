@@ -25,7 +25,7 @@ public class Conversation implements Parcelable {
         Channel(3);
 
 
-        private final int value;
+        private int value;
 
         ConversationType(int value) {
             this.value = value;

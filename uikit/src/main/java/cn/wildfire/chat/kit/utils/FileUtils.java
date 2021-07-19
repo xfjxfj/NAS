@@ -19,6 +19,10 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -31,9 +35,6 @@ import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import cn.wildfire.chat.kit.BuildConfig;
 import cn.wildfire.chat.kit.R;
 import okhttp3.ResponseBody;
@@ -319,7 +320,7 @@ public class FileUtils {
         return true;
     }
 
-    private static int copyStream(InputStream input, OutputStream output) throws Exception {
+    private static int copyStream(InputStream input, OutputStream output) throws Exception, IOException {
         final int BUFFER_SIZE = 1024 * 2;
         byte[] buffer = new byte[BUFFER_SIZE];
         BufferedInputStream in = new BufferedInputStream(input, BUFFER_SIZE);
@@ -507,7 +508,7 @@ public class FileUtils {
                 }
             }
         }
-        return dec.format(fileSize) + suffix;
+        return String.valueOf(dec.format(fileSize) + suffix);
     }
 
     /**

@@ -16,6 +16,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+
 import butterknife.ButterKnife;
 
 public abstract class WfcBaseNoToolbarActivity extends AppCompatActivity {

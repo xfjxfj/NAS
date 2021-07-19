@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ImagePickStore {
 
-    private final ArrayList<ImageItem> pickedImages = new ArrayList<>();   //选中的图片集合
+    private ArrayList<ImageItem> pickedImages = new ArrayList<>();   //选中的图片集合
     private List<ImageFolder> imageFolders;      //所有的图片文件夹
     private int currentImageFolder = 0;  //当前选中的文件夹位置 0表示所有图片
     private boolean compress = true;

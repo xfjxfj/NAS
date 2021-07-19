@@ -10,13 +10,14 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.Collections;
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.OnTextChanged;
 import cn.wildfire.chat.kit.R;
@@ -62,7 +63,11 @@ public class SetGroupNameActivity extends WfcBaseActivity {
     @Override
     protected void afterMenus(Menu menu) {
         confirmMenuItem = menu.findItem(R.id.confirm);
-	    confirmMenuItem.setEnabled(nameEditText.getText().toString().trim().length() > 0);
+        if (nameEditText.getText().toString().trim().length() > 0) {
+            confirmMenuItem.setEnabled(true);
+        } else {
+            confirmMenuItem.setEnabled(false);
+        }
     }
 
     @Override

@@ -20,6 +20,10 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import com.github.chrisbanes.photoview.PhotoView;
 
 import java.io.File;
@@ -27,9 +31,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import cn.wildfire.chat.kit.Config;
 import cn.wildfire.chat.kit.GlideApp;
 import cn.wildfire.chat.kit.R;
@@ -53,7 +54,7 @@ public class MMPreviewActivity extends Activity {
     private boolean pendingPreviewInitialMedia;
 
     private class MMPagerAdapter extends PagerAdapter {
-        private final List<MediaEntry> entries;
+        private List<MediaEntry> entries;
 
         public MMPagerAdapter(List<MediaEntry> entries) {
             this.entries = entries;

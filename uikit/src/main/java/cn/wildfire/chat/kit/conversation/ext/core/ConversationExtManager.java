@@ -19,7 +19,7 @@ import cn.wildfirechat.model.Conversation;
 
 public class ConversationExtManager {
     private static ConversationExtManager instance;
-    private final List<ConversationExt> conversationExts;
+    private List<ConversationExt> conversationExts;
 
     private ConversationExtManager() {
         conversationExts = new ArrayList<>();

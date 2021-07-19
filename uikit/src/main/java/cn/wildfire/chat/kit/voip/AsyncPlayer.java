@@ -17,12 +17,8 @@ import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.io.IOException;
 import java.util.LinkedList;
-
-import cn.wildfire.chat.kit.utils.BusConfig;
 
 public class AsyncPlayer {
     private static final int PLAY = 1;
@@ -42,7 +38,7 @@ public class AsyncPlayer {
         }
     }
 
-    private final LinkedList mCmdQueue = new LinkedList();
+    private LinkedList mCmdQueue = new LinkedList();
 
     private void startSound(Command cmd) {
 
@@ -53,9 +49,9 @@ public class AsyncPlayer {
             player.setLooping(cmd.looping);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 player.setAudioAttributes(new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_REQUEST)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_REQUEST)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
                 );
             }
             player.prepare();
@@ -116,7 +112,7 @@ public class AsyncPlayer {
         }
     }
 
-    private final String mTag;
+    private String mTag;
     private Thread mThread;
     private MediaPlayer mPlayer;
     private PowerManager.WakeLock mWakeLock;
@@ -154,9 +150,6 @@ public class AsyncPlayer {
                 cmd.code = STOP;
                 enqueueLocked(cmd);
                 mState = STOP;
-
-//                启动监听 xufangjie
-//                EventBus.getDefault().postSticky(BusConfig.START_MSC);
             }
         }
     }

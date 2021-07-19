@@ -7,6 +7,7 @@ package cn.wildfire.chat.kit.conversationlist.notification.viewholder;
 import android.view.View;
 
 import androidx.fragment.app.Fragment;
+
 import cn.wildfire.chat.kit.conversationlist.notification.StatusNotification;
 
 public abstract class StatusNotificationViewHolder {

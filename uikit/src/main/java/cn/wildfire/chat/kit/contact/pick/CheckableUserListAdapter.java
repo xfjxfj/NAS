@@ -8,12 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.contact.UserListAdapter;
 import cn.wildfire.chat.kit.contact.model.UIUserInfo;

@@ -12,7 +12,7 @@ public enum MessageDirection {
     Send(0),
     Receive(1);
 
-    private final int value;
+    private int value;
 
     MessageDirection(int value) {
         this.value = value;

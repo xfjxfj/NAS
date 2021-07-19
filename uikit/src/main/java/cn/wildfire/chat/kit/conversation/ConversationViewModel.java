@@ -6,12 +6,13 @@ package cn.wildfire.chat.kit.conversation;
 
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import cn.wildfire.chat.kit.common.AppScopeViewModel;
 import cn.wildfire.chat.kit.conversation.message.model.UiMessage;
 import cn.wildfirechat.message.Message;

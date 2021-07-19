@@ -30,7 +30,7 @@ public class AudioRecorderPanel implements View.OnTouchListener {
     private boolean isCountDown;
     private String currentAudioFile;
 
-    private final Context context;
+    private Context context;
     private View rootView;
     private Button button;
     private AudioRecorder recorder;
@@ -340,7 +340,12 @@ public class AudioRecorderPanel implements View.OnTouchListener {
         int[] location = new int[2];
         view.getLocationOnScreen(location);
 
-	    return event.getRawX() < location[0] || event.getRawX() > location[0] + view.getWidth() || event.getRawY() < location[1] - 40;
+        if (event.getRawX() < location[0] || event.getRawX() > location[0] + view.getWidth()
+            || event.getRawY() < location[1] - 40) {
+            return true;
+        }
+
+        return false;
     }
 
     public interface OnRecordListener {

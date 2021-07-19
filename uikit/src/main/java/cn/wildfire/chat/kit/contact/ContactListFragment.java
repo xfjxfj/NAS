@@ -9,9 +9,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
-import androidx.annotation.Nullable;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.channel.ChannelListActivity;
 import cn.wildfire.chat.kit.contact.model.ContactCountFooterValue;

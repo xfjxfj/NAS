@@ -11,12 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.channel.ChannelInfoActivity;
 import cn.wildfire.chat.kit.search.SearchableModule;

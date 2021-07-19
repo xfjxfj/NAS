@@ -22,8 +22,8 @@ public class CircularProgressBar extends View {
     private int mDuration = 100;
     private int mProgress = 30;
 
-    private final Paint mPaint = new Paint();
-    private final RectF mRectF = new RectF();
+    private Paint mPaint = new Paint();
+    private RectF mRectF = new RectF();
 
     private int mBackgroundColor = Color.LTGRAY;
     private int mPrimaryColor = Color.parseColor("#6DCAEC");
@@ -42,7 +42,7 @@ public class CircularProgressBar extends View {
          * @param progress 当前进度
          * @param rate     当前进度与总进度的商 即：rate = (float)progress / duration
          */
-        void onChange(int duration, int progress, float rate);
+        public void onChange(int duration, int progress, float rate);
     }
 
     private OnProgressChangeListener mOnChangeListener;

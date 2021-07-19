@@ -12,10 +12,10 @@ import android.widget.RelativeLayout;
 
 public class EmojiAdapter extends BaseAdapter {
 
-    private final Context mContext;
-    private final int mStartIndex;
-    private final int mEmotionLayoutWidth;
-    private final int mEmotionLayoutHeight;
+    private Context mContext;
+    private int mStartIndex;
+    private int mEmotionLayoutWidth;
+    private int mEmotionLayoutHeight;
     private final float mPerWidth;
     private final float mPerHeight;
     private final float mIvSize;

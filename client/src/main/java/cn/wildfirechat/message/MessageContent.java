@@ -4,6 +4,7 @@
 
 package cn.wildfirechat.message;
 
+import android.media.MediaScannerConnection;
 import android.os.Parcel;
 import android.os.Parcelable;
 

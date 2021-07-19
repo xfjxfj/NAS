@@ -29,7 +29,7 @@ public enum PersistFlag {
      */
     Transparent(4);
 
-    private final int value;
+    private int value;
 
     PersistFlag(int value) {
         this.value = value;

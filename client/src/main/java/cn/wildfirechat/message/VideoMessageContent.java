@@ -6,6 +6,7 @@ package cn.wildfirechat.message;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
 import android.os.Parcel;
 import android.provider.MediaStore;
@@ -14,6 +15,8 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 
 import cn.wildfirechat.message.core.ContentTag;
 import cn.wildfirechat.message.core.MessageContentType;

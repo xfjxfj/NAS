@@ -8,13 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.contact.model.FooterValue;
 import cn.wildfire.chat.kit.contact.model.HeaderValue;

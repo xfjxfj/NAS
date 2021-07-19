@@ -6,11 +6,12 @@ package cn.wildfire.chat.kit.group;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProviders;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProviders;
 import cn.wildfire.chat.kit.contact.model.UIUserInfo;
 import cn.wildfire.chat.kit.contact.pick.PickContactFragment;
 import cn.wildfire.chat.kit.contact.pick.PickUserViewModel;

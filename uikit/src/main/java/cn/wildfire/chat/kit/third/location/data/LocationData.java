@@ -11,7 +11,7 @@ public class LocationData implements Serializable {
     private double lat;
     private double lng;
     private String poi;
-    private final byte[] thumbnailData;
+    private byte[] thumbnailData;
 
 
     public LocationData(double lat, double lng, String poi, Bitmap thumbnail) {
