@@ -33,7 +33,7 @@ public class VideoPlayerActivity extends BaseActivity<ActivityVideoPlayerBinding
 		RelativeLayout.LayoutParams topContainerParams = (RelativeLayout.LayoutParams) topContainer.getLayoutParams();
 		topContainerParams.topMargin = 16;
 		topContainer.setLayoutParams(topContainerParams);
-		topContainer.setOnClickListener(view -> finish());
+		mViewBinding.sgvpVideoPlayer.getBackButton().setOnClickListener(view -> finish());
 		mViewBinding.sgvpVideoPlayer.getFullscreenButton().setVisibility(View.GONE);
 		mViewBinding.sgvpVideoPlayer.setAutoFullWithSize(true);
 		mViewBinding.sgvpVideoPlayer.setShowFullAnimation(true);

@@ -254,4 +254,14 @@
 	<string name="intelligent_voice_feedback">智能语音反馈</string>
 	<string name="intelligent_voice_feedback_hint">智能语音反馈，当开启语音反馈时，您的每条指令小智都会通过语音反馈，比如“未听清”，“好的”等</string>
 	<string name="intelligent_voice_wakeup_keywords_select">选择唤醒词</string>
+
+	<!--AndServer配置-->
+	<string name="andserver_succeed">成功</string>
+	<string name="andserver_failed">失败</string>
+	<string name="andserver_file_does_not_exist">文件不存在</string>
+	<string name="andserver_file_already_exists">文件已存在</string>
+	<string name="andserver_incorrect_path">路径不正确</string>
+	<string name="andserver_permission_denied">没有访问权限</string>
+	<string name="andserver_unknown">未知错误</string>
+
 </resources>

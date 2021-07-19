@@ -10,21 +10,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.viegre.nas.pad.R;
-import com.viegre.nas.pad.activity.im.ContactsActivity;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.entity.RecordListBean2;
 import com.viegre.nas.pad.util.ExpandableViewHoldersUtil;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,15 +30,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
  * 通话记录adapter
  */
 public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvRecordAdapter.ViewHolder> {
-    private ExpandableViewHoldersUtil.KeepOneHolder<ViewHolder> keepOne;
-    private final Context mcontext;
-    boolean isClick = false;
-    private List<String> data;
-    private Gson gs = new Gson();
+	private ExpandableViewHoldersUtil.KeepOneHolder<ViewHolder> keepOne;
+	private final Context mcontext;
+	boolean isClick = false;
+	private List<String> data;
+	private final Gson gs = new Gson();
 
     public ContactsRvRecordAdapter(Context context) {
         mcontext = context;
@@ -66,18 +63,16 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
         return new ViewHolder(view);
     }
 
+	@Override
+	public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-    @Override
-    public void onBindViewHolder(@NonNull @NotNull ViewHolder holder, int position) {
+		RecordListBean2 mdata = gs.fromJson(data.get(position), RecordListBean2.class);
+		if (null == mdata) {
+			return;
+		}
 
-        RecordListBean2 mdata = gs.fromJson(data.get(position), RecordListBean2.class);
-        if (null == mdata) {
-            return;
-        }
-
-
-        if (mdata.getDirection().equals("Receive")) {
-            holder.delete_text.setText("呼入");
+		if (mdata.getDirection().equals("Receive")) {
+			holder.delete_text.setText("呼入");
 
             holder.tvTitle.setText(mdata.getTargetId());
             holder.tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, 14);

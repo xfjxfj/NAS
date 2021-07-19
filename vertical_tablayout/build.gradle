@@ -17,6 +17,6 @@ android {
 
 dependencies {
 	//https://maven.google.com/web/index.html
-	compileOnly 'com.google.android.material:material:1.4.0-beta01'
+	compileOnly 'com.google.android.material:material:1.5.0-alpha01'
 	api 'q.rorbin:badgeview:1.1.3'
 }

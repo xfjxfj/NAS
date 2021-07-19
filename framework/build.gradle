@@ -21,7 +21,7 @@ android {
 
 dependencies {
 	//https://maven.google.com/web/index.html
-	api 'com.google.android.material:material:1.4.0-beta01'
+	api 'com.google.android.material:material:1.5.0-alpha01'
 	api 'androidx.constraintlayout:constraintlayout:2.1.0-beta02'
 	//https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README-CN.md
 	api 'com.blankj:utilcodex:1.30.6'
