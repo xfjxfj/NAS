@@ -1,4 +1,4 @@
-package com.topqizhi.andserver.converter;
+package com.topqizhi.andserver.component;
 
 import com.topqizhi.andserver.util.JsonUtils;
 import com.yanzhenjie.andserver.annotation.Converter;

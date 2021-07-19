@@ -37,6 +37,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    api project(':ai')
     api project(':client')
     api project(':avenginekit')
     implementation project(':emojilibrary')

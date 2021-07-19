@@ -92,4 +92,9 @@ class FileController {
 			throw new CustomException(e.getMessage());
 		}
 	}
+
+//	@PostMapping(path = "/download", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	String download(@RequestParam("path") String path, @RequestParam(name = "file") MultipartFile file) {
+//
+//	}
 }
