@@ -9,9 +9,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.blankj.utilcode.util.FileUtils;
 
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.wildfire.chat.kit.R2;
@@ -54,7 +55,7 @@ public class VideoMessageContentViewHolder extends MediaMessageContentViewHolder
         int width = 200;
         int height = 200;
         if(thumbnail != null) {
-            int[] imageSize = WeChatImageUtils.getImageSizeByOrgSizeToWeChat(thumbnail.getWidth(), thumbnail.getHeight());
+            int imageSize[] = WeChatImageUtils.getImageSizeByOrgSizeToWeChat(thumbnail.getWidth(), thumbnail.getHeight());
             width = imageSize[0] > 0 ? imageSize[0] : 200;
             height = imageSize[1] > 0 ? imageSize[1] : 200;
         }

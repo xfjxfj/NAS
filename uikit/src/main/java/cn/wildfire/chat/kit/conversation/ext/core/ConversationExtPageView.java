@@ -17,9 +17,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
-import androidx.annotation.Nullable;
 import cn.wildfire.chat.kit.R;
 
 public class ConversationExtPageView extends LinearLayout implements View.OnClickListener {

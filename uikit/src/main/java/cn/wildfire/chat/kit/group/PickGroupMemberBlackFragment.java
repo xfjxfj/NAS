@@ -11,6 +11,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.contact.UserListAdapter;
 import cn.wildfire.chat.kit.contact.pick.CheckableUserListBlackAdapter;
@@ -70,7 +71,7 @@ public class PickGroupMemberBlackFragment extends PickGroupMemberFragment {
 
     private static class Decoration extends RecyclerView.ItemDecoration {
 
-        private final int space;
+        private int space;
 
         public Decoration(int space) {
             this.space = space;

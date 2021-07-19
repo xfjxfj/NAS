@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.View;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+
 import com.lqr.adapter.LQRAdapterForRecyclerView;
 import com.lqr.adapter.LQRViewHolderForRecyclerView;
 import com.tencent.lbssearch.object.result.Geo2AddressResultObject;
@@ -12,7 +14,6 @@ import com.tencent.lbssearch.object.result.Geo2AddressResultObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.recyclerview.widget.GridLayoutManager;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.third.location.data.LocationData;
 import cn.wildfire.chat.kit.third.location.ui.base.BaseActivity;
@@ -21,7 +22,7 @@ import cn.wildfire.chat.kit.third.location.ui.view.IMyLocationAtView;
 
 public class MyLocationAtPresenter extends BasePresenter<IMyLocationAtView> {
 
-    private final List<Geo2AddressResultObject.ReverseAddressResult.Poi> mData = new ArrayList<>();
+    private List<Geo2AddressResultObject.ReverseAddressResult.Poi> mData = new ArrayList<>();
     private int mSelectedPosi = 0;
     private LQRAdapterForRecyclerView<Geo2AddressResultObject.ReverseAddressResult.Poi> mAdapter;
 

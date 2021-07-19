@@ -8,11 +8,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.wildfire.chat.kit.R;
@@ -32,8 +33,8 @@ public class ConversationViewHolder extends ResultItemViewHolder<ConversationSea
     @BindView(R2.id.descTextView)
     TextView descTextView;
 
-    private final UserViewModel userViewModel;
-    private final GroupViewModel groupViewModel;
+    private UserViewModel userViewModel;
+    private GroupViewModel groupViewModel;
 
     public ConversationViewHolder(Fragment fragment, View itemView) {
         super(fragment, itemView);

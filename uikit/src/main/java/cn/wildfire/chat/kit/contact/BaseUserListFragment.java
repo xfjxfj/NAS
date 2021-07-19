@@ -8,12 +8,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.wildfire.chat.kit.R;

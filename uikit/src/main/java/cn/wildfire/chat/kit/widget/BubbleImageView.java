@@ -46,7 +46,7 @@ public class BubbleImageView extends ImageView {
     private int mBitmapWidth;
     private int mBitmapHeight;
 
-    private final Paint mPaint;
+    private Paint mPaint;
     private int percent = 0;
     private boolean mShowText = true;//是否显示文字
     private boolean mShowShadow = true;//是否显示阴影

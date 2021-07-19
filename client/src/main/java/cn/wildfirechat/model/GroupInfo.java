@@ -21,7 +21,7 @@ public class GroupInfo implements Parcelable {
         //member can only quit, owner can do all the operations
         Restricted(2);
 
-        private final int value;
+        private int value;
 
         GroupType(int value) {
             this.value = value;

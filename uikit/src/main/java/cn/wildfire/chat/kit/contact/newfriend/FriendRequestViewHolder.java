@@ -11,11 +11,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -27,11 +28,11 @@ import cn.wildfirechat.model.FriendRequest;
 import cn.wildfirechat.model.UserInfo;
 
 public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
-    private final FriendRequestListFragment fragment;
-    private final FriendRequestListAdapter adapter;
+    private FriendRequestListFragment fragment;
+    private FriendRequestListAdapter adapter;
     private FriendRequest friendRequest;
-    private final UserViewModel userViewModel;
-    private final ContactViewModel contactViewModel;
+    private UserViewModel userViewModel;
+    private ContactViewModel contactViewModel;
 
     @BindView(R2.id.portraitImageView)
     ImageView portraitImageView;

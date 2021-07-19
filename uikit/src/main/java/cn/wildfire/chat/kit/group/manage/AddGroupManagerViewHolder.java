@@ -7,6 +7,7 @@ package cn.wildfire.chat.kit.group.manage;
 import android.view.View;
 
 import androidx.fragment.app.Fragment;
+
 import cn.wildfire.chat.kit.contact.UserListAdapter;
 import cn.wildfire.chat.kit.contact.model.FooterValue;
 import cn.wildfire.chat.kit.contact.viewholder.footer.FooterViewHolder;

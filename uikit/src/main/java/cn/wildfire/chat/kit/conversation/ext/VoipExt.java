@@ -91,7 +91,10 @@ public class VoipExt extends ConversationExt {
         if (conversation.type == Conversation.ConversationType.Single) {
             UserInfo userInfo = ChatManager.Instance().getUserInfo(conversation.target, false);
             // robot
-	        return userInfo.type == 1;
+            if (userInfo.type == 1) {
+                return true;
+            }
+            return false;
         }
         return true;
     }

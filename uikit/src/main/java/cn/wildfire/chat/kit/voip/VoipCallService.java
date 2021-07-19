@@ -28,16 +28,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.greenrobot.eventbus.EventBus;
-
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+
+import java.util.List;
+
 import cn.wildfire.chat.kit.BuildConfig;
 import cn.wildfire.chat.kit.R;
-import cn.wildfire.chat.kit.utils.BusConfig;
 import cn.wildfirechat.avenginekit.AVEngineKit;
 import cn.wildfirechat.avenginekit.PeerConnectionClient;
 import cn.wildfirechat.model.Conversation;
@@ -57,7 +55,7 @@ public class VoipCallService extends Service {
 
     private String focusTargetId;
 
-    private final Handler handler = new Handler();
+    private Handler handler = new Handler();
 
     @Override
     public void onCreate() {
@@ -124,11 +122,12 @@ public class VoipCallService extends Service {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
         if (session == null || AVEngineKit.CallState.Idle == session.getState()) {
             stopSelf();
-//            EventBus.getDefault().postSticky(BusConfig.START_MSC);
         } else {
             updateNotification(session);
             if (showFloatingWindow && session.getState() == AVEngineKit.CallState.Connected) {
-                if (session.isAudioOnly()) {
+                if(session.isScreenSharing()) {
+                    showScreenSharingView(session);
+                } else if (session.isAudioOnly()) {
                     showAudioView(session);
                 } else {
                     showVideoView(session);
@@ -225,7 +224,9 @@ public class VoipCallService extends Service {
         if (session.getState() != AVEngineKit.CallState.Connected) {
             showUnConnectedCallInfo(session);
         } else {
-            if (session.isAudioOnly()) {
+            if(session.isScreenSharing()) {
+                showScreenSharingView(session);
+            } else if (session.isAudioOnly()) {
                 showAudioView(session);
             } else {
                 showVideoView(session);
@@ -268,6 +269,18 @@ public class VoipCallService extends Service {
                 break;
         }
         timeView.setText(title);
+    }
+
+    private void showScreenSharingView(AVEngineKit.CallSession session) {
+        FrameLayout remoteVideoFrameLayout = view.findViewById(R.id.remoteVideoFrameLayout);
+        if (remoteVideoFrameLayout.getVisibility() == View.VISIBLE) {
+            remoteVideoFrameLayout.setVisibility(View.GONE);
+            wm.removeView(view);
+            wm.addView(view, params);
+        }
+        view.findViewById(R.id.screenSharingTextView).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.durationTextView).setVisibility(View.GONE);
+        view.findViewById(R.id.av_media_type).setVisibility(View.GONE);
     }
 
     private void showAudioView(AVEngineKit.CallSession session) {
@@ -349,9 +362,13 @@ public class VoipCallService extends Service {
     }
 
     private void clickToResume() {
-        if (rendererInitialized) {
-            AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
-            if (session != null) {
+        AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
+        if (session != null) {
+            if(session.isScreenSharing()) {
+                session.stopScreenShare();
+            }
+
+            if (rendererInitialized) {
                 session.resetRenderer();
             }
         }

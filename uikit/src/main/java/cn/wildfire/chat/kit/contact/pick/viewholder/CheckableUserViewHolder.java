@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.CheckBox;
 
 import androidx.fragment.app.Fragment;
+
 import butterknife.BindView;
 import cn.wildfire.chat.kit.R2;
 import cn.wildfire.chat.kit.contact.model.UIUserInfo;

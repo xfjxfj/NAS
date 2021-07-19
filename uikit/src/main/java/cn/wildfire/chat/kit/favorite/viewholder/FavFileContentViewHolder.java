@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
 import butterknife.BindView;
 import cn.wildfire.chat.kit.R2;
 import cn.wildfire.chat.kit.favorite.FavoriteItem;

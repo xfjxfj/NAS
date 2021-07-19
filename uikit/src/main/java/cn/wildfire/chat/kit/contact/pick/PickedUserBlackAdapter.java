@@ -9,10 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.contact.model.UIUserInfo;
 
@@ -32,7 +33,7 @@ public class PickedUserBlackAdapter extends PickedUserAdapter {
 
     private class Holder extends RecyclerView.ViewHolder {
 
-        private final ImageView imageView;
+        private ImageView imageView;
 
         Holder(@NonNull View itemView) {
             super(itemView);

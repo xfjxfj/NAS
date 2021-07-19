@@ -10,11 +10,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
+import java.util.List;
+
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.WfcBaseActivity;
 import cn.wildfire.chat.kit.contact.model.UIUserInfo;
@@ -22,13 +23,13 @@ import cn.wildfire.chat.kit.contact.model.UIUserInfo;
 public abstract class PickConversationTargetActivity extends WfcBaseActivity implements PickConversationTargetFragment.OnGroupPickListener {
     public static final String CURRENT_PARTICIPANTS = "currentParticipants";
 
-    private final boolean pickGroupForResult = true;
-    private final boolean multiGroupMode = false;
+    private boolean pickGroupForResult = true;
+    private boolean multiGroupMode = false;
     private MenuItem menuItem;
     private TextView confirmTv;
 
     protected PickUserViewModel pickUserViewModel;
-    private final Observer<UIUserInfo> contactCheckStatusUpdateLiveDataObserver = new Observer<UIUserInfo>() {
+    private Observer<UIUserInfo> contactCheckStatusUpdateLiveDataObserver = new Observer<UIUserInfo>() {
         @Override
         public void onChanged(@Nullable UIUserInfo userInfo) {
             List<UIUserInfo> list = pickUserViewModel.getCheckedUsers();

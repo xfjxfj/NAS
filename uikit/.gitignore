@@ -1,5 +1,1 @@
-build
-captures
-.externalNativeBuild
-*.iml
-*.DS_Store
+/build

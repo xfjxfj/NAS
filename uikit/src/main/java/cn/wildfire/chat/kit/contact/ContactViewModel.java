@@ -7,12 +7,13 @@ package cn.wildfire.chat.kit.contact;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import cn.wildfire.chat.kit.Config;
 import cn.wildfire.chat.kit.WfcUIKit;
 import cn.wildfire.chat.kit.common.OperateResult;
@@ -98,7 +99,7 @@ public class ContactViewModel extends ViewModel implements OnFriendUpdateListene
         return ChatManager.Instance().getMyFriendList(refresh);
     }
 
-    private final AtomicInteger loadingCount = new AtomicInteger(0);
+    private AtomicInteger loadingCount = new AtomicInteger(0);
 
     public void reloadContact() {
         int count = loadingCount.get();

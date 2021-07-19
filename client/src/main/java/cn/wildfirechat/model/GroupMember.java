@@ -21,7 +21,7 @@ public class GroupMember implements Parcelable {
         Removed(4),
         Allowed(5);
 
-        private final int value;
+        private int value;
 
         GroupMemberType(int value) {
             this.value = value;

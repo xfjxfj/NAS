@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.wildfire.chat.kit.R2;

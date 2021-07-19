@@ -11,12 +11,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.WfcBaseActivity;
 import cn.wildfire.chat.kit.contact.model.UIUserInfo;
@@ -32,7 +33,7 @@ public class PickContactActivity extends WfcBaseActivity {
     private TextView confirmTv;
 
     private PickUserViewModel pickUserViewModel;
-    private final Observer<UIUserInfo> contactCheckStatusUpdateLiveDataObserver = new Observer<UIUserInfo>() {
+    private Observer<UIUserInfo> contactCheckStatusUpdateLiveDataObserver = new Observer<UIUserInfo>() {
         @Override
         public void onChanged(@Nullable UIUserInfo userInfo) {
             List<UIUserInfo> list = pickUserViewModel.getCheckedUsers();

@@ -10,7 +10,7 @@ import android.util.SparseArray;
 import cn.wildfire.chat.kit.annotation.ConversationInfoType;
 
 public class ConversationViewHolderManager {
-    private static final ConversationViewHolderManager instance = new ConversationViewHolderManager();
+    private static ConversationViewHolderManager instance = new ConversationViewHolderManager();
 
     private ConversationViewHolderManager() {
         registerConversationViewHolder(SingleConversationViewHolder.class);
@@ -23,7 +23,7 @@ public class ConversationViewHolderManager {
         return instance;
     }
 
-    private final SparseArray<Class<? extends ConversationViewHolder>> messageViewHolders = new SparseArray<>();
+    private SparseArray<Class<? extends ConversationViewHolder>> messageViewHolders = new SparseArray<>();
 
     public void registerConversationViewHolder(Class<? extends ConversationViewHolder> clazz) {
         ConversationInfoType conversationInfoType = clazz.getAnnotation(ConversationInfoType.class);

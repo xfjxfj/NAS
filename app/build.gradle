@@ -117,8 +117,6 @@ dependencies {
 	//https://github.com/Bigkoo/Android-PickerView
 	implementation project(':pickerview')
 	//https://github.com/wildfirechat/android-chat
-	implementation project(':push')
-	implementation project(':uikit')
 	//https://github.com/qstumn/VerticalTabLayout
 	implementation project(':vertical_tablayout')
 	//https://maven.google.com/web/index.html
@@ -192,4 +190,6 @@ dependencies {
 	//http://www.slf4j.org
 	//noinspection GradleDependency
 	implementation 'org.slf4j:slf4j-android:1.6.1-RC1'
+	implementation project(':push')
+	implementation project(':uikit')
 }

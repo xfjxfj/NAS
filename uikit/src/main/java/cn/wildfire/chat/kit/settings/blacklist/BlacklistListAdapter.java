@@ -8,10 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
 import cn.wildfire.chat.kit.R;
 
 public class BlacklistListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

@@ -7,9 +7,10 @@ package cn.wildfire.chat.kit.conversation.message.viewholder;
 import android.graphics.Bitmap;
 import android.view.View;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.blankj.utilcode.util.FileUtils;
 
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.wildfire.chat.kit.R2;
@@ -47,7 +48,7 @@ public class ImageMessageContentViewHolder extends MediaMessageContentViewHolder
     public void onBind(UiMessage message) {
         ImageMessageContent imageMessage = (ImageMessageContent) message.message.content;
         Bitmap thumbnail = imageMessage.getThumbnail();
-        int[] imageSize = WeChatImageUtils.getImageSizeByOrgSizeToWeChat((int) imageMessage.getImageWidth(), (int) imageMessage.getImageHeight());
+        int imageSize[] = WeChatImageUtils.getImageSizeByOrgSizeToWeChat((int) imageMessage.getImageWidth(), (int) imageMessage.getImageHeight());
         int width = imageSize[0] > 0 ? imageSize[0] : 200;
         int height = imageSize[1] > 0 ? imageSize[1] : 200;
         imageView.getLayoutParams().width = width;

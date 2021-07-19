@@ -20,17 +20,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.gridlayout.widget.GridLayout;
+import androidx.lifecycle.ViewModelProviders;
+
 import org.webrtc.RendererCommon;
 import org.webrtc.StatsReport;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.gridlayout.widget.GridLayout;
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -64,7 +65,7 @@ public class MultiCallVideoFragment extends Fragment implements AVEngineKit.Call
 
     private MultiCallItem focusMultiCallItem;
 
-    private final RendererCommon.ScalingType scalingType = RendererCommon.ScalingType.SCALE_ASPECT_BALANCED;
+    private RendererCommon.ScalingType scalingType = RendererCommon.ScalingType.SCALE_ASPECT_BALANCED;
     private boolean micEnabled = true;
     private boolean videoEnabled = true;
 
@@ -416,7 +417,7 @@ public class MultiCallVideoFragment extends Fragment implements AVEngineKit.Call
 
     }
 
-    private final View.OnClickListener clickListener = new View.OnClickListener() {
+    private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             String userId = (String) v.getTag();
@@ -472,7 +473,7 @@ public class MultiCallVideoFragment extends Fragment implements AVEngineKit.Call
         }
     }
 
-    private final Handler handler = new Handler();
+    private Handler handler = new Handler();
 
     private void updateCallDuration() {
         AVEngineKit.CallSession session = getEngineKit().getCurrentSession();

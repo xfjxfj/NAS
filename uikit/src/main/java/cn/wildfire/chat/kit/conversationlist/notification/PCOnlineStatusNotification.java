@@ -7,7 +7,7 @@ package cn.wildfire.chat.kit.conversationlist.notification;
 import cn.wildfirechat.model.PCOnlineInfo;
 
 public class PCOnlineStatusNotification extends StatusNotification {
-    private final PCOnlineInfo pcOnlineInfo;
+    private PCOnlineInfo pcOnlineInfo;
 
     public PCOnlineStatusNotification(PCOnlineInfo info) {
         this.pcOnlineInfo = info;

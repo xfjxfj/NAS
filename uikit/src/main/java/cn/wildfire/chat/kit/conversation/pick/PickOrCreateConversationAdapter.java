@@ -8,11 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.conversation.forward.viewholder.CategoryViewHolder;
 import cn.wildfire.chat.kit.conversation.forward.viewholder.ConversationViewHolder;
@@ -20,7 +21,7 @@ import cn.wildfire.chat.kit.conversation.forward.viewholder.CreateConversationVi
 import cn.wildfirechat.model.ConversationInfo;
 
 public class PickOrCreateConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final Fragment fragment;
+    private Fragment fragment;
     private List<ConversationInfo> conversations;
     private OnConversationItemClickListener conversationItemClickListener;
     private OnNewConversationItemClickListener newConversationItemClickListener;

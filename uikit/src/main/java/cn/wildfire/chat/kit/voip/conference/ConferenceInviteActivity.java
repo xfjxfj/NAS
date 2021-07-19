@@ -7,11 +7,12 @@ package cn.wildfire.chat.kit.voip.conference;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProviders;
 import cn.wildfire.chat.kit.conversation.forward.ForwardPromptView;
 import cn.wildfire.chat.kit.conversation.pick.PickOrCreateConversationActivity;
 import cn.wildfire.chat.kit.group.GroupViewModel;

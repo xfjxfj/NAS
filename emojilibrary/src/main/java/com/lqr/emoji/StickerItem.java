@@ -2,8 +2,8 @@ package com.lqr.emoji;
 
 
 public class StickerItem {
-    private final String category;//类别名
-    private final String name;
+    private String category;//类别名
+    private String name;
 
     public StickerItem(String category, String name) {
         this.category = category;

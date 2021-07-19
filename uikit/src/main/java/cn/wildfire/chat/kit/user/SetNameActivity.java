@@ -68,7 +68,7 @@ public class SetNameActivity extends WfcBaseActivity {
 
     @OnTextChanged(R2.id.nameEditText)
     void onAliasEditTextChange() {
-        menuItem.setEnabled(nameEditText.getText().toString().trim().length() > 0);
+        menuItem.setEnabled(nameEditText.getText().toString().trim().length() > 0 ? true : false);
     }
 
     private void changeAlias() {

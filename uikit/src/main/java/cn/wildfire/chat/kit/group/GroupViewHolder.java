@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.wildfire.chat.kit.GlideApp;
@@ -19,7 +20,7 @@ import cn.wildfirechat.model.GroupInfo;
 
 public class GroupViewHolder extends RecyclerView.ViewHolder {
     protected Fragment fragment;
-    private final GroupListAdapter adapter;
+    private GroupListAdapter adapter;
     @BindView(R2.id.portraitImageView)
     ImageView portraitImageView;
     @BindView(R2.id.nameTextView)

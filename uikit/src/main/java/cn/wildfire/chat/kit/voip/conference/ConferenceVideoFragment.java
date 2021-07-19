@@ -7,6 +7,7 @@ package cn.wildfire.chat.kit.voip.conference;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +24,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.gridlayout.widget.GridLayout;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.webrtc.RendererCommon;
@@ -33,11 +40,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.gridlayout.widget.GridLayout;
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -90,7 +92,7 @@ public class ConferenceVideoFragment extends Fragment implements AVEngineKit.Cal
 
     private Timer hiddenBarTimer = new Timer();
 
-    private final RendererCommon.ScalingType scalingType = RendererCommon.ScalingType.SCALE_ASPECT_BALANCED;
+    private RendererCommon.ScalingType scalingType = RendererCommon.ScalingType.SCALE_ASPECT_BALANCED;
 
     public static final String TAG = "ConferenceVideoFragment";
 
@@ -267,12 +269,12 @@ public class ConferenceVideoFragment extends Fragment implements AVEngineKit.Cal
         ((ConferenceActivity) getActivity()).showFloatingView(null);
     }
 
-    @OnClick(R2.id.manageParticipantView)
+    @OnClick(R2.id.manageParticipantImageView)
     void addParticipant() {
         ((ConferenceActivity) getActivity()).showParticipantList();
     }
 
-    @OnClick(R2.id.muteView)
+    @OnClick(R2.id.muteImageView)
     void mute() {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
         if (session != null && session.getState() == AVEngineKit.CallState.Connected) {
@@ -291,7 +293,7 @@ public class ConferenceVideoFragment extends Fragment implements AVEngineKit.Cal
         }
     }
 
-    @OnClick(R2.id.videoView)
+    @OnClick(R2.id.videoImageView)
     void video() {
         AVEngineKit.CallSession session = getEngineKit().getCurrentSession();
         if (session != null && session.getState() == AVEngineKit.CallState.Connected) {
@@ -301,7 +303,7 @@ public class ConferenceVideoFragment extends Fragment implements AVEngineKit.Cal
         }
     }
 
-    @OnClick(R2.id.hangupView)
+    @OnClick(R2.id.hangupImageView)
     void hangup() {
         AVEngineKit.CallSession session = getEngineKit().getCurrentSession();
         if (session != null) {
@@ -323,7 +325,7 @@ public class ConferenceVideoFragment extends Fragment implements AVEngineKit.Cal
         }
     }
 
-    @OnClick(R2.id.shareScreenView)
+    @OnClick(R2.id.shareScreenImageView)
     void shareScreen() {
         AVEngineKit.CallSession session = getEngineKit().getCurrentSession();
         if (session != null) {
@@ -565,7 +567,7 @@ public class ConferenceVideoFragment extends Fragment implements AVEngineKit.Cal
 
     }
 
-    private final View.OnClickListener clickListener = new View.OnClickListener() {
+    private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             String userId = (String) v.getTag();
@@ -656,7 +658,7 @@ public class ConferenceVideoFragment extends Fragment implements AVEngineKit.Cal
         }
     }
 
-    private final Handler handler = new Handler();
+    private Handler handler = new Handler();
 
     private void updateCallDuration() {
         AVEngineKit.CallSession session = getEngineKit().getCurrentSession();
@@ -714,8 +716,8 @@ public class ConferenceVideoFragment extends Fragment implements AVEngineKit.Cal
     public void onStop() {
         super.onStop();
         if(hiddenBarTimer!=null) {
-            hiddenBarTimer.cancel();
-	        hiddenBarTimer = null;
+            hiddenBarTimer.cancel();;
+            hiddenBarTimer = null;
         }
     }
 }

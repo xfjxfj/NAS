@@ -19,7 +19,7 @@ public enum MessageStatus {
     Played(7),
     All(-1);
 
-    private final int value;
+    private int value;
 
     MessageStatus(int value) {
         this.value = value;

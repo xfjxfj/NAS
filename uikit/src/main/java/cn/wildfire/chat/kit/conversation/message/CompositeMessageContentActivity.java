@@ -6,6 +6,7 @@ package cn.wildfire.chat.kit.conversation.message;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.R2;

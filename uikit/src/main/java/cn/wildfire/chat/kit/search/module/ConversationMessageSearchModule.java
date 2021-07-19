@@ -9,10 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import java.util.List;
+
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.conversation.ConversationActivity;
 import cn.wildfire.chat.kit.search.SearchableModule;
@@ -22,7 +23,7 @@ import cn.wildfirechat.model.Conversation;
 import cn.wildfirechat.remote.ChatManager;
 
 public class ConversationMessageSearchModule extends SearchableModule<Message, MessageViewHolder> {
-    private final Conversation conversation;
+    private Conversation conversation;
 
     public ConversationMessageSearchModule(Conversation conversation) {
         this.conversation = conversation;

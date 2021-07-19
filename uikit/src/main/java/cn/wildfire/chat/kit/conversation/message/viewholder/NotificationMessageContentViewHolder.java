@@ -8,6 +8,7 @@ import android.content.Context;
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
+
 import cn.wildfire.chat.kit.conversation.ConversationFragment;
 import cn.wildfire.chat.kit.conversation.message.model.UiMessage;
 

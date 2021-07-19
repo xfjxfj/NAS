@@ -38,6 +38,8 @@ import com.kongzue.dialog.util.BaseDialog;
 import com.kongzue.dialog.v3.MessageDialog;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
+import com.topqizhi.ai.manager.AIUIManager;
+import com.topqizhi.ai.manager.AudioRecordManager;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.audio.AudioActivity;
@@ -722,6 +724,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                 vBufferedWriter.newLine();
                 vBufferedWriter.close();
                 fileWriter.close();
+                Thread.sleep(500);
+                AIUIManager.INSTANCE.startListening();
             }
         } catch (Exception e) {
             e.printStackTrace();

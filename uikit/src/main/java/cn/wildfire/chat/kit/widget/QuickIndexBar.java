@@ -15,12 +15,13 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+
 import cn.wildfire.chat.kit.R;
 
 public class QuickIndexBar extends View {
 
-    private final Paint mPaint;
-    private final float mTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 13, getResources().getDisplayMetrics());
+    private Paint mPaint;
+    private float mTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 13, getResources().getDisplayMetrics());
     private static final String[] LETTERS = new String[]{
             "↑", "☆", "A", "B", "C", "D", "E", "F", "G", "H",
             "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",

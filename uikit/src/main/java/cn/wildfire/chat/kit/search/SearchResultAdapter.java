@@ -9,12 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.search.viewHolder.CategoryViewHolder;
 import cn.wildfire.chat.kit.search.viewHolder.ExpandViewHolder;
@@ -22,9 +23,9 @@ import cn.wildfire.chat.kit.search.viewHolder.ExpandViewHolder;
 public class SearchResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_CATEGORY = 0;
     private static final int VIEW_TYPE_EXPAND = 1;
-    private final List<InternalSearchResult> results = new ArrayList<>();
-    private final SparseArray<SearchableModule> viewTypeToSearchModule = new SparseArray<>();
-    private final Fragment fragment;
+    private List<InternalSearchResult> results = new ArrayList<>();
+    private SparseArray<SearchableModule> viewTypeToSearchModule = new SparseArray<>();
+    private Fragment fragment;
 
     public SearchResultAdapter(Fragment fragment) {
         this.fragment = fragment;

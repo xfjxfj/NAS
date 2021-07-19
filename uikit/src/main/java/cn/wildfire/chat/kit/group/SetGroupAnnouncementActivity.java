@@ -70,7 +70,11 @@ public class SetGroupAnnouncementActivity extends WfcBaseActivity {
     @Override
     protected void afterMenus(Menu menu) {
         confirmMenuItem = menu.findItem(R.id.confirm);
-	    confirmMenuItem.setEnabled(announcementEditText.getText().toString().trim().length() > 0);
+        if (announcementEditText.getText().toString().trim().length() > 0) {
+            confirmMenuItem.setEnabled(true);
+        } else {
+            confirmMenuItem.setEnabled(false);
+        }
     }
 
     @Override

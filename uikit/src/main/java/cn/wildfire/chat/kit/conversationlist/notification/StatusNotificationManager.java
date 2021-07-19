@@ -4,10 +4,11 @@
 
 package cn.wildfire.chat.kit.conversationlist.notification;
 
+import androidx.annotation.LayoutRes;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.LayoutRes;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.annotation.StatusNotificationType;
 import cn.wildfire.chat.kit.conversationlist.notification.viewholder.ConnectionNotificationViewHolder;

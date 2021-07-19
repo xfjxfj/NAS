@@ -8,17 +8,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
 import cn.wildfire.chat.kit.R;
 import cn.wildfirechat.model.FriendRequest;
 import cn.wildfirechat.model.UserInfo;
 
 public class FriendRequestListAdapter extends RecyclerView.Adapter<FriendRequestViewHolder> {
     private List<FriendRequest> friendRequests;
-    private final FriendRequestListFragment fragment;
+    private FriendRequestListFragment fragment;
 
     public FriendRequestListAdapter(FriendRequestListFragment fragment) {
         this.fragment = fragment;

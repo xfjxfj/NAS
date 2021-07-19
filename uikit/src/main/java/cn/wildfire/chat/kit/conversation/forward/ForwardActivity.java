@@ -7,16 +7,17 @@ package cn.wildfire.chat.kit.conversation.forward;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import cn.wildfire.chat.kit.common.OperateResult;
 import cn.wildfire.chat.kit.conversation.pick.PickOrCreateConversationActivity;
 import cn.wildfire.chat.kit.group.GroupViewModel;

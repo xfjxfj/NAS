@@ -3,14 +3,13 @@ package com.lqr.imagepicker.ui;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AlertDialog;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.lqr.imagepicker.R;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.viewpager.widget.ViewPager;
 
 public class ImagePreviewDelActivity extends ImagePreviewBaseActivity implements View.OnClickListener {
 

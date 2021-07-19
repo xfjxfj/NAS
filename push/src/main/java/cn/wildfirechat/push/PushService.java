@@ -15,6 +15,13 @@ import android.os.Environment;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -44,11 +51,6 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.TimeZone;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
-import androidx.lifecycle.ProcessLifecycleOwner;
 import cn.wildfirechat.remote.ChatManager;
 
 import static com.google.firebase.messaging.Constants.MessageNotificationKeys.TAG;
@@ -61,7 +63,7 @@ public class PushService {
     private HuaweiApiClient HMSClient;
     private boolean hasHMSToken;
     private PushServiceType pushServiceType;
-    private static final PushService INST = new PushService();
+    private static PushService INST = new PushService();
     private static String applicationId;
 
     public enum PushServiceType {
@@ -115,14 +117,22 @@ public class PushService {
             String simNo = tm.getSimOperator();
 
             if(!TextUtils.isEmpty(no) && TextUtils.isEmpty(simNo)) {
-	            //当sim卡和网络都是大陆运营商时，不能使用fcm
-	            //当sim卡和网络有一个不是大陆运营商时，可以使用fcm
-	            return !no.startsWith("460") || !simNo.startsWith("460");
+                if(no.startsWith("460") && simNo.startsWith("460")) {
+                    //当sim卡和网络都是大陆运营商时，不能使用fcm
+                    return false;
+                } else {
+                    //当sim卡和网络有一个不是大陆运营商时，可以使用fcm
+                    return true;
+                }
             }
 
             //区域是中国大陆简体中文且是中国标准时区，不用fcm
             Locale locale = context.getResources().getConfiguration().locale;
-	        return !"zh".equals(locale.getLanguage()) || !"CN".equals(locale.getCountry()) || !"Asia/Shanghai".equals(TimeZone.getDefault().getID());
+            if("zh".equals(locale.getLanguage()) && "CN".equals(locale.getCountry()) && "Asia/Shanghai".equals(TimeZone.getDefault().getID())) {
+                return false;
+            }
+
+            return true;
         }
         return false;
     }
@@ -247,8 +257,8 @@ public class PushService {
                 String appKey = appInfo.metaData.getString("MEIZU_PUSH_APP_KEY");
                 if (!TextUtils.isEmpty(appId) && !TextUtils.isEmpty(appKey)) {
                     String pushId = com.meizu.cloud.pushsdk.PushManager.getPushId(context);
-                    com.meizu.cloud.pushsdk.PushManager.register(context, appId, appKey);
-                    com.meizu.cloud.pushsdk.PushManager.switchPush(context, appId, appKey, pushId, 1, true);
+                    com.meizu.cloud.pushsdk.PushManager.register(context, String.valueOf(appId), appKey);
+                    com.meizu.cloud.pushsdk.PushManager.switchPush(context, String.valueOf(appId), appKey, pushId, 1, true);
                     ChatManager.Instance().setDeviceToken(pushId, PushServiceType.MeiZu.ordinal());
                 }
             }

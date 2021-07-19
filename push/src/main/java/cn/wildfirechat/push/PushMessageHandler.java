@@ -19,7 +19,7 @@ public abstract class PushMessageHandler {
     public static final int DEFAULT_NOTIFICATION_ID = 1883;
     public static final int DEFAULT_NOTIFICATION_CALL_ID = 1884;
     private static PushMessageHandler customHandler;
-    private static final PushMessageHandler defaultHandler;
+    private static PushMessageHandler defaultHandler;
 
     static {
         defaultHandler = new DefaultPushMessageHandler();

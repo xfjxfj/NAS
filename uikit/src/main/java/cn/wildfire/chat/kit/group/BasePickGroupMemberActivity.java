@@ -4,13 +4,14 @@
 
 package cn.wildfire.chat.kit.group;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.WfcBaseActivity;
 import cn.wildfire.chat.kit.contact.model.UIUserInfo;
@@ -29,7 +30,7 @@ public abstract class BasePickGroupMemberActivity extends WfcBaseActivity {
     public static final String MAX_COUNT = "maxCount";
 
     protected PickUserViewModel pickUserViewModel;
-    private final Observer<UIUserInfo> userCheckStatusUpdateLiveDataObserver = new Observer<UIUserInfo>() {
+    private Observer<UIUserInfo> userCheckStatusUpdateLiveDataObserver = new Observer<UIUserInfo>() {
         @Override
         public void onChanged(@Nullable UIUserInfo userInfo) {
             List<UIUserInfo> list = pickUserViewModel.getCheckedUsers();

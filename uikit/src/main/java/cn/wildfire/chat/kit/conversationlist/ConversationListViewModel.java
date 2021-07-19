@@ -4,11 +4,12 @@
 
 package cn.wildfire.chat.kit.conversationlist;
 
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 import cn.wildfirechat.message.Message;
 import cn.wildfirechat.model.Conversation;
 import cn.wildfirechat.model.ConversationInfo;
@@ -40,10 +41,10 @@ public class ConversationListViewModel extends ViewModel implements OnReceiveMes
         OnClearMessageListener {
     private MutableLiveData<List<ConversationInfo>> conversationListLiveData;
     private MutableLiveData<UnreadCount> unreadCountLiveData;
-    private final MutableLiveData<Integer> connectionStatusLiveData = new MutableLiveData<>();
+    private MutableLiveData<Integer> connectionStatusLiveData = new MutableLiveData<>();
 
-    private final List<Conversation.ConversationType> types;
-    private final List<Integer> lines;
+    private List<Conversation.ConversationType> types;
+    private List<Integer> lines;
 
     public ConversationListViewModel(List<Conversation.ConversationType> types, List<Integer> lines) {
         super();
@@ -72,7 +73,7 @@ public class ConversationListViewModel extends ViewModel implements OnReceiveMes
         ChatManager.Instance().removeRemoveConversationListener(this);
     }
 
-    private final AtomicInteger loadingCount = new AtomicInteger(0);
+    private AtomicInteger loadingCount = new AtomicInteger(0);
 
     public void reloadConversationList() {
         reloadConversationList(false);
