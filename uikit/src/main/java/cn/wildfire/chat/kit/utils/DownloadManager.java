@@ -6,6 +6,8 @@ package cn.wildfire.chat.kit.utils;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,7 +15,6 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import androidx.annotation.NonNull;
 import cn.wildfirechat.remote.ChatManager;
 import okhttp3.Call;
 import okhttp3.Callback;

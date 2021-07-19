@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
@@ -47,7 +48,7 @@ public abstract class PickUserFragment extends BaseUserListFragment implements Q
     private boolean isSearchFragmentShowing = false;
     private PickedUserAdapter pickedUserAdapter;
 
-    private final Observer<UIUserInfo> contactCheckStatusUpdateLiveDataObserver = userInfo -> {
+    private Observer<UIUserInfo> contactCheckStatusUpdateLiveDataObserver = userInfo -> {
         ((CheckableUserListAdapter) userListAdapter).updateUserStatus(userInfo);
         hideSearchContactFragment();
         updatePickedUserView(userInfo);

@@ -20,6 +20,7 @@ import cn.wildfirechat.message.core.PersistFlag;
 import cn.wildfirechat.remote.ChatManager;
 
 import static cn.wildfirechat.message.core.MessageContentType.CONTENT_TYPE_ALLOW_MEMBER;
+import static cn.wildfirechat.message.core.MessageContentType.CONTENT_TYPE_MUTE_MEMBER;
 
 @ContentTag(type = CONTENT_TYPE_ALLOW_MEMBER, flag = PersistFlag.Persist)
 public class GroupAllowMemberNotificationContent extends NotificationMessageContent {

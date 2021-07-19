@@ -10,9 +10,9 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
 
-import java.util.List;
-
 import androidx.viewpager.widget.PagerAdapter;
+
+import java.util.List;
 
 import static com.lqr.emoji.EmotionLayout.EMOJI_PER_PAGE;
 import static com.lqr.emoji.EmotionLayout.STICKER_PER_PAGE;
@@ -26,10 +26,10 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
 
     private int mPageCount = 0;
 
-    private final int mEmotionLayoutWidth;
-    private final int mEmotionLayoutHeight;
+    private int mEmotionLayoutWidth;
+    private int mEmotionLayoutHeight;
 
-    private final IEmotionSelectedListener listener;
+    private IEmotionSelectedListener listener;
 
     public EmotionViewPagerAdapter(int emotionLayoutWidth, int emotionLayoutHeight, boolean stickerVisible, IEmotionSelectedListener listener) {
         mEmotionLayoutWidth = emotionLayoutWidth;

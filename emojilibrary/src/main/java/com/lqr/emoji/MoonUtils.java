@@ -80,7 +80,7 @@ public class MoonUtils {
         return SpannableString.valueOf(ssb);
     }
 
-    private static final Pattern mATagPattern = Pattern.compile("<a.*?>.*?</a>");
+    private static Pattern mATagPattern = Pattern.compile("<a.*?>.*?</a>");
 
     public static SpannableString makeSpannableStringTags(Context context, String value, float scale, int align) {
         return makeSpannableStringTags(context, value, DEF_SCALE, align, true);
@@ -247,7 +247,7 @@ public class MoonUtils {
         private int start;
         private int end;
         private String mUrl;
-        private final String tag;
+        private String tag;
 
         ATagSpan(String tag, String url) {
             this.tag = tag;

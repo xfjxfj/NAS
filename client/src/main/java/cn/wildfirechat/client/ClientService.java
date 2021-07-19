@@ -19,6 +19,9 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.JsonReader;
+
+import androidx.annotation.Nullable;
 
 import com.tencent.mars.BaseEvent;
 import com.tencent.mars.Mars;
@@ -44,7 +47,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import androidx.annotation.Nullable;
 import cn.wildfirechat.ErrorCode;
 import cn.wildfirechat.message.CompositeMessageContent;
 import cn.wildfirechat.message.Message;
@@ -120,7 +122,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
     ProtoLogic.IGroupInfoUpdateCallback,
     ProtoLogic.IConferenceEventCallback,
     ProtoLogic.IChannelInfoUpdateCallback, ProtoLogic.IGroupMembersUpdateCallback {
-    private final Map<Integer, Class<? extends MessageContent>> contentMapper = new HashMap<>();
+    private Map<Integer, Class<? extends MessageContent>> contentMapper = new HashMap<>();
 
     private int mConnectionStatus;
     private String mBackupDeviceToken;
@@ -131,22 +133,22 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
     private boolean logined;
     private String userId;
     private String clientId;
-    private final RemoteCallbackList<IOnReceiveMessageListener> onReceiveMessageListeners = new WfcRemoteCallbackList<>();
-    private final RemoteCallbackList<IOnConnectionStatusChangeListener> onConnectionStatusChangeListenes = new WfcRemoteCallbackList<>();
-    private final RemoteCallbackList<IOnFriendUpdateListener> onFriendUpdateListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
-    private final RemoteCallbackList<IOnUserInfoUpdateListener> onUserInfoUpdateListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
-    private final RemoteCallbackList<IOnGroupInfoUpdateListener> onGroupInfoUpdateListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
-    private final RemoteCallbackList<IOnSettingUpdateListener> onSettingUpdateListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
-    private final RemoteCallbackList<IOnChannelInfoUpdateListener> onChannelInfoUpdateListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
-    private final RemoteCallbackList<IOnGroupMembersUpdateListener> onGroupMembersUpdateListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
-    private final RemoteCallbackList<IOnConferenceEventListener> onConferenceEventListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
+    private RemoteCallbackList<IOnReceiveMessageListener> onReceiveMessageListeners = new WfcRemoteCallbackList<>();
+    private RemoteCallbackList<IOnConnectionStatusChangeListener> onConnectionStatusChangeListenes = new WfcRemoteCallbackList<>();
+    private RemoteCallbackList<IOnFriendUpdateListener> onFriendUpdateListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
+    private RemoteCallbackList<IOnUserInfoUpdateListener> onUserInfoUpdateListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
+    private RemoteCallbackList<IOnGroupInfoUpdateListener> onGroupInfoUpdateListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
+    private RemoteCallbackList<IOnSettingUpdateListener> onSettingUpdateListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
+    private RemoteCallbackList<IOnChannelInfoUpdateListener> onChannelInfoUpdateListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
+    private RemoteCallbackList<IOnGroupMembersUpdateListener> onGroupMembersUpdateListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
+    private RemoteCallbackList<IOnConferenceEventListener> onConferenceEventListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
 
-    private final AppLogic.AccountInfo accountInfo = new AppLogic.AccountInfo();
+    private AppLogic.AccountInfo accountInfo = new AppLogic.AccountInfo();
     //        public final String DEVICE_NAME = android.os.Build.MANUFACTURER + "-" + android.os.Build.MODEL;
     public String DEVICE_TYPE = "Android";//"android-" + android.os.Build.VERSION.SDK_INT;
     private AppLogic.DeviceInfo info;
 
-    private final int clientVersion = 200;
+    private int clientVersion = 200;
     private static final String TAG = "ClientService";
 
     private BaseEvent.ConnectionReceiver mConnectionReceiver;
@@ -324,13 +326,12 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
             protoMessage.setStatus(msg.status.value());
             protoMessage.setMessageUid(msg.messageUid);
             protoMessage.setTimestamp(msg.serverTime);
-            protoMessage.setLocalExtra(msg.localExtra);
 
             return protoMessage;
         }
 
         private class SendMessageCallback implements ProtoLogic.ISendMessageCallback {
-            private final ISendMessageCallback callback;
+            private ISendMessageCallback callback;
 
             SendMessageCallback(ISendMessageCallback callback) {
                 this.callback = callback;
@@ -824,11 +825,6 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-        }
-
-        @Override
-        public boolean setMessageLocalExtra(long messageId, String extra) throws RemoteException {
-            return ProtoLogic.setMessageLocalExtra(messageId, extra);
         }
 
         @Override
@@ -1444,7 +1440,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
 
                 String fileName = "";
                 if (mediaPath.contains("/")) {
-                    fileName = mediaPath.substring(mediaPath.lastIndexOf("/") + 1);
+                    fileName = mediaPath.substring(mediaPath.lastIndexOf("/") + 1, mediaPath.length());
                 }
                 uploadMedia(fileName, data, mediaType, callback);
             } catch (Exception e) {
@@ -2529,7 +2525,6 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         msg.status = MessageStatus.status(protoMessage.getStatus());
         msg.messageUid = protoMessage.getMessageUid();
         msg.serverTime = protoMessage.getTimestamp();
-        msg.localExtra = protoMessage.getLocalExtra();
 
         return msg;
     }

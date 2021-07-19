@@ -14,13 +14,13 @@ import cn.wildfire.chat.kit.net.SimpleCallback;
 
 
 public interface AppServiceProvider {
-    interface UpdateGroupAnnouncementCallback {
+    public interface UpdateGroupAnnouncementCallback {
         void onUiSuccess(GroupAnnouncement announcement);
 
         void onUiFailure(int code, String msg);
     }
 
-    interface GetGroupAnnouncementCallback {
+    public interface GetGroupAnnouncementCallback {
         void onUiSuccess(GroupAnnouncement announcement);
 
         void onUiFailure(int code, String msg);
@@ -32,9 +32,9 @@ public interface AppServiceProvider {
         void onUiFailure(int code, String msg);
     }
 
-    void getGroupAnnouncement(String groupId, GetGroupAnnouncementCallback callback);
+    public void getGroupAnnouncement(String groupId, GetGroupAnnouncementCallback callback);
 
-    void updateGroupAnnouncement(String groupId, String announcement, UpdateGroupAnnouncementCallback callback);
+    public void updateGroupAnnouncement(String groupId, String announcement, UpdateGroupAnnouncementCallback callback);
 
     void showPCLoginActivity(String userId, String token, int platform);
 

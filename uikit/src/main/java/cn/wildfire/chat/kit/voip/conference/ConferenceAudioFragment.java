@@ -19,16 +19,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.webrtc.StatsReport;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.gridlayout.widget.GridLayout;
 import androidx.lifecycle.ViewModelProviders;
+
+import org.webrtc.StatsReport;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -164,12 +165,12 @@ public class ConferenceAudioFragment extends Fragment implements AVEngineKit.Cal
         ((ConferenceActivity) getActivity()).showFloatingView(null);
     }
 
-    @OnClick(R2.id.manageParticipantView)
+    @OnClick(R2.id.manageParticipantImageView)
     void addParticipant() {
         ((ConferenceActivity) getActivity()).showParticipantList();
     }
 
-    @OnClick(R2.id.muteView)
+    @OnClick(R2.id.muteImageView)
     void mute() {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
         if (session != null && session.getState() == AVEngineKit.CallState.Connected) {
@@ -179,7 +180,7 @@ public class ConferenceAudioFragment extends Fragment implements AVEngineKit.Cal
         }
     }
 
-    @OnClick(R2.id.speakerView)
+    @OnClick(R2.id.speakerImageView)
     void speaker() {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
         if (session != null && session.getState() == AVEngineKit.CallState.Connected) {
@@ -191,7 +192,7 @@ public class ConferenceAudioFragment extends Fragment implements AVEngineKit.Cal
         }
     }
 
-    @OnClick(R2.id.hangupView)
+    @OnClick(R2.id.hangupImageView)
     void hangup() {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
         if (session != null) {
@@ -361,7 +362,11 @@ public class ConferenceAudioFragment extends Fragment implements AVEngineKit.Cal
             speakerImageView.setSelected(false);
         }
 
-	    speakerImageView.setEnabled(device != AVAudioManager.AudioDevice.WIRED_HEADSET && device != AVAudioManager.AudioDevice.BLUETOOTH);
+        if (device == AVAudioManager.AudioDevice.WIRED_HEADSET || device == AVAudioManager.AudioDevice.BLUETOOTH) {
+            speakerImageView.setEnabled(false);
+        } else {
+            speakerImageView.setEnabled(true);
+        }
     }
 
     @Override
@@ -385,7 +390,7 @@ public class ConferenceAudioFragment extends Fragment implements AVEngineKit.Cal
         }
     }
 
-    private final Handler handler = new Handler();
+    private Handler handler = new Handler();
 
     private void updateCallDuration() {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();

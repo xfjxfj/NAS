@@ -11,10 +11,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.File;
-
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.io.File;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.wildfire.chat.kit.Config;

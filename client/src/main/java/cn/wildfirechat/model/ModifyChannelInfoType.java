@@ -14,7 +14,7 @@ public enum ModifyChannelInfoType {
     Modify_Channel_Desc(2),
     Modify_Channel_Extra(3);
 
-    private final int value;
+    private int value;
 
     ModifyChannelInfoType(int value) {
         this.value = value;

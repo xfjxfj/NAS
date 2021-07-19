@@ -8,20 +8,21 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.TextUtils;
 
-import java.util.List;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import java.util.List;
+
 import cn.wildfirechat.message.Message;
 import cn.wildfirechat.model.Conversation;
 import cn.wildfirechat.remote.ChatManager;
 
 public class SearchViewModel extends ViewModel {
-    private final MutableLiveData<SearchResult> resultLiveData = new MutableLiveData<>();
+    private MutableLiveData<SearchResult> resultLiveData = new MutableLiveData<>();
 
     private Handler workHandler;
-    private final Handler mainHandler = new Handler();
+    private Handler mainHandler = new Handler();
     private String keyword;
 
     public SearchViewModel() {

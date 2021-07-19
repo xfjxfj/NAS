@@ -13,7 +13,7 @@ import android.os.Build;
 import android.os.Handler;
 
 public class AudioRecorder implements AudioManager.OnAudioFocusChangeListener {
-    private final Context context;
+    private Context context;
     private AudioManager audioManager;
     private MediaRecorder mediaRecorder;
     private AudioFocusRequest audioFocusRequest;

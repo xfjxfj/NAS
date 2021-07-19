@@ -9,13 +9,14 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.Collections;
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.OnTextChanged;
 import cn.wildfire.chat.kit.R;
@@ -83,7 +84,11 @@ public class ChangeMyNameActivity extends WfcBaseActivity {
     @OnTextChanged(value = R2.id.nameEditText, callback = OnTextChanged.Callback.TEXT_CHANGED)
     void inputNewName(CharSequence s, int start, int before, int count) {
         if (confirmMenuItem != null) {
-	        confirmMenuItem.setEnabled(nameEditText.getText().toString().trim().length() > 0);
+            if (nameEditText.getText().toString().trim().length() > 0) {
+                confirmMenuItem.setEnabled(true);
+            } else {
+                confirmMenuItem.setEnabled(false);
+            }
         }
     }
 

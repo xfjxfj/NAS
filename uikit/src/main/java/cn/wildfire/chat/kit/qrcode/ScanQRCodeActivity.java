@@ -11,6 +11,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import com.google.zxing.Result;
 import com.king.zxing.CaptureHelper;
 import com.king.zxing.Intents;
@@ -21,7 +23,6 @@ import com.lqr.imagepicker.bean.ImageItem;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import androidx.annotation.Nullable;
 import butterknife.BindView;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.R2;

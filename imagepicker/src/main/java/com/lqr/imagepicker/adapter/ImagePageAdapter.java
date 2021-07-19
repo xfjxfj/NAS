@@ -2,6 +2,7 @@ package com.lqr.imagepicker.adapter;
 
 import android.app.Activity;
 import android.net.Uri;
+import androidx.viewpager.widget.PagerAdapter;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,17 +14,16 @@ import com.lqr.imagepicker.bean.ImageItem;
 
 import java.util.ArrayList;
 
-import androidx.viewpager.widget.PagerAdapter;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ImagePageAdapter extends PagerAdapter {
 
-    private final int screenWidth;
-    private final int screenHeight;
+    private int screenWidth;
+    private int screenHeight;
     private ImagePicker imagePicker;
     private ArrayList<ImageItem> images = new ArrayList<>();
-    private final Activity mActivity;
+    private Activity mActivity;
     public PhotoViewClickListener listener;
 
     public ImagePageAdapter(Activity activity, ArrayList<ImageItem> images) {

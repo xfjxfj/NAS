@@ -14,7 +14,7 @@ import cn.wildfirechat.message.core.ContentTag;
 
 public class MessageViewHolderManager {
     private static final String TAG = "MsgViewHolderManager";
-    private static final MessageViewHolderManager instance = new MessageViewHolderManager();
+    private static MessageViewHolderManager instance = new MessageViewHolderManager();
 
     private MessageViewHolderManager() {
         init();
@@ -39,9 +39,9 @@ public class MessageViewHolderManager {
         registerMessageViewHolder(CompositeMessageContentViewHolder.class, R.layout.conversation_item_composite_send, R.layout.conversation_item_composite_receive);
     }
 
-    private final SparseArray<Class<? extends MessageContentViewHolder>> messageViewHolders = new SparseArray<>();
-    private final SparseArray<Integer> messageSendLayoutRes = new SparseArray<>();
-    private final SparseArray<Integer> messageReceiveLayoutRes = new SparseArray<>();
+    private SparseArray<Class<? extends MessageContentViewHolder>> messageViewHolders = new SparseArray<>();
+    private SparseArray<Integer> messageSendLayoutRes = new SparseArray<>();
+    private SparseArray<Integer> messageReceiveLayoutRes = new SparseArray<>();
 
     public void registerMessageViewHolder(Class<? extends MessageContentViewHolder> clazz, int sendLayoutRes, int receiveLayoutRes) {
         MessageContentType contentType = clazz.getAnnotation(MessageContentType.class);
@@ -53,7 +53,7 @@ public class MessageViewHolderManager {
             throw new IllegalArgumentException("must set message content viewHolder layout ");
         }
 
-        Class<? extends MessageContent>[] clazzes = contentType.value();
+        Class<? extends MessageContent> clazzes[] = contentType.value();
         for (Class<? extends MessageContent> notificationClazz : clazzes) {
             ContentTag contentTag = notificationClazz.getAnnotation(ContentTag.class);
             if (messageViewHolders.get(contentTag.type()) == null) {

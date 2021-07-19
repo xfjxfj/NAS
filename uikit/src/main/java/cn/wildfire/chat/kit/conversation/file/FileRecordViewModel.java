@@ -4,11 +4,12 @@
 
 package cn.wildfire.chat.kit.conversation.file;
 
-import java.util.List;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import java.util.List;
+
 import cn.wildfire.chat.kit.common.OperateResult;
 import cn.wildfirechat.model.Conversation;
 import cn.wildfirechat.model.FileRecord;

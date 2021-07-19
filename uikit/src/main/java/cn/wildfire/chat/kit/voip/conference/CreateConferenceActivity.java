@@ -11,9 +11,10 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import androidx.lifecycle.ViewModelProviders;
+
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
@@ -76,13 +77,21 @@ public class CreateConferenceActivity extends WfcBaseActivity {
     @OnTextChanged(value = R2.id.conferenceTitleTextInputEditText, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void conferenceTitleChannelName(Editable editable) {
         this.title = editable.toString();
-	    createButton.setEnabled(!TextUtils.isEmpty(title) && !TextUtils.isEmpty(desc));
+        if (!TextUtils.isEmpty(title) && !TextUtils.isEmpty(desc)) {
+            createButton.setEnabled(true);
+        } else {
+            createButton.setEnabled(false);
+        }
     }
 
     @OnTextChanged(value = R2.id.conferenceDescTextInputEditText, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void conferenceDescChannelName(Editable editable) {
         this.desc = editable.toString();
-	    createButton.setEnabled(!TextUtils.isEmpty(desc) && !TextUtils.isEmpty(title));
+        if (!TextUtils.isEmpty(desc) && !TextUtils.isEmpty(title)) {
+            createButton.setEnabled(true);
+        } else {
+            createButton.setEnabled(false);
+        }
     }
 
     @OnClick(R2.id.createConferenceBtn)
@@ -92,7 +101,7 @@ public class CreateConferenceActivity extends WfcBaseActivity {
         boolean advanced = advancedSwitch.isChecked();
         String title = titleEditText.getText().toString();
         String desc = descEditText.getText().toString();
-        AVEngineKit.CallSession session = AVEngineKit.Instance().startConference(null, audioOnly, null, ChatManager.Instance().getUserId(), title, desc, audience, advanced, false, null);
+        AVEngineKit.CallSession session = AVEngineKit.Instance().startConference(null, audioOnly, null, ChatManager.Instance().getUserId(), title, desc, audience, advanced, null);
         if (session != null) {
             Intent intent = new Intent(this, ConferenceActivity.class);
             startActivity(intent);

@@ -6,6 +6,7 @@ package cn.wildfire.chat.kit.viewmodel;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
 import cn.wildfire.chat.kit.common.OperateResult;
 import cn.wildfirechat.remote.ChatManager;
 import cn.wildfirechat.remote.GeneralCallback;

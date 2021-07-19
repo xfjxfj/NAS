@@ -51,7 +51,7 @@ public class OKHttpHelper {
     public static void init(Context context) {
         AppContext = new WeakReference<>(context);
     }
-    private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+    private static OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .cookieJar(new CookieJar() {
@@ -89,7 +89,7 @@ public class OKHttpHelper {
             })
             .build();
 
-    private static final Gson gson = new Gson();
+    private static Gson gson = new Gson();
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static <T> void get(final String url, Map<String, String> params, final Callback<T> callback) {

@@ -19,7 +19,7 @@ public enum MessageContentMediaType {
     STICKER(7),
     MOMENTS(8);
 
-    private final int value;
+    private int value;
 
     MessageContentMediaType(int value) {
         this.value = value;

@@ -8,12 +8,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.wildfire.chat.kit.R;
@@ -26,9 +27,9 @@ import cn.wildfirechat.model.GroupInfo;
 import cn.wildfirechat.model.UserInfo;
 
 public class ConversationViewHolder extends RecyclerView.ViewHolder {
-    private final Fragment fragment;
-    private final UserViewModel userViewModel;
-    private final GroupViewModel groupViewModel;
+    private Fragment fragment;
+    private UserViewModel userViewModel;
+    private GroupViewModel groupViewModel;
     @BindView(R2.id.nameTextView)
     TextView nameTextView;
     @BindView(R2.id.portraitImageView)

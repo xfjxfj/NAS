@@ -13,6 +13,7 @@ import android.view.ViewStub;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import cn.wildfire.chat.kit.R;
 
 public abstract class ProgressFragment extends Fragment {

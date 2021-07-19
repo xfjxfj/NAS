@@ -8,6 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.FrameLayout;
 
+import androidx.annotation.IntRange;
+import androidx.fragment.app.Fragment;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,19 +18,17 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.IntRange;
-import androidx.fragment.app.Fragment;
 import cn.wildfire.chat.kit.annotation.ExtContextMenuItem;
 import cn.wildfire.chat.kit.viewmodel.MessageViewModel;
 import cn.wildfire.chat.kit.widget.ViewPagerFixed;
 import cn.wildfirechat.model.Conversation;
 
 public class ConversationExtension {
-    private final Context context;
-    private final Fragment fragment;
+    private Context context;
+    private Fragment fragment;
     private Conversation conversation;
-    private final FrameLayout containerLayout;
-    private final ViewPagerFixed extViewPager;
+    private FrameLayout containerLayout;
+    private ViewPagerFixed extViewPager;
     private List<ConversationExt> exts;
 
     private boolean hideOnScroll = true;

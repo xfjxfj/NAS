@@ -23,7 +23,7 @@ import cn.wildfirechat.remote.ChatManager;
  */
 public abstract class SearchActivity extends WfcBaseNoToolbarActivity {
     private SearchFragment searchFragment;
-    private final List<SearchableModule> modules = new ArrayList<>();
+    private List<SearchableModule> modules = new ArrayList<>();
 
     @BindView(R2.id.search_view)
     SearchView searchView;

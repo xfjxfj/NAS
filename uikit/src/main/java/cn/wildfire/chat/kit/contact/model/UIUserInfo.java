@@ -20,7 +20,7 @@ public class UIUserInfo {
     // 用来排序的字段
     private String sortName;
     private boolean showCategory;
-    private final UserInfo userInfo;
+    private UserInfo userInfo;
     private boolean isChecked;
     private boolean isCheckable = true;
     private String extra;

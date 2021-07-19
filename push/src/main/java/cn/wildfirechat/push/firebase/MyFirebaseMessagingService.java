@@ -2,10 +2,14 @@ package cn.wildfirechat.push.firebase;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import androidx.annotation.NonNull;
+import org.json.JSONException;
+
+import cn.wildfirechat.push.AndroidPushMessage;
 import cn.wildfirechat.push.PushService;
 import cn.wildfirechat.remote.ChatManager;
 

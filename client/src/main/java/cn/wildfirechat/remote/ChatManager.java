@@ -22,6 +22,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.LruCache;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
+
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
@@ -37,12 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
-import androidx.lifecycle.ProcessLifecycleOwner;
 import cn.wildfirechat.ErrorCode;
 import cn.wildfirechat.UserSource;
 import cn.wildfirechat.client.ClientService;
@@ -149,7 +150,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
 public class ChatManager {
     private static final String TAG = ChatManager.class.getName();
 
-    private final String SERVER_HOST;
+    private String SERVER_HOST;
 
     private static IRemoteClient mClient;
 
@@ -163,7 +164,7 @@ public class ChatManager {
     private String deviceToken;
     private String clientId;
     private int pushType;
-    private final Map<Integer, Class<? extends MessageContent>> messageContentMap = new HashMap<>();
+    private Map<Integer, Class<? extends MessageContent>> messageContentMap = new HashMap<>();
 
     private UserSource userSource;
 
@@ -177,26 +178,26 @@ public class ChatManager {
     private int backupAddressPort = 80;
 
     private boolean isBackground = true;
-    private final List<OnReceiveMessageListener> onReceiveMessageListeners = new ArrayList<>();
-    private final List<OnConnectionStatusChangeListener> onConnectionStatusChangeListeners = new ArrayList<>();
-    private final List<OnSendMessageListener> sendMessageListeners = new ArrayList<>();
-    private final List<OnGroupInfoUpdateListener> groupInfoUpdateListeners = new ArrayList<>();
-    private final List<OnGroupMembersUpdateListener> groupMembersUpdateListeners = new ArrayList<>();
-    private final List<OnUserInfoUpdateListener> userInfoUpdateListeners = new ArrayList<>();
-    private final List<OnSettingUpdateListener> settingUpdateListeners = new ArrayList<>();
-    private final List<OnFriendUpdateListener> friendUpdateListeners = new ArrayList<>();
-    private final List<OnConversationInfoUpdateListener> conversationInfoUpdateListeners = new ArrayList<>();
-    private final List<OnRecallMessageListener> recallMessageListeners = new ArrayList<>();
-    private final List<OnDeleteMessageListener> deleteMessageListeners = new ArrayList<>();
-    private final List<OnChannelInfoUpdateListener> channelInfoUpdateListeners = new ArrayList<>();
-    private final List<OnMessageUpdateListener> messageUpdateListeners = new ArrayList<>();
-    private final List<OnClearMessageListener> clearMessageListeners = new ArrayList<>();
-    private final List<OnRemoveConversationListener> removeConversationListeners = new ArrayList<>();
+    private List<OnReceiveMessageListener> onReceiveMessageListeners = new ArrayList<>();
+    private List<OnConnectionStatusChangeListener> onConnectionStatusChangeListeners = new ArrayList<>();
+    private List<OnSendMessageListener> sendMessageListeners = new ArrayList<>();
+    private List<OnGroupInfoUpdateListener> groupInfoUpdateListeners = new ArrayList<>();
+    private List<OnGroupMembersUpdateListener> groupMembersUpdateListeners = new ArrayList<>();
+    private List<OnUserInfoUpdateListener> userInfoUpdateListeners = new ArrayList<>();
+    private List<OnSettingUpdateListener> settingUpdateListeners = new ArrayList<>();
+    private List<OnFriendUpdateListener> friendUpdateListeners = new ArrayList<>();
+    private List<OnConversationInfoUpdateListener> conversationInfoUpdateListeners = new ArrayList<>();
+    private List<OnRecallMessageListener> recallMessageListeners = new ArrayList<>();
+    private List<OnDeleteMessageListener> deleteMessageListeners = new ArrayList<>();
+    private List<OnChannelInfoUpdateListener> channelInfoUpdateListeners = new ArrayList<>();
+    private List<OnMessageUpdateListener> messageUpdateListeners = new ArrayList<>();
+    private List<OnClearMessageListener> clearMessageListeners = new ArrayList<>();
+    private List<OnRemoveConversationListener> removeConversationListeners = new ArrayList<>();
 
-    private final List<IMServiceStatusListener> imServiceStatusListeners = new ArrayList<>();
-    private final List<OnMessageDeliverListener> messageDeliverListeners = new ArrayList<>();
-    private final List<OnMessageReadListener> messageReadListeners = new ArrayList<>();
-    private final List<OnConferenceEventListener> conferenceEventListeners = new ArrayList<>();
+    private List<IMServiceStatusListener> imServiceStatusListeners = new ArrayList<>();
+    private List<OnMessageDeliverListener> messageDeliverListeners = new ArrayList<>();
+    private List<OnMessageReadListener> messageReadListeners = new ArrayList<>();
+    private List<OnConferenceEventListener> conferenceEventListeners = new ArrayList<>();
 
     // key = userId
     private LruCache<String, UserInfo> userInfoCache;
@@ -216,7 +217,7 @@ public class ChatManager {
         //精确搜索电话号码
         Mobile(3);
 
-        private final int value;
+        private int value;
 
         SearchUserType(int value) {
             this.value = value;
@@ -754,7 +755,8 @@ public class ChatManager {
 
         String imei = null;
         try (
-            RandomAccessFile fw = new RandomAccessFile(gContext.getFilesDir().getAbsoluteFile() + "/.wfcClientId", "rw")) {
+            RandomAccessFile fw = new RandomAccessFile(gContext.getFilesDir().getAbsoluteFile() + "/.wfcClientId", "rw");
+        ) {
 
             FileChannel chan = fw.getChannel();
             FileLock lock = chan.lock();
@@ -2824,27 +2826,6 @@ public class ChatManager {
         }
     }
 
-    /**
-     * 设置消息本地扩展信息
-     *
-     * @param messageId 消息ID
-     * @param extra     附加信息
-     *
-     * @return true更新成功，false更新失败
-     */
-    public boolean setMessageLocalExtra(long messageId, String extra) {
-        if (!checkRemoteService()) {
-            return false;
-        }
-
-        try {
-            mClient.setMessageLocalExtra(messageId, extra);
-            return true;
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
     /**
      * 清除所有会话的未读状态
      */
@@ -5249,7 +5230,10 @@ public class ChatManager {
         }
 
         String value = getUserSetting(UserSettingScope.FavoriteGroup, groupId);
-        return value != null && value.equals("1");
+        if (value == null || !value.equals("1")) {
+            return false;
+        }
+        return true;
     }
 
     public void setFavGroup(String groupId, boolean isSet, GeneralCallback callback) {
@@ -5291,7 +5275,10 @@ public class ChatManager {
         }
 
         String value = getUserSetting(UserSettingScope.FavoriteUser, userId);
-        return value != null && value.equals("1");
+        if (value == null || !value.equals("1")) {
+            return false;
+        }
+        return true;
     }
 
     public void setFavUser(String userId, boolean isSet, GeneralCallback callback) {
@@ -6111,7 +6098,10 @@ public class ChatManager {
         }
 
         String value = getUserSetting(UserSettingScope.MuteWhenPcOnline, "");
-        return value != null && value.equals("1");
+        if (value == null || !value.equals("1")) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -6274,7 +6264,7 @@ public class ChatManager {
         }
     }
 
-    private final ServiceConnection serviceConnection = new ServiceConnection() {
+    private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             mClient = IRemoteClient.Stub.asInterface(iBinder);

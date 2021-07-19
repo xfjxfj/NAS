@@ -7,15 +7,16 @@ package cn.wildfire.chat.kit.conversation.pick;
 import android.content.Intent;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import cn.wildfire.chat.kit.common.OperateResult;
 import cn.wildfire.chat.kit.contact.model.UIUserInfo;
 import cn.wildfire.chat.kit.contact.pick.PickConversationTargetActivity;
@@ -27,7 +28,7 @@ import cn.wildfirechat.model.UserInfo;
 public class PickOrCreateConversationTargetActivity extends PickConversationTargetActivity {
     // TODO 多选，单选
     // 先支持单选
-    private final boolean singleMode = true;
+    private boolean singleMode = true;
 
     @Override
     protected void onContactPicked(List<UIUserInfo> newlyCheckedUserInfos) {

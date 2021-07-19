@@ -4,13 +4,14 @@
 
 package cn.wildfire.chat.kit.conversationlist.notification;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 import cn.wildfire.chat.kit.common.AppScopeViewModel;
 
 public class StatusNotificationViewModel extends ViewModel implements AppScopeViewModel {

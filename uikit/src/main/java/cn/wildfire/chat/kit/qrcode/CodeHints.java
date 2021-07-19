@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CodeHints {
-    private static final Map<DecodeHintType, Object> DECODE_HINTS = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
-    private static final Map<EncodeHintType, Object> ENCODE_HINTS = new EnumMap<>(EncodeHintType.class);
+    private static Map<DecodeHintType, Object> DECODE_HINTS = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
+    private static Map<EncodeHintType, Object> ENCODE_HINTS = new EnumMap<>(EncodeHintType.class);
 
     static {
         List<BarcodeFormat> formats = new ArrayList<BarcodeFormat>();

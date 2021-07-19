@@ -11,11 +11,12 @@ import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+
 import cn.wildfire.chat.kit.R;
 
 public class MaxSizeRecyclerView extends RecyclerView {
-    private final int mMaxWidth;
-    private final int mMaxHeight;
+    private int mMaxWidth;
+    private int mMaxHeight;
 
     public MaxSizeRecyclerView(@NonNull Context context) {
         this(context, null);

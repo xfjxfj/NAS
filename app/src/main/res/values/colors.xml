@@ -31,4 +31,15 @@
 	<color name="image_puwind_button_text_2">#FFFFFF</color>
 	<color name="popup_intelligent_voice_keyword_bg">#485465</color>
 
+	<color name="gray24">#A6A6AD</color>
+	<color name="gray25">#5F626B</color>
+	<color name="gray26">#485465</color>
+
+	<color name="blue4">#2094FA</color>
+
+	<color name="black9">#5C5F68</color>
+	<color name="black10">#B5B6BF</color>
+	<color name="black11">#252529</color>
+	<color name="black12">#A6A7B2</color>
+
 </resources>

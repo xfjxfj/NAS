@@ -3,6 +3,10 @@ package com.lqr.imagepicker;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import androidx.fragment.app.FragmentActivity;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
 import com.lqr.imagepicker.bean.ImageFolder;
 import com.lqr.imagepicker.bean.ImageItem;
@@ -10,11 +14,6 @@ import com.lqr.imagepicker.bean.ImageItem;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.fragment.app.FragmentActivity;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.CursorLoader;
-import androidx.loader.content.Loader;
 
 public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -29,9 +28,9 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
             MediaStore.Images.Media.MIME_TYPE,      //图片的类型     image/jpeg
             MediaStore.Images.Media.DATE_ADDED};    //图片被添加的时间，long型  1450518608
 
-    private final FragmentActivity activity;
-    private final OnImageLoadListener loadedListener;                     //图片加载完成的回调接口
-    private final ArrayList<ImageFolder> imageFolders = new ArrayList<>();   //所有的图片文件夹
+    private FragmentActivity activity;
+    private OnImageLoadListener loadedListener;                     //图片加载完成的回调接口
+    private ArrayList<ImageFolder> imageFolders = new ArrayList<>();   //所有的图片文件夹
 
     /**
      * @param activity       用于初始化LoaderManager，需要兼容到2.3

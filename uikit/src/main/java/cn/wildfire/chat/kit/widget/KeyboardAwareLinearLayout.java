@@ -31,11 +31,12 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.View;
 
+import androidx.appcompat.widget.LinearLayoutCompat;
+
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
-import androidx.appcompat.widget.LinearLayoutCompat;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.utils.ServiceUtil;
 

@@ -12,6 +12,7 @@ import cn.wildfirechat.message.core.MessagePayload;
 import cn.wildfirechat.message.core.PersistFlag;
 
 import static cn.wildfirechat.message.core.MessageContentType.ContentType_Friend_Added;
+import static cn.wildfirechat.message.core.MessageContentType.ContentType_Friend_Greeting;
 
 /**
  * Created by heavyrainlee on 20/12/2017.

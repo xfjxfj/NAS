@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
 import butterknife.BindView;
 import butterknife.OnTextChanged;
 import cn.wildfire.chat.kit.R;
@@ -73,7 +74,7 @@ public class SetAliasActivity extends WfcBaseActivity {
 
     @OnTextChanged(R2.id.aliasEditText)
     void onAliasEditTextChange() {
-        menuItem.setEnabled(aliasEditText.getText().toString().trim().length() > 0);
+        menuItem.setEnabled(aliasEditText.getText().toString().trim().length() > 0 ? true : false);
     }
 
     private void changeAlias() {

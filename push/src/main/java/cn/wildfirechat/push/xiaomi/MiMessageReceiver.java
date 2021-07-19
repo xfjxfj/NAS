@@ -28,7 +28,7 @@ import cn.wildfirechat.remote.ChatManager;
 
 public class MiMessageReceiver extends PushMessageReceiver {
     private String mRegId;
-    private final long mResultCode = -1;
+    private long mResultCode = -1;
     private String mReason;
     private String mCommand;
     private String mMessage;

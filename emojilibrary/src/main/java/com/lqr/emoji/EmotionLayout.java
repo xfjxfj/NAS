@@ -13,10 +13,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
+
+import java.util.List;
 
 /**
  * CSDN_LQR
@@ -36,7 +36,7 @@ public class EmotionLayout extends LinearLayout implements View.OnClickListener 
     private int mMeasuredHeight;
 
     private int mTabPosi = 0;
-    private final Context mContext;
+    private Context mContext;
     private View emotionLayout;
     private ViewPagerFixed mVpEmotioin;
     private LinearLayout mLlPageNumber;
@@ -44,7 +44,7 @@ public class EmotionLayout extends LinearLayout implements View.OnClickListener 
     private RelativeLayout mRlEmotionAdd;
 
     private int mTabCount;
-    private final SparseArray<View> mTabViewArray = new SparseArray<>();
+    private SparseArray<View> mTabViewArray = new SparseArray<>();
     private EmotionTab mSettingTab;
     private IEmotionSelectedListener mEmotionSelectedListener;
     private IEmotionExtClickListener mEmotionExtClickListener;

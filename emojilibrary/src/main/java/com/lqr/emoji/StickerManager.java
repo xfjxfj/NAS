@@ -1,5 +1,7 @@
 package com.lqr.emoji;
 
+import androidx.annotation.Nullable;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,8 +9,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.Nullable;
 
 /**
  * CSDN_LQR
@@ -19,8 +19,8 @@ public class StickerManager {
     private static StickerManager instance;
 
     //数据源
-    private final List<StickerCategory> stickerCategories = new ArrayList<>();
-    private final Map<String, StickerCategory> stickerCategoryMap = new HashMap<>();
+    private List<StickerCategory> stickerCategories = new ArrayList<>();
+    private Map<String, StickerCategory> stickerCategoryMap = new HashMap<>();
 //    private Map<String, Integer> stickerOrder = new HashMap<>();
 
     public static StickerManager getInstance() {

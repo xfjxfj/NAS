@@ -13,11 +13,12 @@ import android.graphics.Color;
 import android.os.Build;
 import android.text.TextUtils;
 
+import androidx.core.app.NotificationCompat;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.core.app.NotificationCompat;
 import cn.wildfire.chat.kit.contact.newfriend.FriendRequestListActivity;
 import cn.wildfire.chat.kit.conversation.ConversationActivity;
 import cn.wildfirechat.message.Message;
@@ -175,7 +176,7 @@ public class WfcNotificationManager {
 
     }
 
-    private final List<Conversation> notificationConversations = new ArrayList<>();
+    private List<Conversation> notificationConversations = new ArrayList<>();
 
     private int notificationId(Conversation conversation) {
         if (!notificationConversations.contains(conversation)) {

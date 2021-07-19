@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -21,6 +19,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.wildfire.chat.kit.R;
@@ -35,7 +36,7 @@ public class SearchFragment extends Fragment {
     LinearLayout descLinearLayout;
     private SearchResultAdapter adapter;
     private SearchViewModel searchViewModel;
-    private final Observer<SearchResult> searchResultObserver = this::onSearchResult;
+    private Observer<SearchResult> searchResultObserver = this::onSearchResult;
     private InputMethodManager inputManager;
 
     private boolean hideSearchDescView = false;

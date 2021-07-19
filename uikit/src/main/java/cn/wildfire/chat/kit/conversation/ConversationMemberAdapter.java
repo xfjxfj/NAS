@@ -10,14 +10,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.util.Iterator;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -30,9 +31,9 @@ import cn.wildfirechat.remote.ChatManager;
 
 public class ConversationMemberAdapter extends RecyclerView.Adapter<ConversationMemberAdapter.MemberViewHolder> {
     private List<UserInfo> members;
-    private final ConversationInfo conversationInfo;
-    private final boolean enableAddMember;
-    private final boolean enableRemoveMember;
+    private ConversationInfo conversationInfo;
+    private boolean enableAddMember;
+    private boolean enableRemoveMember;
     private OnMemberClickListener onMemberClickListener;
 
     public ConversationMemberAdapter(ConversationInfo conversationInfo, boolean enableAddMember, boolean enableRemoveMember) {

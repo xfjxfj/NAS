@@ -15,7 +15,7 @@ import cn.wildfire.chat.kit.R;
 
 public class ProgressWebView extends WebView {
 
-    private final ProgressBar mProgressBar;
+    private ProgressBar mProgressBar;
 
     public ProgressWebView(Context context, AttributeSet attrs) {
         super(context, attrs);

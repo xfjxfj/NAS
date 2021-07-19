@@ -19,8 +19,8 @@ import com.lqr.imagepicker.R;
 
 public class FolderPopUpWindow extends PopupWindow implements View.OnClickListener {
 
-    private final View rootView;
-    private final ListView listView;
+    private View rootView;
+    private ListView listView;
     private OnItemClickListener onItemClickListener;
     private final View masker;
     private final View marginView;

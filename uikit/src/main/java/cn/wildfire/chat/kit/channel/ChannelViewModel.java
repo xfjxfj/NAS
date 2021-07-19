@@ -4,11 +4,12 @@
 
 package cn.wildfire.chat.kit.channel;
 
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 import cn.wildfire.chat.kit.common.OperateResult;
 import cn.wildfirechat.message.MessageContentMediaType;
 import cn.wildfirechat.model.ChannelInfo;

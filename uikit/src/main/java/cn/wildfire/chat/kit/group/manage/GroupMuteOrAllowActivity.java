@@ -6,13 +6,14 @@ package cn.wildfire.chat.kit.group.manage;
 
 import android.widget.Toast;
 
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.kyleduo.switchbutton.SwitchButton;
 
 import java.util.Collections;
 import java.util.List;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import cn.wildfire.chat.kit.R;
 import cn.wildfire.chat.kit.R2;
