@@ -38,6 +38,10 @@ class FileController {
 	@PostMapping(path = "/list", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	List<HttpFile> list(@RequestParam("path") String path) {
 		try {
+			path = PathConfig.NAS + path;
+			if (!path.endsWith(File.separator)) {
+				path = path + File.separator;
+			}
 			if (!FileUtils.isFileExists(path)) {
 				throw new FileNotExistException();
 			}
@@ -51,7 +55,7 @@ class FileController {
 			return FileUtils.listFilesInDir(path)
 			                .stream()
 			                .map(file -> new HttpFile(file.getName(),
-			                                          file.getAbsolutePath(),
+			                                          file.getAbsolutePath().replaceFirst(PathConfig.NAS, ""),
 			                                          FileUtils.isDir(file),
 			                                          FileUtils.getLength(file),
 			                                          TimeUtils.millis2String(FileUtils.getFileLastModified(file), simpleDateFormat)))
@@ -62,22 +66,32 @@ class FileController {
 	}
 
 	@PostMapping(path = "/mkdir", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	String mkdir(@RequestParam("path") String path) {
+	void mkdir(@RequestParam("path") String path) {
+		path = PathConfig.NAS + path;
+		if (!path.endsWith(File.separator)) {
+			path = path + File.separator;
+		}
 		if (FileUtils.isFileExists(path)) {
 			throw new FileAlreadyExistsException();
+		}
+		if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
+			throw new PermissionDeniedException();
 		}
 		FileUtils.createOrExistsDir(path);
 		MediaScannerConnection.scanFile(Utils.getApp(),
 		                                new String[]{path},
 		                                null,
 		                                (s, uri) -> LogUtils.iTag("FileController.mkdir", "path = " + s, "uri = " + uri));
-		return path;
 	}
 
 	@PostMapping(path = "/upload", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	String upload(@RequestParam("path") String path, @RequestParam(name = "file") MultipartFile file) {
+	void upload(@RequestParam("path") String path, @RequestParam(name = "file") MultipartFile file) {
+		path = PathConfig.NAS + path;
 		if (FileUtils.isFileExists(path)) {
 			throw new FileAlreadyExistsException();
+		}
+		if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
+			throw new PermissionDeniedException();
 		}
 		try {
 			File localFile = new File(path);
@@ -87,14 +101,8 @@ class FileController {
 			                                null,
 			                                (s, uri) -> LogUtils.iTag("FileController.upload", "path = " + s, "uri = " + uri));
 			new MediaScanner().scanFile(localFile);
-			return path;
 		} catch (Exception e) {
 			throw new CustomException(e.getMessage());
 		}
 	}
-
-//	@PostMapping(path = "/download", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//	String download(@RequestParam("path") String path, @RequestParam(name = "file") MultipartFile file) {
-//
-//	}
 }

@@ -24,7 +24,7 @@ public class PartialContentInterceptor implements HandlerInterceptor {
 	public boolean onIntercept(@NonNull HttpRequest request, @NonNull HttpResponse response, @NonNull RequestHandler handler) throws IOException {
 		String range = request.getHeader("Range");
 		if (!TextUtils.isEmpty(range)) {
-			File file = new File(PathConfig.UPLOAD_CACHE);
+			File file = new File(PathConfig.NAS + request.getPath());
 
 			//开始下载位置
 			long startByte = 0;
