@@ -24,7 +24,7 @@ public enum AudioRecordManager {
 
 	public void startRecord() {
 		if (null != mAudioRecord) {
-//			mAudioRecord.startRecording();
+			mAudioRecord.startRecording();
 		}
 	}
 
