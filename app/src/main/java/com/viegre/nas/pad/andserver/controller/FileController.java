@@ -38,6 +38,21 @@ class FileController {
 	@PostMapping(path = "/list", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	List<HttpFile> list(@RequestParam("path") String path) {
 		try {
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+			if (File.separator.equals(path)) {
+				path = PathConfig.NAS;
+				return FileUtils.listFilesInDir(path)
+				                .stream()
+				                .filter(file -> (file.getAbsolutePath().equals(PathConfig.PUBLIC.substring(0, PathConfig.PUBLIC.length() - 1)) || file
+						                .getAbsolutePath()
+						                .equals(PathConfig.PRIVATE.substring(0, PathConfig.PRIVATE.length() - 1))) && file.isDirectory())
+				                .map(file -> new HttpFile(file.getName(),
+				                                          file.getAbsolutePath().replaceFirst(PathConfig.NAS, ""),
+				                                          FileUtils.isDir(file),
+				                                          FileUtils.getLength(file),
+				                                          TimeUtils.millis2String(FileUtils.getFileLastModified(file), simpleDateFormat)))
+				                .collect(Collectors.toList());
+			}
 			path = PathConfig.NAS + path;
 			if (!path.endsWith(File.separator)) {
 				path = path + File.separator;
@@ -51,7 +66,6 @@ class FileController {
 			if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
 				throw new PermissionDeniedException();
 			}
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 			return FileUtils.listFilesInDir(path)
 			                .stream()
 			                .map(file -> new HttpFile(file.getName(),
