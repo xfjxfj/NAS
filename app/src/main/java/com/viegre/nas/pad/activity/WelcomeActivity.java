@@ -55,6 +55,7 @@ import com.viegre.nas.pad.util.ZxingUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -343,17 +344,20 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 
     private void createQRCode() {
         try {
-            Bitmap bitmapSN = ZxingUtils.createQRCode(getJsonBind(), 500, 500, true);
+            JSONObject json = new JSONObject();
+            json.put("bind", getJsonBind());
+            Bitmap bitmapSN = ZxingUtils.createQRCode(json.toString(), 500, 500, true);
             Glide.with(this).load(bitmapSN).into(mQRCodeImg);
         } catch (Exception e) {
             e.printStackTrace();
+            Log.e(CommonUtils.getFileName() + CommonUtils.getFileName(), e.toString());
         }
     }
 
     @NotNull
     private String getJsonBind() {
         String str = "";
-        str =  SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
+        str = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
         return str;
     }
 
@@ -380,11 +384,13 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 //			startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
 //		}
     }
+
     protected void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
         // unbindService(conn);
     }
+
     private void initLayout3() {
 //        显示layout3视图 获取蓝牙权限  监控蓝牙
         Layout1.setVisibility(View.GONE);
