@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.PopupWindow;
@@ -43,21 +44,32 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 public class ImageActivity extends BaseActivity<ActivityImageBinding> implements View.OnClickListener {
 
-	private ImageListAdapter mImageListAdapter;
-	private RightPopupWindows rightpopuwindows;
-	private String mKeywords = "", mType = Type.PUBLIC, mTime = TIME.ALL;
+    private ImageListAdapter mImageListAdapter;
+    private RightPopupWindows rightpopuwindows;
+    private String mKeywords = "", mType = Type.PUBLIC, mTime = TIME.ALL;
 
-	@Override
-	protected void initialize() {
-		mViewBinding.iImageTitle.actvFileManagerTitle.setText(R.string.image);
-		mViewBinding.iImageTitle.acivFileManagerTitleBack.setOnClickListener(view -> finish());
-		mViewBinding.iImageTitle.acivFileManagerFilter.setOnClickListener(this);
-		mViewBinding.imageActivityButtonBt.setOnClickListener(this);
-		initRadioGroup();
-		initList();
-	}
+    @Override
+    protected void initialize() {
+        mViewBinding.iImageTitle.actvFileManagerTitle.setText(R.string.image);
+        mViewBinding.iImageTitle.acivFileManagerTitleBack.setOnClickListener(view -> finish());
+        mViewBinding.iImageTitle.acivFileManagerFilter.setOnClickListener(this);
+        mViewBinding.imageActivityButtonBt.setOnClickListener(this);
+        initRadioGroup();
+        initList();
+    }
 
-//    private void initRadioGroup() {
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
+            privateUI();
+        } else {
+            ifLogin();
+            Log.d(CommonUtils.getFileName() + CommonUtils.getLineNumber(), "未登录");
+        }
+    }
+
+    //    private void initRadioGroup() {
 //        mViewBinding.rgImageTag.setOnCheckedChangeListener((radioGroup, i) -> {
 //            if (R.id.acrbImageTagPrivate == i) {
 //				if (!SPUtils.getInstance().contains(SPConfig.PHONE)) {
@@ -78,188 +90,214 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
 //        });
 //        TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbImageTagPrivate, mViewBinding.acrbImageTagPublic);
 //    }
-	private void initRadioGroup() {
-		mViewBinding.rgImageTag.setOnCheckedChangeListener((radioGroup, i) -> {
-			if (R.id.acrbImageTagPrivate == i) {
-				if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
-					queryImage("", Type.PRIVATE, TIME.ALL);
-				} else {
-					mViewBinding.rvImageList.setVisibility(View.GONE);
-				}
-			} else if (R.id.acrbImageTagPublic == i) {
-				mViewBinding.rvImageList.setVisibility(View.VISIBLE);
-				queryImage("", Type.PUBLIC, TIME.ALL);
-			}
-		});
-		TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbImageTagPrivate, mViewBinding.acrbImageTagPublic);
-	}
+    private void initRadioGroup() {
+        mViewBinding.rgImageTag.setOnCheckedChangeListener((radioGroup, i) -> {
+            if (R.id.acrbImageTagPrivate == i) {
+                if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
+                    privateUI();
+                } else {
+                    ifLogin();
+                    Log.d(CommonUtils.getFileName() + CommonUtils.getLineNumber(), "未登录");
+                }
+            } else if (R.id.acrbImageTagPublic == i) {
+                publicPic();
+            }
+        });
+        TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbImageTagPrivate, mViewBinding.acrbImageTagPublic);
+    }
 
-	private void initList() {
-		mImageListAdapter = new ImageListAdapter();
-		mViewBinding.rvImageList.setLayoutManager(new GridLayoutManager(this, 4));
-		mViewBinding.rvImageList.addItemDecoration(new GridSpaceItemDecoration(4, 12, 12));
-		mViewBinding.rvImageList.setAdapter(mImageListAdapter);
-		//禁用动画以防止更新列表时产生闪烁
-		SimpleItemAnimator simpleItemAnimator = (SimpleItemAnimator) mViewBinding.rvImageList.getItemAnimator();
-		if (null != simpleItemAnimator) {
-			simpleItemAnimator.setSupportsChangeAnimations(false);
-		}
-		mViewBinding.srlImageRefresh.setColorSchemeResources(R.color.settings_menu_selected_bg);
-		mViewBinding.srlImageRefresh.setProgressBackgroundColorSchemeResource(R.color.file_manager_tag_unpressed);
-		mViewBinding.srlImageRefresh.setOnRefreshListener(this::queryImage);
-		mViewBinding.srlImageRefresh.setRefreshing(true);
-		queryImage("", Type.PUBLIC, TIME.MONTH_3);
-	}
+    private void privateUI() {
+        mViewBinding.rvImageList.setVisibility(View.VISIBLE);
+        mViewBinding.srlImageRefresh.setVisibility(View.VISIBLE);
+        mViewBinding.imageConst.setVisibility(View.GONE);
+        queryImage("", Type.PRIVATE, TIME.ALL);
+    }
 
-	private void queryImage(String keywords, @Type String type, @TIME String time) {
-		mKeywords = keywords;
-		mType = type;
-		mTime = time;
-		queryImage();
-	}
+    private void publicPic() {
+        mViewBinding.rvImageList.setVisibility(View.VISIBLE);
+        mViewBinding.srlImageRefresh.setVisibility(View.VISIBLE);
+        mViewBinding.imageConst.setVisibility(View.GONE);
+        queryImage("", Type.PUBLIC, TIME.ALL);
+    }
 
-	private void queryImage() {
-		ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<ImageEntity>>() {
-			@Override
-			public List<ImageEntity> doInBackground() {
-				List<ImageEntity> imageList = new ArrayList<>();
-				StringBuilder selection = new StringBuilder();
-				List<String> selectionArgList = new ArrayList<>();
-				switch (mType) {
-					case Type.PUBLIC:
-						selection.append(MediaStore.Images.ImageColumns.DATA + " like ? escape '/'");
-						selectionArgList.add(CommonUtils.sqliteEscape(PathConfig.PUBLIC) + "%");
-						break;
+    private void ifLogin() {
+        mViewBinding.rvImageList.setVisibility(View.GONE);
+        mViewBinding.srlImageRefresh.setVisibility(View.GONE);
+        mViewBinding.imageConst.setVisibility(View.VISIBLE);
+        mViewBinding.imageConst.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mActivity,LoginActivity.class));
+            }
+        });
+    }
 
-					case Type.PRIVATE:
-						selection.append(MediaStore.Images.ImageColumns.DATA + " like ? escape '/'");
-						selectionArgList.add(CommonUtils.sqliteEscape(PathConfig.PRIVATE + SPUtils.getInstance()
-						                                                                          .getString(SPConfig.PHONE) + File.separator) + "%");
-						break;
+    private void initList() {
+        mImageListAdapter = new ImageListAdapter();
+        mViewBinding.rvImageList.setLayoutManager(new GridLayoutManager(this, 4));
+        mViewBinding.rvImageList.addItemDecoration(new GridSpaceItemDecoration(4, 12, 12));
+        mViewBinding.rvImageList.setAdapter(mImageListAdapter);
+        //禁用动画以防止更新列表时产生闪烁
+        SimpleItemAnimator simpleItemAnimator = (SimpleItemAnimator) mViewBinding.rvImageList.getItemAnimator();
+        if (null != simpleItemAnimator) {
+            simpleItemAnimator.setSupportsChangeAnimations(false);
+        }
+        mViewBinding.srlImageRefresh.setColorSchemeResources(R.color.settings_menu_selected_bg);
+        mViewBinding.srlImageRefresh.setProgressBackgroundColorSchemeResource(R.color.file_manager_tag_unpressed);
+        mViewBinding.srlImageRefresh.setOnRefreshListener(this::queryImage);
+        mViewBinding.srlImageRefresh.setRefreshing(true);
+        queryImage("", Type.PUBLIC, TIME.MONTH_3);
+    }
 
-					default:
-						selection.append(MediaStore.Images.ImageColumns.DATA + " like ? escape '/' and " + MediaStore.Images.ImageColumns.DATA + " like ? escape '/'");
-						selectionArgList.add(CommonUtils.sqliteEscape(PathConfig.PUBLIC) + "%");
-						selectionArgList.add(CommonUtils.sqliteEscape(PathConfig.PRIVATE + SPUtils.getInstance()
-						                                                                          .getString(SPConfig.PHONE) + File.separator) + "%");
-						break;
-				}
-				if (!mKeywords.isEmpty()) {
-					selection.append(" and " + MediaStore.Images.ImageColumns.DISPLAY_NAME + " like ? escape '/'");
-					selectionArgList.add(CommonUtils.sqliteEscape(mKeywords) + "%");
-				}
-				selection.append(" and " + MediaStore.Images.ImageColumns.DATE_MODIFIED + " > ?");
-				long nowTime = System.currentTimeMillis() / 1000 / 60 / 60 / 24;
-				switch (mTime) {
-					case TIME.DAY_1:
-						selectionArgList.add(String.valueOf(nowTime - 1));
-						break;
+    private void queryImage(String keywords, @Type String type, @TIME String time) {
+        mKeywords = keywords;
+        mType = type;
+        mTime = time;
+        queryImage();
+    }
 
-					case TIME.DAY_3:
-						selectionArgList.add(String.valueOf(nowTime - 3));
-						break;
+    private void queryImage() {
+        ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<ImageEntity>>() {
+            @Override
+            public List<ImageEntity> doInBackground() {
+                List<ImageEntity> imageList = new ArrayList<>();
+                StringBuilder selection = new StringBuilder();
+                List<String> selectionArgList = new ArrayList<>();
+                switch (mType) {
+                    case Type.PUBLIC:
+                        selection.append(MediaStore.Images.ImageColumns.DATA + " like ? escape '/'");
+                        selectionArgList.add(CommonUtils.sqliteEscape(PathConfig.PUBLIC) + "%");
+                        break;
 
-					case TIME.DAY_7:
-						selectionArgList.add(String.valueOf(nowTime - 7));
-						break;
+                    case Type.PRIVATE:
+                        selection.append(MediaStore.Images.ImageColumns.DATA + " like ? escape '/'");
+                        selectionArgList.add(CommonUtils.sqliteEscape(PathConfig.PRIVATE + SPUtils.getInstance()
+                                .getString(SPConfig.PHONE) + File.separator) + "%");
+                        break;
 
-					case TIME.MONTH_1:
-						selectionArgList.add(String.valueOf(nowTime - 30));
-						break;
+                    default:
+                        selection.append(MediaStore.Images.ImageColumns.DATA + " like ? escape '/' and " + MediaStore.Images.ImageColumns.DATA + " like ? escape '/'");
+                        selectionArgList.add(CommonUtils.sqliteEscape(PathConfig.PUBLIC) + "%");
+                        selectionArgList.add(CommonUtils.sqliteEscape(PathConfig.PRIVATE + SPUtils.getInstance()
+                                .getString(SPConfig.PHONE) + File.separator) + "%");
+                        break;
+                }
+                if (!mKeywords.isEmpty()) {
+                    selection.append(" and " + MediaStore.Images.ImageColumns.DISPLAY_NAME + " like ? escape '/'");
+                    selectionArgList.add(CommonUtils.sqliteEscape(mKeywords) + "%");
+                }
+                selection.append(" and " + MediaStore.Images.ImageColumns.DATE_MODIFIED + " > ?");
+                long nowTime = System.currentTimeMillis() / 1000 / 60 / 60 / 24;
+                switch (mTime) {
+                    case TIME.DAY_1:
+                        selectionArgList.add(String.valueOf(nowTime - 1));
+                        break;
 
-					case TIME.MONTH_3:
-						selectionArgList.add(String.valueOf(nowTime - 90));
-						break;
+                    case TIME.DAY_3:
+                        selectionArgList.add(String.valueOf(nowTime - 3));
+                        break;
 
-					default:
-						selectionArgList.add(String.valueOf(0));
-						break;
-				}
-				Cursor cursor = Utils.getApp()
-				                     .getContentResolver()
-				                     .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-				                            new String[]{MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_MODIFIED},
-				                            selection.toString(),
-				                            selectionArgList.toArray(new String[0]),
-				                            null);
-				if (null != cursor) {
-					while (cursor.moveToNext()) {
-						String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
-						imageList.add(new ImageEntity(path));
-					}
-					cursor.close();
-				}
-				return imageList;
-			}
+                    case TIME.DAY_7:
+                        selectionArgList.add(String.valueOf(nowTime - 7));
+                        break;
 
-			@Override
-			public void onSuccess(List<ImageEntity> result) {
-				mImageListAdapter.setList(result);
-				mViewBinding.srlImageRefresh.setRefreshing(false);
-			}
-		});
-	}
+                    case TIME.MONTH_1:
+                        selectionArgList.add(String.valueOf(nowTime - 30));
+                        break;
 
-	@SuppressLint("NonConstantResourceId")
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-			case R.id.acivFileManagerFilter:
-				setPupwind();
-				break;
-			case R.id.image_activity_button_bt:
-				startActivity(new Intent(ImageActivity.this, LoginActivity.class));
-				break;
-		}
-	}
+                    case TIME.MONTH_3:
+                        selectionArgList.add(String.valueOf(nowTime - 90));
+                        break;
 
-	private void setPupwind() {
-		rightpopuwindows = new RightPopupWindows(this, rightonclick);
-		rightpopuwindows.showAtLocation(mViewBinding.mainlayout, Gravity.RIGHT, 0, 0);
-		rightpopuwindows.setWindowAlpa(true);
+                    default:
+                        selectionArgList.add(String.valueOf(0));
+                        break;
+                }
+                Cursor cursor = Utils.getApp()
+                        .getContentResolver()
+                        .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                new String[]{MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_MODIFIED},
+                                selection.toString(),
+                                selectionArgList.toArray(new String[0]),
+                                null);
+                if (null != cursor) {
+                    while (cursor.moveToNext()) {
+                        String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
+                        imageList.add(new ImageEntity(path));
+                    }
+                    cursor.close();
+                }
+                return imageList;
+            }
 
-		rightpopuwindows.setOnDismissListener(new PopupWindow.OnDismissListener() {
-			@Override
-			public void onDismiss() {
-				rightpopuwindows.setWindowAlpa(false);
-			}
-		});
-	}
+            @Override
+            public void onSuccess(List<ImageEntity> result) {
+                mImageListAdapter.setList(result);
+                mViewBinding.srlImageRefresh.setRefreshing(false);
+            }
+        });
+    }
 
-	private final View.OnClickListener rightonclick = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			rightpopuwindows.dismiss();
-			switch (v.getId()) {
-				case R.id.shenqing:
-					Toast.makeText(ImageActivity.this, "菜单1", Toast.LENGTH_SHORT).show();
-					break;
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.acivFileManagerFilter:
+                setPupwind();
+                break;
+            case R.id.image_activity_button_bt:
+                startActivity(new Intent(ImageActivity.this, LoginActivity.class));
+                break;
+        }
+    }
 
-				case R.id.exit:
-					Toast.makeText(ImageActivity.this, "退出", Toast.LENGTH_SHORT).show();
-					break;
-			}
-		}
-	};
+    private void setPupwind() {
+        rightpopuwindows = new RightPopupWindows(this, rightonclick);
+        rightpopuwindows.showAtLocation(mViewBinding.mainlayout, Gravity.RIGHT, 0, 0);
+        rightpopuwindows.setWindowAlpa(true);
 
-	@Retention(SOURCE)
-	@Target({PARAMETER})
-	@StringDef(value = {Type.ALL, Type.PUBLIC, Type.PRIVATE})
-	public @interface Type {
-		String ALL = "all";
-		String PUBLIC = "public";
-		String PRIVATE = "private";
-	}
+        rightpopuwindows.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                rightpopuwindows.setWindowAlpa(false);
+            }
+        });
+    }
 
-	@Retention(SOURCE)
-	@Target({PARAMETER})
-	@StringDef(value = {TIME.ALL, TIME.DAY_1, TIME.DAY_3, TIME.DAY_7, TIME.MONTH_1, TIME.MONTH_3})
-	public @interface TIME {
-		String ALL = "all";
-		String DAY_1 = "day1";
-		String DAY_3 = "day3";
-		String DAY_7 = "day7";
-		String MONTH_1 = "month1";
-		String MONTH_3 = "month3";
-	}
+    private final View.OnClickListener rightonclick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            rightpopuwindows.dismiss();
+            switch (v.getId()) {
+                case R.id.shenqing:
+                    Toast.makeText(ImageActivity.this, "菜单1", Toast.LENGTH_SHORT).show();
+                    break;
+
+                case R.id.exit:
+                    Toast.makeText(ImageActivity.this, "退出", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+
+    @Retention(SOURCE)
+    @Target({PARAMETER})
+    @StringDef(value = {Type.ALL, Type.PUBLIC, Type.PRIVATE})
+    public @interface Type {
+        String ALL = "all";
+        String PUBLIC = "public";
+        String PRIVATE = "private";
+    }
+
+    @Retention(SOURCE)
+    @Target({PARAMETER})
+    @StringDef(value = {TIME.ALL, TIME.DAY_1, TIME.DAY_3, TIME.DAY_7, TIME.MONTH_1, TIME.MONTH_3})
+    public @interface TIME {
+        String ALL = "all";
+        String DAY_1 = "day1";
+        String DAY_3 = "day3";
+        String DAY_7 = "day7";
+        String MONTH_1 = "month1";
+        String MONTH_3 = "month3";
+    }
 }

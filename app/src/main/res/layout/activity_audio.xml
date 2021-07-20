@@ -3,6 +3,7 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:background="@android:color/black">
 
 	<include
@@ -36,7 +37,54 @@
 			android:checked="true"
 			android:text="@string/audio" />
 	</RadioGroup>
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/image_const"
+		android:layout_width="wrap_content"
+		android:layout_height="0dp"
+		android:visibility="gone"
+		android:layout_marginEnd="45px"
+		android:gravity="center_vertical"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/iAudioTitle"
+		>
 
+		<TextView
+			android:id="@+id/video_textview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="center_horizontal"
+			android:text="@string/image_text_14"
+			android:textColor="@color/white"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			tools:ignore="MissingConstraints" />
+
+		<TextView
+			android:id="@+id/video_textview1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="center_horizontal"
+			android:text="@string/image_text_15"
+			android:textSize="18dp"
+			android:textColor="@color/settings_menu_selected_bg"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintStart_toEndOf="@+id/video_textview"
+			app:layout_constraintTop_toTopOf="parent"
+			tools:ignore="MissingConstraints" />
+
+		<TextView
+			android:id="@+id/video_textview2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="center_horizontal"
+			android:text="@string/image_text_16"
+			android:textColor="@color/white"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintStart_toEndOf="@+id/video_textview1"
+			app:layout_constraintTop_toTopOf="parent"
+			tools:ignore="MissingConstraints" />
+	</androidx.constraintlayout.widget.ConstraintLayout>
 	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 		android:id="@+id/srlAudioRefresh"
 		android:layout_width="0dp"

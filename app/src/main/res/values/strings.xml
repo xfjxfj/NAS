@@ -190,6 +190,9 @@
 	<string name="image_text_11">3个月内</string>
 	<string name="image_text_12">重置</string>
 	<string name="image_text_13">确定</string>
+	<string name="image_text_14">您还未登录，点击</string>
+	<string name="image_text_15">登录</string>
+	<string name="image_text_16">后可查看私人空间内容</string>
 
 	<!--音频-->
 	<string name="audio">音频</string>

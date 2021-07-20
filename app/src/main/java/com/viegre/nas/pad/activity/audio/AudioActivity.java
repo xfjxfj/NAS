@@ -4,16 +4,20 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.view.View;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.activity.LoginActivity;
 import com.viegre.nas.pad.adapter.AudioListAdapter;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
+import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.ActivityAudioBinding;
 import com.viegre.nas.pad.entity.AudioEntity;
 import com.viegre.nas.pad.manager.AudioPlayListManager;
@@ -66,13 +70,42 @@ public class AudioActivity extends BaseActivity<ActivityAudioBinding> {
         mViewBinding.rgAudioTag.setOnCheckedChangeListener((radioGroup, i) -> {
             if (R.id.acrbAudioTagPrivate == i) {
                 mIsPublic = false;
+                loginStatus();
             } else if (R.id.acrbAudioTagPublic == i) {
                 mIsPublic = true;
+                loginStatus();
             }
             mViewBinding.srlAudioRefresh.setRefreshing(true);
             queryAudioByLitepal();
         });
+        mViewBinding.imageConst.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mActivity, LoginActivity.class));
+            }
+        });
         TextStyleManager.INSTANCE.setFileManagerTagOnCheckedChange(mViewBinding.acrbAudioTagPrivate, mViewBinding.acrbAudioTagPublic);
+    }
+    private void loginStatus() {
+        if (mIsPublic) {
+            mViewBinding.srlAudioRefresh.setVisibility(View.VISIBLE);
+            mViewBinding.rvAudioList.setVisibility(View.VISIBLE);
+            mViewBinding.imageConst.setVisibility(View.GONE);
+        } else {
+            login();
+        }
+    }
+
+    private void login() {
+        if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
+            mViewBinding.srlAudioRefresh.setVisibility(View.VISIBLE);
+            mViewBinding.rvAudioList.setVisibility(View.VISIBLE);
+            mViewBinding.imageConst.setVisibility(View.GONE);
+        } else {
+            mViewBinding.srlAudioRefresh.setVisibility(View.GONE);
+            mViewBinding.rvAudioList.setVisibility(View.GONE);
+            mViewBinding.imageConst.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initList() {

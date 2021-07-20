@@ -47,6 +47,8 @@ import com.viegre.nas.pad.entity.FtpFileEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
+import com.viegre.nas.pad.manager.PopupManager;
+import com.viegre.nas.pad.popup.LoginTimePopup;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.MediaScanner;
@@ -347,7 +349,7 @@ public class MQTTService extends Service {
 						RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient()).setOnParamAssembly(param -> param.addHeader(SPConfig.TOKEN, token));
 						SPUtils.getInstance().put(SPConfig.PHONE, phone);
 						SPUtils.getInstance().put(SPConfig.TOKEN, token);
-//                        PopupManager.INSTANCE.showCustomXPopup(this, new LoginTimePopup(this));
+//						PopupManager.INSTANCE.showCustomXPopup(this, new LoginTimePopup(this));
 						ActivityUtils.finishActivity(LoginActivity.class);
 						break;
 
