@@ -39,6 +39,7 @@ public class BlueToothBindStatusActivity extends BaseActivity<ActivityBlueToothB
 
     @Override
     protected void initialize() {
+        SPUtils.getInstance().put("bleBound", true);
         bindService(new Intent(this, MQTTService.class), conn, Context.BIND_AUTO_CREATE);
         mViewBinding.blueBindingContainer.setVisibility(View.VISIBLE);
         mViewBinding.blueBindContainer.setVisibility(View.GONE);
