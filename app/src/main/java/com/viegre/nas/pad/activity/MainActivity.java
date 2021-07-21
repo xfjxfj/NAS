@@ -136,7 +136,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         Intent intent = new Intent(this, MQTTService.class);
         bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
-
+        SPUtils.getInstance().put("bleBound", false);
 //        ServiceUtils.startService(ScreenSaverService.class);
         ChatManager.Instance().addOnMessageUpdateListener(this);
 //		getUsbPermission();
