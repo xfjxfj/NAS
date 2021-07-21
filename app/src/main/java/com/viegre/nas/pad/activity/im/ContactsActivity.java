@@ -193,7 +193,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                         Gson gson = new Gson();
 //                        {"code":4000,"msg":"参数不正确","data":null}
                         AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
-                        Log.d("GET_ADDFRIENDRESULT:",addDevicesFriend.toString());
+                        Log.d("GET_ADDFRIENDRESULT:", addDevicesFriend.toString());
                         if (addDevicesFriend.msg.equals("OK")) {
                             if (status == 1) {
                                 Toast.makeText(ContactsActivity.this, "添加成功", Toast.LENGTH_LONG).show();
@@ -298,10 +298,12 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
         super.onRestart();
         contactsRvRecordAdapter.notifyDataSetChanged();
     }
+
     protected void onDestroy() {
         super.onDestroy();
         unbindService(conn);
     }
+
     private void ifRecordList() {
         mRecordData = getRecordData();
         initRecordData(mRecordData);
@@ -359,7 +361,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
         contactsRv2.setLayoutManager(linearLayoutManager1);
         //创建适配器，将数据传递给适配器
         //设置适配器adapter
-        contactsRv2.setAdapter(new  ContactsRvFriendsAdapter(this, mContactsData));
+        contactsRv2.setAdapter(new ContactsRvFriendsAdapter(this, mContactsData));
     }
 
     private void initRecordData(List<String> mRecordData) {
@@ -456,15 +458,6 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                                     String userid = datum.getCallId();
                                     mFriendData.add(new ContactsBean(userid, picdata, nickName, phone));
                                 }
-
-//                                mFriendData.add(new ContactsBean("ceciciJJ", "", "郑飞", "138"));
-//                                mFriendData.add(new ContactsBean("anaOaOjj", "", "设备pad", "191"));
-//                                mFriendData.add(new ContactsBean("ISIFIF99", "", "oppo-pad", "191"));
-//                                mFriendData.add(new ContactsBean("agahahss", "", "华为AL00-pad", "456"));
-//                                mFriendData.add(new ContactsBean("ZoZcZcKK", "", "夜神模拟器-pad", "666"));
-//                                mFriendData.add(new ContactsBean("RlRbRbGG", "", "设备2-pad", "666"));
-//                                mFriendData.add(new ContactsBean("OkORORNN", "", "设备3-oppo", "1313"));
-//                                mFriendData.add(new ContactsBean("-a-X-Xoo", "", "设备4-小米re", "1313"));
                             }
                             TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
                             initFriendData(mFriendData);
@@ -543,8 +536,10 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
     //添加设备好友
     @Override
     public void onAddDevicesFriendClick(Button bt, String friendId, String friendName) {
-        if (friendId.equals("") && friendName.equals("")) {
-            Toast.makeText(this, "请输入序列号和联系人名称", Toast.LENGTH_LONG).show();
+        if (friendId.equals("")) {
+            Toast.makeText(this, "请输入序列号或联系人名称", Toast.LENGTH_LONG).show();
+        } else if (friendName.equals("")) {
+            Toast.makeText(this, "请输入序列号或联系人名称", Toast.LENGTH_LONG).show();
         } else {
             bt.setText("请稍等....");
             RxHttp.postForm(UrlConfig.Device.GET_ADDFRIENDREQUEST)
@@ -565,7 +560,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
 //                        {"code":0,"msg":"OK","data":null}
                             Gson gson = new Gson();
                             AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
-                            Log.d("GET_ADDFRIENDREQUEST：",addDevicesFriend.toString());
+                            Log.d("GET_ADDFRIENDREQUEST：", addDevicesFriend.toString());
                             if (addDevicesFriend.msg.equals("OK")) {
                                 Toast.makeText(ContactsActivity.this, "添加请求发送成功，等待对方接受。", Toast.LENGTH_LONG).show();
                                 tips(bt);
@@ -716,7 +711,8 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                     public void onSubscribe(@NonNull Disposable d) {
                         Log.d("onSubscribe", d.toString());
                     }
-//1794d52b003521f4
+
+                    //1794d52b003521f4
 //                    {"msg":"token verify fail","code":"4111"}   2021年5月21日
                     @Override
                     public void onNext(@NonNull String s) {

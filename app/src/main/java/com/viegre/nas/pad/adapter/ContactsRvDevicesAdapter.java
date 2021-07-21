@@ -97,29 +97,19 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
         holder.de_laytou1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                DialogSettings.use_blur = true;
                 DialogSettings.isUseBlur = true;
                 CustomDialog.build((AppCompatActivity) mContext, R.layout.contacts_add_devices_dialog, new CustomDialog.OnBindView() {
                     @Override
                     public void onBind(final CustomDialog dialog, View v) {
-                        /**
-                         * 测试数据
-                         */
-//                        5830e3fbe8c57dd5
                         EditText viewById = v.findViewById(R.id.add_device_dialog_edittext);
                         EditText viewById1 = v.findViewById(R.id.add_device_username_dialog_edittext);
                         Button cancle_bt = v.findViewById(R.id.cancle_bt);
                         Button button_ok = v.findViewById(R.id.button_ok);
-
-//                        viewById.setText(SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
-//                        viewById.setText("6fa8295f4764b429");
-//                        viewById1.setText(new Random().nextInt(1000) + "---魏格设备");
-
                         button_ok.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (addDevicesFriend!=null) {
-                                addDevicesFriend.onAddDevicesFriendClick(button_ok, viewById.getText().toString(), viewById1.getText().toString());
+                                if (addDevicesFriend != null) {
+                                    addDevicesFriend.onAddDevicesFriendClick(button_ok, viewById.getText().toString(), viewById1.getText().toString());
                                 }
                             }
                         });
