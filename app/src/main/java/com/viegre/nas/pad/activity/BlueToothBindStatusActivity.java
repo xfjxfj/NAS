@@ -40,10 +40,12 @@ public class BlueToothBindStatusActivity extends BaseActivity<ActivityBlueToothB
     @Override
     protected void initialize() {
         bindService(new Intent(this, MQTTService.class), conn, Context.BIND_AUTO_CREATE);
+        mViewBinding.blueBindingContainer.setVisibility(View.VISIBLE);
+        mViewBinding.blueBindContainer.setVisibility(View.GONE);
         mViewBinding.bindNextButton.setOnClickListener(view -> {
             myService.getWelcomeBindStr().onWelcomeBind("绑定成功");
             CommonUtils.showToast("绑定成功，请稍等");
-            finish();
+//            finish();
         });
     }
 
