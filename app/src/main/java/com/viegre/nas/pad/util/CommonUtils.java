@@ -20,8 +20,10 @@ import com.viegre.nas.pad.R;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.temporal.Temporal;
+import java.util.TimeZone;
 
 import static com.blankj.utilcode.util.ViewUtils.runOnUiThread;
 
@@ -32,6 +34,19 @@ public class CommonUtils {
 
     public static final long DEFAULT_SPLASH_GUIDE_DURATION = 5 * 1000L;
 
+    /**
+     * 获取毫秒转换成时分秒
+     * @param seconds
+     * @return
+     */
+    public static String getDateFormatFromMilliSecond(long seconds) {
+        //初始化format格式
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        //设置时区，跳过此步骤会默认设置为"GMT+08:00" 得到的结果会多出来8个小时
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
+        String time = dateFormat.format(seconds);
+        return time;
+    }
     /**
      * 计算时间间隔
      *

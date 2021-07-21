@@ -46,6 +46,9 @@ public class BusConfig {
 	 */
 	public static final String DEVICE_BOUND = "device_bound";
 	public static final String DEVICE_LOGIN = "device_LOGIN";
+	public static final String DEVICE_OUT = "device_out";
+	public static final String DEVICE_BOUND_SUCCESS = "device_bound_success";
+	public static final String DEVICE_BOUND_ERROR = "device_bound_error";
 
 	/**
 	 * 控制语音识别
