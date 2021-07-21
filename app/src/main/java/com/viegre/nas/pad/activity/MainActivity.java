@@ -533,8 +533,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
             liveIntent.putExtra("ChannelNum", 1);
             ActivityUtils.startActivity(liveIntent);
         });
-//        mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(MoreAppActivity.class));//跳转到更多应用activity中
-        mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(WelcomeActivity.class));
+        mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(MoreAppActivity.class));//跳转到更多应用activity中
+//        mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(WelcomeActivity.class));
     }
 
     private void initBanner() {
