@@ -137,7 +137,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
 
-        ServiceUtils.startService(ScreenSaverService.class);
+//        ServiceUtils.startService(ScreenSaverService.class);
         ChatManager.Instance().addOnMessageUpdateListener(this);
 //		getUsbPermission();
         initClick();
@@ -533,7 +533,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
             liveIntent.putExtra("ChannelNum", 1);
             ActivityUtils.startActivity(liveIntent);
         });
-        mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(MoreAppActivity.class));//跳转到更多应用activity中
+//        mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(MoreAppActivity.class));//跳转到更多应用activity中
+        mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(WelcomeActivity.class));
     }
 
     private void initBanner() {
@@ -756,5 +757,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         if (BusConfig.NETWORK_DISCONNECTED.equals(event)) {
             mViewBinding.llcMainUnconnected.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void pushBle(String event) {
+        if (!BusConfig.DEVICE_LOGIN.equals(event)) {
+            return;
+        }
+        ActivityUtils.startActivity(BlueToothBindStatusActivity.class);
     }
 }
