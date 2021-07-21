@@ -19,6 +19,10 @@ public class SPConfig {
 
 	//手机号
 	public static final String PHONE = "phone";
+	//小时
+	public static final String HOUR = "hour";
+	//头像
+	public static final String AVATAR = "avatar";
 	//token
 	public static final String TOKEN = "token";
 	//	头像

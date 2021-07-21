@@ -332,68 +332,27 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     /**
      * 初始化用户区域
      */
-    private void initUserInfo() {
-        if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
-            Glide.with(mActivity)
-                    .load(CommonUtils.stringToBitmap(SPUtils.getInstance().getString(SPConfig.USERICON)))
-                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                    .into(mViewBinding.acivMainUserIcon);
-            mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE)));
-            mViewBinding.llcMainUser.setOnClickListener(null);
-//			计算token是否过期
-//            {"phone":"15357906428","token_start_time":1625640110622,"token_hour_time":24}
-            String jsonTokenInfo = SPUtils.getInstance().getString(SPConfig.TOKEN_TIME);
-            if (!"".equals(jsonTokenInfo)) {
-                UserTokenTime userTokenTime = new Gson().fromJson(jsonTokenInfo, UserTokenTime.class);
-                Long token_hour_time = Long.valueOf(userTokenTime.getToken_hour_time() * 60);
-                long minute = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - userTokenTime.getToken_start_time());
-                if (minute <= token_hour_time) {
-                    getLoginIM();
-//                refreshToken(userTokenTime.getToken_hour_time());
-                } else {
-                    showTips();//过期token，提示
-                }
-            }
-        } else {
-            Glide.with(mActivity)
-                    .load(R.mipmap.main_unlogin)
-                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                    .into(mViewBinding.acivMainUserIcon);
-//			mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
-            mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login1);
-            mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
-        }
-        mViewBinding.llcMainUser.setVisibility(View.VISIBLE);
-    }
-
 //    private void initUserInfo() {
-//        //			计算token是否过期
+//        if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
+//            Glide.with(mActivity)
+//                    .load(CommonUtils.stringToBitmap(SPUtils.getInstance().getString(SPConfig.USERICON)))
+//                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+//                    .into(mViewBinding.acivMainUserIcon);
+//            mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE)));
+//            mViewBinding.llcMainUser.setOnClickListener(null);
+////			计算token是否过期
 ////            {"phone":"15357906428","token_start_time":1625640110622,"token_hour_time":24}
-//        String jsonTokenInfo = SPUtils.getInstance().getString(SPConfig.TOKEN_TIME);
-//        if (!"".equals(jsonTokenInfo)) {
-//            UserTokenTime userTokenTime = new Gson().fromJson(jsonTokenInfo, UserTokenTime.class);
-//            Long token_hour_time = Long.valueOf(userTokenTime.getToken_hour_time() * 60);
-//            long minute = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - userTokenTime.getToken_start_time());
-//            if (minute <= token_hour_time) {
-//                if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
-//                    Glide.with(mActivity)
-//                            .load(CommonUtils.stringToBitmap(SPUtils.getInstance().getString(SPConfig.USERICON)))
-//                            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-//                            .into(mViewBinding.acivMainUserIcon);
-//                    mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE)));
-//                    mViewBinding.llcMainUser.setOnClickListener(null);
+//            String jsonTokenInfo = SPUtils.getInstance().getString(SPConfig.TOKEN_TIME);
+//            if (!"".equals(jsonTokenInfo)) {
+//                UserTokenTime userTokenTime = new Gson().fromJson(jsonTokenInfo, UserTokenTime.class);
+//                Long token_hour_time = Long.valueOf(userTokenTime.getToken_hour_time() * 60);
+//                long minute = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - userTokenTime.getToken_start_time());
+//                if (minute <= token_hour_time) {
+//                    getLoginIM();
+////                refreshToken(userTokenTime.getToken_hour_time());
 //                } else {
-//                    Glide.with(mActivity)
-//                            .load(R.mipmap.main_unlogin)
-//                            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-//                            .into(mViewBinding.acivMainUserIcon);
-////			mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
-//                    mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login1);
-//                    mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
+//                    showTips();//过期token，提示
 //                }
-//                getLoginIM();
-//            } else {
-//                showTips();//过期token，提示
 //            }
 //        } else {
 //            Glide.with(mActivity)
@@ -406,6 +365,47 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 //        }
 //        mViewBinding.llcMainUser.setVisibility(View.VISIBLE);
 //    }
+
+    private void initUserInfo() {
+        //			计算token是否过期
+//            {"phone":"15357906428","token_start_time":1625640110622,"token_hour_time":24}
+        String jsonTokenInfo = SPUtils.getInstance().getString(SPConfig.TOKEN_TIME);
+        if (!"".equals(jsonTokenInfo)) {
+            UserTokenTime userTokenTime = new Gson().fromJson(jsonTokenInfo, UserTokenTime.class);
+            Long token_hour_time = Long.valueOf(userTokenTime.getToken_hour_time() * 60);
+            long minute = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - userTokenTime.getToken_start_time());
+            if (minute <= token_hour_time) {
+                if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
+                    Glide.with(mActivity)
+                            .load(CommonUtils.stringToBitmap(SPUtils.getInstance().getString(SPConfig.USERICON)))
+                            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                            .into(mViewBinding.acivMainUserIcon);
+                    mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE)));
+                    mViewBinding.llcMainUser.setOnClickListener(null);
+                } else {
+                    Glide.with(mActivity)
+                            .load(R.mipmap.main_unlogin)
+                            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                            .into(mViewBinding.acivMainUserIcon);
+//			mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
+                    mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login1);
+                    mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
+                }
+                getLoginIM();
+            } else {
+                showTips();//过期token，提示
+            }
+        } else {
+            Glide.with(mActivity)
+                    .load(R.mipmap.main_unlogin)
+                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                    .into(mViewBinding.acivMainUserIcon);
+//			mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login);
+            mViewBinding.actvMainUserInfo.setText(R.string.main_click_to_login1);
+            mViewBinding.llcMainUser.setOnClickListener(view -> ActivityUtils.startActivity(LoginActivity.class));
+        }
+        mViewBinding.llcMainUser.setVisibility(View.VISIBLE);
+    }
 
     private void refreshToken(int token_hour_time) {
         TipDialog show = WaitDialog.show(this, "请稍候...");
