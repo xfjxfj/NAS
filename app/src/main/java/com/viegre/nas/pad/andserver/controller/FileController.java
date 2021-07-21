@@ -9,8 +9,9 @@ import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.Utils;
 import com.topqizhi.andserver.model.HttpFile;
 import com.viegre.nas.pad.andserver.exception.CustomException;
+import com.viegre.nas.pad.andserver.exception.DirAlreadyExistsException;
+import com.viegre.nas.pad.andserver.exception.DirNotExistException;
 import com.viegre.nas.pad.andserver.exception.FileAlreadyExistsException;
-import com.viegre.nas.pad.andserver.exception.FileNotExistException;
 import com.viegre.nas.pad.andserver.exception.IncorrectPathException;
 import com.viegre.nas.pad.andserver.exception.PermissionDeniedException;
 import com.viegre.nas.pad.config.PathConfig;
@@ -58,7 +59,7 @@ class FileController {
 				path = path + File.separator;
 			}
 			if (!FileUtils.isFileExists(path)) {
-				throw new FileNotExistException();
+				throw new DirNotExistException();
 			}
 			if (!FileUtils.isDir(path)) {
 				throw new IncorrectPathException();
@@ -86,7 +87,7 @@ class FileController {
 			path = path + File.separator;
 		}
 		if (FileUtils.isFileExists(path)) {
-			throw new FileAlreadyExistsException();
+			throw new DirAlreadyExistsException();
 		}
 		if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
 			throw new PermissionDeniedException();
@@ -101,11 +102,15 @@ class FileController {
 	@PostMapping(path = "/upload", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	void upload(@RequestParam("path") String path, @RequestParam(name = "file") MultipartFile file) {
 		path = PathConfig.NAS + path;
-		if (FileUtils.isFileExists(path)) {
-			throw new FileAlreadyExistsException();
+		if (!FileUtils.isFileExists(path)) {
+			throw new DirNotExistException();
 		}
+		path = path + File.separator + file.getFilename();
 		if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
 			throw new PermissionDeniedException();
+		}
+		if (FileUtils.isFileExists(path)) {
+			throw new FileAlreadyExistsException();
 		}
 		try {
 			File localFile = new File(path);

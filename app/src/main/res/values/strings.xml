@@ -261,7 +261,9 @@
 	<!--AndServer配置-->
 	<string name="andserver_succeed">成功</string>
 	<string name="andserver_failed">失败</string>
+	<string name="andserver_dir_does_not_exist">目录不存在</string>
 	<string name="andserver_file_does_not_exist">文件不存在</string>
+	<string name="andserver_dir_already_exists">目录已存在</string>
 	<string name="andserver_file_already_exists">文件已存在</string>
 	<string name="andserver_incorrect_path">路径不正确</string>
 	<string name="andserver_permission_denied">没有访问权限</string>

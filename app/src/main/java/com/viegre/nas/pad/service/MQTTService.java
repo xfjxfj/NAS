@@ -47,8 +47,6 @@ import com.viegre.nas.pad.entity.FtpFileEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
-import com.viegre.nas.pad.manager.PopupManager;
-import com.viegre.nas.pad.popup.LoginTimePopup;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.MediaScanner;
@@ -422,7 +420,7 @@ public class MQTTService extends Service {
 							@Override
 							public Void doInBackground() {
 								List<ExternalDriveEntity> list = new ArrayList<>();
-								list.add(new ExternalDriveEntity("USB Storage", PathConfig.NAS));
+								list.add(new ExternalDriveEntity("USB Storage", File.separator));
 								Map<String, Object> externalDriveListMap = new HashMap<>();
 								externalDriveListMap.put("externalDriveList", list);
 								MQTTMsgEntity externalDriveListMsg = getMQTTMsg(MQTTMsgEntity.TYPE_NOTIFY,
