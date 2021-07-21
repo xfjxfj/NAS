@@ -38,17 +38,19 @@ import androidx.recyclerview.widget.RecyclerView;
  * 通话记录adapter
  */
 public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvRecordAdapter.ViewHolder> {
-	private ExpandableViewHoldersUtil.KeepOneHolder<ViewHolder> keepOne;
-	private final Context mcontext;
-	boolean isClick = false;
-	private List<String> data;
-	private final Gson gs = new Gson();
+    private ExpandableViewHoldersUtil.KeepOneHolder<ViewHolder> keepOne;
+    private final Context mcontext;
+    boolean isClick = false;
+    private List<String> data;
+    private final Gson gs = new Gson();
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public ContactsRvRecordAdapter(Context context) {
         mcontext = context;
         data = getRecordData();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public int getItemCount() {
         List<String> recordData = getRecordData();
@@ -63,16 +65,16 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
         return new ViewHolder(view);
     }
 
-	@Override
-	public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-		RecordListBean2 mdata = gs.fromJson(data.get(position), RecordListBean2.class);
-		if (null == mdata) {
-			return;
-		}
+        RecordListBean2 mdata = gs.fromJson(data.get(position), RecordListBean2.class);
+        if (null == mdata) {
+            return;
+        }
 
-		if (mdata.getDirection().equals("Receive")) {
-			holder.delete_text.setText("呼入");
+        if (mdata.getDirection().equals("Receive")) {
+            holder.delete_text.setText("呼入");
 
             holder.tvTitle.setText(mdata.getTargetId());
             holder.tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, 14);
@@ -170,13 +172,13 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
         String[] split1 = mdata.getTurnOnTime().split(":");
         String time = " 通话";
         if (split1.length > 1) {
-            if (!split1[0].equals("0")) {
+            if (!split1[0].equals("00")) {
                 time = time + split1[0] + "小时";
             }
             if (!split1[1].equals("00")) {
                 time = time + split1[1] + "分";
             }
-            if (!split1[2].equals("0")) {
+            if (!split1[2].equals("00")) {
                 time = time + split1[2] + "秒";
             } else {
                 holder.delete_text.setText("未接");

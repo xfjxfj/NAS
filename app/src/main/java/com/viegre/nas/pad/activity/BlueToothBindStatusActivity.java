@@ -60,5 +60,4 @@ public class BlueToothBindStatusActivity extends BaseActivity<ActivityBlueToothB
         mViewBinding.blueBindingContainer.setVisibility(View.GONE);
         mViewBinding.blueBindContainer.setVisibility(View.VISIBLE);
     }
-
 }

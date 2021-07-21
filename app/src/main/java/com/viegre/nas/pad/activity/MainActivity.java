@@ -726,6 +726,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 //        }
 //    };
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onMessageUpdate(Message message) {
         Log.d("onMessageUpdate:message", message.toString());
@@ -743,16 +744,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                 jsStr.put("MessageUid", message.messageUid);
                 jsStr.put("CallTime", new SimpleDateFormat("yyyy-MM-dd HH:mm").format(Calendar.getInstance().getTime()));
                 if (me.getConnectTime() > 0 && me.getEndTime() > 0) {
-                    Long q = (me.getEndTime() - me.getConnectTime());
-//                    int i = q.intValue();
-                    Long time = q / 1000;
-                    String str = "";
-                    if (time > 3600) {
-                        str = String.format("%d:%02d:%02d", time / 3600, time / 60, time % 60);
-                    } else {
-                        str = String.format("%d:%02d:%02d", time / 3600, time / 60, time % 60);
-                    }
-                    jsStr.put("TurnOnTime", str);
+                    jsStr.put("TurnOnTime", CommonUtils.getDateFormatFromMilliSecond((me.getEndTime() - me.getConnectTime())));
                     jsStr.put("TurnOn", true);
                 } else {
                     jsStr.put("TurnOnTime", "0");
