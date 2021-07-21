@@ -122,7 +122,7 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 
         @Override
         public void onStartFailure(int errorCode) {
-            CommonUtils.showToast("BLE广播开启失败,错误码:" + errorCode);
+            CommonUtils.showToast("BLE广播开启失败,请重启系统蓝牙");
 //            Toast.makeText(MainActivity2.this,"BLE广播开启失败,错误码:" + errorCode,Toast.LENGTH_SHORT).show();
         }
     };
