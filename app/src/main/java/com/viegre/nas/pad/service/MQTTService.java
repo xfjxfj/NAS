@@ -34,6 +34,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.google.common.collect.Lists;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.activity.BlueToothBindStatusActivity;
 import com.viegre.nas.pad.activity.LoginActivity;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
@@ -81,6 +82,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import androidx.core.app.NotificationCompat;
+
+import cn.wildfire.chat.kit.Event;
 import custom.fileobserver.FileListener;
 import custom.fileobserver.FileWatcher;
 import rxhttp.RxHttpPlugins;
@@ -450,10 +453,12 @@ public class MQTTService extends Service {
 						LogUtils.iTag(TAG, "绑定结果: ", userName, sn, state);
 						if (2 == state) {
 							ToastUtils.showShort("管理员拒绝绑定");
+							ActivityUtils.finishActivity(BlueToothBindStatusActivity.class);
 						} else if (1 == state || 3 == state) {
 //							EventBus.getDefault().postSticky(BusConfig.DEVICE_BOUND);//这边发消息  splashactivity中deviceBound未走
 							if (welcomeBindStr != null) {
-								welcomeBindStr.onWelcomeBind("绑定成功");
+//								welcomeBindStr.onWelcomeBind("绑定成功");
+								EventBus.getDefault().postSticky(BusConfig.DEVICE_BOUND_SUCCESS);
 							}
 						}
 						break;
@@ -1424,6 +1429,10 @@ public class MQTTService extends Service {
 
 	public void setWelcomeserver(welcomebind welcomeBindStr) {
 		this.welcomeBindStr = welcomeBindStr;
+	}
+
+	public welcomebind getWelcomeBindStr() {
+		return welcomeBindStr;
 	}
 
 	public IBinder onBind(Intent intent) {

@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.bumptech.glide.Glide;
 import com.djangoogle.framework.activity.BaseActivity;
@@ -131,20 +132,27 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
         @SuppressLint("MissingPermission")
         @Override
         public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
-            Log.i(TAG, String.format("onConnectionStateChange:%s,%s,%s,%s", device.getName(), device.getAddress(), status, newState));
-            CommonUtils.showToast(String.format(status == 0 ? (newState == 2 ? "与[%s]连接成功" : "与[%s]连接断开") : ("与[%s]连接出错,错误码:" + status), device));
+            Log.i(TAG, String.format("onConnectionStateChange:%s,%s,%s,%s", device.getName(), device.getAddress(),
+                    status, newState));
+            CommonUtils.showToast(String.format(status == 0 ? (newState == 2 ? "与[%s]连接成功" : "与[%s]连接断开") : ("与[%s" +
+                    "]连接出错,错误码:" + status), device));
+//            if (status == 0 && newState == 2) {
+//                ActivityUtils.startActivity(BlueToothBindStatusActivity.class);
+//            }
         }
 
         @Override
         public void onServiceAdded(int status, BluetoothGattService service) {
             Log.i(TAG, String.format("onServiceAdded:%s,%s", status, service.getUuid()));
-//            CommonUtils.showToast(String.format(status == 0 ? "添加服务[%s]成功" : "添加服务[%s]失败,错误码:" + status, service.getUuid()));
+//            CommonUtils.showToast(String.format(status == 0 ? "添加服务[%s]成功" : "添加服务[%s]失败,错误码:" + status, service
+//            .getUuid()));
         }
 
         //读取
         @SuppressLint("MissingPermission")
         @Override
-        public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic) {
+        public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset,
+                                                BluetoothGattCharacteristic characteristic) {
             Log.i(TAG,
                     String.format("onCharacteristicReadRequest:%s,%s,%s,%s,%s",
                             device.getName(),
@@ -152,36 +160,28 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
                             requestId,
                             offset,
                             characteristic.getUuid()));
-            mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, getJsonBind().getBytes());// 响应客户端
+            mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0,
+                    getJsonBind().getBytes());// 响应客户端\
+            ActivityUtils.startActivity(BlueToothBindStatusActivity.class);
+
         }
 
         //写入
         @SuppressLint("MissingPermission")
         @Override
-        public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded, int offset, byte[] requestBytes) {
+        public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId,
+                                                 BluetoothGattCharacteristic characteristic, boolean preparedWrite,
+                                                 boolean responseNeeded, int offset, byte[] requestBytes) {
             // 获取客户端发过来的数据
             String requestStr = new String(requestBytes);
-            Log.i(TAG,
-                    String.format("onCharacteristicWriteRequest:%s,%s,%s,%s,%s,%s,%s,%s",
-                            device.getName(),
-                            device.getAddress(),
-                            requestId,
-                            characteristic.getUuid(),
-                            preparedWrite,
-                            responseNeeded,
-                            offset,
-                            requestStr));
-            mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, requestBytes);// 响应客户端
-//            CommonUtils.showToast("客户端写入Characteristic[" + characteristic.getUuid() + "]:\n" + requestStr);
-            if (true) {
-                EventBus.getDefault().postSticky(BusConfig.DEVICE_BOUND);
-//                finish();
-            }
+            CommonUtils.showErrorToast(requestStr);
+            ActivityUtils.finishActivity(BlueToothBindStatusActivity.class);
         }
 
         @SuppressLint("MissingPermission")
         @Override
-        public void onDescriptorReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattDescriptor descriptor) {
+        public void onDescriptorReadRequest(BluetoothDevice device, int requestId, int offset,
+                                            BluetoothGattDescriptor descriptor) {
             Log.i(TAG,
                     String.format("onDescriptorReadRequest:%s,%s,%s,%s,%s",
                             device.getName(),
@@ -190,13 +190,16 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
                             offset,
                             descriptor.getUuid()));
             String response = "DESC_" + (int) (Math.random() * 100); //模拟数据
-            mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, response.getBytes()); // 响应客户端
+            mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset,
+                    response.getBytes()); // 响应客户端
 //            CommonUtils.showToast("客户端读取Descriptor[" + descriptor.getUuid() + "]:\n" + response);
         }
 
         @SuppressLint("MissingPermission")
         @Override
-        public void onDescriptorWriteRequest(final BluetoothDevice device, int requestId, BluetoothGattDescriptor descriptor, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
+        public void onDescriptorWriteRequest(final BluetoothDevice device, int requestId,
+                                             BluetoothGattDescriptor descriptor, boolean preparedWrite,
+                                             boolean responseNeeded, int offset, byte[] value) {
             // 获取客户端发过来的数据
             String valueStr = Arrays.toString(value);
             Log.i(TAG,
@@ -223,7 +226,8 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 //                            String response = "CHAR_" + (int) (Math.random() * 100); //模拟数据
 //                            characteristic.setValue(response);
 //                            mBluetoothGattServer.notifyCharacteristicChanged(device, characteristic, false);
-//                            CommonUtils.showToast("通知客户端改变Characteristic[" + characteristic.getUuid() + "]:\n" + response);
+//                            CommonUtils.showToast("通知客户端改变Characteristic[" + characteristic.getUuid() + "]:\n" +
+//                            response);
 //                        }
 //                    }
 //                }).start();
@@ -233,7 +237,8 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
         @SuppressLint("MissingPermission")
         @Override
         public void onExecuteWrite(BluetoothDevice device, int requestId, boolean execute) {
-            Log.i(TAG, String.format("onExecuteWrite:%s,%s,%s,%s", device.getName(), device.getAddress(), requestId, execute));
+            Log.i(TAG, String.format("onExecuteWrite:%s,%s,%s,%s", device.getName(), device.getAddress(), requestId,
+                    execute));
         }
 
         @SuppressLint("MissingPermission")
@@ -286,7 +291,8 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 
             // Android 6.0动态请求权限
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_COARSE_LOCATION};
+                String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_COARSE_LOCATION};
                 for (String str : permissions) {
                     if (checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(permissions, 111);
@@ -438,11 +444,14 @@ public class WelcomeActivity extends BaseActivity<ActivityWelcomeBinding> implem
 
         // 注意：必须要开启可连接的BLE广播，其它设备才能发现并连接BLE服务端!
         // =============启动BLE蓝牙服务端=====================================================================================
-        BluetoothGattService service = new BluetoothGattService(UUID_SERVICE, BluetoothGattService.SERVICE_TYPE_PRIMARY);
+        BluetoothGattService service = new BluetoothGattService(UUID_SERVICE,
+                BluetoothGattService.SERVICE_TYPE_PRIMARY);
         //添加可读+通知characteristic
         BluetoothGattCharacteristic characteristicRead = new BluetoothGattCharacteristic(UUID_CHAR_READ_NOTIFY,
-                BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_NOTIFY, BluetoothGattCharacteristic.PERMISSION_READ);
-        characteristicRead.addDescriptor(new BluetoothGattDescriptor(UUID_DESC_NOTITY, BluetoothGattCharacteristic.PERMISSION_WRITE));
+                BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.PROPERTY_NOTIFY,
+                BluetoothGattCharacteristic.PERMISSION_READ);
+        characteristicRead.addDescriptor(new BluetoothGattDescriptor(UUID_DESC_NOTITY,
+                BluetoothGattCharacteristic.PERMISSION_WRITE));
         service.addCharacteristic(characteristicRead);
         //添加可写characteristic
         BluetoothGattCharacteristic characteristicWrite = new BluetoothGattCharacteristic(UUID_CHAR_WRITE,
