@@ -171,7 +171,6 @@
     <string name="screen_brightness">屏幕亮度</string>
     <string name="screen_custom_album_count">%d张</string>
 
-<<<<<<< HEAD
 	<!--图片-->
 	<string name="image">图片</string>
 	<string name="image_private">私人图片</string>
@@ -194,27 +193,6 @@
 	<string name="image_text_14">您还未登录，点击</string>
 	<string name="image_text_15">登录</string>
 	<string name="image_text_16">后可查看私人空间内容</string>
-=======
-    <!--图片-->
-    <string name="image">图片</string>
-    <string name="image_private">私人图片</string>
-    <string name="image_filter">筛选</string>
-    <string name="image_edittext_hint">请输入搜索内容</string>
-    <string name="image_edittext_1">搜索范围</string>
-    <string name="image_text_1">搜索范围</string>
-    <string name="image_text_2">全部</string>
-    <string name="image_text_3">私人空间</string>
-    <string name="image_text_4">公共空间</string>
-    <string name="image_text_5">最近浏览过</string>
-    <string name="image_text_6">全部</string>
-    <string name="image_text_7">1天内</string>
-    <string name="image_text_8">3天内</string>
-    <string name="image_text_9">7天内</string>
-    <string name="image_text_10">一个月内</string>
-    <string name="image_text_11">3个月内</string>
-    <string name="image_text_12">重置</string>
-    <string name="image_text_13">确定</string>
->>>>>>> hotfix/bug
 
     <!--音频-->
     <string name="audio">音频</string>
