@@ -185,6 +185,7 @@ dependencies {
 	//https://gitee.com/pandalhhhh/EasyPhotos?_from=gitee_search
 	implementation 'com.github.HuanTanSheng:EasyPhotos:3.1.3'
 	//https://github.com/SusionSuc/DraggableImageViewer
-	implementation 'com.susion:image-viewer:1.0.2'
+//	implementation 'com.susion:image-viewer:1.0.2'
+	implementation project(':dragable_image_viewer')
 	annotationProcessor 'com.yanzhenjie.andserver:processor:2.1.9'
 }
