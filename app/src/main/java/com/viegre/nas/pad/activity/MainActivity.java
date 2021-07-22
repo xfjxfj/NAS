@@ -214,11 +214,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                         SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
                         sp.edit()
                                 .putString("id", loginResult.getUserId())
-//                              .putString("token", loginResult.getUserId())
                                 .putString("token", loginResult.getToken())
                                 .putString("mToken", loginResult.getToken())
                                 .apply();
-                        Log.d("MainInfo:", ANDROID_ID + "," + loginResult.getUserId());
                         getDevicesToken(ANDROID_ID, loginResult.getUserId());
                         return null;
                     }
@@ -255,7 +253,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                 DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
                 if (loglinCodeEntity.getMsg().equals("OK")) {
                     String token = loglinCodeEntity.getData().getToken();
-                    SPUtils.getInstance().put("token", token);
+                    SPUtils.getInstance().put(SPConfig.DEVICES_TOKEN, token);
                     postCallId(token, android_id, userid);
                 } else {
                     mViewBinding.mainError.setText("提示：ID " + android_id + ", " + loglinCodeEntity.getMsg() + "!");
@@ -432,6 +430,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                                         SPUtils.getInstance().remove(SPConfig.PHONE);
                                         //清空token
                                         SPUtils.getInstance().remove(SPConfig.TOKEN);
+                                        //清空登录时间
+                                        SPUtils.getInstance().put(SPConfig.TOKEN_TIME,"");
                                         //跳转到登录界面
                                         ActivityUtils.startActivity(LoginActivity.class);
                                     }
@@ -449,6 +449,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                 SPUtils.getInstance().remove(SPConfig.PHONE);
                 //清空token
                 SPUtils.getInstance().remove(SPConfig.TOKEN);
+                //清空登录时间
+                SPUtils.getInstance().put(SPConfig.TOKEN_TIME,"");
                 return false;
             }
         }).setButtonOrientation(LinearLayout.VERTICAL);

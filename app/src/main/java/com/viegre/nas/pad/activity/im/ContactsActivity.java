@@ -364,6 +364,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
         contactsRv2.setAdapter(new ContactsRvFriendsAdapter(this, mContactsData));
     }
 
+    @SuppressLint("NewApi")
     private void initRecordData(List<String> mRecordData) {
         //初始化数据
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -381,7 +382,8 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
             dialog = WaitDialog.show(this, "请稍候...");
         }
         RxHttp.get(UrlConfig.Device.GET_GETFRIENDS)
-                .addHeader("token", SPUtils.getInstance().getString("token"))
+//                .addHeader("token", SPUtils.getInstance().getString("token"))
+                .addHeader("token", SPUtils.getInstance().getString(SPConfig.DEVICES_TOKEN))
                 .add("pageNum", new Integer(0))
                 .add("pageSize", new Integer(100))
                 .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
@@ -431,7 +433,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
     private void getContactsDatas() {
         dialog = WaitDialog.show(this, "请稍候...");
         RxHttp.postForm(UrlConfig.Device.GET_GETALLFOLLOWS)
-                .addHeader("token", SPUtils.getInstance().getString("token"))
+                .addHeader("token",SPUtils.getInstance().getString(SPConfig.DEVICES_TOKEN))
                 .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
                 .asString()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -611,9 +613,9 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
                     @Override
                     public void onClick(View v) {
                         if (newFriendName.getText().toString().trim().equals("")) {
-                            posNetWork(newFriendName.getText().toString(), devicesSn, dialog);
-                        } else {
                             Toast.makeText(mActivity, "请输入新的名称", Toast.LENGTH_LONG).show();
+                        } else {
+                            posNetWork(newFriendName.getText().toString(), devicesSn, dialog);
                         }
                     }
                 });
@@ -630,7 +632,7 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
     //修改设备名称
     private void posNetWork(String newFriendName, String devicesSn, CustomDialog dialog) {
         RxHttp.postForm(UrlConfig.Device.GET_SETFRIENDNAME)
-                .addHeader("token", SPUtils.getInstance().getString("token"))
+                .addHeader("token", SPUtils.getInstance().getString(SPConfig.DEVICES_TOKEN))
                 .add("name", newFriendName)
                 .add("requestedSn", devicesSn)
                 .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))

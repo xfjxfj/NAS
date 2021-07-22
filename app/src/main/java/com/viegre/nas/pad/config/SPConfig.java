@@ -25,6 +25,8 @@ public class SPConfig {
 	public static final String AVATAR = "avatar";
 	//token
 	public static final String TOKEN = "token";
+	//devices token
+	public static final String DEVICES_TOKEN = "devices_token";
 	//	头像
 	public static final String USERICON = "user_icon";
 	//	存储上次选择的token时间
