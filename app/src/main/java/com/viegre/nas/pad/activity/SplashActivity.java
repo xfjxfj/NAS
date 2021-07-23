@@ -2,7 +2,6 @@ package com.viegre.nas.pad.activity;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -16,8 +15,6 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.FileUtils;
@@ -33,8 +30,6 @@ import com.blankj.utilcode.util.Utils;
 import com.bumptech.glide.Glide;
 import com.djangoogle.framework.activity.BaseFragmentActivity;
 import com.google.gson.Gson;
-import com.kongzue.dialog.v3.TipDialog;
-import com.kongzue.dialog.v3.WaitDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.viegre.nas.pad.BuildConfig;
@@ -357,7 +352,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 						mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
 						startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
 					} else {
-						mViewBinding.nvpSplashGuideVideo.setVisibility(View.VISIBLE);
+						mViewBinding.svpSplashGuideVideo.setVisibility(View.VISIBLE);
 						playGuideVideo(fileName);
 					}
 				}
@@ -373,8 +368,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	private void playGuideVideo(String path) {
 		//全屏拉伸显示，使用这个属性时，surface_container建议使用FrameLayout
 		GSYVideoType.setShowType(GSYVideoType.SCREEN_MATCH_FULL);
-		mViewBinding.nvpSplashGuideVideo.setUp(path, true, "");
-		mViewBinding.nvpSplashGuideVideo.setIsTouchWiget(false);
+		mViewBinding.svpSplashGuideVideo.setUp(path, true, "");
+		mViewBinding.svpSplashGuideVideo.setIsTouchWiget(false);
 		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Long>() {
 			@Override
 			public Long doInBackground() {
@@ -383,7 +378,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 
 			@Override
 			public void onSuccess(Long result) {
-				mViewBinding.nvpSplashGuideVideo.startPlayLogic();
+				mViewBinding.svpSplashGuideVideo.startPlayLogic();
 				startCountdown(result);
 			}
 		});

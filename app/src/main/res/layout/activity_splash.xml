@@ -20,8 +20,8 @@
 		android:visibility="gone"
 		app:srcCompat="@mipmap/splash_guide_image" />
 
-	<com.viegre.nas.pad.widget.NasVideoPlayer
-		android:id="@+id/nvpSplashGuideVideo"
+	<com.viegre.nas.pad.widget.SplashVideoPlayer
+		android:id="@+id/svpSplashGuideVideo"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:visibility="gone" />

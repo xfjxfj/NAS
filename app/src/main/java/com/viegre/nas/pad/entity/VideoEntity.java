@@ -13,6 +13,8 @@ public class VideoEntity extends LitePalSupport implements Serializable {
 	private String suffix;
 	private String path;
 
+	public VideoEntity() {}
+
 	public VideoEntity(String name, String suffix, String path) {
 		this.name = name;
 		this.suffix = suffix;

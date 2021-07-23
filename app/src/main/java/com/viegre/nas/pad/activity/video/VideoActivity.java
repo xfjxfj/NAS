@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.provider.MediaStore;
 import android.view.View;
 
+import com.alibaba.fastjson.JSON;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -102,7 +103,8 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 		mVideoListAdapter = new VideoListAdapter();
 		mVideoListAdapter.setOnItemClickListener((adapter, view, position) -> {
 			Intent intent = new Intent(this, VideoPlayerActivity.class);
-			intent.putExtra("video", mVideoListAdapter.getData().get(position));
+			intent.putExtra("videoListJson", JSON.toJSONString(mVideoListAdapter.getData()));
+			intent.putExtra("index", position);
 			ActivityUtils.startActivity(intent);
 		});
 		mViewBinding.rvVideoList.setLayoutManager(new GridLayoutManager(this, 3));

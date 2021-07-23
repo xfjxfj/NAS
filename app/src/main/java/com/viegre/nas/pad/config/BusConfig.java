@@ -61,4 +61,10 @@ public class BusConfig {
 	 */
 	public static final String NETWORK_CONNECTED = "network_connected";
 	public static final String NETWORK_DISCONNECTED = "network_disconnected";
+
+	/**
+	 * 播放控制
+	 */
+	public static final String VIDEO_PLAY_PREVIOUS = "video_play_previous";
+	public static final String VIDEO_PLAY_NEXT = "video_play_next";
 }

@@ -610,7 +610,10 @@ public enum SkillManager {
 					AIUIManager.INSTANCE.startTTS("以下是" + videoEntity.getSemantic().get(0).getSlots().get(0).getValue() + "的搜索结果。");
 				} else {
 					Intent intent = new Intent(Utils.getApp(), VideoPlayerActivity.class);
-					intent.putExtra("video", result.get(0));
+					List<VideoEntity> videoList = new ArrayList<>();
+					videoList.add(result.get(0));
+					intent.putExtra("videoListJson", JSON.toJSONString(videoList));
+					intent.putExtra("index", 0);
 					ActivityUtils.startActivity(intent);
 					AIUIManager.INSTANCE.startListening();
 				}
