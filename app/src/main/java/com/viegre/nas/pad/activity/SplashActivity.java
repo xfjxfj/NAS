@@ -201,7 +201,16 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
         NetworkInfo networkWiFiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         isEthernetConnected = null != networkEthernetInfo && networkEthernetInfo.isConnected();
         isWiFiConnected = null != networkWiFiInfo && networkWiFiInfo.isConnected();
-        getDevicesToken(SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
+//        if (!isEthernetConnected && !isWiFiConnected) {//配置网络
+//            mNetworkFragment = NetworkFragment.newInstance(true);
+//            mNetworkDetailFragment = NetworkDetailFragment.newInstance();
+//            FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
+//            FragmentUtils.show(mNetworkFragment);
+//        } else {//引导用户注册
+            getDevicesToken(SPUtils.getInstance().getString(SPConfig.ANDROID_ID));//网络判定是否绑定
+//        }
+
+
 //		if (!SPUtils.getInstance().getBoolean(SPConfig.IS_BOUND, false)) {//未绑定
 //			//判断网络是否可用
 //			if (!isEthernetConnected && !isWiFiConnected) {//配置网络
@@ -250,22 +259,6 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
                 getDeviceResource();
             }
         }
-
-        if (!isEthernetConnected && !isWiFiConnected) {
-            if (true) {
-
-            } else {
-
-            }
-        } else {
-            if (true) {
-
-            } else {
-
-            }
-
-        }
-
 
     }
 
@@ -519,14 +512,14 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
                             List<DataBeanXX> data = devicesFollowEntity.getData();
                             if (null != data) {
                                 if (data.size() == 0) {//0为初始绑定 需要进入绑定界面，否则不处理 直接进入main
-                                    if (!isEthernetConnected && !isWiFiConnected) {//配置网络
-                                        mNetworkFragment = NetworkFragment.newInstance(true);
-                                        mNetworkDetailFragment = NetworkDetailFragment.newInstance();
-                                        FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
-                                        FragmentUtils.show(mNetworkFragment);
-                                    } else {//引导用户注册
-                                        ActivityUtils.startActivity(WelcomeActivity.class);
-                                    }
+//                                    if (!isEthernetConnected && !isWiFiConnected) {//配置网络
+//                                        mNetworkFragment = NetworkFragment.newInstance(true);
+//                                        mNetworkDetailFragment = NetworkDetailFragment.newInstance();
+//                                        FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
+//                                        FragmentUtils.show(mNetworkFragment);
+//                                    } else {//引导用户注册
+                                    ActivityUtils.startActivity(WelcomeActivity.class);
+//                                    }
                                 } else {
                                     //判断网络是否可用
                                     if (!isEthernetConnected && !isWiFiConnected) {
