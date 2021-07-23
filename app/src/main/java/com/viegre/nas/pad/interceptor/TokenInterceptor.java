@@ -68,8 +68,9 @@ public class TokenInterceptor implements Interceptor {
 	/**
 	 * 展示重新登录逻辑
 	 */
-	private static void showTips() {
+	public static void showTips() {
 		showTip = false;
+		clearTokenInfo();
 		MessageDialog.show((AppCompatActivity) ActivityUtils.getTopActivity(), "提示", "登录已经过期,请重新登录！", "是", "取消")
 		             .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
 			             @Override
@@ -119,5 +120,6 @@ public class TokenInterceptor implements Interceptor {
 		SPUtils.getInstance().remove(SPConfig.PHONE);
 		//清空token
 		SPUtils.getInstance().remove(SPConfig.TOKEN);
+		SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "");
 	}
 }
