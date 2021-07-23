@@ -76,132 +76,132 @@ import rxhttp.RxHttp;
  */
 public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> {
 
-    private NetworkFragment mNetworkFragment;
-    private NetworkDetailFragment mNetworkDetailFragment;
-    private CountDownTimer mGuideSkipCountDownTimer;
-    private boolean isEthernetConnected;
-    private boolean isWiFiConnected;
-    // MQTT服务
-    ServiceConnection conn = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MQTTService myService = ((MQTTService.DownLoadBinder) service).getService();
-            myService.setWelcomeserver(new MQTTService.welcomebind() {
-                @Override
-                public Void onWelcomeBind(String bindStr) {
-                    getDeviceResource();
-                    return null;
-                }
-            });
-        }
+	private NetworkFragment mNetworkFragment;
+	private NetworkDetailFragment mNetworkDetailFragment;
+	private CountDownTimer mGuideSkipCountDownTimer;
+	private boolean isEthernetConnected;
+	private boolean isWiFiConnected;
+	// MQTT服务
+	ServiceConnection conn = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			MQTTService myService = ((MQTTService.DownLoadBinder) service).getService();
+			myService.setWelcomeserver(new MQTTService.welcomebind() {
+				@Override
+				public Void onWelcomeBind(String bindStr) {
+					getDeviceResource();
+					return null;
+				}
+			});
+		}
 
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
 
-        }
-    };
+		}
+	};
 
-    @Override
-    protected void initialize() {
-        bindService(new Intent(this, MQTTService.class), conn, Context.BIND_AUTO_CREATE);
+	@Override
+	protected void initialize() {
+		bindService(new Intent(this, MQTTService.class), conn, Context.BIND_AUTO_CREATE);
 
-        grantPermission();
-    }
+		grantPermission();
+	}
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        GSYVideoManager.onResume();
-    }
+	@Override
+	protected void onResume() {
+		super.onResume();
+		GSYVideoManager.onResume();
+	}
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        GSYVideoManager.onPause();
-    }
+	@Override
+	protected void onPause() {
+		super.onPause();
+		GSYVideoManager.onPause();
+	}
 
-    @Override
-    protected void onDestroy() {
-        FragmentUtils.removeAll(getSupportFragmentManager());
-        GSYVideoManager.releaseAllVideos();
-        super.onDestroy();
-        unbindService(conn);//解绑服务
-    }
+	@Override
+	protected void onDestroy() {
+		FragmentUtils.removeAll(getSupportFragmentManager());
+		GSYVideoManager.releaseAllVideos();
+		super.onDestroy();
+		unbindService(conn);//解绑服务
+	}
 
-    /**
-     * 开启无障碍服务、授予权限、忽略电池优化、创建私有文件夹
-     */
-    private void grantPermission() {
-        ThreadUtils.executeByCached(new VoidTask() {
-            @SuppressLint("MissingPermission")
-            @Override
-            public Void doInBackground() {
-                //创建文件夹
-                FileUtils.createOrExistsDir(PathConfig.GUIDE_RESOURCE);
-                FileUtils.createOrExistsDir(PathConfig.RECYCLE_BIN);
-                FileUtils.createOrExistsDir(PathConfig.UPLOAD_CACHE);
-                //开启MQTT服务
-                ServiceUtils.startService(MQTTService.class);
-                //生产版本配置
-                if ("official".equals(BuildConfig.FLAVOR)) {
-                    //开启无障碍服务
-                    Settings.Secure.putString(getContentResolver(),
-                            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-                            getPackageName() + "/com.viegre.nas.pad.service.WakeupService");
-                    Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
-                    //设置24小时制
-                    if (24 != Settings.System.getInt(Utils.getApp().getContentResolver(), Settings.System.TIME_12_24, 12)) {
-                        Settings.System.putInt(Utils.getApp().getContentResolver(), Settings.System.TIME_12_24, 24);
-                    }
-                    //关闭系统自动确定时区
-                    if (1 == Settings.Global.getInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 1)) {
-                        Settings.Global.putInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
-                    }
-                    //设置时区为东八区
-                    AlarmManager alarmManager = (AlarmManager) Utils.getApp().getSystemService(Context.ALARM_SERVICE);
-                    alarmManager.setTimeZone("Asia/Shanghai");
-                }
-                //执行command
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    List<String> commandList = new ArrayList<>();
-                    //忽略电池优化
-                    PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
-                    if (!powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
-                        String ignoreBatteryOptimization = "dumpsys deviceidle whitelist +" + getPackageName();
-                        commandList.add(ignoreBatteryOptimization);
-                    }
-                    //开启frp内网穿透
-                    commandList.add("cd /data/data/com.viegre.nas.pad/files/frp/");
-                    commandList.add("./frpc -c ./frpc.ini > frpc.log  2>&1  &");
-                    ShellUtils.CommandResult commandResult = ShellUtils.execCmd(commandList, true);
-                    LogUtils.iTag("ShellUtils", commandResult.toString());
-                }
-                return null;
-            }
+	/**
+	 * 开启无障碍服务、授予权限、忽略电池优化、创建私有文件夹
+	 */
+	private void grantPermission() {
+		ThreadUtils.executeByCached(new VoidTask() {
+			@SuppressLint("MissingPermission")
+			@Override
+			public Void doInBackground() {
+				//创建文件夹
+				FileUtils.createOrExistsDir(PathConfig.GUIDE_RESOURCE);
+				FileUtils.createOrExistsDir(PathConfig.RECYCLE_BIN);
+				FileUtils.createOrExistsDir(PathConfig.UPLOAD_CACHE);
+				//开启MQTT服务
+				ServiceUtils.startService(MQTTService.class);
+				//生产版本配置
+				if ("official".equals(BuildConfig.FLAVOR)) {
+					//开启无障碍服务
+					Settings.Secure.putString(getContentResolver(),
+					                          Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
+					                          getPackageName() + "/com.viegre.nas.pad.service.WakeupService");
+					Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
+					//设置24小时制
+					if (24 != Settings.System.getInt(Utils.getApp().getContentResolver(), Settings.System.TIME_12_24, 12)) {
+						Settings.System.putInt(Utils.getApp().getContentResolver(), Settings.System.TIME_12_24, 24);
+					}
+					//关闭系统自动确定时区
+					if (1 == Settings.Global.getInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 1)) {
+						Settings.Global.putInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
+					}
+					//设置时区为东八区
+					AlarmManager alarmManager = (AlarmManager) Utils.getApp().getSystemService(Context.ALARM_SERVICE);
+					alarmManager.setTimeZone("Asia/Shanghai");
+				}
+				//执行command
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+					List<String> commandList = new ArrayList<>();
+					//忽略电池优化
+					PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
+					if (!powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
+						String ignoreBatteryOptimization = "dumpsys deviceidle whitelist +" + getPackageName();
+						commandList.add(ignoreBatteryOptimization);
+					}
+					//开启frp内网穿透
+					commandList.add("cd /data/data/com.viegre.nas.pad/files/frp/");
+					commandList.add("./frpc -c ./frpc.ini > frpc.log  2>&1  &");
+					ShellUtils.CommandResult commandResult = ShellUtils.execCmd(commandList, true);
+					LogUtils.iTag("ShellUtils", commandResult.toString());
+				}
+				return null;
+			}
 
-            @Override
-            protected void onDone() {
-                super.onDone();
-                ThreadUtils.runOnUiThread(() -> {
-                    ActivityUtils.startActivity(MainActivity.class);
-                    finish();
+			@Override
+			protected void onDone() {
+				super.onDone();
+				ThreadUtils.runOnUiThread(() -> {
+					ActivityUtils.startActivity(MainActivity.class);
+					finish();
 //					getDeviceBoundstatus();
-                    isBindDevices();
-                });
-            }
-        });
-    }
+					isBindDevices();
+				});
+			}
+		});
+	}
 
-    /**
-     * xfj 判断设备是否绑定用户
-     */
-    private void isBindDevices() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) Utils.getApp().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkEthernetInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
-        NetworkInfo networkWiFiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        isEthernetConnected = null != networkEthernetInfo && networkEthernetInfo.isConnected();
-        isWiFiConnected = null != networkWiFiInfo && networkWiFiInfo.isConnected();
-        getDevicesToken(SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
+	/**
+	 * xfj 判断设备是否绑定用户
+	 */
+	private void isBindDevices() {
+		ConnectivityManager connectivityManager = (ConnectivityManager) Utils.getApp().getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkEthernetInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
+		NetworkInfo networkWiFiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		isEthernetConnected = null != networkEthernetInfo && networkEthernetInfo.isConnected();
+		isWiFiConnected = null != networkWiFiInfo && networkWiFiInfo.isConnected();
+		getDevicesToken(SPUtils.getInstance().getString(SPConfig.ANDROID_ID));
 //		if (!SPUtils.getInstance().getBoolean(SPConfig.IS_BOUND, false)) {//未绑定
 //			//判断网络是否可用
 //			if (!isEthernetConnected && !isWiFiConnected) {//配置网络
@@ -220,338 +220,335 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 //				getDeviceResource();
 //			}
 //		}
-    }
+	}
 
-    /**
-     * 判断设备是否绑定用户
-     */
-    private void getDeviceBoundstatus() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) Utils.getApp().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkEthernetInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
-        NetworkInfo networkWiFiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        boolean isEthernetConnected = null != networkEthernetInfo && networkEthernetInfo.isConnected();
-        boolean isWiFiConnected = null != networkWiFiInfo && networkWiFiInfo.isConnected();
-        if (!SPUtils.getInstance().getBoolean(SPConfig.IS_BOUND, false)) {//未绑定
-            //判断网络是否可用
-            if (!isEthernetConnected && !isWiFiConnected) {//配置网络
-                mNetworkFragment = NetworkFragment.newInstance(true);
-                mNetworkDetailFragment = NetworkDetailFragment.newInstance();
-                FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
-                FragmentUtils.show(mNetworkFragment);
-            } else {//引导用户注册
-                ActivityUtils.startActivity(WelcomeActivity.class);
+	/**
+	 * 判断设备是否绑定用户
+	 */
+	private void getDeviceBoundstatus() {
+		ConnectivityManager connectivityManager = (ConnectivityManager) Utils.getApp().getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkEthernetInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
+		NetworkInfo networkWiFiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		boolean isEthernetConnected = null != networkEthernetInfo && networkEthernetInfo.isConnected();
+		boolean isWiFiConnected = null != networkWiFiInfo && networkWiFiInfo.isConnected();
+		if (!SPUtils.getInstance().getBoolean(SPConfig.IS_BOUND, false)) {//未绑定
+			//判断网络是否可用
+			if (!isEthernetConnected && !isWiFiConnected) {//配置网络
+				mNetworkFragment = NetworkFragment.newInstance(true);
+				mNetworkDetailFragment = NetworkDetailFragment.newInstance();
+				FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
+				FragmentUtils.show(mNetworkFragment);
+			} else {//引导用户注册
+				ActivityUtils.startActivity(WelcomeActivity.class);
 //				ActivityUtils.startActivity(MainActivity.class);
-            }
-        } else {//已绑定
-            //判断网络是否可用
-            if (!isEthernetConnected && !isWiFiConnected) {
-                showGuideData();
-            } else {//获取并显示最新引导页
-                getDeviceResource();
-            }
-        }
+			}
+		} else {//已绑定
+			//判断网络是否可用
+			if (!isEthernetConnected && !isWiFiConnected) {
+				showGuideData();
+			} else {//获取并显示最新引导页
+				getDeviceResource();
+			}
+		}
 
-        if (!isEthernetConnected && !isWiFiConnected) {
-            if (true) {
+		if (!isEthernetConnected && !isWiFiConnected) {
+			if (true) {
 
-            } else {
+			} else {
 
-            }
-        } else {
-            if (true) {
+			}
+		} else {
+			if (true) {
 
-            } else {
+			} else {
 
-            }
+			}
+		}
+	}
 
-        }
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void networkDetailOperation(String[] events) {
+		if (!BusConfig.NETWORK_DETAIL.equals(events[0])) {
+			return;
+		}
+		switch (events[1]) {
+			case BusConfig.SHOW_NETWORK_DETAIL:
+				FragmentUtils.add(getSupportFragmentManager(), mNetworkDetailFragment, R.id.flSplash);
+				FragmentUtils.show(mNetworkDetailFragment);
+				break;
 
+			case BusConfig.HIDE_NETWORK_DETAIL:
+				FragmentUtils.remove(mNetworkDetailFragment);
+				break;
 
-    }
+			default:
+				break;
+		}
+	}
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void networkDetailOperation(String[] events) {
-        if (!BusConfig.NETWORK_DETAIL.equals(events[0])) {
-            return;
-        }
-        switch (events[1]) {
-            case BusConfig.SHOW_NETWORK_DETAIL:
-                FragmentUtils.add(getSupportFragmentManager(), mNetworkDetailFragment, R.id.flSplash);
-                FragmentUtils.show(mNetworkDetailFragment);
-                break;
+	@Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+	public void deviceBound(String event) {
+		if (!BusConfig.DEVICE_BOUND.equals(event)) {
+			return;
+		}
+		SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
+		//获取并显示最新引导页
+		getDeviceResource();
+	}
 
-            case BusConfig.HIDE_NETWORK_DETAIL:
-                FragmentUtils.remove(mNetworkDetailFragment);
-                break;
+	/**
+	 * 获取资源配置
+	 */
+	private void getDeviceResource() {
+		RxHttp.postForm(UrlConfig.Device.GET_RESOURCE)
+		      .setAssemblyEnabled(false)
+		      .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
+		      .asResponse(DeviceResourceRootEntity.class)
+		      .subscribe(new Observer<DeviceResourceRootEntity>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {
+			      }
 
-            default:
-                break;
-        }
-    }
+			      @Override
+			      public void onNext(@NonNull DeviceResourceRootEntity deviceResourceRootEntity) {
+				      List<DeviceResourceEntity> resourceList = deviceResourceRootEntity.getResourceList();
+				      if (!resourceList.isEmpty()) {
+					      LitePal.deleteAll(DeviceResourceEntity.class);
+					      LitePal.saveAll(resourceList);
+					      DeviceResourceEntity deviceResourceEntity = LitePal.where("type = ?", "guideVideo").findFirst(DeviceResourceEntity.class);
+					      List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
+					      if (null != deviceResourceEntity) {
+						      String url = deviceResourceEntity.getContent();
+						      String fileName = FileUtils.getFileName(url);
+						      //判断文件是否已下载
+						      if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
+							      showGuideData();
+							      return;
+						      }
+						      downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
+					      }
+				      }
+				      showGuideData();
+			      }
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void deviceBound(String event) {
-        if (!BusConfig.DEVICE_BOUND.equals(event)) {
-            return;
-        }
-        SPUtils.getInstance().put(SPConfig.IS_BOUND, true);
-        //获取并显示最新引导页
-        getDeviceResource();
-    }
+			      @Override
+			      public void onError(@NonNull Throwable e) {
+				      e.printStackTrace();
+				      showGuideData();
+			      }
 
-    /**
-     * 获取资源配置
-     */
-    private void getDeviceResource() {
-        RxHttp.postForm(UrlConfig.Device.GET_RESOURCE)
-                .setAssemblyEnabled(false)
-                .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
-                .asResponse(DeviceResourceRootEntity.class)
-                .subscribe(new Observer<DeviceResourceRootEntity>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                    }
+			      @Override
+			      public void onComplete() {
+			      }
+		      });
+	}
 
-                    @Override
-                    public void onNext(@NonNull DeviceResourceRootEntity deviceResourceRootEntity) {
-                        List<DeviceResourceEntity> resourceList = deviceResourceRootEntity.getResourceList();
-                        if (!resourceList.isEmpty()) {
-                            LitePal.deleteAll(DeviceResourceEntity.class);
-                            LitePal.saveAll(resourceList);
-                            DeviceResourceEntity deviceResourceEntity = LitePal.where("type = ?", "guideVideo").findFirst(DeviceResourceEntity.class);
-                            List<File> guideFileList = FileUtils.listFilesInDir(PathConfig.GUIDE_RESOURCE);
-                            if (null != deviceResourceEntity) {
-                                String url = deviceResourceEntity.getContent();
-                                String fileName = FileUtils.getFileName(url);
-                                //判断文件是否已下载
-                                if (!guideFileList.isEmpty() && guideFileList.get(0).getName().equals(fileName)) {
-                                    showGuideData();
-                                    return;
-                                }
-                                downloadGuideData(new GuideResourceEntity(fileName, url, ImageUtils.isImage(fileName)));
-                            }
-                        }
-                        showGuideData();
-                    }
+	/**
+	 * 显示引导页
+	 */
+	private void showGuideData() {
+		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<GuideResourceEntity>() {
+			@Override
+			public GuideResourceEntity doInBackground() {
+				return LitePal.findFirst(GuideResourceEntity.class);
+			}
 
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        e.printStackTrace();
-                        showGuideData();
-                    }
+			@Override
+			public void onSuccess(GuideResourceEntity result) {
+				mViewBinding.actvSplashGuideSkip.setOnClickListener(view -> {
+					mGuideSkipCountDownTimer.cancel();
+					ActivityUtils.startActivity(MainActivity.class);
+					finish();
+				});
+				if (null == result) {
+					mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
+					startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
+				} else {
+					String fileName = PathConfig.GUIDE_RESOURCE + result.getFileName();
+					if (result.isImage()) {
+						Glide.with(mActivity).load(fileName).into(mViewBinding.acivSplashGuideImage);
+						mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
+						startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
+					} else {
+						mViewBinding.nvpSplashGuideVideo.setVisibility(View.VISIBLE);
+						playGuideVideo(fileName);
+					}
+				}
+			}
+		});
+	}
 
-                    @Override
-                    public void onComplete() {
-                    }
-                });
-    }
+	/**
+	 * 播放引导视频
+	 *
+	 * @param path
+	 */
+	private void playGuideVideo(String path) {
+		//全屏拉伸显示，使用这个属性时，surface_container建议使用FrameLayout
+		GSYVideoType.setShowType(GSYVideoType.SCREEN_MATCH_FULL);
+		mViewBinding.nvpSplashGuideVideo.setUp(path, true, "");
+		mViewBinding.nvpSplashGuideVideo.setIsTouchWiget(false);
+		ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Long>() {
+			@Override
+			public Long doInBackground() {
+				return CommonUtils.getLocalVideoDuration(path);
+			}
 
-    /**
-     * 显示引导页
-     */
-    private void showGuideData() {
-        ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<GuideResourceEntity>() {
-            @Override
-            public GuideResourceEntity doInBackground() {
-                return LitePal.findFirst(GuideResourceEntity.class);
-            }
+			@Override
+			public void onSuccess(Long result) {
+				mViewBinding.nvpSplashGuideVideo.startPlayLogic();
+				startCountdown(result);
+			}
+		});
+	}
 
-            @Override
-            public void onSuccess(GuideResourceEntity result) {
-                mViewBinding.actvSplashGuideSkip.setOnClickListener(view -> {
-                    mGuideSkipCountDownTimer.cancel();
-                    ActivityUtils.startActivity(MainActivity.class);
-                    finish();
-                });
-                if (null == result) {
-                    mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
-                    startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
-                } else {
-                    String fileName = PathConfig.GUIDE_RESOURCE + result.getFileName();
-                    if (result.isImage()) {
-                        Glide.with(mActivity).load(fileName).into(mViewBinding.acivSplashGuideImage);
-                        mViewBinding.acivSplashGuideImage.setVisibility(View.VISIBLE);
-                        startCountdown(CommonUtils.DEFAULT_SPLASH_GUIDE_DURATION);
-                    } else {
-                        mViewBinding.nvpSplashGuideVideo.setVisibility(View.VISIBLE);
-                        playGuideVideo(fileName);
-                    }
-                }
-            }
-        });
-    }
+	/**
+	 * 开始倒计时
+	 *
+	 * @param duration
+	 */
+	private void startCountdown(long duration) {
+		mViewBinding.actvSplashGuideSkip.setVisibility(View.VISIBLE);
+		mGuideSkipCountDownTimer = new CountDownTimer(duration, 1000L) {
+			@Override
+			public void onTick(long l) {
+				mViewBinding.actvSplashGuideSkip.setText(StringUtils.getString(R.string.splash_guide_skip, l / 1000));
+			}
 
-    /**
-     * 播放引导视频
-     *
-     * @param path
-     */
-    private void playGuideVideo(String path) {
-        //全屏拉伸显示，使用这个属性时，surface_container建议使用FrameLayout
-        GSYVideoType.setShowType(GSYVideoType.SCREEN_MATCH_FULL);
-        mViewBinding.nvpSplashGuideVideo.setUp(path, true, "");
-        mViewBinding.nvpSplashGuideVideo.setIsTouchWiget(false);
-        ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Long>() {
-            @Override
-            public Long doInBackground() {
-                return CommonUtils.getLocalVideoDuration(path);
-            }
+			@Override
+			public void onFinish() {
+				ActivityUtils.startActivity(MainActivity.class);
+				finish();
+			}
+		};
+		mGuideSkipCountDownTimer.start();
+	}
 
-            @Override
-            public void onSuccess(Long result) {
-                mViewBinding.nvpSplashGuideVideo.startPlayLogic();
-                startCountdown(result);
-            }
-        });
-    }
+	/**
+	 * 下载引导资源
+	 *
+	 * @param guideResourceEntity
+	 */
+	private void downloadGuideData(GuideResourceEntity guideResourceEntity) {
+		FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
+		RxHttp.get(guideResourceEntity.getUrl())
+		      .setAssemblyEnabled(false)
+		      .asDownload(PathConfig.GUIDE_RESOURCE + guideResourceEntity.getFileName())
+		      .subscribe(new Observer<String>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {
+			      }
 
-    /**
-     * 开始倒计时
-     *
-     * @param duration
-     */
-    private void startCountdown(long duration) {
-        mViewBinding.actvSplashGuideSkip.setVisibility(View.VISIBLE);
-        mGuideSkipCountDownTimer = new CountDownTimer(duration, 1000L) {
-            @Override
-            public void onTick(long l) {
-                mViewBinding.actvSplashGuideSkip.setText(StringUtils.getString(R.string.splash_guide_skip, l / 1000));
-            }
+			      @Override
+			      public void onNext(@NonNull String s) {
+				      LitePal.deleteAll(GuideResourceEntity.class);
+				      guideResourceEntity.save();
+			      }
 
-            @Override
-            public void onFinish() {
-                ActivityUtils.startActivity(MainActivity.class);
-                finish();
-            }
-        };
-        mGuideSkipCountDownTimer.start();
-    }
+			      @Override
+			      public void onError(@NonNull Throwable e) {
+				      e.printStackTrace();
+				      LitePal.deleteAll(GuideResourceEntity.class);
+				      FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
+			      }
 
-    /**
-     * 下载引导资源
-     *
-     * @param guideResourceEntity
-     */
-    private void downloadGuideData(GuideResourceEntity guideResourceEntity) {
-        FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
-        RxHttp.get(guideResourceEntity.getUrl())
-                .setAssemblyEnabled(false)
-                .asDownload(PathConfig.GUIDE_RESOURCE + guideResourceEntity.getFileName())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                    }
+			      @Override
+			      public void onComplete() {
+			      }
+		      });
+	}
 
-                    @Override
-                    public void onNext(@NonNull String s) {
-                        LitePal.deleteAll(GuideResourceEntity.class);
-                        guideResourceEntity.save();
-                    }
+	private void getDevicesToken(String android_id) {
+		String url = UrlConfig.Device.GET_DEVICESTOKEN;
+		RxHttp.postForm(url).add("sn", android_id).asString().observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<String>() {
+			@Override
+			public void onSubscribe(@NonNull Disposable d) {
+				Log.d("", "");
+			}
 
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        e.printStackTrace();
-                        LitePal.deleteAll(GuideResourceEntity.class);
-                        FileUtils.deleteAllInDir(PathConfig.GUIDE_RESOURCE);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                    }
-                });
-    }
-
-    private void getDevicesToken(String android_id) {
-        String url = UrlConfig.Device.GET_DEVICESTOKEN;
-        RxHttp.postForm(url).add("sn", android_id).asString().observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<String>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-                Log.d("", "");
-            }
-
-            @Override
-            public void onNext(@NonNull String s) {
-                Gson gson = new Gson();
-                DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
-                if (loglinCodeEntity.getMsg().equals("OK")) {
-                    String token = loglinCodeEntity.getData().getToken();
-                    SPUtils.getInstance().put(SPConfig.TOKEN, token);
-                    getContactsDatas(token, android_id);
-                } else {
-                    Log.e("提示：ID ", android_id + ", " + loglinCodeEntity.getMsg() + "!");
-                    CommonUtils.showErrorToast(loglinCodeEntity.getMsg());
+			@Override
+			public void onNext(@NonNull String s) {
+				Gson gson = new Gson();
+				DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
+				if (loglinCodeEntity.getMsg().equals("OK")) {
+					String token = loglinCodeEntity.getData().getToken();
+					SPUtils.getInstance().put(SPConfig.TOKEN, token);
+					getContactsDatas(token, android_id);
+				} else {
+					Log.e("提示：ID ", android_id + ", " + loglinCodeEntity.getMsg() + "!");
+					CommonUtils.showErrorToast(loglinCodeEntity.getMsg());
 //					TipDialog.show(SplashActivity.this, loglinCodeEntity.getMsg(), TipDialog.TYPE.ERROR).doDismiss();
-                }
-            }
+				}
+			}
 
-            @Override
-            public void onError(@NonNull Throwable e) {
-                CommonUtils.showErrorToast(e.getMessage());
+			@Override
+			public void onError(@NonNull Throwable e) {
+				CommonUtils.showErrorToast(e.getMessage());
 //				TipDialog.show(WelcomeActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
-            }
+			}
 
-            @Override
-            public void onComplete() {
-                Log.d("", "");
+			@Override
+			public void onComplete() {
+				Log.d("", "");
 //                        SPUtils.getInstance().remove(SPConfig.LOGIN_CODE_SESSION_ID);
 ////                        mViewBinding.actvLoginAccountBtn.setClickable(true);
-            }
-        });
+			}
+		});
+	}
 
-    }
+	private void getContactsDatas(String token, String android_id) {
+		RxHttp.postForm(UrlConfig.Device.GET_GETALLFOLLOWS)
+		      .addHeader(SPConfig.TOKEN, SPUtils.getInstance().getString(SPConfig.DEVICES_TOKEN))
+		      .add("sn", android_id)
+		      .asString()
+		      .observeOn(AndroidSchedulers.mainThread())
+		      .subscribe(new Observer<String>() {
+			      @Override
+			      public void onSubscribe(@NonNull Disposable d) {
+				      Log.d("onSubscribe", d.toString());
+			      }
 
-    private void getContactsDatas(String token, String android_id) {
-        RxHttp.postForm(UrlConfig.Device.GET_GETALLFOLLOWS)
-                .add("sn", android_id)
-                .asString()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                        Log.d("onSubscribe", d.toString());
-                    }
+			      @Override
+			      public void onNext(@NonNull String s) {
+				      Gson gson = new Gson();
+				      DevicesFollowEntity devicesFollowEntity = gson.fromJson(s, DevicesFollowEntity.class);
+				      if (devicesFollowEntity.getMsg().equals("OK")) {//返回数据正确
+					      List<DataBeanXX> data = devicesFollowEntity.getData();
+					      if (null != data) {
+						      if (data.size() == 0) {//0为初始绑定 需要进入绑定界面，否则不处理 直接进入main
+							      if (!isEthernetConnected && !isWiFiConnected) {//配置网络
+								      mNetworkFragment = NetworkFragment.newInstance(true);
+								      mNetworkDetailFragment = NetworkDetailFragment.newInstance();
+								      FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
+								      FragmentUtils.show(mNetworkFragment);
+							      } else {//引导用户注册
+								      ActivityUtils.startActivity(WelcomeActivity.class);
+							      }
+						      } else {
+							      //判断网络是否可用
+							      if (!isEthernetConnected && !isWiFiConnected) {
+								      showGuideData();
+							      } else {//获取并显示最新引导页
+								      getDeviceResource();
+							      }
+						      }
+					      } else {
+						      CommonUtils.showErrorToast(devicesFollowEntity.getMsg());
+					      }
+				      } else {
+					      CommonUtils.showErrorToast(devicesFollowEntity.getMsg());
+				      }
+			      }
 
-                    @Override
-                    public void onNext(@NonNull String s) {
-                        Gson gson = new Gson();
-                        DevicesFollowEntity devicesFollowEntity = gson.fromJson(s, DevicesFollowEntity.class);
-                        if (devicesFollowEntity.getMsg().equals("OK")) {//返回数据正确
-                            List<DataBeanXX> data = devicesFollowEntity.getData();
-                            if (null != data) {
-                                if (data.size() == 0) {//0为初始绑定 需要进入绑定界面，否则不处理 直接进入main
-                                    if (!isEthernetConnected && !isWiFiConnected) {//配置网络
-                                        mNetworkFragment = NetworkFragment.newInstance(true);
-                                        mNetworkDetailFragment = NetworkDetailFragment.newInstance();
-                                        FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
-                                        FragmentUtils.show(mNetworkFragment);
-                                    } else {//引导用户注册
-                                        ActivityUtils.startActivity(WelcomeActivity.class);
-                                    }
-                                } else {
-                                    //判断网络是否可用
-                                    if (!isEthernetConnected && !isWiFiConnected) {
-                                        showGuideData();
-                                    } else {//获取并显示最新引导页
-                                        getDeviceResource();
-                                    }
-                                }
-                            } else {
-                                CommonUtils.showErrorToast(devicesFollowEntity.getMsg());
-                            }
-                        } else {
-                            CommonUtils.showErrorToast(devicesFollowEntity.getMsg());
-                        }
-                    }
+			      @Override
+			      public void onError(@NonNull Throwable e) {
+				      CommonUtils.showErrorToast(e.getMessage());
+			      }
 
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        CommonUtils.showErrorToast(e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d("", "");
-                    }
-                });
-    }
+			      @Override
+			      public void onComplete() {
+				      Log.d("", "");
+			      }
+		      });
+	}
 }

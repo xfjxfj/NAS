@@ -33,6 +33,7 @@ import static com.blankj.utilcode.util.ThreadUtils.runOnUiThread;
 public class TokenInterceptor implements Interceptor {
 
 	private static final String TAG = "TokenInterceptor";
+	private static boolean showTip = true;
 
 	@Override
 	public Response intercept(Chain chain) throws IOException {
@@ -59,13 +60,16 @@ public class TokenInterceptor implements Interceptor {
 	 */
 	private void handleTokenInvalid() {
 		ActivityUtils.finishToActivity(MainActivity.class, false);
-		showTips();
+		if (showTip) {
+			showTips();
+		}
 	}
 
 	/**
 	 * 展示重新登录逻辑
 	 */
-	private void showTips() {
+	private static void showTips() {
+		showTip = false;
 		MessageDialog.show((AppCompatActivity) ActivityUtils.getTopActivity(), "提示", "登录已经过期,请重新登录！", "是", "取消")
 		             .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
 			             @Override
@@ -82,12 +86,14 @@ public class TokenInterceptor implements Interceptor {
 						             });
 					             }
 				             }, 300);
+				             showTip = true;
 				             return false;
 			             }
 		             })
 		             .setOnCancelButtonClickListener(new OnDialogButtonClickListener() {
 			             @Override
 			             public boolean onClick(BaseDialog baseDialog, View v) {
+			             	showTip = true;
 				             return false;
 			             }
 		             })
@@ -103,7 +109,6 @@ public class TokenInterceptor implements Interceptor {
 	static public void saveTokenInfo(String phone, String token) {
 		SPUtils.getInstance().put(SPConfig.PHONE, phone);
 		SPUtils.getInstance().put(SPConfig.TOKEN, token);
-		RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient()).setOnParamAssembly(param -> param.addHeader(SPConfig.TOKEN, token));
 	}
 
 	/**
@@ -114,6 +119,5 @@ public class TokenInterceptor implements Interceptor {
 		SPUtils.getInstance().remove(SPConfig.PHONE);
 		//清空token
 		SPUtils.getInstance().remove(SPConfig.TOKEN);
-		RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient()).setOnParamAssembly(param -> param.addHeader(SPConfig.TOKEN, ""));
 	}
 }

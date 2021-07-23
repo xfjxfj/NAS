@@ -1,130 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#131314"
-    android:paddingLeft="20dp"
-    android:paddingTop="24dp"
-    android:paddingRight="20dp">
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="#131314"
+	android:paddingLeft="20dp"
+	android:paddingTop="24dp"
+	android:paddingRight="20dp">
 
-    <ImageView
-        android:id="@+id/userImage"
-        android:layout_width="40px"
-        android:layout_height="40px"
-        android:layout_marginRight="12dp"
-        android:src="@mipmap/ic_launcher" />
+	<ImageView
+		android:id="@+id/userImage"
+		android:layout_width="40px"
+		android:layout_height="40px"
+		android:layout_marginRight="12dp"
+		android:src="@mipmap/ic_launcher" />
 
-    <TextView
-        android:id="@+id/delete_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="17dp"
-        android:scaleType="fitXY"
-        android:text=""
-        android:textColor="#8D8E99" />
+	<TextView
+		android:id="@+id/delete_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:layout_marginLeft="17dp"
+		android:scaleType="fitXY"
+		android:text=""
+		android:textColor="#8D8E99" />
 
-    <TextView
-        android:id="@+id/item_user_concern_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/delete_text"
-        android:layout_toRightOf="@+id/userImage"
-        android:maxLines="1"
-        android:textColor="#FEFEFE"
-        android:textSize="13px"
-        android:textStyle="bold"
-        tools:text="张三" />
+	<androidx.appcompat.widget.LinearLayoutCompat
+		android:id="@+id/item_user_container"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_toLeftOf="@+id/delete_text"
+		android:layout_toRightOf="@+id/userImage"
+		android:gravity="center_vertical"
+		android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/item_user_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/item_user_concern_title"
-        android:layout_marginTop="4dp"
-        android:layout_toRightOf="@+id/userImage"
-        android:text="18：32  响铃8下"
-        android:textColor="#AAB0BB"
-        android:textSize="11sp" />
+		<TextView
+			android:id="@+id/item_user_concern_title"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:maxLines="1"
+			android:textColor="#FEFEFE"
+			android:textSize="13px"
+			android:textStyle="bold"
+			tools:text="张三" />
 
-    <!--    <LinearLayout-->
-    <!--        android:id="@+id/item_user_concern_arrow"-->
-    <!--        android:layout_width="50dp"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_below="@+id/item_user_concern_title"-->
-    <!--        android:layout_marginTop="4dp"-->
-    <!--        android:layout_toRightOf="@+id/item_user_time"-->
-    <!--        android:gravity="center_vertical"-->
-    <!--        android:orientation="vertical"-->
-    <!--        android:paddingLeft="6dp"-->
-    <!--        android:paddingTop="3dp">-->
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/phone_type_image"
+			android:layout_width="wrap_content"
+			android:layout_height="6dp"
+			android:src="@mipmap/phone_audio" />
+	</androidx.appcompat.widget.LinearLayoutCompat>
 
-    <!--        <ImageView-->
-    <!--            android:id="@+id/item_user_concern_arrow_image"-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:src="@drawable/_xpopup_shadow" />-->
-    <!--    </LinearLayout>-->
+	<TextView
+		android:id="@+id/item_user_time"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/item_user_container"
+		android:layout_marginTop="4dp"
+		android:layout_toRightOf="@+id/userImage"
+		android:text="18：32  响铃8下"
+		android:textColor="#AAB0BB"
+		android:textSize="11sp" />
 
-    <LinearLayout
-        android:id="@+id/item_user_concern_link_layout"
-        android:layout_width="match_parent"
-        android:layout_height="80px"
-        android:layout_below="@+id/item_user_time"
-        android:layout_marginTop="4dp"
-        android:layout_toRightOf="@+id/userImage"
-        android:background="@mipmap/call_delete"
-        android:orientation="vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:visibility="visible"
-        tools:visibility="visible">
+	<!--    <LinearLayout-->
+	<!--        android:id="@+id/item_user_concern_arrow"-->
+	<!--        android:layout_width="50dp"-->
+	<!--        android:layout_height="wrap_content"-->
+	<!--        android:layout_below="@+id/item_user_concern_title"-->
+	<!--        android:layout_marginTop="4dp"-->
+	<!--        android:layout_toRightOf="@+id/item_user_time"-->
+	<!--        android:gravity="center_vertical"-->
+	<!--        android:orientation="vertical"-->
+	<!--        android:paddingLeft="6dp"-->
+	<!--        android:paddingTop="3dp">-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp">
+	<!--        <ImageView-->
+	<!--            android:id="@+id/item_user_concern_arrow_image"-->
+	<!--            android:layout_width="wrap_content"-->
+	<!--            android:layout_height="wrap_content"-->
+	<!--            android:src="@drawable/_xpopup_shadow" />-->
+	<!--    </LinearLayout>-->
 
-            <TextView
-                android:id="@+id/delete_text_1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="8dp"
-                android:layout_weight="1"
-                android:text="删除"
-                android:textColor="#FA1233"
-                android:textSize="24px" />
+	<LinearLayout
+		android:id="@+id/item_user_concern_link_layout"
+		android:layout_width="match_parent"
+		android:layout_height="80px"
+		android:layout_below="@+id/item_user_time"
+		android:layout_marginTop="4dp"
+		android:layout_toRightOf="@+id/userImage"
+		android:background="@mipmap/call_delete"
+		android:orientation="vertical"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp"
+		android:visibility="visible"
+		tools:visibility="visible">
 
-            <TextView
-                android:id="@+id/delete_text_2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="8dp"
-                android:layout_weight="1"
-                android:textColor="#FA1233"
-                android:textSize="24px" />
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_vertical"
+			android:orientation="horizontal"
+			android:paddingTop="3dp"
+			android:paddingBottom="3dp">
 
-            <ImageView
-                android:id="@+id/delete_image_3"
-                android:layout_width="0dp"
-                android:layout_height="22px"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:lineSpacingMultiplier="1.2"
-                android:src="@mipmap/delete_img"
-                android:textColor="#333333"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </LinearLayout>
+			<TextView
+				android:id="@+id/delete_text_1"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"
+				android:layout_weight="1"
+				android:text="删除"
+				android:textColor="#FA1233"
+				android:textSize="24px" />
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginTop="13px"
-        android:layout_below="@+id/item_user_concern_link_layout"
-        android:background="@color/black11" />
+			<TextView
+				android:id="@+id/delete_text_2"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"
+				android:layout_weight="1"
+				android:textColor="#FA1233"
+				android:textSize="24px" />
+
+			<ImageView
+				android:id="@+id/delete_image_3"
+				android:layout_width="0dp"
+				android:layout_height="22px"
+				android:layout_weight="1"
+				android:ellipsize="end"
+				android:lineSpacingMultiplier="1.2"
+				android:src="@mipmap/delete_img"
+				android:textColor="#333333"
+				android:textSize="12sp" />
+		</LinearLayout>
+	</LinearLayout>
+
+	<ImageView
+		android:layout_width="match_parent"
+		android:layout_height="1px"
+		android:layout_below="@+id/item_user_concern_link_layout"
+		android:layout_marginTop="13px"
+		android:background="@color/black11" />
 </RelativeLayout>

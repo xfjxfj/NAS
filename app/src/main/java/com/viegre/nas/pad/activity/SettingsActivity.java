@@ -28,6 +28,7 @@ import com.viegre.nas.pad.fragment.settings.network.NetworkFragment;
 import com.viegre.nas.pad.fragment.settings.screen.ScreenCustomImageFragment;
 import com.viegre.nas.pad.fragment.settings.screen.ScreenFragment;
 import com.viegre.nas.pad.impl.PopupClickListener;
+import com.viegre.nas.pad.interceptor.TokenInterceptor;
 import com.viegre.nas.pad.manager.PopupManager;
 import com.viegre.nas.pad.popup.PromptPopup;
 import com.viegre.nas.pad.util.CommonUtils;
@@ -162,8 +163,7 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 
 			      @Override
 			      public void onNext(@NonNull String s) {
-				      SPUtils.getInstance().remove(SPConfig.PHONE);
-				      RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient()).setOnParamAssembly(param -> param.removeAllHeader("token"));
+				      TokenInterceptor.clearTokenInfo();
 				      checkLoginStatus();
 			      }
 
