@@ -51,7 +51,6 @@ public class AutoAnswerFragment extends BaseFragment<FragmentAutoAnswerBinding> 
 
     private void getFriendList() {
         RxHttp.postForm(UrlConfig.Device.GET_GETALLFOLLOWS)
-                .addHeader("token", SPUtils.getInstance().getString("token"))
                 .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
                 .asString()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -110,7 +109,6 @@ public class AutoAnswerFragment extends BaseFragment<FragmentAutoAnswerBinding> 
 
     private void getDevicesfriend(List<ContactsBean> mFriendData) {
         RxHttp.get(UrlConfig.Device.GET_GETFRIENDS)
-                .addHeader("token", SPUtils.getInstance().getString("token"))
                 .add("pageNum", new Integer(0))
                 .add("pageSize", new Integer(100))
                 .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))

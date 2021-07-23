@@ -18,6 +18,7 @@ import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.manager.AMapLocationManager;
+import com.viegre.nas.pad.manager.RxHttpManager;
 import com.viegre.nas.pad.service.AppService;
 
 import org.litepal.LitePal;
@@ -104,7 +105,7 @@ public class NasApp extends BaseApplication {
 	}
 
 	private void initRxHttp() {
-		RxHttpPlugins.init(OkHttpManager.INSTANCE.getOkHttpClient()).setDebug(BuildConfig.DEBUG);
+		RxHttpManager.init(this);
 	}
 
 	/**
