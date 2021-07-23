@@ -22,7 +22,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.constant.TimeConstants;
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -48,8 +47,6 @@ import com.viegre.nas.pad.entity.FtpFileEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
-import com.viegre.nas.pad.manager.PopupManager;
-import com.viegre.nas.pad.popup.LoginTimePopup;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.MediaScanner;
@@ -82,8 +79,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import androidx.core.app.NotificationCompat;
-
-import cn.wildfire.chat.kit.Event;
 import custom.fileobserver.FileListener;
 import custom.fileobserver.FileWatcher;
 import rxhttp.RxHttpPlugins;
@@ -1331,7 +1326,7 @@ public class MQTTService extends Service {
             } else {
                 isPick = ftpFileEntity.getPickSet().contains(phoneNum);
             }
-            list.add(new FtpCategoryEntity(name, path, createTime, ConvertUtils.byte2FitMemorySize(size, 2), src, isPick));
+            list.add(new FtpCategoryEntity(name, path, createTime, size, src, isPick));
         }
         cursor.close();
         return list;

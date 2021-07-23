@@ -10,13 +10,13 @@ public class FtpCategoryEntity implements Serializable {
 	private String name;
 	private String path;
 	private String createTime;
-	private String size;
+	private long size;
 	private String src;
 	private boolean pick = false;
 
 	public FtpCategoryEntity() {}
 
-	public FtpCategoryEntity(String name, String path, String createTime, String size, String src, boolean pick) {
+	public FtpCategoryEntity(String name, String path, String createTime, long size, String src, boolean pick) {
 		this.name = name;
 		this.path = path;
 		this.createTime = createTime;
@@ -49,11 +49,11 @@ public class FtpCategoryEntity implements Serializable {
 		this.createTime = createTime;
 	}
 
-	public String getSize() {
+	public long getSize() {
 		return size;
 	}
 
-	public void setSize(String size) {
+	public void setSize(long size) {
 		this.size = size;
 	}
 
