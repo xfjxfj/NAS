@@ -475,7 +475,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
                 DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
                 if (loglinCodeEntity.getMsg().equals("OK")) {
                     String token = loglinCodeEntity.getData().getToken();
-                    SPUtils.getInstance().put("token", token);
+                    SPUtils.getInstance().put(SPConfig.TOKEN, token);
                     getContactsDatas(token, android_id);
                 } else {
                     Log.e("提示：ID ", android_id + ", " + loglinCodeEntity.getMsg() + "!");
@@ -502,7 +502,6 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 
     private void getContactsDatas(String token, String android_id) {
         RxHttp.postForm(UrlConfig.Device.GET_GETALLFOLLOWS)
-                .addHeader("token", token)
                 .add("sn", android_id)
                 .asString()
                 .observeOn(AndroidSchedulers.mainThread())

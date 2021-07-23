@@ -48,6 +48,7 @@ import com.viegre.nas.pad.entity.FtpFileEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
+import com.viegre.nas.pad.interceptor.TokenInterceptor;
 import com.viegre.nas.pad.manager.PopupManager;
 import com.viegre.nas.pad.popup.LoginTimePopup;
 import com.viegre.nas.pad.task.VoidTask;
@@ -357,9 +358,7 @@ public class MQTTService extends Service {
                         String phone = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.PHONE);
                         String avatar = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.AVATAR);
                         String hour = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.HOUR);
-                        RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient()).setOnParamAssembly(param -> param.addHeader(SPConfig.TOKEN, token));
-                        SPUtils.getInstance().put(SPConfig.PHONE, phone);
-                        SPUtils.getInstance().put(SPConfig.TOKEN, token);
+                        TokenInterceptor.saveTokenInfo(phone, token);
                         JSONObject js = new JSONObject();
                         js.put("phone", SPUtils.getInstance().getString(SPConfig.PHONE));
                         js.put(SPConfig.TOKEN_START_TIME, System.currentTimeMillis());

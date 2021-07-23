@@ -174,7 +174,6 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
     @SuppressLint("UseValueOf")
     private void AccectRequest(int status, String friendId, CustomDialog dialog) {
         RxHttp.postForm(UrlConfig.Device.GET_ADDFRIENDRESULT)
-                .addHeader("token", SPUtils.getInstance().getString("token"))
                 .add("requesterSn", friendId)
                 .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
                 .add("status", new Integer(status))
@@ -381,7 +380,6 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
             dialog = WaitDialog.show(this, "请稍候...");
         }
         RxHttp.get(UrlConfig.Device.GET_GETFRIENDS)
-                .addHeader("token", SPUtils.getInstance().getString("token"))
                 .add("pageNum", new Integer(0))
                 .add("pageSize", new Integer(100))
                 .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
@@ -431,7 +429,6 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
     private void getContactsDatas() {
         dialog = WaitDialog.show(this, "请稍候...");
         RxHttp.postForm(UrlConfig.Device.GET_GETALLFOLLOWS)
-                .addHeader("token", SPUtils.getInstance().getString("token"))
                 .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
                 .asString()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -543,7 +540,6 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
         } else {
             bt.setText("请稍等....");
             RxHttp.postForm(UrlConfig.Device.GET_ADDFRIENDREQUEST)
-                    .addHeader("token", SPUtils.getInstance().getString("token"))
                     .add("requestedSn", friendId)
                     .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
                     .asString()
@@ -630,7 +626,6 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
     //修改设备名称
     private void posNetWork(String newFriendName, String devicesSn, CustomDialog dialog) {
         RxHttp.postForm(UrlConfig.Device.GET_SETFRIENDNAME)
-                .addHeader("token", SPUtils.getInstance().getString("token"))
                 .add("name", newFriendName)
                 .add("requestedSn", devicesSn)
                 .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
@@ -701,7 +696,6 @@ ContactsActivity extends BaseActivity<ActivityContactsBinding> implements View.O
     //6fa8295f4764b429 删除设备
     private void postDeleteNetWork(String friendSn) {
         RxHttp.postForm(UrlConfig.Device.GET_DELFRIEND)
-                .addHeader("token", SPUtils.getInstance().getString("token"))
                 .add("requestedSn", friendSn)
                 .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
                 .asString()

@@ -255,7 +255,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                 DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
                 if (loglinCodeEntity.getMsg().equals("OK")) {
                     String token = loglinCodeEntity.getData().getToken();
-                    SPUtils.getInstance().put("token", token);
+                    SPUtils.getInstance().put(SPConfig.TOKEN, token);
                     postCallId(token, android_id, userid);
                 } else {
                     mViewBinding.mainError.setText("提示：ID " + android_id + ", " + loglinCodeEntity.getMsg() + "!");
@@ -283,7 +283,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
     private void postCallId(String token, String Callid, String sn) {
         RxHttp.postForm(UrlConfig.Call.GET_REPORTINFO)
-                .addHeader("token", token)
                 .add("itemId", Callid)
                 .add("callId", sn)
                 .add("itemType", 2)
@@ -376,7 +375,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     private void refreshToken(int token_hour_time) {
         TipDialog show = WaitDialog.show(this, "请稍候...");
         RxHttp.postForm(UrlConfig.User.REFRESH_TOKEN)
-                .addHeader("token", SPUtils.getInstance().getString(SPConfig.TOKEN))
                 .add("hour", token_hour_time)
                 .asResponse(LoginEntity.class)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -389,8 +387,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                     public void onNext(@io.reactivex.rxjava3.annotations.NonNull LoginEntity loginEntity) {
 //                        token_hour_time
                         SPUtils.getInstance().put(SPConfig.TOKEN, loginEntity.getToken());
-                        RxHttpPlugins.init(RxHttpPlugins.getOkHttpClient())
-                                .setOnParamAssembly(param -> param.addHeader("token", loginEntity.getToken()));
                         loginIM();
                     }
 
