@@ -159,8 +159,8 @@ dependencies {
 	//https://lbs.amap.com/api/android-location-sdk/guide/create-project/android-studio-create-project
 	implementation 'com.amap.api:location:5.2.0'
 	//https://github.com/CarGuo/GSYVideoPlayer
-	implementation 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java:v8.1.3-jitpack'
-	implementation 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-exo_player2:v8.1.3-jitpack'
+	implementation 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java:v8.1.5-jitpack'
+	implementation 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-exo_player2:v8.1.5-jitpack'
 	//https://github.com/guolindev/LitePal
 	implementation 'org.litepal.guolindev:core:3.2.3'
 	//https://github.com/jaydeepw/audio-wife

@@ -450,13 +450,14 @@
 							android:textColor="#E5E5EB"
 							android:textSize="20px" />
 
-						<androidx.appcompat.widget.AppCompatTextView
-							android:id="@+id/actvMyDeviceBasicInformationOperationHours"
+						<Chronometer
+							android:id="@+id/cMyDeviceBasicInformationOperationHours"
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
 							android:layout_alignParentEnd="true"
 							android:layout_centerVertical="true"
 							android:layout_marginEnd="30px"
+							android:countDown="false"
 							android:includeFontPadding="false"
 							android:textColor="#5C5F68"
 							android:textSize="20px" />

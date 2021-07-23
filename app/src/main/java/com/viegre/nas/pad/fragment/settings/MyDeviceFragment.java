@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 
@@ -53,6 +52,7 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 		} else {
 			mViewBinding.llcMyDeviceLogin.setVisibility(View.GONE);
 		}
+		afterLogin();
 	}
 
 	private void initCurrentlyConnectedDevice() {
@@ -99,7 +99,8 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 		//设备状态
 		mViewBinding.actvMyDeviceBasicInformationDeviceState.setText("正常");
 		//运行时间
-		mViewBinding.actvMyDeviceBasicInformationOperationHours.setText(ConvertUtils.millis2FitTimeSpan(SystemClock.elapsedRealtime(), 2));
+		mViewBinding.cMyDeviceBasicInformationOperationHours.setBase(0);
+		mViewBinding.cMyDeviceBasicInformationOperationHours.start();
 		//恢复出厂
 		mViewBinding.actvMyDeviceBasicInformationReset.setOnClickListener(view -> {
 			//暂未处理
@@ -123,7 +124,7 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 			mViewBinding.actvMyDeviceHardDiskInformationCapacity.setText(ConvertUtils.byte2FitMemorySize(FileUtils.getFsTotalSize(PathConfig.NAS)));
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e(CommonUtils.getFileName()+CommonUtils.getLineNumber(),e.toString());
+			Log.e(CommonUtils.getFileName() + CommonUtils.getLineNumber(), e.toString());
 		}
 	}
 }

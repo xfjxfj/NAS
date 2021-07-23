@@ -283,7 +283,7 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
     @Retention(SOURCE)
     @Target({PARAMETER})
     @StringDef(value = {Type.ALL, Type.PUBLIC, Type.PRIVATE})
-    public @interface Type {
+    private @interface Type {
         String ALL = "all";
         String PUBLIC = "public";
         String PRIVATE = "private";
@@ -292,7 +292,7 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
     @Retention(SOURCE)
     @Target({PARAMETER})
     @StringDef(value = {TIME.ALL, TIME.DAY_1, TIME.DAY_3, TIME.DAY_7, TIME.MONTH_1, TIME.MONTH_3})
-    public @interface TIME {
+    private @interface TIME {
         String ALL = "all";
         String DAY_1 = "day1";
         String DAY_3 = "day3";
