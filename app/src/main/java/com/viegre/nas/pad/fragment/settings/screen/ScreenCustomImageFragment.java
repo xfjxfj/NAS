@@ -54,13 +54,15 @@ public class ScreenCustomImageFragment extends BaseFragment<FragmentScreenCustom
 				mScreenCustomSet.clear();
 				if (0 == mode) {
 					for (ImageAlbumEntity album : mScreenCustomAlbumAdapter.getData()) {
-						if (!album.getImageSet().isEmpty()) {
+						if (album.isCheck() && !album.getImageSet().isEmpty()) {
 							mScreenCustomSet.addAll(album.getImageSet());
 						}
 					}
 				} else {
 					for (ImageEntity image : mScreenCustomImageAdapter.getData()) {
-						mScreenCustomSet.add(image.getPath());
+						if (image.isCheck()) {
+							mScreenCustomSet.add(image.getPath());
+						}
 					}
 				}
 				if (!mScreenCustomSet.isEmpty()) {
@@ -74,17 +76,45 @@ public class ScreenCustomImageFragment extends BaseFragment<FragmentScreenCustom
 		}));
 		mViewBinding.acivScreenCustomList.setOnClickListener(view -> {
 			mode = 0;
-			mViewBinding.acivScreenCustomList.setImageResource(R.mipmap.screen_custom_list_checked);
-			mViewBinding.acivScreenCustomTiled.setImageResource(R.mipmap.screen_custom_tiled_unchecked);
-			mViewBinding.rvScreenCustomAlbumList.setVisibility(View.VISIBLE);
-			mViewBinding.rvScreenCustomImageList.setVisibility(View.GONE);
+			ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
+				@Override
+				public Void doInBackground() {
+					for (ImageEntity imageEntity : mScreenCustomImageAdapter.getData()) {
+						imageEntity.setCheck(false);
+					}
+					return null;
+				}
+
+				@Override
+				public void onSuccess(Void result) {
+					mScreenCustomImageAdapter.notifyDataSetChanged();
+					mViewBinding.acivScreenCustomList.setImageResource(R.mipmap.screen_custom_list_checked);
+					mViewBinding.acivScreenCustomTiled.setImageResource(R.mipmap.screen_custom_tiled_unchecked);
+					mViewBinding.rvScreenCustomAlbumList.setVisibility(View.VISIBLE);
+					mViewBinding.rvScreenCustomImageList.setVisibility(View.GONE);
+				}
+			});
 		});
 		mViewBinding.acivScreenCustomTiled.setOnClickListener(view -> {
 			mode = 1;
-			mViewBinding.acivScreenCustomList.setImageResource(R.mipmap.screen_custom_list_unchecked);
-			mViewBinding.acivScreenCustomTiled.setImageResource(R.mipmap.screen_custom_tiled_checked);
-			mViewBinding.rvScreenCustomAlbumList.setVisibility(View.GONE);
-			mViewBinding.rvScreenCustomImageList.setVisibility(View.VISIBLE);
+			ThreadUtils.executeByCached(new ThreadUtils.SimpleTask<Void>() {
+				@Override
+				public Void doInBackground() {
+					for (ImageAlbumEntity imageAlbumEntity : mScreenCustomAlbumAdapter.getData()) {
+						imageAlbumEntity.setCheck(false);
+					}
+					return null;
+				}
+
+				@Override
+				public void onSuccess(Void result) {
+					mScreenCustomAlbumAdapter.notifyDataSetChanged();
+					mViewBinding.acivScreenCustomList.setImageResource(R.mipmap.screen_custom_list_unchecked);
+					mViewBinding.acivScreenCustomTiled.setImageResource(R.mipmap.screen_custom_tiled_checked);
+					mViewBinding.rvScreenCustomAlbumList.setVisibility(View.GONE);
+					mViewBinding.rvScreenCustomImageList.setVisibility(View.VISIBLE);
+				}
+			});
 		});
 
 		initAlbum();

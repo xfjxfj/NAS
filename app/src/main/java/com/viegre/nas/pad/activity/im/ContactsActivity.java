@@ -227,35 +227,38 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
 					@Override
 					public void run() {
 //                                            bt.setText("发送邀请");
-						dialog.doDismiss();
-					}
-				});
-			}
-		}, 1500);
-	}
+                        dialog.doDismiss();
 
-	@Override
-	protected void initialize() {
-		initView();
-		getContactsDatas();
-	}
+                    }
+                });
+            }
+        }, 1500);
+    }
 
-	private void initView() {
+    @Override
+    protected void initialize() {
+        initView();
+
+    }
+
+    private void initView() {
 //        EventBus.getDefault().postSticky(BusConfig.STOP_MSC);
-		getDevicesfriend();
-		contactsRv1 = findViewById(R.id.contactsRv1);
-		contactsRv2 = findViewById(R.id.contactsRv2);
-		contactsRv3 = findViewById(R.id.contactsRv3);
-		textRecord = findViewById(R.id.textRecord);
-		homeImg = findViewById(R.id.homeImg);
-		textView2 = findViewById(R.id.textView2);
-		mViewBinding.homeImg.setOnClickListener(view -> finish());
-		textView2.setOnClickListener(this);
-		Intent intent = new Intent(this, MQTTService.class);
-		// 标志位BIND_AUTO_CREATE是的服务中onCreate得到执行,onStartCommand不会执行
-		bindService(intent, conn, Context.BIND_AUTO_CREATE);
+//        ChatManager.Instance().getUserInfo(fileRecord.userId, false)
+        getContactsDatas();//获取联系人好友
+        getDevicesfriend();//获取设备好友
+        contactsRv1 = findViewById(R.id.contactsRv1);
+        contactsRv2 = findViewById(R.id.contactsRv2);
+        contactsRv3 = findViewById(R.id.contactsRv3);
+        textRecord = findViewById(R.id.textRecord);
+        homeImg = findViewById(R.id.homeImg);
+        textView2 = findViewById(R.id.textView2);
+        mViewBinding.homeImg.setOnClickListener(view -> finish());
+        textView2.setOnClickListener(this);
+        Intent intent = new Intent(this, MQTTService.class);
+        // 标志位BIND_AUTO_CREATE是的服务中onCreate得到执行,onStartCommand不会执行
+        bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
-		ExpandableViewHoldersUtil.getInstance().init().setNeedExplanedOnlyOne(false);
+        ExpandableViewHoldersUtil.getInstance().init().setNeedExplanedOnlyOne(false);
 //      初始化RecycleViewAdapter
 		ExpandableViewHoldersUtil.getInstance().resetExpanedList();
 //        initFriendData(mContactsData);

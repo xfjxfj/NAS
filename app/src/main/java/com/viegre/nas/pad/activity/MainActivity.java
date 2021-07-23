@@ -17,7 +17,6 @@ import android.os.storage.StorageManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.GsonUtils;
@@ -40,7 +39,6 @@ import com.kongzue.dialog.v3.MessageDialog;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.topqizhi.ai.manager.AIUIManager;
-import com.topqizhi.ai.manager.AudioRecordManager;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.audio.AudioActivity;
@@ -96,7 +94,6 @@ import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import rxhttp.RxHttp;
-import rxhttp.RxHttpPlugins;
 
 /**
  * Created by レインマン on 2020/12/15 09:29 with Android Studio.
@@ -136,9 +133,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		Intent intent = new Intent(this, MQTTService.class);
 		bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
-		SPUtils.getInstance().put("bleBound", false);
-//        ServiceUtils.startService(ScreenSaverService.class);
-		ChatManager.Instance().addOnMessageUpdateListener(this);
+        Intent intent = new Intent(this, MQTTService.class);
+        bindService(intent, conn, Context.BIND_AUTO_CREATE);
+
+        SPUtils.getInstance().put("bleBound", false);
+        ServiceUtils.startService(ScreenSaverService.class);
+        ChatManager.Instance().addOnMessageUpdateListener(this);
 //		getUsbPermission();
 		initClick();
 		initIcon();
