@@ -420,8 +420,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 //			mViewBinding.tcMainTime.setOnClickListener(view -> {
 //			});
 //		}
-		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
-		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
+        mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
+        mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
 //        mViewBinding.acivMainIncomingCall.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -681,6 +681,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 				initContactsFile();//判断本地是否有相关文件存储数据 没有则创建
 				FileWriter fileWriter = new FileWriter(getFilesDir().toString() + PathConfig.CONTACTS_RECOMDING, true);
 				BufferedWriter vBufferedWriter = new BufferedWriter(fileWriter);
+				Log.d("onMessageUpdate---"+CommonUtils.getFileName()+"--",GsonUtils.toJson(message)+"----"+jsStr.toString());
 				vBufferedWriter.append(jsStr.toString());
 				vBufferedWriter.newLine();
 				vBufferedWriter.close();

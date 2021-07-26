@@ -58,16 +58,26 @@ public class CommonUtils {
         return duration.toHours();
     }
 
+    /**
+     * 获取当前运行的类名
+     * @return
+     */
     public static String getFileName() {
         StackTraceElement ste = new Throwable().getStackTrace()[1];
         return ste.getFileName();
     }
 
+    /**
+     * 获取当前运行的类中的行号
+     * @return
+     */
     public static String getLineNumber() {
         StackTraceElement ste = new Throwable().getStackTrace()[1];
         return String.valueOf(ste.getLineNumber());
     }
-
+    public static String getClassNameAndLine() {
+        return new StringBuilder(getFileName()).append("_").append(getLineNumber()).toString();
+    }
     /**
      * Base64字符串转换成图片
      *
