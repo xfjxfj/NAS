@@ -18,6 +18,7 @@ import com.viegre.nas.pad.activity.MainActivity;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.NasConfig;
 import com.viegre.nas.pad.config.SPConfig;
+import com.viegre.nas.pad.config.UrlConfig;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -37,7 +38,6 @@ import static com.blankj.utilcode.util.ThreadUtils.runOnUiThread;
 public class TokenInterceptor implements Interceptor {
 
 	private static final String TAG = "TokenInterceptor";
-	private static boolean showTip = true;
 
 	@Override
 	public Response intercept(Chain chain) throws IOException {
@@ -51,7 +51,11 @@ public class TokenInterceptor implements Interceptor {
 			if (code.equals(NasConfig.TOKEN_FAILED)) {
 				Log.e(TAG, "intercept: " + "token失效");
 				Thread.sleep(500);
-				handleTokenInvalid();
+				if (request.url().toString().contains(UrlConfig.APP_SERVER + UrlConfig.User.USER)) {/// 用户接口失效判断
+					handleTokenInvalid();
+				} else if (request.url().toString().contains(UrlConfig.APP_SERVER + UrlConfig.Device.DEVICE)) {/// 设备接口失效判断
+					EventBus.getDefault().post(BusConfig.DEVICE_TOKEN_UPDATE);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -64,7 +68,7 @@ public class TokenInterceptor implements Interceptor {
 	 */
 	private void handleTokenInvalid() {
 		ActivityUtils.finishToActivity(MainActivity.class, false);
-		if (showTip) {
+		if (SPUtils.getInstance().getBoolean(SPConfig.LOGIN_ERROR_SHOW, false)) {
 			showTips();
 		}
 	}
@@ -73,8 +77,8 @@ public class TokenInterceptor implements Interceptor {
 	 * 展示重新登录逻辑
 	 */
 	public static void showTips() {
-		if (showTip) {
-			showTip = false;
+		if (SPUtils.getInstance().getBoolean(SPConfig.LOGIN_ERROR_SHOW, false)) {
+			SPUtils.getInstance().put(SPConfig.LOGIN_ERROR_SHOW, false);
 			clearTokenInfo();
 			MessageDialog.show((AppCompatActivity) ActivityUtils.getTopActivity(), "提示", "登录已经过期,请重新登录！", "确定")
 			             .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
@@ -91,14 +95,14 @@ public class TokenInterceptor implements Interceptor {
 							             });
 						             }
 					             }, 300);
-					             showTip = true;
+					             SPUtils.getInstance().put(SPConfig.LOGIN_ERROR_SHOW, true);
 					             return false;
 				             }
 			             })
 			             .setOnDismissListener(new OnDismissListener() {
 				             @Override
 				             public void onDismiss() {
-					             showTip = true;
+					             SPUtils.getInstance().put(SPConfig.LOGIN_ERROR_SHOW, true);
 				             }
 			             })
 			             .setButtonOrientation(LinearLayout.VERTICAL);

@@ -137,6 +137,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
 		SPUtils.getInstance().put("bleBound", false);
 //        ServiceUtils.startService(ScreenSaverService.class);
+		// 登录时间监听
 		ServiceUtils.startService(TimeService.class);
 		ChatManager.Instance().addOnMessageUpdateListener(this);
 //		getUsbPermission();
@@ -173,33 +174,22 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 	}
 
 	@Override
-	protected void onRestart() {
-		super.onRestart();
-		getLoginIM();
-	}
-
-	//判断是否出现token错误的情况，如果没有则不需要重新登录
-	private void getLoginIM() {
-		if (!ContactsActivity.Token_valid) {
-			loginIM();
-		}
-	}
-
-	@Override
 	protected void onResume() {
 		super.onResume();
 		initUserInfo();
 		AMapLocationManager.INSTANCE.getLocation();
 	}
 
-	//登录音视频通话服务器
+	/**
+	 * 野火账号登录且只在此登录一次
+	 */
 	private void loginIM() {
 		//音视频登录 04f69b6004f9cc41
 		WaitDialog.show(this, "请稍候...");
 		String ANDROID_ID = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
 		String authCode = "66666";
 		//需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
-		ChatManagerHolder.gChatManager.disconnect(true, true);
+//		ChatManagerHolder.gChatManager.disconnect(true, true);
 		AppService.Instance().smsLogin(ANDROID_ID, authCode, new AppService.LoginCallback() {
 			@Override
 			public void onUiSuccess(LoginResult loginResult) {
@@ -212,12 +202,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 					@Override
 					public Void doInBackground() {
 						boolean success = ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
-                        SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
-                        sp.edit()
-                                .putString("id", loginResult.getUserId())
-                                .putString("token", loginResult.getToken())
-                                .putString("mToken", loginResult.getToken())
-                                .apply();
+						SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
+						sp.edit()
+						  .putString("id", loginResult.getUserId())
+						  .putString("token", loginResult.getToken())
+						  .putString("mToken", loginResult.getToken())
+						  .apply();
+						SPUtils.getInstance().put(SPConfig.WFC_USER_ID, loginResult.getUserId());
 						getDevicesToken(ANDROID_ID, loginResult.getUserId());
 						return null;
 					}
@@ -236,6 +227,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		});
 	}
 
+	/**
+	 * 刷新设备token
+	 *
+	 * @param android_id 设备id
+	 * @param userid     野火userId
+	 */
 	private void getDevicesToken(String android_id, String userid) {
 		String url = UrlConfig.Device.GET_DEVICESTOKEN;
 		RxHttp.postForm(url).add("sn", android_id).asString().observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<String>() {
@@ -355,7 +352,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 					     .into(mViewBinding.acivMainUserIcon);
 					mViewBinding.actvMainUserInfo.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE)));
 					mViewBinding.llcMainUser.setOnClickListener(null);
-					getLoginIM();
 				} else {
 					TokenInterceptor.showTips();
 				}
@@ -377,8 +373,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 //			mViewBinding.tcMainTime.setOnClickListener(view -> {
 //			});
 //		}
-        mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
-        mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
+		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
+		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
 //        mViewBinding.acivMainIncomingCall.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -638,7 +634,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 				initContactsFile();//判断本地是否有相关文件存储数据 没有则创建
 				FileWriter fileWriter = new FileWriter(getFilesDir().toString() + PathConfig.CONTACTS_RECOMDING, true);
 				BufferedWriter vBufferedWriter = new BufferedWriter(fileWriter);
-				Log.d("onMessageUpdate---"+CommonUtils.getFileName()+"--",GsonUtils.toJson(message)+"----"+jsStr.toString());
+				Log.d("onMessageUpdate---" + CommonUtils.getFileName() + "--", GsonUtils.toJson(message) + "----" + jsStr.toString());
 				vBufferedWriter.append(jsStr.toString());
 				vBufferedWriter.newLine();
 				vBufferedWriter.close();
@@ -691,5 +687,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 			return;
 		}
 		initUserInfo();
+	}
+
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void deviceTokenUpdate(String event) {
+		if (!BusConfig.DEVICE_TOKEN_UPDATE.equals(event)) {
+			return;
+		}
+		String ANDROID_ID = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
+		String userId = SPUtils.getInstance().getString(SPConfig.WFC_USER_ID);
+		getDevicesToken(ANDROID_ID, userId);
 	}
 }

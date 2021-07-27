@@ -58,9 +58,15 @@ public class SPConfig {
 	//ANDROID_ID
 	public static final String ANDROID_ID = "android_id";
 
+	// 野火用户id
+	public static final String WFC_USER_ID = "wfc_user_id";
+
 	//当前唤醒词
 	public static final String WAKEUP_KEYWORDS_INDEX = "wakeup_keywords_index";
 
 	//智能语音反馈开关
 	public static final String INTELLIGENT_VOICE_FEEDBACK = "intelligent_voice_feedback";
+
+	// 登录弹窗
+	public static final String LOGIN_ERROR_SHOW = "login_error_show";
 }

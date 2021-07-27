@@ -6,7 +6,6 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.viegre.nas.pad.receiver.ScreenStatusReceiver;
 import com.viegre.nas.pad.receiver.TimeChangeReceiver;
 
 import androidx.annotation.Nullable;

@@ -49,7 +49,7 @@ public class BusConfig {
 	public static final String DEVICE_OUT = "device_out";
 	public static final String DEVICE_BOUND_SUCCESS = "device_bound_success";
 	public static final String DEVICE_BOUND_ERROR = "device_bound_error";
-
+	public static final String DEVICE_TOKEN_UPDATE = "device_token_update";
 	/**
 	 * 控制语音识别
 	 */
