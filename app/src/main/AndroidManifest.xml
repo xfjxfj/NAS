@@ -80,14 +80,14 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".activity.LoginActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape" >
+        </activity>
         <activity
             android:name=".activity.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="${applicationId}.main" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

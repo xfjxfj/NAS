@@ -13,7 +13,7 @@
 		android:layout_width="40px"
 		android:layout_height="40px"
 		android:layout_marginRight="12dp"
-		android:src="@mipmap/ic_launcher" />
+		android:src="@mipmap/main_unlogin" />
 
 	<TextView
 		android:id="@+id/delete_text"
@@ -88,10 +88,11 @@
 		android:layout_below="@+id/item_user_time"
 		android:layout_marginTop="4dp"
 		android:layout_toRightOf="@+id/userImage"
-		android:background="@mipmap/call_delete"
+		android:background="@mipmap/call_delete_bg"
 		android:orientation="vertical"
 		android:paddingLeft="10dp"
 		android:paddingRight="10dp"
+		android:gravity="center_vertical"
 		android:visibility="visible"
 		tools:visibility="visible">
 
@@ -99,6 +100,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:gravity="center_vertical"
+			android:layout_marginTop="15px"
 			android:orientation="horizontal"
 			android:paddingTop="3dp"
 			android:paddingBottom="3dp">
