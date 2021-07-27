@@ -86,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="挂断"
+                android:text="取消"
                 android:textColor="@color/white" />
 
         </LinearLayout>
@@ -111,7 +111,6 @@
                 android:layout_marginTop="10dp"
                 android:text="旋转摄像头"
                 android:textColor="@color/white" />
-
         </LinearLayout>
     </LinearLayout>
 

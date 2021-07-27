@@ -32,6 +32,15 @@ public class DevicesTokenEntity {
 
     public static class DataDTO {
         private String token;
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
 
         public String getToken() {
             return token;

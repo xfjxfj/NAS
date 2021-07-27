@@ -52,7 +52,6 @@ public class MyDeviceFragment extends BaseFragment<FragmentMyDeviceBinding> {
 		} else {
 			mViewBinding.llcMyDeviceLogin.setVisibility(View.GONE);
 		}
-		afterLogin();
 	}
 
 	private void initCurrentlyConnectedDevice() {
