@@ -83,21 +83,23 @@ public class VideoPlayerActivity extends BaseActivity<ActivityVideoPlayerBinding
 	}
 
 	private void playPrevious() {
-		mIndex--;
 		if (mIndex < 0) {
 			mIndex = mVideoList.size() - 1;
-			mViewBinding.nvpVideoPlayer.setUp(mVideoList.get(mIndex).getPath(), true, mVideoList.get(mIndex).getName());
-			mViewBinding.nvpVideoPlayer.startPlayLogic();
+		} else {
+			mIndex--;
 		}
+		mViewBinding.nvpVideoPlayer.setUp(mVideoList.get(mIndex).getPath(), true, mVideoList.get(mIndex).getName());
+		mViewBinding.nvpVideoPlayer.startPlayLogic();
 	}
 
 	private void playNext() {
-		mIndex++;
 		if (mIndex == mVideoList.size() - 1) {
 			mIndex = 0;
-			mViewBinding.nvpVideoPlayer.setUp(mVideoList.get(mIndex).getPath(), true, mVideoList.get(mIndex).getName());
-			mViewBinding.nvpVideoPlayer.startPlayLogic();
+		} else {
+			mIndex++;
 		}
+		mViewBinding.nvpVideoPlayer.setUp(mVideoList.get(mIndex).getPath(), true, mVideoList.get(mIndex).getName());
+		mViewBinding.nvpVideoPlayer.startPlayLogic();
 	}
 
 	@Subscribe(threadMode = ThreadMode.MAIN)

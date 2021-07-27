@@ -5,11 +5,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -51,7 +51,6 @@ import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivityMainBinding;
 import com.viegre.nas.pad.entity.DevicesTokenEntity;
-import com.viegre.nas.pad.entity.LoginEntity;
 import com.viegre.nas.pad.entity.LoginResult;
 import com.viegre.nas.pad.entity.LoglinCodeEntity;
 import com.viegre.nas.pad.entity.UserTokenTime;
@@ -74,16 +73,21 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import cn.wildfire.chat.kit.ChatManagerHolder;
 import cn.wildfirechat.message.CallStartMessageContent;
@@ -646,7 +650,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 			e.printStackTrace();
 		}
 	}
-
 	private void initContactsFile() {
 		File file = new File(getFilesDir().toString() + "/" + "Recomding.txt");
 		if (!file.exists()) {
