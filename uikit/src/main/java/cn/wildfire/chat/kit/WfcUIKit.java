@@ -29,7 +29,6 @@ import androidx.lifecycle.ViewModelStore;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.kongzue.dialog.v3.CustomDialog;
 import com.lqr.emoji.LQREmotionKit;
 import com.topqizhi.ai.manager.AIUIManager;
 import com.topqizhi.ai.manager.AudioRecordManager;
