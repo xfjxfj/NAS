@@ -67,4 +67,6 @@ public class BusConfig {
 	 */
 	public static final String VIDEO_PLAY_PREVIOUS = "video_play_previous";
 	public static final String VIDEO_PLAY_NEXT = "video_play_next";
+
+	public static final String USER_INFO_UPDATE = "user_info_update";
 }

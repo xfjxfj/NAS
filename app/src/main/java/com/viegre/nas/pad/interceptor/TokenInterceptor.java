@@ -9,13 +9,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.kongzue.dialog.interfaces.OnDialogButtonClickListener;
+import com.kongzue.dialog.interfaces.OnDismissListener;
 import com.kongzue.dialog.util.BaseDialog;
 import com.kongzue.dialog.v3.MessageDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.viegre.nas.pad.activity.LoginActivity;
 import com.viegre.nas.pad.activity.MainActivity;
+import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.NasConfig;
 import com.viegre.nas.pad.config.SPConfig;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
@@ -69,36 +73,37 @@ public class TokenInterceptor implements Interceptor {
 	 * 展示重新登录逻辑
 	 */
 	public static void showTips() {
-		showTip = false;
-		clearTokenInfo();
-		MessageDialog.show((AppCompatActivity) ActivityUtils.getTopActivity(), "提示", "登录已经过期,请重新登录！", "是", "取消")
-		             .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
-			             @Override
-			             public boolean onClick(BaseDialog baseDialog, View v) {
-				             WaitDialog.show((AppCompatActivity) ActivityUtils.getTopActivity(), "请稍候...");
-				             new Handler().postDelayed(new Runnable() {
-					             @Override
-					             public void run() {
-						             runOnUiThread(new Runnable() {
-							             @Override
-							             public void run() {
-								             ActivityUtils.startActivity(LoginActivity.class);
-							             }
-						             });
-					             }
-				             }, 300);
-				             showTip = true;
-				             return false;
-			             }
-		             })
-		             .setOnCancelButtonClickListener(new OnDialogButtonClickListener() {
-			             @Override
-			             public boolean onClick(BaseDialog baseDialog, View v) {
-			             	showTip = true;
-				             return false;
-			             }
-		             })
-		             .setButtonOrientation(LinearLayout.VERTICAL);
+		if (showTip) {
+			showTip = false;
+			clearTokenInfo();
+			MessageDialog.show((AppCompatActivity) ActivityUtils.getTopActivity(), "提示", "登录已经过期,请重新登录！", "确定")
+			             .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
+				             @Override
+				             public boolean onClick(BaseDialog baseDialog, View v) {
+					             new Handler().postDelayed(new Runnable() {
+						             @Override
+						             public void run() {
+							             runOnUiThread(new Runnable() {
+								             @Override
+								             public void run() {
+									             ActivityUtils.startActivity(LoginActivity.class);
+								             }
+							             });
+						             }
+					             }, 300);
+					             showTip = true;
+					             return false;
+				             }
+			             })
+			             .setOnDismissListener(new OnDismissListener() {
+				             @Override
+				             public void onDismiss() {
+					             showTip = true;
+				             }
+			             })
+			             .setButtonOrientation(LinearLayout.VERTICAL);
+			EventBus.getDefault().post(BusConfig.USER_INFO_UPDATE);
+		}
 	}
 
 	/**

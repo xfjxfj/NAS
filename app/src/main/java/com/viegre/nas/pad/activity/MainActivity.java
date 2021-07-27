@@ -62,6 +62,7 @@ import com.viegre.nas.pad.service.AppService;
 import com.viegre.nas.pad.service.MQTTService;
 import com.viegre.nas.pad.service.MscService;
 import com.viegre.nas.pad.service.ScreenSaverService;
+import com.viegre.nas.pad.service.TimeService;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.youth.banner.Banner;
@@ -134,9 +135,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		Intent intent = new Intent(this, MQTTService.class);
 		bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
-        SPUtils.getInstance().put("bleBound", false);
-        ServiceUtils.startService(ScreenSaverService.class);
-        ChatManager.Instance().addOnMessageUpdateListener(this);
+		SPUtils.getInstance().put("bleBound", false);
+//        ServiceUtils.startService(ScreenSaverService.class);
+		ServiceUtils.startService(TimeService.class);
+		ChatManager.Instance().addOnMessageUpdateListener(this);
 //		getUsbPermission();
 		initClick();
 		initIcon();
@@ -205,16 +207,17 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 					TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
 					return;
 				}
+				WaitDialog.dismiss();
 				ThreadUtils.executeByCachedWithDelay(new VoidTask() {
 					@Override
 					public Void doInBackground() {
-						ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
-//                        SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
-//                        sp.edit()
-//                                .putString("id", loginResult.getUserId())
-//                                .putString("token", loginResult.getToken())
-//                                .putString("mToken", loginResult.getToken())
-//                                .apply();
+						boolean success = ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
+                        SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
+                        sp.edit()
+                                .putString("id", loginResult.getUserId())
+                                .putString("token", loginResult.getToken())
+                                .putString("mToken", loginResult.getToken())
+                                .apply();
 						getDevicesToken(ANDROID_ID, loginResult.getUserId());
 						return null;
 					}
@@ -332,7 +335,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		//			计算token是否过期
 //            {"phone":"15357906428","token_start_time":1625640110622,"token_hour_time":24}
 		if (!SPUtils.getInstance().contains(SPConfig.TOKEN)) {
-			TokenInterceptor.showTips();
 			Glide.with(mActivity)
 			     .load(R.mipmap.main_unlogin)
 			     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
@@ -368,51 +370,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 			}
 		}
 		mViewBinding.llcMainUser.setVisibility(View.VISIBLE);
-	}
-
-	private void showTips() {
-		MessageDialog.show(this, "提示", "登录已经过期,请重新登录！", "是", "取消").setOnOkButtonClickListener(new OnDialogButtonClickListener() {
-			@Override
-			public boolean onClick(BaseDialog baseDialog, View v) {
-				WaitDialog.show(MainActivity.this, "请稍候...");
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-//                                        ResetRecord();
-								TipDialog.show(MainActivity.this, "成功！", TipDialog.TYPE.SUCCESS).setOnDismissListener(new OnDismissListener() {
-									@Override
-									public void onDismiss() {
-										//清空手机号
-										SPUtils.getInstance().remove(SPConfig.PHONE);
-										//清空token
-										SPUtils.getInstance().remove(SPConfig.TOKEN);
-										//清空登录时间
-										SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "");
-										//跳转到登录界面
-										ActivityUtils.startActivity(LoginActivity.class);
-									}
-								});
-							}
-						});
-					}
-				}, 300);
-				return false;
-			}
-		}).setOnCancelButtonClickListener(new OnDialogButtonClickListener() {
-			@Override
-			public boolean onClick(BaseDialog baseDialog, View v) {
-				//清空手机号
-				SPUtils.getInstance().remove(SPConfig.PHONE);
-				//清空token
-				SPUtils.getInstance().remove(SPConfig.TOKEN);
-				//清空登录时间
-				SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "");
-				return false;
-			}
-		}).setButtonOrientation(LinearLayout.VERTICAL);
 	}
 
 	private void initClick() {
@@ -725,5 +682,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 			return;
 		}
 		ActivityUtils.startActivity(BlueToothBindStatusActivity.class);
+	}
+
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void userInfo(String event) {
+		if (!BusConfig.USER_INFO_UPDATE.equals(event)) {
+			return;
+		}
+		initUserInfo();
 	}
 }
