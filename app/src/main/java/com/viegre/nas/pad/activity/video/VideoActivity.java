@@ -57,20 +57,19 @@ public class VideoActivity extends BaseActivity<ActivityVideoBinding> {
 	}
 
 	@Override
-	protected void onRestart() {
-		super.onRestart();
-		login();
+	protected void onResume() {
+		super.onResume();
+		loginStatus();
 	}
 
 	private void initRadioGroup() {
 		mViewBinding.rgVideoTag.setOnCheckedChangeListener((radioGroup, i) -> {
 			if (R.id.acrbVideoTagPrivate == i) {
 				mIsPublic = false;
-				loginStatus();
 			} else if (R.id.acrbVideoTagPublic == i) {
 				mIsPublic = true;
-				loginStatus();
 			}
+			loginStatus();
 			scanMedia();
 		});
 		mViewBinding.imageConst.setOnClickListener(v -> startActivity(new Intent(mActivity, LoginActivity.class)));

@@ -14,6 +14,7 @@ import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.adapter.ScreenCustomAlbumAdapter;
 import com.viegre.nas.pad.adapter.ScreenCustomImageAdapter;
 import com.viegre.nas.pad.config.BusConfig;
+import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.databinding.FragmentScreenCustomImageBinding;
 import com.viegre.nas.pad.entity.ImageAlbumEntity;
@@ -153,7 +154,12 @@ public class ScreenCustomImageFragment extends BaseFragment<FragmentScreenCustom
 				Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 				String[] projection = {MediaStore.Images.Media._ID, MediaStore.Images.Media.BUCKET_ID, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.ImageColumns.DATA};
 
-				Cursor cursor = mActivity.getContentResolver().query(uri, projection, null, null, null);
+				Cursor cursor = mActivity.getContentResolver()
+				                         .query(uri,
+				                                projection,
+				                                MediaStore.Images.ImageColumns.DATA + " like ?",
+				                                new String[]{PathConfig.PUBLIC + "%"},
+				                                null);
 
 				List<String> bucketIdList = new ArrayList<>();
 				List<ImageAlbumEntity> imageAlbumList = new ArrayList<>();
@@ -224,8 +230,8 @@ public class ScreenCustomImageFragment extends BaseFragment<FragmentScreenCustom
 				Cursor cursor = mActivity.getContentResolver()
 				                         .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
 				                                new String[]{MediaStore.Images.ImageColumns.DATA},
-				                                null,
-				                                null,
+				                                MediaStore.Images.ImageColumns.DATA + " like ?",
+				                                new String[]{PathConfig.PUBLIC + "%"},
 				                                null);
 				if (null != cursor) {
 					while (cursor.moveToNext()) {
