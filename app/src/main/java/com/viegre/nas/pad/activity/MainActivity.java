@@ -134,16 +134,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 	protected void initialize() {
 
 		if ("official".equals(BuildConfig.FLAVOR)) {
-			ServiceUtils.startService(MscService.class);
+			Intent mscIntent = new Intent(this, MscService.class);
+			startService(mscIntent);
 		}
 
 		Intent intent = new Intent(this, MQTTService.class);
 		bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
 		SPUtils.getInstance().put("bleBound", false);
-//        ServiceUtils.startService(ScreenSaverService.class);
+		// 屏保
+		Intent screenIntent = new Intent(this, ScreenSaverService.class);
+		startService(screenIntent);
 		// 登录时间监听
-		ServiceUtils.startService(TimeService.class);
+		Intent timeIntent = new Intent(this, TimeService.class);
+		startService(timeIntent);
 		ChatManager.Instance().addOnMessageUpdateListener(this);
 //		getUsbPermission();
 		initClick();
@@ -202,22 +206,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 					TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
 					return;
 				}
+				boolean success = ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
+				SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
+				sp.edit()
+				  .putString("id", loginResult.getUserId())
+				  .putString("token", loginResult.getToken())
+				  .putString("mToken", loginResult.getToken())
+				  .apply();
+				SPUtils.getInstance().put(SPConfig.WFC_USER_ID, loginResult.getUserId());
+				getDevicesToken(ANDROID_ID, loginResult.getUserId());
 				WaitDialog.dismiss();
-				ThreadUtils.executeByCachedWithDelay(new VoidTask() {
-					@Override
-					public Void doInBackground() {
-						boolean success = ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
-						SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
-						sp.edit()
-						  .putString("id", loginResult.getUserId())
-						  .putString("token", loginResult.getToken())
-						  .putString("mToken", loginResult.getToken())
-						  .apply();
-						SPUtils.getInstance().put(SPConfig.WFC_USER_ID, loginResult.getUserId());
-						getDevicesToken(ANDROID_ID, loginResult.getUserId());
-						return null;
-					}
-				}, 3L, TimeUnit.SECONDS);
 			}
 
 			@Override
@@ -459,8 +457,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 			liveIntent.putExtra("ChannelNum", 1);
 			ActivityUtils.startActivity(liveIntent);
 		});
-		mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(MoreAppActivity.class));//跳转到更多应用activity中
-//        mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(WelcomeActivity.class));
+//		mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(MoreAppActivity.class));//跳转到更多应用activity中
+		mViewBinding.acivMainIcon8.setOnClickListener(view -> ActivityUtils.startActivity(WelcomeActivity.class));
 	}
 
 	private void initBanner() {
@@ -651,6 +649,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 			e.printStackTrace();
 		}
 	}
+
 	private void initContactsFile() {
 		File file = new File(getFilesDir().toString() + "/" + "Recomding.txt");
 		if (!file.exists()) {
