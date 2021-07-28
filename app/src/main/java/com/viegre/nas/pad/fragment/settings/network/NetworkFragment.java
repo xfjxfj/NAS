@@ -17,6 +17,7 @@ import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
@@ -117,6 +118,25 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 	public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
 		if (R.id.acivItemNetworkArrow == view.getId()) {
 
+		}
+	}
+
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void networkDetailOperation(String[] events) {
+		if (!BusConfig.NETWORK_DETAIL.equals(events[0])) {
+			return;
+		}
+		switch (events[1]) {
+			case BusConfig.HIDE_NETWORK_DETAIL:
+				initSavedWiFiList();
+				if (null != mNetworkListAdapter && !mNetworkListAdapter.getData().isEmpty()) {
+					updateWiFiList(mNetworkListAdapter.getData());
+					mNetworkListAdapter.notifyDataSetChanged();
+				}
+				break;
+
+			default:
+				break;
 		}
 	}
 
@@ -286,6 +306,9 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 	private List<WiFiEntity> updateWiFiList(List<WiFiEntity> wifiList) {
 		List<WiFiEntity> processWiFiList = new ArrayList<>(wifiList);
 		for (WiFiEntity scanResult : processWiFiList) {
+			scanResult.setPassword("");
+		}
+		for (WiFiEntity scanResult : processWiFiList) {
 			for (WiFiEntity wifiEntity : mSavedWiFiList) {
 				if (scanResult.getScanResult().SSID.equals(wifiEntity.getScanResult().SSID) && scanResult.getScanResult().BSSID.equals(wifiEntity.getScanResult().BSSID)) {
 					scanResult.setPassword(wifiEntity.getPassword());
@@ -364,9 +387,10 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 	 */
 	private void initSavedWiFiList() {
 		mSavedWiFiList.clear();
-		List<WiFiEntity> wifiList = JSON.parseArray(SPUtils.getInstance().getString(SPConfig.SAVED_WIFI, ""), WiFiEntity.class);
+		List<WiFiEntity> wifiList = JSON.parseArray(SPUtils.getInstance().getString(SPConfig.SAVED_WIFI, "[]"), WiFiEntity.class);
 		if (null != wifiList && !wifiList.isEmpty()) {
 			mSavedWiFiList.addAll(wifiList);
+			ToastUtils.showShort("查询到" + mSavedWiFiList.size() + "个已保存WiFi");
 		}
 	}
 

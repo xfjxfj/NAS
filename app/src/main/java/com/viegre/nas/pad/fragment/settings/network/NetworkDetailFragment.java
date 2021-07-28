@@ -4,9 +4,6 @@ import android.content.Context;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.alibaba.fastjson.JSON;
 import com.blankj.utilcode.util.ColorUtils;
 import com.blankj.utilcode.util.NetworkUtils;
@@ -33,6 +30,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 /**
  * 网络详情
  * Created by レインマン on 2020/12/03 15:49 with Android Studio.
@@ -45,21 +45,18 @@ public class NetworkDetailFragment extends BaseFragment<FragmentNetworkDetailBin
 		                                                                     .post(new String[]{BusConfig.NETWORK_DETAIL, BusConfig.HIDE_NETWORK_DETAIL}));
 		String SSID = SPUtils.getInstance().getString(SPConfig.CURRENT_WIFI_SSID, "");
 		mViewBinding.actvNetworkDetailSSID.setText(SSID);
-		mViewBinding.actvNetworkDetailIgnore.setOnClickListener(view -> WifiUtils.withContext(mActivity)
-		                                                                         .remove(SSID, new RemoveSuccessListener() {
-			                                                                         @Override
-			                                                                         public void success() {
-				                                                                         removeWiFiFromSPBySSID(SSID);
-				                                                                         EventBus.getDefault()
-				                                                                                 .post(new String[]{BusConfig.NETWORK_DETAIL, BusConfig.HIDE_NETWORK_DETAIL});
-			                                                                         }
+		mViewBinding.actvNetworkDetailIgnore.setOnClickListener(view -> WifiUtils.withContext(mActivity).remove(SSID, new RemoveSuccessListener() {
+			@Override
+			public void success() {
+				removeWiFiFromSPBySSID(SSID);
+				EventBus.getDefault().post(new String[]{BusConfig.NETWORK_DETAIL, BusConfig.HIDE_NETWORK_DETAIL});
+			}
 
-			                                                                         @Override
-			                                                                         public void failed(
-					                                                                         @NonNull RemoveErrorCode errorCode) {
-				                                                                         ToastUtils.showShort(R.string.network_ignore_network_failed);
-			                                                                         }
-		                                                                         }));
+			@Override
+			public void failed(@NonNull RemoveErrorCode errorCode) {
+				ToastUtils.showShort(R.string.network_ignore_network_failed);
+			}
+		}));
 		initList();
 	}
 
@@ -76,9 +73,7 @@ public class NetworkDetailFragment extends BaseFragment<FragmentNetworkDetailBin
 				networkInfoList.add(new String[]{StringUtils.getString(R.string.network_ip_address), NetworkUtils.getIpAddressByWifi()});
 				networkInfoList.add(new String[]{StringUtils.getString(R.string.network_subnet_mask), NetworkUtils.getNetMaskByWifi()});
 				networkInfoList.add(new String[]{StringUtils.getString(R.string.network_gateway), NetworkUtils.getGatewayByWifi()});
-				WifiManager wifiManager = (WifiManager) Utils.getApp()
-				                                             .getApplicationContext()
-				                                             .getSystemService(Context.WIFI_SERVICE);
+				WifiManager wifiManager = (WifiManager) Utils.getApp().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 				DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
 				networkInfoList.add(new String[]{StringUtils.getString(R.string.network_dns), dhcpInfo2String(dhcpInfo.dns1)});
 				return networkInfoList;
@@ -87,8 +82,10 @@ public class NetworkDetailFragment extends BaseFragment<FragmentNetworkDetailBin
 			@Override
 			public void onSuccess(List<String[]> result) {
 				mViewBinding.rvNetworkDetail.setLayoutManager(new LinearLayoutManager(mActivity));
-				mViewBinding.rvNetworkDetail.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(
-						ColorUtils.getColor(R.color.divider_line)).size(1).margin(25).build());
+				mViewBinding.rvNetworkDetail.addItemDecoration(new HorizontalDividerItemDecoration.Builder(mActivity).color(ColorUtils.getColor(R.color.divider_line))
+				                                                                                                     .size(1)
+				                                                                                                     .margin(25)
+				                                                                                                     .build());
 				mViewBinding.rvNetworkDetail.setAdapter(new NetworkDetailListAdapter(result));
 			}
 		});
@@ -110,12 +107,13 @@ public class NetworkDetailFragment extends BaseFragment<FragmentNetworkDetailBin
 	 * @param SSID
 	 */
 	private void removeWiFiFromSPBySSID(String SSID) {
-		List<WiFiEntity> wifiList = JSON.parseArray(SPUtils.getInstance().getString(SPConfig.SAVED_WIFI, ""), WiFiEntity.class);
+		List<WiFiEntity> wifiList = JSON.parseArray(SPUtils.getInstance().getString(SPConfig.SAVED_WIFI, "[]"), WiFiEntity.class);
 		if (null != wifiList && !wifiList.isEmpty()) {
 			Iterator<WiFiEntity> iterator = wifiList.iterator();
 			while (iterator.hasNext()) {
 				if (iterator.next().getScanResult().SSID.equals(SSID)) {
 					iterator.remove();
+					ThreadUtils.runOnUiThread(() -> ToastUtils.showShort(SSID + "已删除, 还剩" + wifiList.size() + "条"));
 					break;
 				}
 			}

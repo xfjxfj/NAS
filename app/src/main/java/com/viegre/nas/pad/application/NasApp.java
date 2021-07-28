@@ -8,7 +8,6 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.djangoogle.framework.applicaiton.BaseApplication;
-import com.djangoogle.framework.manager.OkHttpManager;
 import com.shuyu.gsyvideoplayer.player.PlayerFactory;
 import com.topqizhi.ai.manager.AIUIManager;
 import com.topqizhi.ai.manager.AudioRecordManager;
@@ -28,7 +27,6 @@ import cn.wildfire.chat.kit.WfcUIKit;
 import cn.wildfire.chat.kit.conversation.message.viewholder.MessageViewHolderManager;
 import cn.wildfire.chat.kit.third.location.viewholder.LocationMessageContentViewHolder;
 import cn.wildfirechat.push.PushService;
-import rxhttp.RxHttpPlugins;
 import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
 
 /**

@@ -22,7 +22,6 @@ import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ShellUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -136,7 +135,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				FileUtils.createOrExistsDir(PathConfig.RECYCLE_BIN);
 				FileUtils.createOrExistsDir(PathConfig.UPLOAD_CACHE);
 				//开启MQTT服务
-				ServiceUtils.startService(MQTTService.class);
+				startService(new Intent(mActivity, MQTTService.class));
+//				ServiceUtils.startService(MQTTService.class);
 				//生产版本配置
 				if ("official".equals(BuildConfig.FLAVOR)) {
 					//开启无障碍服务
@@ -245,7 +245,6 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				getDeviceResource();
 			}
 		}
-
 	}
 
 	@Subscribe(threadMode = ThreadMode.MAIN)
@@ -498,14 +497,14 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 					      List<DataBeanXX> data = devicesFollowEntity.getData();
 					      if (null != data) {
 						      if (data.size() == 0) {//0为初始绑定 需要进入绑定界面，否则不处理 直接进入main
-							    //   if (!isEthernetConnected && !isWiFiConnected) {//配置网络
-								//       mNetworkFragment = NetworkFragment.newInstance(true);
-								//       mNetworkDetailFragment = NetworkDetailFragment.newInstance();
-								//       FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
-								//       FragmentUtils.show(mNetworkFragment);
-							    //   } else {//引导用户注册
-								      ActivityUtils.startActivity(WelcomeActivity.class);
-							    //   }
+							      //   if (!isEthernetConnected && !isWiFiConnected) {//配置网络
+							      //       mNetworkFragment = NetworkFragment.newInstance(true);
+							      //       mNetworkDetailFragment = NetworkDetailFragment.newInstance();
+							      //       FragmentUtils.add(getSupportFragmentManager(), mNetworkFragment, R.id.flSplash);
+							      //       FragmentUtils.show(mNetworkFragment);
+							      //   } else {//引导用户注册
+							      ActivityUtils.startActivity(WelcomeActivity.class);
+							      //   }
 						      } else {
 							      //判断网络是否可用
 							      if (!isEthernetConnected && !isWiFiConnected) {

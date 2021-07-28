@@ -45,7 +45,6 @@ import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import rxhttp.RxHttp;
-import rxhttp.RxHttpPlugins;
 
 /**
  * 设置页
@@ -97,9 +96,9 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 		if (SPUtils.getInstance().contains(SPConfig.PHONE)) {
 			mViewBinding.acivSettingsLogout.setVisibility(View.VISIBLE);
 			Glide.with(mActivity)
-					.load(CommonUtils.stringToBitmap(SPUtils.getInstance().getString(SPConfig.USERICON)))
-					.apply(RequestOptions.bitmapTransform(new CircleCrop()))
-					.into(mViewBinding.acivSettingsAvatar);
+			     .load(CommonUtils.stringToBitmap(SPUtils.getInstance().getString(SPConfig.USERICON)))
+			     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+			     .into(mViewBinding.acivSettingsAvatar);
 			mViewBinding.actvSettingsUsername.setText(CommonUtils.getMarkedPhoneNumber(SPUtils.getInstance().getString(SPConfig.PHONE)));
 			mViewBinding.clSettingsLoginArea.setOnClickListener(null);
 		} else {
