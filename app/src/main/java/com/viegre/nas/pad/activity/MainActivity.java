@@ -626,6 +626,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 				jsStr.put("EndTime", me.getEndTime());
 				jsStr.put("CallId", me.getCallId());
 				jsStr.put("MessageUid", message.messageUid);
+				jsStr.put("ServerTime", message.serverTime);
 				jsStr.put("CallTime", new SimpleDateFormat("yyyy-MM-dd HH:mm").format(Calendar.getInstance().getTime()));
 				if (me.getConnectTime() > 0 && me.getEndTime() > 0) {
 					jsStr.put("TurnOnTime", CommonUtils.getDateFormatFromMilliSecond((me.getEndTime() - me.getConnectTime())));
