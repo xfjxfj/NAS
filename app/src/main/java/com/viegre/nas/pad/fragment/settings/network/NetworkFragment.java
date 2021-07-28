@@ -17,7 +17,6 @@ import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
@@ -390,7 +389,6 @@ public class NetworkFragment extends BaseFragment<FragmentNetworkBinding> implem
 		List<WiFiEntity> wifiList = JSON.parseArray(SPUtils.getInstance().getString(SPConfig.SAVED_WIFI, "[]"), WiFiEntity.class);
 		if (null != wifiList && !wifiList.isEmpty()) {
 			mSavedWiFiList.addAll(wifiList);
-			ToastUtils.showShort("查询到" + mSavedWiFiList.size() + "个已保存WiFi");
 		}
 	}
 
