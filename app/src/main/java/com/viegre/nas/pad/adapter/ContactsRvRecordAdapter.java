@@ -234,6 +234,8 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
             }
         } else {
             holder.delete_text.setText("未接");
+            long refuseTime = mdata.getEndTime() - mdata.getServerTime();
+            time = " 响铃" + (int)refuseTime/1800 + "次";
         }
         return year + time;
     }
