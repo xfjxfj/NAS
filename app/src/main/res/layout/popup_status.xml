@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:layout_width="match_parent"
+		android:layout_height="200px"
+		android:background="#18181A">
+
+		<TextClock
+			android:id="@+id/tcStatusTime"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="50px"
+			android:layout_marginTop="40px"
+			android:format12Hour="hh:mm"
+			android:format24Hour="HH:mm"
+			android:includeFontPadding="false"
+			android:textColor="@android:color/white"
+			android:textSize="80px"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+
+		<TextClock
+			android:id="@+id/tcStatusDate"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="20px"
+			android:format12Hour="MM月dd日 EEEE"
+			android:format24Hour="MM月dd日 EEEE"
+			android:includeFontPadding="false"
+			android:textColor="@android:color/white"
+			android:textSize="22px"
+			app:layout_constraintStart_toStartOf="@id/tcStatusTime"
+			app:layout_constraintTop_toBottomOf="@id/tcStatusTime" />
+
+		<RelativeLayout
+			android:id="@+id/rlStatusHome"
+			android:layout_width="110px"
+			android:layout_height="120px"
+			android:layout_marginStart="286px"
+			android:layout_marginTop="40px"
+			android:background="#050505"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent">
+
+			<androidx.appcompat.widget.AppCompatImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerHorizontal="true"
+				android:layout_marginTop="15px"
+				app:srcCompat="@mipmap/status_home" />
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentBottom="true"
+				android:layout_centerHorizontal="true"
+				android:layout_marginBottom="20px"
+				android:includeFontPadding="false"
+				android:text="@string/status_home"
+				android:textColor="#909098"
+				android:textSize="18px" />
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:id="@+id/rlStatusSettings"
+			android:layout_width="110px"
+			android:layout_height="120px"
+			android:layout_marginStart="40px"
+			android:background="#050505"
+			app:layout_constraintBottom_toBottomOf="@id/rlStatusHome"
+			app:layout_constraintStart_toEndOf="@id/rlStatusHome"
+			app:layout_constraintTop_toTopOf="@id/rlStatusHome">
+
+			<androidx.appcompat.widget.AppCompatImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerHorizontal="true"
+				android:layout_marginTop="15px"
+				app:srcCompat="@mipmap/status_settings" />
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentBottom="true"
+				android:layout_centerHorizontal="true"
+				android:layout_marginBottom="20px"
+				android:includeFontPadding="false"
+				android:text="@string/status_settings"
+				android:textColor="#909098"
+				android:textSize="18px" />
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:id="@+id/rlStatusWiFi"
+			android:layout_width="110px"
+			android:layout_height="120px"
+			android:layout_marginStart="40px"
+			android:background="#050505"
+			app:layout_constraintBottom_toBottomOf="@id/rlStatusHome"
+			app:layout_constraintStart_toEndOf="@id/rlStatusSettings"
+			app:layout_constraintTop_toTopOf="@id/rlStatusHome">
+
+			<androidx.appcompat.widget.AppCompatImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerHorizontal="true"
+				android:layout_marginTop="15px"
+				app:srcCompat="@mipmap/status_wifi" />
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentBottom="true"
+				android:layout_centerHorizontal="true"
+				android:layout_marginBottom="20px"
+				android:includeFontPadding="false"
+				android:text="@string/status_wifi"
+				android:textColor="#909098"
+				android:textSize="18px" />
+		</RelativeLayout>
+	</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
