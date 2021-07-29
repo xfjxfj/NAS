@@ -29,7 +29,8 @@ public class UrlConfig {
         public static final String GET_PHONENUMBER = APP_SERVER + "user/getSmsCode";
         //验证码登录接口
         public static final String GET_loginWithSms = APP_SERVER + "user/loginWithSms";
-
+        //单独获取头像
+        public static final String GET_DOWNLOADAVATARIMG = APP_SERVER + "user/downloadAvatarImg";
     }
 
     /**
