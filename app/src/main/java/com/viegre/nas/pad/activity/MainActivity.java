@@ -10,6 +10,7 @@ import android.content.res.TypedArray;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
@@ -488,6 +489,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 					@Override
 					public void onClick(View v) {
 						startActivity(new Intent(MainActivity.this, WebActivity.class));
+//						Uri uri = Uri.parse("https://www.baidu.com");
+//						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//						startActivity(intent);
 					}
 				});
 			}
