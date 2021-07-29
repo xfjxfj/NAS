@@ -9,7 +9,7 @@ import java.io.File;
  */
 public class PathConfig {
 
-	//	public static final String NAS = PathUtils.getExternalStoragePath() + File.separator + "nas" + File.separator;、
+//	public static final String NAS = PathUtils.getExternalStoragePath() + File.separator + "nas" + File.separator;
 	public static final String NAS = "/storage/52207D41207D2CDB/nas/";
 
 	//引导资源目录

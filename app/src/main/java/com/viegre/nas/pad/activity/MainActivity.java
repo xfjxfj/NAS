@@ -198,7 +198,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		String ANDROID_ID = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
 		String authCode = "66666";
 		//需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
-//		ChatManagerHolder.gChatManager.disconnect(true, true);
+		ChatManagerHolder.gChatManager.disconnect(true, true);
 		AppService.Instance().smsLogin(ANDROID_ID, authCode, new AppService.LoginCallback() {
 			@Override
 			public void onUiSuccess(LoginResult loginResult) {
@@ -206,16 +206,22 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 					TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
 					return;
 				}
-				boolean success = ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
-				SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
-				sp.edit()
-				  .putString("id", loginResult.getUserId())
-				  .putString("token", loginResult.getToken())
-				  .putString("mToken", loginResult.getToken())
-				  .apply();
-				SPUtils.getInstance().put(SPConfig.WFC_USER_ID, loginResult.getUserId());
-				getDevicesToken(ANDROID_ID, loginResult.getUserId());
 				WaitDialog.dismiss();
+				ThreadUtils.executeByCachedWithDelay(new VoidTask() {
+					@Override
+					public Void doInBackground() {
+						ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
+						SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
+						sp.edit()
+						  .putString("id", loginResult.getUserId())
+						  .putString("token", loginResult.getToken())
+						  .putString("mToken", loginResult.getToken())
+						  .apply();
+						SPUtils.getInstance().put(SPConfig.WFC_USER_ID, loginResult.getUserId());
+						getDevicesToken(ANDROID_ID, loginResult.getUserId());
+						return null;
+					}
+				}, 3L, TimeUnit.SECONDS);
 			}
 
 			@Override
@@ -223,7 +229,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 				if (isFinishing()) {
 					return;
 				}
-				TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
+				TipDialog.show(MainActivity.this, "聊天服务器登录失败", TipDialog.TYPE.ERROR).doDismiss();
 //                Toast.makeText(MainActivity.this, "登录失败：" + code + " " + msg, Toast.LENGTH_SHORT).show();
 //                loginButton.setEnabled(true);
 			}

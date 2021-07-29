@@ -68,7 +68,7 @@ public class TokenInterceptor implements Interceptor {
 	 */
 	private void handleTokenInvalid() {
 		ActivityUtils.finishToActivity(MainActivity.class, false);
-		if (SPUtils.getInstance().getBoolean(SPConfig.LOGIN_ERROR_SHOW, false)) {
+		if (SPUtils.getInstance().getBoolean(SPConfig.LOGIN_ERROR_SHOW, true)) {
 			showTips();
 		}
 	}
@@ -77,7 +77,7 @@ public class TokenInterceptor implements Interceptor {
 	 * 展示重新登录逻辑
 	 */
 	public static void showTips() {
-		if (SPUtils.getInstance().getBoolean(SPConfig.LOGIN_ERROR_SHOW, false)) {
+		if (SPUtils.getInstance().getBoolean(SPConfig.LOGIN_ERROR_SHOW, true)) {
 			SPUtils.getInstance().put(SPConfig.LOGIN_ERROR_SHOW, false);
 			clearTokenInfo();
 			MessageDialog.show((AppCompatActivity) ActivityUtils.getTopActivity(), "提示", "登录已经过期,请重新登录！", "确定")
