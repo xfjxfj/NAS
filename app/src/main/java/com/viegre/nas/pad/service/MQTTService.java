@@ -1,6 +1,7 @@
 package com.viegre.nas.pad.service;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -51,8 +52,10 @@ import com.viegre.nas.pad.entity.FtpFileEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
+import com.viegre.nas.pad.entity.MqttGetUserimage;
 import com.viegre.nas.pad.interceptor.TokenInterceptor;
 import com.viegre.nas.pad.manager.PopupManager;
+import com.viegre.nas.pad.manager.RxHttpManager;
 import com.viegre.nas.pad.popup.LoginTimePopup;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
@@ -71,9 +74,11 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 import org.litepal.LitePal;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -93,6 +98,11 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import rxhttp.RxHttp;
 import rxhttp.RxHttpPlugins;
 
@@ -366,14 +376,14 @@ public class MQTTService extends Service {
                         String avatar = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.AVATAR);
                         String hour = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.HOUR);
                         TokenInterceptor.saveTokenInfo(phone, token);
+                        SPUtils.getInstance().put(SPConfig.AVATAR, avatar);
                         JSONObject js = new JSONObject();
                         js.put("phone", SPUtils.getInstance().getString(SPConfig.PHONE));
                         js.put(SPConfig.TOKEN_START_TIME, System.currentTimeMillis());
                         js.put(SPConfig.USERICON, avatar);
                         js.put(SPConfig.TOKEN_HOUR_TIME, hour);
                         SPUtils.getInstance().put(SPConfig.TOKEN_TIME, js.toString());
-
-//                        getImgUrl(avatar,token);
+                        getUserImg();
 //                        ActivityUtils.finishActivity(LoginActivity.class);
                         break;
 
@@ -1242,7 +1252,6 @@ public class MQTTService extends Service {
     }
 
 
-
     /**
      * 生成一个startNum 到 endNum之间的随机数(不包含endNum的随机数)
      *
@@ -1517,4 +1526,40 @@ public class MQTTService extends Service {
             EventBus.getDefault().post(BusConfig.NETWORK_CONNECTED);
         }
     };
+
+    private void getUserImg() {
+        String url = UrlConfig.User.GET_DOWNLOADIMGBYTE;
+        String token = SPUtils.getInstance().getString(SPConfig.DEVICES_TOKEN);
+        String imgId = SPUtils.getInstance().getString(SPConfig.AVATAR);
+        RxHttp.postForm(url)
+                .setHeader(SPConfig.TOKEN, token)
+                .add(SPConfig.AVATAR, imgId)
+                .asString()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.d("", "");
+                    }
+
+                    @Override
+                    public void onNext(@NonNull String s) {
+                        Gson gson = new Gson();
+                        MqttGetUserimage image = gson.fromJson(s, MqttGetUserimage.class);
+                        if (image.getMsg().equals("OK")) {
+                            SPUtils.getInstance().put(SPConfig.USERICON, image.getData());
+                            ActivityUtils.finishActivity(LoginActivity.class);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("", "");
+                    }
+                });
+    }
 }
