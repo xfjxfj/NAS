@@ -1,0 +1,83 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal|center_vertical"
+    android:orientation="horizontal"
+    android:padding="6px"
+    tools:ignore="MissingDefaultResource">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:src="@mipmap/pc"
+        android:layout_height="wrap_content" />
+<!--    <LinearLayout-->
+<!--        android:layout_width="790px"-->
+<!--        android:layout_height="402px"-->
+<!--        android:background="@drawable/contacts_layout_dialog_bg"-->
+<!--        android:orientation="vertical"-->
+<!--        android:padding="40px"-->
+<!--        tools:ignore="MissingDefaultResource,RedundantNamespace">-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/dialogtips"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/contacts_add_devices10"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="30px"-->
+<!--            tools:ignore="MissingConstraints" />-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="center_horizontal">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/invitation_tips"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="59px"-->
+<!--                android:text="@string/contacts_add_devices10"-->
+<!--                android:textColor="@color/gray24"-->
+<!--                android:textSize="30px"-->
+<!--                tools:ignore="MissingConstraints" />-->
+<!--        </LinearLayout>-->
+
+<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="40px"-->
+<!--            android:layout_marginBottom="40px"-->
+<!--            android:orientation="horizontal">-->
+
+<!--            <Button-->
+<!--                android:id="@+id/button_ok"-->
+<!--                android:layout_width="128px"-->
+<!--                android:layout_height="56px"-->
+<!--                android:background="@drawable/contacts_add_button_ok_bg"-->
+<!--                android:text="@string/contacts_add_devices13"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textSize="24px"-->`
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->`
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                tools:ignore="MissingConstraints" />-->
+
+<!--            <Button-->
+<!--                android:id="@+id/cancle_bt"-->
+<!--                android:layout_width="128px"-->
+<!--                android:layout_height="56px"-->
+<!--                android:layout_marginRight="20px"-->
+<!--                android:background="@drawable/contacts_add_button_no_bg"-->
+<!--                android:text="@string/cancel"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textSize="24px"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/button_ok"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/button_ok"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/button_ok"-->
+<!--                tools:ignore="MissingConstraints" />-->
+<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+<!--    </LinearLayout>-->
+</LinearLayout>

@@ -32,13 +32,17 @@ import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.kongzue.dialog.v3.TipDialog;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.BlueToothBindStatusActivity;
 import com.viegre.nas.pad.activity.LoginActivity;
+import com.viegre.nas.pad.activity.MainActivity;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
+import com.viegre.nas.pad.entity.DevicesTokenEntity;
 import com.viegre.nas.pad.entity.ExternalDriveEntity;
 import com.viegre.nas.pad.entity.FtpCategoryEntity;
 import com.viegre.nas.pad.entity.FtpCmdEntity;
@@ -82,8 +86,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import androidx.core.app.NotificationCompat;
+
 import custom.fileobserver.FileListener;
 import custom.fileobserver.FileWatcher;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import rxhttp.RxHttp;
 import rxhttp.RxHttpPlugins;
 
 /**
@@ -350,7 +360,7 @@ public class MQTTService extends Service {
                         }
                         break;
                     //登录设备
-                    case MQTTMsgEntity.MSG_SCAN_LOGIN://扫码登录未传头像信息过来
+                    case MQTTMsgEntity.MSG_SCAN_LOGIN://扫码登录过来
                         String token = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.TOKEN);
                         String phone = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.PHONE);
                         String avatar = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.AVATAR);
@@ -362,7 +372,9 @@ public class MQTTService extends Service {
                         js.put(SPConfig.USERICON, avatar);
                         js.put(SPConfig.TOKEN_HOUR_TIME, hour);
                         SPUtils.getInstance().put(SPConfig.TOKEN_TIME, js.toString());
-                        ActivityUtils.finishActivity(LoginActivity.class);
+
+//                        getImgUrl(avatar,token);
+//                        ActivityUtils.finishActivity(LoginActivity.class);
                         break;
 
                     //设备信息
@@ -1228,6 +1240,8 @@ public class MQTTService extends Service {
                 break;
         }
     }
+
+
 
     /**
      * 生成一个startNum 到 endNum之间的随机数(不包含endNum的随机数)

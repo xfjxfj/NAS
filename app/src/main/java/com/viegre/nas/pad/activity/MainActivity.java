@@ -10,17 +10,22 @@ import android.content.res.TypedArray;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.storage.StorageManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.bumptech.glide.Glide;
@@ -29,6 +34,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.djangoogle.framework.activity.BaseActivity;
 import com.google.gson.Gson;
+import com.kongzue.dialog.interfaces.OnDialogButtonClickListener;
+import com.kongzue.dialog.interfaces.OnDismissListener;
+import com.kongzue.dialog.util.BaseDialog;
+import com.kongzue.dialog.v3.MessageDialog;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.lxj.xpopup.XPopup;
@@ -58,6 +67,7 @@ import com.viegre.nas.pad.service.MQTTService;
 import com.viegre.nas.pad.service.MscService;
 import com.viegre.nas.pad.service.ScreenSaverService;
 import com.viegre.nas.pad.service.TimeService;
+import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.youth.banner.Banner;
 import com.youth.banner.adapter.BannerImageAdapter;
@@ -68,16 +78,21 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import cn.wildfire.chat.kit.ChatManagerHolder;
 import cn.wildfirechat.message.CallStartMessageContent;
@@ -121,6 +136,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
 	@Override
 	protected void initialize() {
+
 		if ("official".equals(BuildConfig.FLAVOR)) {
 			Intent mscIntent = new Intent(this, MscService.class);
 			startService(mscIntent);
@@ -186,7 +202,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		String ANDROID_ID = SPUtils.getInstance().getString(SPConfig.ANDROID_ID);
 		String authCode = "66666";
 		//需要注意token跟clientId是强依赖的，一定要调用getClientId获取到clientId，然后用这个clientId获取token，这样connect才能成功，如果随便使用一个clientId获取到的token将无法链接成功。
-//		ChatManagerHolder.gChatManager.disconnect(true, true);
+		ChatManagerHolder.gChatManager.disconnect(true, true);
 		AppService.Instance().smsLogin(ANDROID_ID, authCode, new AppService.LoginCallback() {
 			@Override
 			public void onUiSuccess(LoginResult loginResult) {
@@ -194,16 +210,22 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 					TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
 					return;
 				}
-				boolean success = ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
-				SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
-				sp.edit()
-				  .putString("id", loginResult.getUserId())
-				  .putString("token", loginResult.getToken())
-				  .putString("mToken", loginResult.getToken())
-				  .apply();
-				SPUtils.getInstance().put(SPConfig.WFC_USER_ID, loginResult.getUserId());
-				getDevicesToken(ANDROID_ID, loginResult.getUserId());
 				WaitDialog.dismiss();
+				ThreadUtils.executeByCachedWithDelay(new VoidTask() {
+					@Override
+					public Void doInBackground() {
+						ChatManagerHolder.gChatManager.connect(loginResult.getUserId(), loginResult.getToken());
+						SharedPreferences sp = getSharedPreferences("config", Context.MODE_PRIVATE);
+						sp.edit()
+						  .putString("id", loginResult.getUserId())
+						  .putString("token", loginResult.getToken())
+						  .putString("mToken", loginResult.getToken())
+						  .apply();
+						SPUtils.getInstance().put(SPConfig.WFC_USER_ID, loginResult.getUserId());
+						getDevicesToken(ANDROID_ID, loginResult.getUserId());
+						return null;
+					}
+				}, 3L, TimeUnit.SECONDS);
 			}
 
 			@Override
@@ -211,7 +233,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 				if (isFinishing()) {
 					return;
 				}
-				TipDialog.show(MainActivity.this, "登录失败", TipDialog.TYPE.ERROR).doDismiss();
+				TipDialog.show(MainActivity.this, "聊天服务器登录失败", TipDialog.TYPE.ERROR).doDismiss();
 //                Toast.makeText(MainActivity.this, "登录失败：" + code + " " + msg, Toast.LENGTH_SHORT).show();
 //                loginButton.setEnabled(true);
 			}
@@ -476,6 +498,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 					@Override
 					public void onClick(View v) {
 						startActivity(new Intent(MainActivity.this, WebActivity.class));
+//						Uri uri = Uri.parse("https://www.baidu.com");
+//						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//						startActivity(intent);
 					}
 				});
 			}
