@@ -273,4 +273,9 @@
 	<string name="andserver_permission_denied">没有访问权限</string>
 	<string name="andserver_unknown">未知错误</string>
 
+	<!--状态栏页面-->
+	<string name="status_home">首页</string>
+	<string name="status_settings">设置</string>
+	<string name="status_wifi">WiFi</string>
+
 </resources>

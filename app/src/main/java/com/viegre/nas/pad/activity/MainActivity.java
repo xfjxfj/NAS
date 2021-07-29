@@ -31,6 +31,8 @@ import com.djangoogle.framework.activity.BaseActivity;
 import com.google.gson.Gson;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.enums.PopupPosition;
 import com.topqizhi.ai.manager.AIUIManager;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
@@ -50,6 +52,7 @@ import com.viegre.nas.pad.entity.UserTokenTime;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.interceptor.TokenInterceptor;
 import com.viegre.nas.pad.manager.AMapLocationManager;
+import com.viegre.nas.pad.popup.StatusPopup;
 import com.viegre.nas.pad.service.AppService;
 import com.viegre.nas.pad.service.MQTTService;
 import com.viegre.nas.pad.service.MscService;
@@ -357,10 +360,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 	}
 
 	private void initClick() {
-//		if (BuildConfig.DEBUG) {
-//			mViewBinding.tcMainTime.setOnClickListener(view -> {
-//			});
-//		}
+		if (BuildConfig.DEBUG) {
+			mViewBinding.tcMainTime.setOnClickListener(view -> new XPopup.Builder(mActivity).hasShadowBg(false)//是否有半透明的背景，默认为true
+			                                                                                .hasBlurBg(true)//是否有高斯模糊的背景，默认为false
+			                                                                                .dismissOnBackPressed(false)//按返回键是否关闭弹窗，默认为true
+			                                                                                .dismissOnTouchOutside(false)//点击外部是否关闭弹窗，默认为true
+			                                                                                .hasStatusBar(false)//是否显示状态栏，默认显示
+			                                                                                .hasNavigationBar(false)//是否显示导航栏，默认显示
+			                                                                                .popupPosition(PopupPosition.Top)//顶部划入
+			                                                                                .asCustom(new StatusPopup(mActivity)).show());
+		}
 		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
 		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
 //        mViewBinding.acivMainIncomingCall.setOnClickListener(new View.OnClickListener() {

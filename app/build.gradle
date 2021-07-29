@@ -139,7 +139,7 @@ dependencies {
 	//https://github.com/iielse/switchbutton
 	implementation 'com.github.iielse:switchbutton:1.0.4'
 	//https://github.com/li-xiaojun/XPopup
-	implementation 'com.github.li-xiaojun:XPopup:2.3.2'
+	implementation 'com.github.li-xiaojun:XPopup:2.5.4'
 	//https://github.com/yqritc/RecyclerView-FlexibleDivider
 	implementation 'com.yqritc:recyclerview-flexibledivider:1.4.0'
 	//https://github.com/ThanosFisherman/WifiUtils
