@@ -289,6 +289,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		      .subscribe(new Observer<DeviceResourceRootEntity>() {
 			      @Override
 			      public void onSubscribe(@NonNull Disposable d) {
+
 			      }
 
 			      @Override

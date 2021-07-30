@@ -343,6 +343,7 @@ public class MQTTService extends Service {
 //		{"action":"addFriendResult","fromId":"appService","itemType":0,"msgType":"notify",
 //		"param":{"handleTime":"2021-07-05T15:17:06.509","requestedSn":"5830e3fbe8c57dd5","status":1},
 //		"timeStamp":1625469426,"toId":"6fa8295f4764b429"}
+//        {"action":"addFriendResult","fromId":"appService","itemType":0,"msgType":"notify","param":{"handleTime":"2021-07-30T16:07:33.580","requestedSn":"8e42a826eed81ee7","status":1},"timeStamp":1627632453,"toId":"955b79091f3c4d19"}
         MQTTMsgEntity mqttMsgEntity = JSON.parseObject(message, MQTTMsgEntity.class);
         switch (mqttMsgEntity.getMsgType()) {
             case MQTTMsgEntity.TYPE_REQUEST:
@@ -360,13 +361,14 @@ public class MQTTService extends Service {
                 }
 
                 break;
-            case MQTTMsgEntity.TYPE_NOTIFY:
+            case MQTTMsgEntity.TYPE_NOTIFY://添加设备好友
                 switch (mqttMsgEntity.getAction()) {
                     case MQTTMsgEntity.MSG_ADDFRIENDRESULT:
                         String status = JSON.parseObject(mqttMsgEntity.getParam()).getString("status");
+                        String requestedSn = JSON.parseObject(mqttMsgEntity.getParam()).getString("requestedSn");
                         Log.d("MSG_ADDFRIENDRESULT：", message);
                         if (null != tipsdevicesfriend) {
-                            tipsdevicesfriend.onTipsdevicesFriendStatus(status);
+                            tipsdevicesfriend.onTipsdevicesFriendStatus(status,requestedSn);
                         }
                         break;
                     //登录设备
@@ -1472,7 +1474,8 @@ public class MQTTService extends Service {
     public interface TipsDevicesFriend {
         void onTipsdevicesFriend(String requestID);
 
-        void onTipsdevicesFriendStatus(String statusid);
+        void onTipsdevicesFriendStatus(String statusid,String requestedSn);
+//        void onTipsdevicesFriendStatus(String statusid);
     }
 
     public interface welcomebind {
