@@ -129,6 +129,8 @@ public class TokenInterceptor implements Interceptor {
 		SPUtils.getInstance().remove(SPConfig.PHONE);
 		//清空token
 		SPUtils.getInstance().remove(SPConfig.TOKEN);
+		//清空头像
+		SPUtils.getInstance().remove(SPConfig.AVATAR);
 		SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "");
 	}
 }
