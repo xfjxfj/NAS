@@ -191,6 +191,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		super.onResume();
 		initUserInfo();
 		AMapLocationManager.INSTANCE.getLocation();
+		WaitDialog.dismiss();
 	}
 
 	/**
