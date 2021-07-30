@@ -25,6 +25,7 @@ public class TimeChangeReceiver extends BroadcastReceiver {
 			UserTokenTime userTokenTime = new Gson().fromJson(jsonTokenInfo, UserTokenTime.class);
 			Long token_hour_time = Long.valueOf(userTokenTime.getToken_hour_time() * 60);
 			long minute = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - userTokenTime.getToken_start_time());
+			Log.d(TAG, "onReceive: " + "过期时间：" + token_hour_time + "已过时间：" + minute);
 			if (minute > token_hour_time) {
 				TokenInterceptor.showTips();
 			}
