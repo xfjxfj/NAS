@@ -13,8 +13,13 @@ import com.kongzue.dialog.interfaces.OnDismissListener;
 import com.kongzue.dialog.util.BaseDialog;
 import com.kongzue.dialog.v3.MessageDialog;
 import com.kongzue.dialog.v3.WaitDialog;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.core.BasePopupView;
+import com.lxj.xpopup.interfaces.OnConfirmListener;
+import com.lxj.xpopup.interfaces.SimpleCallback;
 import com.viegre.nas.pad.activity.LoginActivity;
 import com.viegre.nas.pad.activity.MainActivity;
+import com.viegre.nas.pad.application.NasApp;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.NasConfig;
 import com.viegre.nas.pad.config.SPConfig;
@@ -80,32 +85,25 @@ public class TokenInterceptor implements Interceptor {
 		if (SPUtils.getInstance().getBoolean(SPConfig.LOGIN_ERROR_SHOW, true)) {
 			SPUtils.getInstance().put(SPConfig.LOGIN_ERROR_SHOW, false);
 			clearTokenInfo();
-			MessageDialog.show((AppCompatActivity) ActivityUtils.getTopActivity(), "提示", "登录已经过期,请重新登录！", "确定")
-			             .setOnOkButtonClickListener(new OnDialogButtonClickListener() {
-				             @Override
-				             public boolean onClick(BaseDialog baseDialog, View v) {
-					             new Handler().postDelayed(new Runnable() {
-						             @Override
-						             public void run() {
-							             runOnUiThread(new Runnable() {
-								             @Override
-								             public void run() {
-									             ActivityUtils.startActivity(LoginActivity.class);
-								             }
-							             });
-						             }
-					             }, 300);
-					             SPUtils.getInstance().put(SPConfig.LOGIN_ERROR_SHOW, true);
-					             return false;
-				             }
-			             })
-			             .setOnDismissListener(new OnDismissListener() {
-				             @Override
-				             public void onDismiss() {
-					             SPUtils.getInstance().put(SPConfig.LOGIN_ERROR_SHOW, true);
-				             }
-			             })
-			             .setButtonOrientation(LinearLayout.VERTICAL);
+			Log.d(TAG, "showTips: " + "过期弹窗");
+			new XPopup.Builder(ActivityUtils.getTopActivity()).dismissOnTouchOutside(false)
+			                                       .dismissOnBackPressed(false)
+			                                       .enableShowWhenAppBackground(true)
+			                                       .setPopupCallback(new SimpleCallback() {
+				                                       @Override
+				                                       public void onDismiss(BasePopupView popupView) {
+					                                       super.onDismiss(popupView);
+					                                       SPUtils.getInstance().put(SPConfig.LOGIN_ERROR_SHOW, true);
+				                                       }
+			                                       })
+			                                       .asConfirm("提示", "登录已经过期,请重新登录！", "", "确定", new OnConfirmListener() {
+				                                       @Override
+				                                       public void onConfirm() {
+					                                       SPUtils.getInstance().put(SPConfig.LOGIN_ERROR_SHOW, true);
+					                                       ActivityUtils.startActivity(LoginActivity.class);
+				                                       }
+			                                       }, null, true)
+			                                       .show();
 			EventBus.getDefault().post(BusConfig.USER_INFO_UPDATE);
 		}
 	}
@@ -129,6 +127,8 @@ public class TokenInterceptor implements Interceptor {
 		SPUtils.getInstance().remove(SPConfig.PHONE);
 		//清空token
 		SPUtils.getInstance().remove(SPConfig.TOKEN);
+		//清空头像
+		SPUtils.getInstance().remove(SPConfig.AVATAR);
 		SPUtils.getInstance().put(SPConfig.TOKEN_TIME, "");
 	}
 }

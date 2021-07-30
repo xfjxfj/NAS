@@ -54,11 +54,12 @@
 
 	<View
 		android:id="@+id/vMainUnreadPoint"
-		android:layout_width="10px"
-		android:layout_height="10px"
+		android:layout_width="20px"
+		android:layout_height="20px"
 		android:background="@drawable/unread_point"
-		app:layout_constraintBottom_toTopOf="@id/acivMainIncomingCall"
-		app:layout_constraintStart_toEndOf="@id/acivMainIncomingCall" />
+		android:visibility="invisible"
+		app:layout_constraintTop_toTopOf="@+id/acivMainIncomingCall"
+		app:layout_constraintEnd_toEndOf="@id/acivMainIncomingCall" />
 
 	<androidx.appcompat.widget.LinearLayoutCompat
 		android:id="@+id/llcMainUnconnected"

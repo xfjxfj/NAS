@@ -176,6 +176,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		super.onResume();
 		initUserInfo();
 		AMapLocationManager.INSTANCE.getLocation();
+		WaitDialog.dismiss();
 	}
 
 	/**
@@ -382,7 +383,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 			                                                                                .show());
 		}
 		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
-		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> ActivityUtils.startActivity(ContactsActivity.class));
+		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> {
+			ActivityUtils.startActivity(ContactsActivity.class);
+			mViewBinding.vMainUnreadPoint.setVisibility(View.INVISIBLE);
+		});
 //        mViewBinding.acivMainIncomingCall.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -642,6 +646,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 				} else {
 					jsStr.put("TurnOnTime", "0");
 					jsStr.put("TurnOn", false);
+					mViewBinding.vMainUnreadPoint.setVisibility(View.VISIBLE);
 				}
 				initContactsFile();//判断本地是否有相关文件存储数据 没有则创建
 				FileWriter fileWriter = new FileWriter(getFilesDir().toString() + PathConfig.CONTACTS_RECOMDING, true);

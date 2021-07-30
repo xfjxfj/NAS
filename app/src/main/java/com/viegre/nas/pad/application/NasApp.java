@@ -33,10 +33,13 @@ import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
  * Created by レインマン on 2020/09/10 10:21 with Android Studio.
  */
 public class NasApp extends BaseApplication {
+	private static Context context;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		context = getApplicationContext();
+		SPUtils.getInstance().put(SPConfig.LOGIN_ERROR_SHOW, true);
 		initUtils();
 		initAndroidId();
 		LitePal.initialize(this);
@@ -48,6 +51,10 @@ public class NasApp extends BaseApplication {
 		AudioRecordManager.INSTANCE.initialize();
 		initAMap();
 		initIM();
+	}
+
+	public static Context getContext() {
+		return context;
 	}
 
 	/**

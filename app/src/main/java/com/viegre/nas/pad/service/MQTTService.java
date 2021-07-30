@@ -1,6 +1,7 @@
 package com.viegre.nas.pad.service;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -32,12 +33,17 @@ import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.kongzue.dialog.v3.TipDialog;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.BlueToothBindStatusActivity;
+import com.viegre.nas.pad.activity.LoginActivity;
+import com.viegre.nas.pad.activity.MainActivity;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
+import com.viegre.nas.pad.entity.DevicesTokenEntity;
 import com.viegre.nas.pad.entity.ExternalDriveEntity;
 import com.viegre.nas.pad.entity.FtpCategoryEntity;
 import com.viegre.nas.pad.entity.FtpCmdEntity;
@@ -46,7 +52,11 @@ import com.viegre.nas.pad.entity.FtpFileEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
+import com.viegre.nas.pad.entity.MqttGetUserimage;
 import com.viegre.nas.pad.interceptor.TokenInterceptor;
+import com.viegre.nas.pad.manager.PopupManager;
+import com.viegre.nas.pad.manager.RxHttpManager;
+import com.viegre.nas.pad.popup.LoginTimePopup;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.MediaScanner;
@@ -64,9 +74,11 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 import org.litepal.LitePal;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -79,8 +91,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import androidx.core.app.NotificationCompat;
+
 import custom.fileobserver.FileListener;
 import custom.fileobserver.FileWatcher;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import rxhttp.RxHttp;
+import rxhttp.RxHttpPlugins;
 
 /**
  * Created by レインマン on 2021/04/12 09:40 with Android Studio.
@@ -319,6 +343,7 @@ public class MQTTService extends Service {
 //		{"action":"addFriendResult","fromId":"appService","itemType":0,"msgType":"notify",
 //		"param":{"handleTime":"2021-07-05T15:17:06.509","requestedSn":"5830e3fbe8c57dd5","status":1},
 //		"timeStamp":1625469426,"toId":"6fa8295f4764b429"}
+//        {"action":"addFriendResult","fromId":"appService","itemType":0,"msgType":"notify","param":{"handleTime":"2021-07-30T16:07:33.580","requestedSn":"8e42a826eed81ee7","status":1},"timeStamp":1627632453,"toId":"955b79091f3c4d19"}
         MQTTMsgEntity mqttMsgEntity = JSON.parseObject(message, MQTTMsgEntity.class);
         switch (mqttMsgEntity.getMsgType()) {
             case MQTTMsgEntity.TYPE_REQUEST:
@@ -336,13 +361,14 @@ public class MQTTService extends Service {
                 }
 
                 break;
-            case MQTTMsgEntity.TYPE_NOTIFY:
+            case MQTTMsgEntity.TYPE_NOTIFY://添加设备好友
                 switch (mqttMsgEntity.getAction()) {
                     case MQTTMsgEntity.MSG_ADDFRIENDRESULT:
                         String status = JSON.parseObject(mqttMsgEntity.getParam()).getString("status");
+                        String requestedSn = JSON.parseObject(mqttMsgEntity.getParam()).getString("requestedSn");
                         Log.d("MSG_ADDFRIENDRESULT：", message);
                         if (null != tipsdevicesfriend) {
-                            tipsdevicesfriend.onTipsdevicesFriendStatus(status);
+                            tipsdevicesfriend.onTipsdevicesFriendStatus(status,requestedSn);
                         }
                         break;
                     //登录设备
@@ -352,14 +378,14 @@ public class MQTTService extends Service {
                         String avatar = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.AVATAR);
                         String hour = JSON.parseObject(mqttMsgEntity.getParam()).getString(SPConfig.HOUR);
                         TokenInterceptor.saveTokenInfo(phone, token);
+                        SPUtils.getInstance().put(SPConfig.AVATAR, avatar);
                         JSONObject js = new JSONObject();
                         js.put("phone", SPUtils.getInstance().getString(SPConfig.PHONE));
                         js.put(SPConfig.TOKEN_START_TIME, System.currentTimeMillis());
                         js.put(SPConfig.USERICON, avatar);
                         js.put(SPConfig.TOKEN_HOUR_TIME, hour);
                         SPUtils.getInstance().put(SPConfig.TOKEN_TIME, js.toString());
-
-//                        getImgUrl(avatar,token);
+                        getUserImg();
 //                        ActivityUtils.finishActivity(LoginActivity.class);
                         break;
 
@@ -942,8 +968,8 @@ public class MQTTService extends Service {
                                         if (isAdd) {
                                             if (null == ftpFile) {
                                                 ftpFileEntity.setCreateTime(TimeUtils.millis2String(FileUtils.getFileLastModified(ftpFileEntity.getPath()),
-                                                                                                    sdf));
-                                                ftpFileEntity.setSize(String.valueOf(FileUtils.getLength(ftpFileEntity.getPath())));
+                                                        sdf));
+                                                ftpFileEntity.setSize(FileUtils.getSize(ftpFileEntity.getPath()));
                                                 ftpFileEntity.setState(FtpFileEntity.State.NORMAL);
                                                 ftpFileEntity.getPickSet().add(mqttMsgEntity.getFromId());
                                                 ftpFileEntity.save();
@@ -1159,8 +1185,8 @@ public class MQTTService extends Service {
                                         if (isBan) {
                                             if (null == fileEntity) {
                                                 ftpFileEntity.setCreateTime(TimeUtils.millis2String(FileUtils.getFileLastModified(ftpFileEntity.getPath()),
-                                                                                                    sdf));
-                                                ftpFileEntity.setSize(String.valueOf(FileUtils.getLength(ftpFileEntity.getPath())));
+                                                        sdf));
+                                                ftpFileEntity.setSize(FileUtils.getSize(ftpFileEntity.getPath()));
                                                 ftpFileEntity.setState(FtpFileEntity.State.NORMAL);
                                                 ftpFileEntity.getBanSet().add(banPhoneNum);
                                                 ftpFileEntity.save();
@@ -1226,7 +1252,6 @@ public class MQTTService extends Service {
                 break;
         }
     }
-
 
 
     /**
@@ -1449,7 +1474,8 @@ public class MQTTService extends Service {
     public interface TipsDevicesFriend {
         void onTipsdevicesFriend(String requestID);
 
-        void onTipsdevicesFriendStatus(String statusid);
+        void onTipsdevicesFriendStatus(String statusid,String requestedSn);
+//        void onTipsdevicesFriendStatus(String statusid);
     }
 
     public interface welcomebind {
@@ -1503,4 +1529,40 @@ public class MQTTService extends Service {
             EventBus.getDefault().post(BusConfig.NETWORK_CONNECTED);
         }
     };
+
+    private void getUserImg() {
+        String url = UrlConfig.User.GET_DOWNLOADIMGBYTE;
+        String token = SPUtils.getInstance().getString(SPConfig.DEVICES_TOKEN);
+        String imgId = SPUtils.getInstance().getString(SPConfig.AVATAR);
+        RxHttp.postForm(url)
+                .setHeader(SPConfig.TOKEN, token)
+                .add(SPConfig.AVATAR, imgId)
+                .asString()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.d("", "");
+                    }
+
+                    @Override
+                    public void onNext(@NonNull String s) {
+                        Gson gson = new Gson();
+                        MqttGetUserimage image = gson.fromJson(s, MqttGetUserimage.class);
+                        if (image.getMsg().equals("OK")) {
+                            SPUtils.getInstance().put(SPConfig.USERICON, image.getData());
+                            ActivityUtils.finishActivity(LoginActivity.class);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("", "");
+                    }
+                });
+    }
 }

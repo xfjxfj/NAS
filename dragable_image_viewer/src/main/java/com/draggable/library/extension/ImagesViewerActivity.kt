@@ -4,13 +4,19 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.LinearLayoutCompat
 import com.draggable.library.extension.entities.DraggableImageInfo
 import com.draggable.library.extension.view.DraggableImageGalleryViewer
+import com.drawable.library.R
 
 //查看多图
 class ImagesViewerActivity : AppCompatActivity() {
+
+    private lateinit var acivImageViewerTvIndicator: LinearLayoutCompat
 
     companion object {
         private const val PARAMS = "draggableImages"
@@ -50,6 +56,8 @@ class ImagesViewerActivity : AppCompatActivity() {
         if (draggableImages.isNotEmpty()) {
             galleryViewer.showImagesWithAnimator(draggableImages, index)
         }
+        acivImageViewerTvIndicator = findViewById(R.id.acivImageViewerTvIndicator)
+        acivImageViewerTvIndicator.setOnClickListener { onBackPressed() }
     }
 
     override fun onBackPressed() {

@@ -289,6 +289,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 		      .subscribe(new Observer<DeviceResourceRootEntity>() {
 			      @Override
 			      public void onSubscribe(@NonNull Disposable d) {
+
 			      }
 
 			      @Override
@@ -454,7 +455,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 				DevicesTokenEntity loglinCodeEntity = gson.fromJson(s, DevicesTokenEntity.class);
 				if (loglinCodeEntity.getMsg().equals("OK")) {
 					String token = loglinCodeEntity.getData().getToken();
-					SPUtils.getInstance().put(SPConfig.TOKEN, token);
+					SPUtils.getInstance().put(SPConfig.DEVICES_TOKEN, token);
+					Log.d(CommonUtils.getFileName()+CommonUtils.getLineNumber()+"-----------",token);
 					getContactsDatas(token, android_id);
 				} else {
 					Log.e("提示：ID ", android_id + ", " + loglinCodeEntity.getMsg() + "!");
@@ -479,6 +481,7 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
 	}
 
 	private void getContactsDatas(String token, String android_id) {
+		Log.d("xufangjie"+"-"+CommonUtils.getFileName()+CommonUtils.getLineNumber()+"-----------",SPUtils.getInstance().getString(SPConfig.DEVICES_TOKEN));
 		RxHttp.postForm(UrlConfig.Device.GET_GETALLFOLLOWS)
 		      .addHeader(SPConfig.TOKEN, SPUtils.getInstance().getString(SPConfig.DEVICES_TOKEN))
 		      .add("sn", android_id)
