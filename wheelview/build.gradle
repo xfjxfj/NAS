@@ -1,10 +1,12 @@
-apply plugin: 'com.android.library'
+plugins {
+	id 'com.android.library'
+}
 
 android {
-	compileSdkVersion 26
+	compileSdk 30
 
 	defaultConfig {
-		minSdkVersion 14
+		minSdk 14
 	}
 
 	lintOptions {

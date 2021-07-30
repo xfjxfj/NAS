@@ -3,19 +3,14 @@ plugins {
 }
 
 android {
-	compileSdkVersion 30
+	compileSdk 30
 
 	defaultConfig {
-		minSdkVersion 19
+		minSdk 19
 	}
 
 	buildFeatures {
 		viewBinding = true
-	}
-
-	compileOptions {
-		sourceCompatibility JavaVersion.VERSION_1_8
-		targetCompatibility JavaVersion.VERSION_1_8
 	}
 }
 

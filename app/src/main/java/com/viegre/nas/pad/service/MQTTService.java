@@ -32,17 +32,12 @@ import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.kongzue.dialog.v3.TipDialog;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.BlueToothBindStatusActivity;
-import com.viegre.nas.pad.activity.LoginActivity;
-import com.viegre.nas.pad.activity.MainActivity;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
-import com.viegre.nas.pad.entity.DevicesTokenEntity;
 import com.viegre.nas.pad.entity.ExternalDriveEntity;
 import com.viegre.nas.pad.entity.FtpCategoryEntity;
 import com.viegre.nas.pad.entity.FtpCmdEntity;
@@ -52,8 +47,6 @@ import com.viegre.nas.pad.entity.FtpFileQueryEntity;
 import com.viegre.nas.pad.entity.FtpFileQueryPaginationEntity;
 import com.viegre.nas.pad.entity.MQTTMsgEntity;
 import com.viegre.nas.pad.interceptor.TokenInterceptor;
-import com.viegre.nas.pad.manager.PopupManager;
-import com.viegre.nas.pad.popup.LoginTimePopup;
 import com.viegre.nas.pad.task.VoidTask;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.MediaScanner;
@@ -86,15 +79,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import androidx.core.app.NotificationCompat;
-
 import custom.fileobserver.FileListener;
 import custom.fileobserver.FileWatcher;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.annotations.NonNull;
-import io.reactivex.rxjava3.core.Observer;
-import io.reactivex.rxjava3.disposables.Disposable;
-import rxhttp.RxHttp;
-import rxhttp.RxHttpPlugins;
 
 /**
  * Created by レインマン on 2021/04/12 09:40 with Android Studio.
@@ -956,8 +942,8 @@ public class MQTTService extends Service {
                                         if (isAdd) {
                                             if (null == ftpFile) {
                                                 ftpFileEntity.setCreateTime(TimeUtils.millis2String(FileUtils.getFileLastModified(ftpFileEntity.getPath()),
-                                                        sdf));
-                                                ftpFileEntity.setSize(FileUtils.getSize(ftpFileEntity.getPath()));
+                                                                                                    sdf));
+                                                ftpFileEntity.setSize(String.valueOf(FileUtils.getLength(ftpFileEntity.getPath())));
                                                 ftpFileEntity.setState(FtpFileEntity.State.NORMAL);
                                                 ftpFileEntity.getPickSet().add(mqttMsgEntity.getFromId());
                                                 ftpFileEntity.save();
@@ -1173,8 +1159,8 @@ public class MQTTService extends Service {
                                         if (isBan) {
                                             if (null == fileEntity) {
                                                 ftpFileEntity.setCreateTime(TimeUtils.millis2String(FileUtils.getFileLastModified(ftpFileEntity.getPath()),
-                                                        sdf));
-                                                ftpFileEntity.setSize(FileUtils.getSize(ftpFileEntity.getPath()));
+                                                                                                    sdf));
+                                                ftpFileEntity.setSize(String.valueOf(FileUtils.getLength(ftpFileEntity.getPath())));
                                                 ftpFileEntity.setState(FtpFileEntity.State.NORMAL);
                                                 ftpFileEntity.getBanSet().add(banPhoneNum);
                                                 ftpFileEntity.save();

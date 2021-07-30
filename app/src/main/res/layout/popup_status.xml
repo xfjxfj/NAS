@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	android:background="@android:color/transparent"
+	android:orientation="vertical">
 
 	<androidx.constraintlayout.widget.ConstraintLayout
 		android:layout_width="match_parent"
@@ -122,5 +124,62 @@
 				android:textColor="#909098"
 				android:textSize="18px" />
 		</RelativeLayout>
+
+		<androidx.appcompat.widget.AppCompatSeekBar
+			android:id="@+id/acsbStatusBrightness"
+			android:layout_width="0dp"
+			android:layout_height="50px"
+			android:layout_marginStart="30px"
+			android:layout_marginEnd="48px"
+			android:max="255"
+			android:progress="85"
+			android:progressDrawable="@drawable/status_popup_seek_bar_bg"
+			android:thumb="@null"
+			android:thumbOffset="0dp"
+			app:layout_constraintBottom_toTopOf="@id/acsbStatusVolume"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@id/rlStatusWiFi"
+			app:layout_constraintTop_toTopOf="@id/rlStatusWiFi"
+			app:layout_constraintVertical_chainStyle="spread_inside" />
+
+		<androidx.appcompat.widget.AppCompatSeekBar
+			android:id="@+id/acsbStatusVolume"
+			android:layout_width="0dp"
+			android:layout_height="50px"
+			android:layout_marginStart="30px"
+			android:layout_marginEnd="48px"
+			android:progress="33"
+			android:progressDrawable="@drawable/status_popup_seek_bar_bg"
+			android:thumb="@null"
+			android:thumbOffset="0dp"
+			app:layout_constraintBottom_toBottomOf="@id/rlStatusWiFi"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@id/rlStatusWiFi"
+			app:layout_constraintTop_toBottomOf="@id/acsbStatusBrightness" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/acivStatusBrightness"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="25px"
+			app:layout_constraintBottom_toBottomOf="@id/acsbStatusBrightness"
+			app:layout_constraintStart_toStartOf="@id/acsbStatusBrightness"
+			app:layout_constraintTop_toTopOf="@id/acsbStatusBrightness"
+			app:srcCompat="@mipmap/status_brightness_0" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/acivStatusVolume"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="25px"
+			app:layout_constraintBottom_toBottomOf="@id/acsbStatusVolume"
+			app:layout_constraintStart_toStartOf="@id/acsbStatusVolume"
+			app:layout_constraintTop_toTopOf="@id/acsbStatusVolume"
+			app:srcCompat="@mipmap/status_volume_0" />
 	</androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+
+	<View
+		android:id="@+id/vStatusDismiss"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" />
+</androidx.appcompat.widget.LinearLayoutCompat>

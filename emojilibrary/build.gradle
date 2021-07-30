@@ -1,10 +1,12 @@
-apply plugin: 'com.android.library'
+plugins {
+	id 'com.android.library'
+}
 
 android {
-	compileSdkVersion 28
+	compileSdk 30
 
 	defaultConfig {
-		minSdkVersion 16
+		minSdk 16
 	}
 
 	android {

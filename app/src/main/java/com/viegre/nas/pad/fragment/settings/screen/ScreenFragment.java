@@ -235,7 +235,7 @@ public class ScreenFragment extends BaseFragment<FragmentScreenBinding> {
 		saveBrightness(Utils.getApp().getContentResolver(), process);
 	}
 
-	public static void saveBrightness(ContentResolver resolver, int brightness) {
+	private void saveBrightness(ContentResolver resolver, int brightness) {
 		//改变系统的亮度值
 		//设置为手动调节模式
 		Settings.System.putInt(resolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
