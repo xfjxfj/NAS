@@ -38,6 +38,7 @@ import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.audio.AudioActivity;
 import com.viegre.nas.pad.activity.im.ContactsActivity;
+import com.viegre.nas.pad.activity.im.ImConfig.YehuoCongigActivity;
 import com.viegre.nas.pad.activity.image.ImageActivity;
 import com.viegre.nas.pad.activity.video.VideoActivity;
 import com.viegre.nas.pad.config.BusConfig;
@@ -122,6 +123,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
 	@Override
 	protected void initialize() {
+
 		if ("official".equals(BuildConfig.FLAVOR)) {
 			Intent mscIntent = new Intent(this, MscService.class);
 			startService(mscIntent);
@@ -376,7 +378,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 			                                                                                .hasStatusBar(false)//是否显示状态栏，默认显示
 			                                                                                .hasNavigationBar(false)//是否显示导航栏，默认显示
 			                                                                                .popupAnimation(PopupAnimation.TranslateFromTop)//从上方平移进入
-			                                                                                .animationDuration(600)
+//			                                                                                .animationDuration(600)
 			                                                                                .enableDrag(true)
 			                                                                                .enableShowWhenAppBackground(true)
 			                                                                                .asCustom(new StatusPopup(mActivity))
@@ -385,6 +387,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
 		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> {
 			ActivityUtils.startActivity(ContactsActivity.class);
+//			ActivityUtils.startActivity(YehuoCongigActivity.class);//跳转到野火配置界面
 			mViewBinding.vMainUnreadPoint.setVisibility(View.INVISIBLE);
 		});
 //        mViewBinding.acivMainIncomingCall.setOnClickListener(new View.OnClickListener() {

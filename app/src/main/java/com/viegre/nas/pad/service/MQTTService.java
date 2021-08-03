@@ -334,9 +334,10 @@ public class MQTTService extends Service {
                 switch (mqttMsgEntity.getAction()) {
                     case MQTTMsgEntity.MSG_ADD_FRIEND_REQUEST:
                         String requesterID = JSON.parseObject(mqttMsgEntity.getParam()).getString("requester");
+                        String requesterCallId = JSON.parseObject(mqttMsgEntity.getParam()).getString("callId");
                         Log.d("MSG_ADD_FRIEND_REQUEST：", message);
                         if (null != tipsdevicesfriend) {
-                            tipsdevicesfriend.onTipsdevicesFriend(requesterID);
+                            tipsdevicesfriend.onTipsdevicesFriend(requesterID,requesterCallId);
                         }
                         break;
 
@@ -350,9 +351,10 @@ public class MQTTService extends Service {
                     case MQTTMsgEntity.MSG_ADDFRIENDRESULT:
                         String status = JSON.parseObject(mqttMsgEntity.getParam()).getString("status");
                         String requestedSn = JSON.parseObject(mqttMsgEntity.getParam()).getString("requestedSn");
+                        String callid = JSON.parseObject(mqttMsgEntity.getParam()).getString("ZDZ5Z5FF");
                         Log.d("MSG_ADDFRIENDRESULT：", message);
                         if (null != tipsdevicesfriend) {
-                            tipsdevicesfriend.onTipsdevicesFriendStatus(status,requestedSn);
+                            tipsdevicesfriend.onTipsdevicesFriendStatus(status,requestedSn,callid);
                         }
                         break;
                     //登录设备
@@ -1456,9 +1458,9 @@ public class MQTTService extends Service {
     }
 
     public interface TipsDevicesFriend {
-        void onTipsdevicesFriend(String requestID);
+        void onTipsdevicesFriend(String requestID,String callid);
 
-        void onTipsdevicesFriendStatus(String statusid,String requestedSn);
+        void onTipsdevicesFriendStatus(String statusid,String requestedSn,String callid);
 //        void onTipsdevicesFriendStatus(String statusid);
     }
 

@@ -51,16 +51,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
-import cn.wildfirechat.remote.ChatManager;
+import cn.wildfire.chat.kit.common.OperateResult;
+import cn.wildfire.chat.kit.contact.ContactViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
@@ -96,7 +97,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
 //             回调接口
             myService.setTipsDevicesFriend(new MQTTService.TipsDevicesFriend() {
                 @Override
-                public void onTipsdevicesFriend(String requestID) {
+                public void onTipsdevicesFriend(String requestID, String callId) {
                     DialogSettings.isUseBlur = true;
                     CustomDialog.build(ContactsActivity.this, R.layout.contacts_add_devices_invitation_dialog, new CustomDialog.OnBindView() {
                         @SuppressLint("SetTextI18n")
@@ -111,13 +112,14 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                             button_ok.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    AccectRequest(1, requestID, dialog);
+//                                    接受好友邀请
+                                    AccectRequest(1, requestID, dialog, callId);
                                 }
                             });
                             cancle_bt.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    AccectRequest(2, requestID, dialog);
+                                    AccectRequest(2, requestID, dialog, callId);
 //                                    dialog.doDismiss();
                                 }
                             });
@@ -126,7 +128,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                 }
 
                 @Override
-                public void onTipsdevicesFriendStatus(String requestID, String requestedSn) {
+                public void onTipsdevicesFriendStatus(String requestID, String requestedSn,String callid) {
                     String status = "";
                     switch (requestID) {
                         case "1":
@@ -155,7 +157,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                                     dialog.doDismiss();
                                     if (requestID.equals("1")) {//接受好友
 //										getDevicesfriend();
-                                        posNetWork(newFriendName, requestedSn, null);//添加好友后，修改名称
+                                        posNetWork(newFriendName, requestedSn, null,callid);//添加好友后，修改名称
                                     } else {//拒绝好友
                                         getDevicesfriend();
                                     }
@@ -173,10 +175,11 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         }
     };
     private TipDialog dialog;
+    private ContactViewModel contactViewModel;
 
     //***接受或者拒绝好友申请
     @SuppressLint("UseValueOf")
-    private void AccectRequest(int status, String friendId, CustomDialog dialog) {
+    private void AccectRequest(int status, String friendId, CustomDialog dialog, String callId) {
         RxHttp.postForm(UrlConfig.Device.GET_ADDFRIENDRESULT)
                 .addHeader(SPConfig.TOKEN, SPUtils.getInstance().getString(SPConfig.DEVICES_TOKEN))
                 .add("requesterSn", friendId)
@@ -201,6 +204,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                         if (addDevicesFriend.msg.equals("OK")) {
                             if (status == 1) {
                                 Toast.makeText(ContactsActivity.this, "添加成功", Toast.LENGTH_LONG).show();
+                                accept(callId);
                             } else {
                                 Toast.makeText(ContactsActivity.this, "已拒绝该好友添加请求", Toast.LENGTH_LONG).show();
                             }
@@ -250,6 +254,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
 //        ChatManager.Instance().getUserInfo(fileRecord.userId, false)
         getContactsDatas();//获取联系人好友
         getDevicesfriend();//获取设备好友
+        contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);//野火修改备注需要
         contactsRv1 = findViewById(R.id.contactsRv1);
         contactsRv2 = findViewById(R.id.contactsRv2);
         contactsRv3 = findViewById(R.id.contactsRv3);
@@ -556,13 +561,15 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                             Log.d("onSubscribe", d.toString());
                         }
 
+                        @SuppressLint("LongLogTag")
                         @Override
                         public void onNext(@NonNull String s) {
                             Gson gson = new Gson();
                             AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
-                            Log.d("GET_ADDFRIENDREQUEST：", addDevicesFriend.toString());
+                            Log.d("onAddDevicesFriendClick ：", addDevicesFriend.toString());
                             if (addDevicesFriend.msg.equals("OK")) {
                                 Toast.makeText(ContactsActivity.this, "添加请求发送成功，等待对方接受。", Toast.LENGTH_LONG).show();
+                                invite(friendId, "");
                                 tips(bt);
                             } else {
                                 Toast.makeText(ContactsActivity.this, addDevicesFriend.msg, Toast.LENGTH_LONG).show();
@@ -597,23 +604,25 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         }, 1500);
     }
 
+
     //修改好友名称
     @Override
     public void onEditDevicesNameClick(String callId, String devicesSn) {
         CustomDialog.build(ContactsActivity.this, R.layout.contacts_edit_devices__name_dialog, new CustomDialog.OnBindView() {
             @Override
             public void onBind(final CustomDialog dialog, View v) {
-                EditText newFriendName = v.findViewById(R.id.add_device_dialog_edittext);
+                EditText fName = v.findViewById(R.id.add_device_dialog_edittext);
                 Button cancle_bt = v.findViewById(R.id.cancle_bt);
                 Button button_ok = v.findViewById(R.id.button_ok);
 
                 button_ok.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (newFriendName.getText().toString().trim().equals("")) {
+                        newFriendName = fName.getText().toString().trim();
+                        if (newFriendName.equals("")) {
                             Toast.makeText(mActivity, "请输入新的名称", Toast.LENGTH_LONG).show();
                         } else {
-                            posNetWork(newFriendName.getText().toString(), devicesSn, dialog);
+                            posNetWork(newFriendName, devicesSn, dialog,callId);
                         }
                     }
                 });
@@ -628,7 +637,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     }
 
     //修改设备名称
-    private void posNetWork(String newFriendName, String devicesSn, CustomDialog dialog) {
+    private void posNetWork(String newFriendName, String devicesSn, CustomDialog dialog,String callId) {
         RxHttp.postForm(UrlConfig.Device.GET_SETFRIENDNAME)
                 .addHeader(SPConfig.TOKEN, SPUtils.getInstance().getString(SPConfig.DEVICES_TOKEN))
                 .add("name", newFriendName)
@@ -645,19 +654,19 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                     //                    {"msg":"token verify fail","code":"4111"}   2021年5月21日
                     @Override
                     public void onNext(@NonNull String s) {
-//                        {"code":0,"msg":"OK","data":null}
                         Gson gson = new Gson();
                         AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
                         if (addDevicesFriend.msg.equals("OK")) {
                             Toast.makeText(ContactsActivity.this, "修改成功", Toast.LENGTH_LONG).show();
+                            changeAlias(callId,newFriendName);
                             if (dialog != null) {
                                 dialog.doDismiss();
                             }
-                            getDevicesfriend();
                         } else {
                             Toast.makeText(ContactsActivity.this, addDevicesFriend.msg, Toast.LENGTH_LONG).show();
                         }
                     }
+
 
                     @Override
                     public void onError(@NonNull Throwable e) {
@@ -740,6 +749,56 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                         Log.d("", "");
                     }
                 });
+    }
+
+    /**
+     * 野火添加好友請求
+     */
+    public void invite(String userId, String userTips) {
+        ContactViewModel contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);
+        contactViewModel.invite(userId, userTips)
+                .observe(this, new androidx.lifecycle.Observer<Boolean>() {
+                    @Override
+                    public void onChanged(@Nullable Boolean aBoolean) {
+                        if (aBoolean) {
+                            Toast.makeText(mActivity, "好友邀请已发送", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(mActivity, "添加好友失败", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 修改对好友的备注
+     */
+    private void changeAlias(String userId, String displayName) {
+        contactViewModel.setFriendAlias(userId, displayName).observe(this, new androidx.lifecycle.Observer<OperateResult<Integer>>() {
+            @Override
+            public void onChanged(OperateResult<Integer> integerOperateResult) {
+                if (integerOperateResult.isSuccess()) {
+//                    Toast.makeText(SetAliasActivity.this, "修改成功", Toast.LENGTH_SHORT).show();
+                    Log.d(CommonUtils.getFileName() + CommonUtils.getLineNumber(), "修改别名成功");
+                } else {
+//                    Toast.makeText(SetAliasActivity.this, "修改别名错误：" + integerOperateResult.getErrorCode(), Toast.LENGTH_SHORT).show();
+                    Log.d(CommonUtils.getFileName() + CommonUtils.getLineNumber(), "修改别名失败" + integerOperateResult.getErrorCode());
+                }
+                getDevicesfriend();
+            }
+        });
+    }
+
+    /**
+     * 野火好友列表接受好友邀请
+     */
+    void accept(String callId) {
+        contactViewModel.acceptFriendRequest(callId).observe((LifecycleOwner) mActivity, aBoolean -> {
+            if (aBoolean) {
+                Log.d("", "accept: " + "已经接受好友请求");
+            } else {
+                Log.d("", "accept: " + "好友请求失败");
+            }
+        });
     }
 }
 

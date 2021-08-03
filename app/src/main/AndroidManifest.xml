@@ -123,7 +123,9 @@
 			android:screenOrientation="landscape" />
 		<activity
 			android:name=".activity.WelcomeActivity"
-			android:screenOrientation="landscape" />
+			android:screenOrientation="landscape" /><activity
+		android:name=".activity.im.ImConfig.YehuoCongigActivity"
+		android:screenOrientation="landscape" />
 
 		<service android:name="com.amap.api.location.APSService" />
 		<service android:name=".service.MQTTService" />
