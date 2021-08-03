@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.view.WindowManager;
 import android.widget.SeekBar;
@@ -14,6 +15,8 @@ import com.blankj.utilcode.util.Utils;
 import com.blankj.utilcode.util.VolumeUtils;
 import com.lxj.xpopup.impl.FullScreenPopupView;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.activity.MainActivity;
+import com.viegre.nas.pad.activity.SettingsActivity;
 import com.viegre.nas.pad.databinding.PopupStatusBinding;
 
 import androidx.annotation.NonNull;
@@ -40,6 +43,11 @@ public class StatusPopup extends FullScreenPopupView {
 		PopupStatusBinding popupStatusBinding = PopupStatusBinding.bind(getPopupImplView());
 
 		popupStatusBinding.vStatusDismiss.setOnClickListener(view -> dismiss());
+		popupStatusBinding.rlStatusHome.setOnClickListener(view -> ActivityUtils.startActivity(MainActivity.class));
+		popupStatusBinding.rlStatusSettings.setOnClickListener(view -> ActivityUtils.startActivity(SettingsActivity.class));
+		Bundle bundle = new Bundle();
+		bundle.putString("WiFi", "WiFi");
+		popupStatusBinding.rlStatusWiFi.setOnClickListener(view -> ActivityUtils.startActivity(MainActivity.class, bundle));
 
 		try {
 			int brightness = Settings.System.getInt(Utils.getApp().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);

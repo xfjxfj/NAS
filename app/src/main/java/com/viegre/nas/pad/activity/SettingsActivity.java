@@ -1,5 +1,6 @@
 package com.viegre.nas.pad.activity;
 
+import android.content.Intent;
 import android.view.View;
 
 import com.blankj.utilcode.util.ActivityUtils;
@@ -81,6 +82,20 @@ public class SettingsActivity extends BaseFragmentActivity<ActivitySettingsBindi
 				                                                                                                                  logout();
 			                                                                                                                  }
 		                                                                                                                  })));
+		String extra = getIntent().getStringExtra("WiFi");
+		if ("WiFi".equals(extra)) {
+			FragmentUtils.show(mNetworkFragment);
+		}
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setIntent(intent);
+		String extra = getIntent().getStringExtra("WiFi");
+		if ("WiFi".equals(extra)) {
+			FragmentUtils.show(mNetworkFragment);
+		}
 	}
 
 	@Override
