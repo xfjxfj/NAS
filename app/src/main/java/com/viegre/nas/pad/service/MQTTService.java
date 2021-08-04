@@ -208,6 +208,7 @@ public class MQTTService extends Service {
         mMqttConnectOptions.setCleanSession(true);//是否清空客户端的连接记录。若为true，则断开后，broker将自动清除该客户端连接信息
         mMqttConnectOptions.setConnectionTimeout(60);
         mMqttConnectOptions.setKeepAliveInterval(60);
+        mMqttConnectOptions.setMaxInflight(1024);
         mMqttConnectOptions.setUserName("study_pen");
         mMqttConnectOptions.setPassword("lMz^zBrG2Gtu".toCharArray());
         mMqttConnectOptions.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);//选择MQTT版本

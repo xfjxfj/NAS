@@ -202,7 +202,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
 //                        {"code":4000,"msg":"参数不正确","data":null}
                         AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
                         Log.d("GET_ADDFRIENDRESULT:", addDevicesFriend.toString());
-                        if (addDevicesFriend.msg.equals("OK")) {
+                        if (addDevicesFriend.getMsg().equals("OK")) {
                             if (status == 1) {
                                 Toast.makeText(ContactsActivity.this, "添加成功", Toast.LENGTH_LONG).show();
                                 accept(callId);
@@ -211,7 +211,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                             }
                             getDevicesfriend();
                         } else {
-                            CommonUtils.showErrorToast(addDevicesFriend.msg);
+                            CommonUtils.showErrorToast(addDevicesFriend.getMsg());
                         }
                         dismiss(dialog);
                     }
@@ -546,16 +546,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
         if (friendId.equals("")) {
             Toast.makeText(this, "请输入序列号", Toast.LENGTH_LONG).show();
         } else {
-//            if (friendName.equals("")) {
-//                if (SPUtils.getInstance().getInt(SPConfig.NASNAME) == 0) {
-//                    friendName = "NAS GAS " + 1;
-//                    SPUtils.getInstance().put(SPConfig.NASNAME, 1);
-//                } else {
-//                    int nameInt = SPUtils.getInstance().getInt(SPConfig.NASNAME) + 1;
-//                    friendName = "NAS GAS " + nameInt;
-//                    SPUtils.getInstance().put(SPConfig.NASNAME, nameInt);
-//                }
-//            }
 
             newFriendName = friendName;//本地复制名字，为添加成功后 修改好友名称赋值
             bt.setText("请稍等....");
@@ -577,12 +567,12 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                             Gson gson = new Gson();
                             AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
                             Log.d("onAddDevicesFriendClick ：", addDevicesFriend.toString());
-                            if (addDevicesFriend.msg.equals("OK")) {
+                            if (addDevicesFriend.getMsg().equals("OK")) {
                                 Toast.makeText(ContactsActivity.this, "添加请求发送成功，等待对方接受。", Toast.LENGTH_LONG).show();
-                                invite(friendId, "");
+                                invite(addDevicesFriend.getData().getCallId(), "");
                                 tips(bt);
                             } else {
-                                Toast.makeText(ContactsActivity.this, addDevicesFriend.msg, Toast.LENGTH_LONG).show();
+                                Toast.makeText(ContactsActivity.this, addDevicesFriend.getMsg(), Toast.LENGTH_LONG).show();
                                 tips(bt);
                             }
                         }
@@ -673,14 +663,14 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                     public void onNext(@NonNull String s) {
                         Gson gson = new Gson();
                         AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
-                        if (addDevicesFriend.msg.equals("OK")) {
+                        if (addDevicesFriend.getMsg().equals("OK")) {
                             Toast.makeText(ContactsActivity.this, "修改成功", Toast.LENGTH_LONG).show();
                             changeAlias(callId, finalIsName);
                             if (dialog != null) {
                                 dialog.doDismiss();
                             }
                         } else {
-                            Toast.makeText(ContactsActivity.this, addDevicesFriend.msg, Toast.LENGTH_LONG).show();
+                            Toast.makeText(ContactsActivity.this, addDevicesFriend.getMsg(), Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -747,7 +737,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
 //                        {"code":0,"msg":"OK","data":null}
                         Gson gson = new Gson();
                         AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
-                        if (addDevicesFriend.msg.equals("OK")) {
+                        if (addDevicesFriend.getMsg().equals("OK")) {
                             Toast.makeText(ContactsActivity.this, "删除成功", Toast.LENGTH_LONG).show();
                             delefriened(callid);
                             if (dialog != null) {
@@ -755,7 +745,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                             }
 
                         } else {
-                            Toast.makeText(ContactsActivity.this, addDevicesFriend.msg, Toast.LENGTH_LONG).show();
+                            Toast.makeText(ContactsActivity.this, addDevicesFriend.getMsg(), Toast.LENGTH_LONG).show();
                         }
                     }
 
