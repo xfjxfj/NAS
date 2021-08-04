@@ -89,6 +89,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     private ContactsRvRecordAdapter contactsRvRecordAdapter;
     private MQTTService myService;
     private String newFriendName = "";
+    private String TAG = CommonUtils.getFileName();
     //处理mqtt那边传递过来的消息
     ServiceConnection conn = new ServiceConnection() {
         @Override
@@ -128,7 +129,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                 }
 
                 @Override
-                public void onTipsdevicesFriendStatus(String requestID, String requestedSn,String callid) {
+                public void onTipsdevicesFriendStatus(String requestID, String requestedSn, String callid,String name) {
                     String status = "";
                     switch (requestID) {
                         case "1":
@@ -157,7 +158,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                                     dialog.doDismiss();
                                     if (requestID.equals("1")) {//接受好友
 //										getDevicesfriend();
-                                        posNetWork(newFriendName, requestedSn, null,callid);//添加好友后，修改名称
+                                        posNetWork(newFriendName, requestedSn, null, callid,name);//添加好友后，修改名称
                                     } else {//拒绝好友
                                         getDevicesfriend();
                                     }
@@ -543,10 +544,19 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     @Override
     public void onAddDevicesFriendClick(Button bt, String friendId, String friendName) {
         if (friendId.equals("")) {
-            Toast.makeText(this, "请输入序列号或联系人名称", Toast.LENGTH_LONG).show();
-        } else if (friendName.equals("")) {
-            Toast.makeText(this, "请输入序列号或联系人名称", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "请输入序列号", Toast.LENGTH_LONG).show();
         } else {
+//            if (friendName.equals("")) {
+//                if (SPUtils.getInstance().getInt(SPConfig.NASNAME) == 0) {
+//                    friendName = "NAS GAS " + 1;
+//                    SPUtils.getInstance().put(SPConfig.NASNAME, 1);
+//                } else {
+//                    int nameInt = SPUtils.getInstance().getInt(SPConfig.NASNAME) + 1;
+//                    friendName = "NAS GAS " + nameInt;
+//                    SPUtils.getInstance().put(SPConfig.NASNAME, nameInt);
+//                }
+//            }
+
             newFriendName = friendName;//本地复制名字，为添加成功后 修改好友名称赋值
             bt.setText("请稍等....");
             RxHttp.postForm(UrlConfig.Device.GET_ADDFRIENDREQUEST)
@@ -622,7 +632,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                         if (newFriendName.equals("")) {
                             Toast.makeText(mActivity, "请输入新的名称", Toast.LENGTH_LONG).show();
                         } else {
-                            posNetWork(newFriendName, devicesSn, dialog,callId);
+                            posNetWork(newFriendName, devicesSn, dialog, callId,newFriendName);
                         }
                     }
                 });
@@ -637,10 +647,17 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     }
 
     //修改设备名称
-    private void posNetWork(String newFriendName, String devicesSn, CustomDialog dialog,String callId) {
+    private void posNetWork(String newFriendName, String devicesSn, CustomDialog dialog, String callId,String name) {
+        String isName = "";
+        if (newFriendName.equals(name)) {
+            isName = newFriendName;
+        } else {
+            isName = name;
+        }
+        String finalIsName = isName;
         RxHttp.postForm(UrlConfig.Device.GET_SETFRIENDNAME)
                 .addHeader(SPConfig.TOKEN, SPUtils.getInstance().getString(SPConfig.DEVICES_TOKEN))
-                .add("name", newFriendName)
+                .add("name", finalIsName)
                 .add("requestedSn", devicesSn)
                 .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
                 .asString()
@@ -658,7 +675,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                         AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
                         if (addDevicesFriend.msg.equals("OK")) {
                             Toast.makeText(ContactsActivity.this, "修改成功", Toast.LENGTH_LONG).show();
-                            changeAlias(callId,newFriendName);
+                            changeAlias(callId, finalIsName);
                             if (dialog != null) {
                                 dialog.doDismiss();
                             }
@@ -682,7 +699,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
 
     //删除设备好友弹框提示
     @Override
-    public void onDeleteDevicesFriend(String friendSn, String friendName) {
+    public void onDeleteDevicesFriend(String friendSn, String friendName, String callId) {
         CustomDialog.build(ContactsActivity.this, R.layout.contacts_delete_devices_friend_dialog, new CustomDialog.OnBindView() {
             @Override
             public void onBind(final CustomDialog dialog, View v) {
@@ -696,7 +713,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                     @Override
                     public void onClick(View v) {
                         dialog.doDismiss();
-                        postDeleteNetWork(friendSn);
+                        postDeleteNetWork(friendSn, callId);
                     }
                 });
                 cancle_bt.setOnClickListener(new View.OnClickListener() {
@@ -710,7 +727,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     }
 
     //6fa8295f4764b429 删除设备
-    private void postDeleteNetWork(String friendSn) {
+    private void postDeleteNetWork(String friendSn, String callid) {
         RxHttp.postForm(UrlConfig.Device.GET_DELFRIEND)
                 .addHeader(SPConfig.TOKEN, SPUtils.getInstance().getString(SPConfig.DEVICES_TOKEN))
                 .add("requestedSn", friendSn)
@@ -732,8 +749,11 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                         AddDevicesFriend addDevicesFriend = gson.fromJson(s, AddDevicesFriend.class);
                         if (addDevicesFriend.msg.equals("OK")) {
                             Toast.makeText(ContactsActivity.this, "删除成功", Toast.LENGTH_LONG).show();
-                            dialog.doDismiss();
-                            getDevicesfriend();
+                            delefriened(callid);
+                            if (dialog != null) {
+                                dialog.doDismiss();
+                            }
+
                         } else {
                             Toast.makeText(ContactsActivity.this, addDevicesFriend.msg, Toast.LENGTH_LONG).show();
                         }
@@ -799,6 +819,24 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                 Log.d("", "accept: " + "好友请求失败");
             }
         });
+    }
+
+    /**
+     * delefriend
+     */
+    private void delefriened(String userid) {
+        contactViewModel.deleteFriend(userid).observe(
+                (LifecycleOwner) mActivity, booleanOperateResult -> {
+                    if (booleanOperateResult.isSuccess()) {
+//                        Toast.makeText(mActivity, "delete friend OK " + booleanOperateResult.getErrorCode(), Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "delefriened: 删除好友成功");
+                    } else {
+//                        Toast.makeText(mActivity, "delete friend error " + booleanOperateResult.getErrorCode(), Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "delefriened: 删除好友失败");
+                    }
+                    getDevicesfriend();
+                }
+        );
     }
 }
 

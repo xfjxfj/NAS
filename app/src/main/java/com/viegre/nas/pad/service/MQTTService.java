@@ -94,9 +94,7 @@ import rxhttp.RxHttp;
  * Created by レインマン on 2021/04/12 09:40 with Android Studio.
  */
 public class MQTTService extends Service {
-
     private final String TAG = MQTTService.class.getSimpleName();
-
     private MqttConnectOptions mMqttConnectOptions;
     private MqttAndroidClient mMqttAndroidClient;
     private FileWatcher mFileWatcher;
@@ -313,7 +311,8 @@ public class MQTTService extends Service {
     public void sendMQTTMsg(MQTTMsgEntity mqttMsgEntity) {
         MqttMessage mqttMessage = new MqttMessage();
         mqttMessage.setPayload(JSON.toJSONString(mqttMsgEntity).getBytes());//设置消息内容
-        mqttMessage.setQos(1);//设置消息发送质量，可为0,1,2.
+        mqttMessage.setQos(2);//设置消息发送质量，可为0,1,2.
+//        mqttMessage.setQos(1);//设置消息发送质量，可为0,1,2.
         mqttMessage.setRetained(false);//服务器是否保存最后一条消息，若保存，client再次上线时，将再次受到上次发送的最后一条消息。
         try {
             mMqttAndroidClient.publish("nas/user/" + mqttMsgEntity.getToId(), mqttMessage);//设置消息的topic，并发送。
@@ -324,9 +323,6 @@ public class MQTTService extends Service {
 
     @SuppressLint("NewApi")
     private void parseMessage(String message) {
-//		{"action":"addFriendResult","fromId":"appService","itemType":0,"msgType":"notify",
-//		"param":{"handleTime":"2021-07-05T15:17:06.509","requestedSn":"5830e3fbe8c57dd5","status":1},
-//		"timeStamp":1625469426,"toId":"6fa8295f4764b429"}
 //        {"action":"addFriendResult","fromId":"appService","itemType":0,"msgType":"notify","param":{"handleTime":"2021-07-30T16:07:33.580","requestedSn":"8e42a826eed81ee7","status":1},"timeStamp":1627632453,"toId":"955b79091f3c4d19"}
         MQTTMsgEntity mqttMsgEntity = JSON.parseObject(message, MQTTMsgEntity.class);
         switch (mqttMsgEntity.getMsgType()) {
@@ -351,10 +347,11 @@ public class MQTTService extends Service {
                     case MQTTMsgEntity.MSG_ADDFRIENDRESULT:
                         String status = JSON.parseObject(mqttMsgEntity.getParam()).getString("status");
                         String requestedSn = JSON.parseObject(mqttMsgEntity.getParam()).getString("requestedSn");
-                        String callid = JSON.parseObject(mqttMsgEntity.getParam()).getString("ZDZ5Z5FF");
+                        String callid = JSON.parseObject(mqttMsgEntity.getParam()).getString("callId");
+                        String name = JSON.parseObject(mqttMsgEntity.getParam()).getString("name");
                         Log.d("MSG_ADDFRIENDRESULT：", message);
                         if (null != tipsdevicesfriend) {
-                            tipsdevicesfriend.onTipsdevicesFriendStatus(status,requestedSn,callid);
+                            tipsdevicesfriend.onTipsdevicesFriendStatus(status,requestedSn,callid,name);
                         }
                         break;
                     //登录设备
@@ -1460,7 +1457,7 @@ public class MQTTService extends Service {
     public interface TipsDevicesFriend {
         void onTipsdevicesFriend(String requestID,String callid);
 
-        void onTipsdevicesFriendStatus(String statusid,String requestedSn,String callid);
+        void onTipsdevicesFriendStatus(String statusid,String requestedSn,String callid,String name);
 //        void onTipsdevicesFriendStatus(String statusid);
     }
 
