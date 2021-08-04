@@ -142,7 +142,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
 
     //    回调接口删除设备
     public interface deleteDevicesFriend {
-        void onDeleteDevicesFriend(String friendSn, String friendName);
+        void onDeleteDevicesFriend(String friendSn, String friendName,String callId);
     }
 
     //定义回调方法 修改名称
@@ -210,7 +210,7 @@ public class ContactsRvDevicesAdapter extends RecyclerView.Adapter<ContactsRvDev
                 public void onClick(View v) {
 //                    删除设备呼叫
                     popupWindow.dismiss();
-                    deleteDevicesFriend.onDeleteDevicesFriend(friendSn, friendName);
+                    deleteDevicesFriend.onDeleteDevicesFriend(friendSn, friendName,callId);
                 }
             });
         }

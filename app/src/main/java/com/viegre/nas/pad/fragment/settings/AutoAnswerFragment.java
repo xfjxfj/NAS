@@ -4,18 +4,13 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.djangoogle.framework.fragment.BaseFragment;
 import com.google.gson.Gson;
 import com.kongzue.dialog.v3.TipDialog;
-import com.kongzue.dialog.v3.WaitDialog;
-import com.viegre.nas.pad.R;
-import com.viegre.nas.pad.activity.im.ContactsActivity;
 import com.viegre.nas.pad.adapter.AutoAnswerRvAdapter;
-import com.viegre.nas.pad.adapter.ContactsRvDevicesAdapter;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.FragmentAutoAnswerBinding;
@@ -23,7 +18,6 @@ import com.viegre.nas.pad.entity.ContactsBean;
 import com.viegre.nas.pad.entity.DataBeanXX;
 import com.viegre.nas.pad.entity.DevicesFollowEntity;
 import com.viegre.nas.pad.entity.DevicesFriendList;
-import com.viegre.nas.pad.entity.DevicesFriendsListBean;
 import com.viegre.nas.pad.util.CommonUtils;
 
 import java.util.ArrayList;
