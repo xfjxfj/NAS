@@ -99,6 +99,11 @@ class FileController {
 		                                (s, uri) -> LogUtils.iTag("FileController.mkdir", "path = " + s, "uri = " + uri));
 	}
 
+	@PostMapping(path = "/check", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	boolean check(@RequestParam("path") String path) {
+		return FileUtils.isFileExists(path);
+	}
+
 	@PostMapping(path = "/upload", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	void upload(@RequestParam("path") String path, @RequestParam(name = "file") MultipartFile file) {
 		path = PathConfig.NAS + path;
