@@ -84,6 +84,7 @@ import java.util.concurrent.TimeUnit;
 import cn.wildfire.chat.kit.ChatManagerHolder;
 import cn.wildfirechat.message.CallStartMessageContent;
 import cn.wildfirechat.message.Message;
+import cn.wildfirechat.model.UserInfo;
 import cn.wildfirechat.remote.ChatManager;
 import cn.wildfirechat.remote.OnMessageUpdateListener;
 import hdp.http.APIConstant;

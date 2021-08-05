@@ -570,11 +570,10 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                             if (addDevicesFriend.getMsg().equals("OK")) {
                                 Toast.makeText(ContactsActivity.this, "添加请求发送成功，等待对方接受。", Toast.LENGTH_LONG).show();
                                 invite(addDevicesFriend.getData().getCallId(), "");
-                                tips(bt);
                             } else {
                                 Toast.makeText(ContactsActivity.this, addDevicesFriend.getMsg(), Toast.LENGTH_LONG).show();
-                                tips(bt);
                             }
+                            tips(bt);
                         }
 
                         @Override
@@ -614,7 +613,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                 EditText fName = v.findViewById(R.id.add_device_dialog_edittext);
                 Button cancle_bt = v.findViewById(R.id.cancle_bt);
                 Button button_ok = v.findViewById(R.id.button_ok);
-
                 button_ok.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

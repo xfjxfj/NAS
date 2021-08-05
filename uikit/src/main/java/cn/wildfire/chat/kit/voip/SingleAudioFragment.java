@@ -14,9 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -54,7 +56,12 @@ public class SingleAudioFragment extends Fragment implements AVEngineKit.CallSes
     TextView descTextView;
     @BindView(R2.id.durationTextView)
     TextView durationTextView;
+    @BindView(R2.id.speakerImageView2)
+    ImageView speakerImageView2;
+    @BindView(R2.id.layout_seekbar)
+    ConstraintLayout layout_seekbar;
 
+    private boolean isSeekbar = false;
     private static final String TAG = "AudioFragment";
 
     @Override
@@ -156,13 +163,13 @@ public class SingleAudioFragment extends Fragment implements AVEngineKit.CallSes
     @Override
     public void didAudioDeviceChanged(AVAudioManager.AudioDevice device) {
         AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
-        if(audioManager.isSpeakerphoneOn()) {
+        if (audioManager.isSpeakerphoneOn()) {
             spearImageView.setSelected(true);
         } else {
             spearImageView.setSelected(false);
         }
 
-        if(device == AVAudioManager.AudioDevice.WIRED_HEADSET || device == AVAudioManager.AudioDevice.BLUETOOTH) {
+        if (device == AVAudioManager.AudioDevice.WIRED_HEADSET || device == AVAudioManager.AudioDevice.BLUETOOTH) {
             spearImageView.setEnabled(false);
         } else {
             spearImageView.setEnabled(true);
@@ -262,6 +269,20 @@ public class SingleAudioFragment extends Fragment implements AVEngineKit.CallSes
 
         AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
         spearImageView.setSelected(audioManager.isSpeakerphoneOn());
+
+
+        speakerImageView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isSeekbar) {
+                    layout_seekbar.setVisibility(View.GONE);
+                    isSeekbar = false;
+                } else {
+                    layout_seekbar.setVisibility(View.VISIBLE);
+                    isSeekbar = true;
+                }
+            }
+        });
     }
 
     private void runOnUiThread(Runnable runnable) {

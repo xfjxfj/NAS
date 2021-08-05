@@ -79,5 +79,10 @@
     <style name="deliveryProgress" parent="Widget.MaterialProgressBar.ProgressBar.Small">
 
     </style>
-
+    <style name="mbar" parent="@android:style/Widget.SeekBar">
+        <item name="android:minWidth">225px</item>
+        <item name="android:maxWidth">225px</item>
+        <item name="android:minHeight">60px</item>
+        <item name="android:maxHeight">60px</item>
+    </style>
 </resources>
