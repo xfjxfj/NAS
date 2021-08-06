@@ -18,8 +18,10 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.activity.MainActivity;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.entity.ContactsBean;
+import com.viegre.nas.pad.entity.MyfriendDataFriend;
 import com.viegre.nas.pad.entity.RecordListBean2;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.ExpandableViewHoldersUtil;
@@ -93,14 +95,12 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
         if (mdata.getDirection().equals("Receive")) {
             holder.delete_text.setText("呼入");
 
-            holder.tvTitle.setText(mdata.getTargetId());
-            holder.tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, 14);
         } else {
             holder.delete_text.setText("呼出");
 
-            holder.tvTitle.setText(mdata.getTargetId());
-            holder.tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, 14);
         }
+        holder.tvTitle.setText(mdata.getFriendName());
+        holder.tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, 14);
         holder.item_user_time.setText(setTimeText(mdata, holder));
         holder.delete_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, 14);
         //显示头像
@@ -235,7 +235,7 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
         } else {
             holder.delete_text.setText("未接");
             long refuseTime = mdata.getEndTime() - mdata.getServerTime();
-            time = " 响铃" + (int)refuseTime/1800 + "次";
+            time = " 响铃" + (int) refuseTime / 1800 + "次";
         }
         return year + time;
     }

@@ -15,6 +15,15 @@ public class RecordListBean2 {
 	@SerializedName("TurnOnTime") private String turnOnTime;
 	@SerializedName("TurnOn") private boolean turnOn;
 	@SerializedName("ServerTime") private long serverTime;
+	@SerializedName("friendName") private String friendName;
+
+	public String getFriendName() {
+		return friendName;
+	}
+
+	public void setFriendName(String friendName) {
+		this.friendName = friendName;
+	}
 
 	public String getTargetId() {
 		return targetId;

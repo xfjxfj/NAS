@@ -35,6 +35,8 @@ public class SPConfig {
     public static final String TOKEN_TIME = "token_time";
     //	存储上次选择的token标记
     public static final String TOKEN_TYPE = "token_type";
+    //	数据来源类型
+    public static final String NASPAD = "nasPad";
     //	存储token有效时间-开始时间
     public static final String TOKEN_START_TIME = "token_start_time";
     //	存储token有效时间-结束时间

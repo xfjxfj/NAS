@@ -46,9 +46,11 @@ import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivityMainBinding;
+import com.viegre.nas.pad.entity.DevicesFriendsListBean;
 import com.viegre.nas.pad.entity.DevicesTokenEntity;
 import com.viegre.nas.pad.entity.LoginResult;
 import com.viegre.nas.pad.entity.LoglinCodeEntity;
+import com.viegre.nas.pad.entity.MyfriendDataFriend;
 import com.viegre.nas.pad.entity.UserTokenTime;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.interceptor.TokenInterceptor;
@@ -100,8 +102,9 @@ import rxhttp.RxHttp;
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements OnMessageUpdateListener {
 
 	private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
+	public static List<MyfriendDataFriend> mDevicesFriend = new ArrayList<>();
 
-	private final Map<String, Integer> mWeatherMap = new HashMap<>();
+	public final Map<String, Integer> mWeatherMap = new HashMap<>();
 	// MQTT服务
 	ServiceConnection conn = new ServiceConnection() {
 		@Override
@@ -632,8 +635,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 		Log.d("onMessageUpdate:message", GsonUtils.toJson(message));
 		try {
 			CallStartMessageContent me = (CallStartMessageContent) message.content;
+			String name = "";
 			//大于0 为挂断状态
 			if (me.getEndTime() > 0) {
+				for (MyfriendDataFriend myfriendDataFriend : MainActivity.mDevicesFriend) {
+					if (myfriendDataFriend.getCallId().equals(message.conversation.target)) {
+						name = myfriendDataFriend.getFriendName();
+					}
+				}
 				JSONObject jsStr = new JSONObject();
 				jsStr.put("targetId", message.conversation.target);
 				jsStr.put("Direction", message.direction.toString());
@@ -643,6 +652,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 				jsStr.put("CallId", me.getCallId());
 				jsStr.put("MessageUid", message.messageUid);
 				jsStr.put("ServerTime", message.serverTime);
+				jsStr.put("friendName", name);
 				jsStr.put("CallTime", new SimpleDateFormat("yyyy-MM-dd HH:mm").format(Calendar.getInstance().getTime()));
 				if (me.getConnectTime() > 0 && me.getEndTime() > 0) {
 					jsStr.put("TurnOnTime", CommonUtils.getDateFormatFromMilliSecond((me.getEndTime() - me.getConnectTime())));

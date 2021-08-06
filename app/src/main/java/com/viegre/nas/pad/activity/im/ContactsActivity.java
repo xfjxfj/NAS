@@ -28,6 +28,7 @@ import com.kongzue.dialog.v3.MessageDialog;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.activity.MainActivity;
 import com.viegre.nas.pad.adapter.ContactsRvDevicesAdapter;
 import com.viegre.nas.pad.adapter.ContactsRvFriendsAdapter;
 import com.viegre.nas.pad.adapter.ContactsRvRecordAdapter;
@@ -41,6 +42,7 @@ import com.viegre.nas.pad.entity.DataBeanXX;
 import com.viegre.nas.pad.entity.DevicesFollowEntity;
 import com.viegre.nas.pad.entity.DevicesFriendList;
 import com.viegre.nas.pad.entity.DevicesFriendsListBean;
+import com.viegre.nas.pad.entity.MyfriendDataFriend;
 import com.viegre.nas.pad.service.MQTTService;
 import com.viegre.nas.pad.util.CommonUtils;
 import com.viegre.nas.pad.util.ExpandableViewHoldersUtil;
@@ -81,7 +83,6 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     private RecyclerView contactsRv3;
     private ImageView homeImg;
     private final List<ContactsBean> mFriendData = new ArrayList<>();
-    private List<DevicesFriendsListBean> mDevicesData = new ArrayList<>();
     private List<String> mRecordData = new ArrayList<>();
     public static Boolean Token_valid = true;
     private TextView textView2;
@@ -90,6 +91,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     private MQTTService myService;
     private String newFriendName = "";
     private String TAG = CommonUtils.getFileName();
+    private static List<DevicesFriendsListBean> mDevicesData = new ArrayList<>();
     //处理mqtt那边传递过来的消息
     ServiceConnection conn = new ServiceConnection() {
         @Override
@@ -247,12 +249,12 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     @Override
     protected void initialize() {
         initView();
-
     }
 
     private void initView() {
 //        EventBus.getDefault().postSticky(BusConfig.STOP_MSC);
 //        ChatManager.Instance().getUserInfo(fileRecord.userId, false)
+        MainActivity.mDevicesFriend.clear();//清空数据
         getContactsDatas();//获取联系人好友
         getDevicesfriend();//获取设备好友
         contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);//野火修改备注需要
@@ -419,6 +421,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                                 devicesFriendsListBean.setName(friends.get(i).getName());
                                 devicesFriendsListBean.setSn(friends.get(i).getSn());
                                 mDevicesData.add(devicesFriendsListBean);
+                                MainActivity.mDevicesFriend.add(new MyfriendDataFriend(friends.get(i).getCallId(),friends.get(i).getName(),"",friends.get(i).getSn(),SPConfig.NASPAD));
                             }
                             initDevicesData(mDevicesData);
                         } else {
@@ -465,6 +468,7 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
                                     String picdata = String.valueOf(datum.getPicData());
                                     String userid = datum.getCallId();
                                     mFriendData.add(new ContactsBean(userid, picdata, nickName, phone));
+                                    MainActivity.mDevicesFriend.add(new MyfriendDataFriend(userid,nickName,picdata,phone,SPConfig.PHONE));
                                 }
                             }
                             TipDialog.show(ContactsActivity.this, "成功", TipDialog.TYPE.SUCCESS).doDismiss();
