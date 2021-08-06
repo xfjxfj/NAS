@@ -186,8 +186,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
             protected void onDone() {
                 super.onDone();
                 ThreadUtils.runOnUiThread(() -> {
-                    ActivityUtils.startActivity(MainActivity.class);
-                    finish();
+//                    ActivityUtils.startActivity(MainActivity.class);
+//                    finish();
 //					getDeviceBoundstatus();
                     isBindDevices();
                 });
@@ -465,12 +465,13 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
                     String token = loglinCodeEntity.getData().getToken();
                     SPUtils.getInstance().put(SPConfig.DEVICES_TOKEN, token);
                     Log.d(CommonUtils.getFileName() + CommonUtils.getLineNumber() + "-----------", token);
-                    getContactsDatas(token, android_id);
+//                    getContactsDatas(token, android_id);
                 } else {
                     Log.e("提示：ID ", android_id + ", " + loglinCodeEntity.getMsg() + "!");
                     CommonUtils.showErrorToast(loglinCodeEntity.getMsg());
 //					TipDialog.show(SplashActivity.this, loglinCodeEntity.getMsg(), TipDialog.TYPE.ERROR).doDismiss();
                 }
+                    getDevicesfriend();
             }
 
             @Override
@@ -508,14 +509,13 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
                         DevicesFriendList DevicesFriendList = gson.fromJson(s, DevicesFriendList.class);
                         if (DevicesFriendList.getMsg().equals("OK")) {//返回数据正确
                             List<com.viegre.nas.pad.entity.DevicesFriendList.FriendsBean> friends = DevicesFriendList.getData().getFriends();
-
                             for (int i = 0; i < friends.size(); i++) {
                                 MainActivity.mDevicesFriend.add(new MyfriendDataFriend(friends.get(i).getCallId(),friends.get(i).getName(),"",friends.get(i).getSn(),SPConfig.NASPAD));
                             }
                         } else {
                             CommonUtils.showErrorToast(DevicesFriendList.getMsg());
                         }
-                        ActivityUtils.startActivity(WelcomeActivity.class);
+                        getContactsDatas();
                     }
 
                     @Override
@@ -530,10 +530,10 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
                 });
     }
 
-    private void getContactsDatas(String token, String android_id) {
+    private void getContactsDatas() {
         RxHttp.postForm(UrlConfig.Device.GET_GETALLFOLLOWS)
                 .addHeader(SPConfig.TOKEN, SPUtils.getInstance().getString(SPConfig.DEVICES_TOKEN))
-                .add("sn", android_id)
+                .add("sn", SPUtils.getInstance().getString(SPConfig.ANDROID_ID))
                 .asString()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {
@@ -550,6 +550,8 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
                             List<DataBeanXX> data = devicesFollowEntity.getData();
                             if (null != data) {
                                 if (data.size() == 0) {//0为初始绑定 需要进入绑定界面，否则不处理 直接进入main
+                                    ActivityUtils.startActivity(WelcomeActivity.class);
+                                } else {
                                     for (DataBeanXX datum : data) {
                                         String nickName = String.valueOf(datum.getNickName());
                                         String phone = datum.getPhone();
@@ -557,8 +559,6 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
                                         String userid = datum.getCallId();
                                         MainActivity.mDevicesFriend.add(new MyfriendDataFriend(userid,nickName,picdata,phone,SPConfig.PHONE));
                                     }
-                                    getDevicesfriend();
-                                } else {
                                     //判断网络是否可用
                                     if (!isEthernetConnected && !isWiFiConnected) {
                                         showGuideData();

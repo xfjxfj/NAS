@@ -6,6 +6,8 @@ public class MyfriendDataFriend {
     private String ico;
     private String userSn;
     private String type;
+    private String autoStatus;
+
 
 
     public MyfriendDataFriend(String callId, String friendName, String ico, String userSn, String type) {
@@ -14,6 +16,19 @@ public class MyfriendDataFriend {
         this.ico = ico;
         this.userSn = userSn;
         this.type = type;
+    }
+
+    public MyfriendDataFriend(String callId, String autoStatus) {
+        this.callId = callId;
+        this.autoStatus = autoStatus;
+    }
+
+    public String getAutoStatus() {
+        return autoStatus;
+    }
+
+    public void setAutoStatus(String autoStatus) {
+        this.autoStatus = autoStatus;
     }
 
     public String getType() {
