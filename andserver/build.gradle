@@ -20,4 +20,5 @@ dependencies {
 	//https://github.com/alibaba/fastjson
 	//noinspection GradleDependency
 	api 'com.alibaba:fastjson:1.1.72.android'
+	api 'javax.activation:javax.activation-api:1.2.0'
 }

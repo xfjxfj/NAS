@@ -1,7 +1,6 @@
 package com.viegre.nas.pad.activity;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +21,6 @@ import com.blankj.utilcode.util.FragmentUtils;
 import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ShellUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -30,25 +28,20 @@ import com.blankj.utilcode.util.Utils;
 import com.bumptech.glide.Glide;
 import com.djangoogle.framework.activity.BaseFragmentActivity;
 import com.google.gson.Gson;
-import com.kongzue.dialog.v3.TipDialog;
-import com.kongzue.dialog.v3.WaitDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
-import com.viegre.nas.pad.activity.im.ContactsActivity;
 import com.viegre.nas.pad.config.BusConfig;
 import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivitySplashBinding;
-import com.viegre.nas.pad.entity.ContactsBean;
 import com.viegre.nas.pad.entity.DataBeanXX;
 import com.viegre.nas.pad.entity.DeviceResourceEntity;
 import com.viegre.nas.pad.entity.DeviceResourceRootEntity;
 import com.viegre.nas.pad.entity.DevicesFollowEntity;
 import com.viegre.nas.pad.entity.DevicesFriendList;
-import com.viegre.nas.pad.entity.DevicesFriendsListBean;
 import com.viegre.nas.pad.entity.DevicesTokenEntity;
 import com.viegre.nas.pad.entity.GuideResourceEntity;
 import com.viegre.nas.pad.entity.MyfriendDataFriend;
@@ -149,20 +142,20 @@ public class SplashActivity extends BaseFragmentActivity<ActivitySplashBinding> 
                 if ("official".equals(BuildConfig.FLAVOR)) {
                     //开启无障碍服务
                     Settings.Secure.putString(getContentResolver(),
-                            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-                            getPackageName() + "/com.viegre.nas.pad.service.WakeupService");
+                                              Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
+                                              getPackageName() + "/com.viegre.nas.pad.service.WakeupService");
                     Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
                     //设置24小时制
                     if (24 != Settings.System.getInt(Utils.getApp().getContentResolver(), Settings.System.TIME_12_24, 12)) {
                         Settings.System.putInt(Utils.getApp().getContentResolver(), Settings.System.TIME_12_24, 24);
                     }
-                    //关闭系统自动确定时区
-                    if (1 == Settings.Global.getInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 1)) {
-                        Settings.Global.putInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
-                    }
-                    //设置时区为东八区
-                    AlarmManager alarmManager = (AlarmManager) Utils.getApp().getSystemService(Context.ALARM_SERVICE);
-                    alarmManager.setTimeZone("Asia/Shanghai");
+//                    //关闭系统自动确定时区
+//                    if (1 == Settings.Global.getInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 1)) {
+//                        Settings.Global.putInt(Utils.getApp().getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
+//                    }
+//                    //设置时区为东八区
+//                    AlarmManager alarmManager = (AlarmManager) Utils.getApp().getSystemService(Context.ALARM_SERVICE);
+//                    alarmManager.setTimeZone("Asia/Shanghai");
                 }
                 //执行command
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

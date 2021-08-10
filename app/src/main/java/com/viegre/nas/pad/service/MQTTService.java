@@ -27,6 +27,7 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.ShellUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -626,6 +627,7 @@ public class MQTTService extends Service {
                                         mqttMsgEntity.getFromId());
                                 shutDownMsg.setParam(new JSONObject(shutDownMap).toJSONString());
                                 sendMQTTMsg(shutDownMsg);
+                                ShellUtils.execCmd("reboot -p", true);
                                 return null;
                             }
                         });
@@ -642,6 +644,7 @@ public class MQTTService extends Service {
                                         , mqttMsgEntity.getFromId());
                                 rebootMsg.setParam(new JSONObject(rebootMap).toJSONString());
                                 sendMQTTMsg(rebootMsg);
+                                ShellUtils.execCmd("reboot", true);
                                 return null;
                             }
                         });
@@ -1183,7 +1186,7 @@ public class MQTTService extends Service {
                                             }
                                         } else {
                                             if (null != fileEntity && fileEntity.getBanSet().contains(banPhoneNum)) {
-                                                fileEntity.getPickSet().remove(banPhoneNum);
+                                                fileEntity.getBanSet().remove(banPhoneNum);
                                                 fileEntity.setExt("");
                                                 fileEntity.save();
                                             }
