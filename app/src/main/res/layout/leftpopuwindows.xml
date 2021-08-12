@@ -98,15 +98,17 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/all_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/image_puwind_button_bg"
                 android:text="@string/image_text_2"
-                android:textColor="@drawable/image_puwind_button_text_bg"
+                android:textColor="#A6A7B2"
                 android:textSize="24px" />
 
             <Button
+                android:id="@+id/private_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -116,6 +118,7 @@
                 android:textSize="24px" />
 
             <Button
+                android:id="@+id/public_bt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -146,6 +149,7 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/all_time_bt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -155,6 +159,7 @@
                 android:textSize="24px" />
 
             <Button
+                android:id="@+id/oneDayTime_bt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -164,6 +169,7 @@
                 android:textSize="24px" />
 
             <Button
+                android:id="@+id/ThreeDaysTime_bt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -184,6 +190,7 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/sevenDaysTime_day"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -193,6 +200,7 @@
                 android:textSize="24px" />
 
             <Button
+                android:id="@+id/oneMonthTime_bt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -202,6 +210,7 @@
                 android:textSize="24px" />
 
             <Button
+                android:id="@+id/threeMonthsTime_bt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -224,6 +233,7 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/reset_bt"
                 android:layout_width="0dp"
                 android:layout_height="56px"
                 android:layout_marginLeft="5dp"
@@ -234,6 +244,7 @@
                 android:textSize="16sp" />
 
             <Button
+                android:id="@+id/window_ok"
                 android:layout_width="0dp"
                 android:layout_height="56px"
                 android:layout_marginLeft="5dp"

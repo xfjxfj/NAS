@@ -4,13 +4,10 @@
     <!--		android:topRightRadius="10dip"-->
     <!--		android:bottomRightRadius="10dip"-->
     <!--		android:bottomLeftRadius="10dip" />-->
-<!--<item-->
-<!--    android:drawable="@drawable/image_puwind_button_bg_normal"-->
-<!--    android:state_pressed="false" />-->
     <!--圆角矩形白色背景-->
     <selector xmlns:android="http://schemas.android.com/apk/res/android"
      >
-    <item
-        android:drawable="@drawable/image_puwind_button_bg_normal"
-        android:state_pressed="false" />
+        <item
+            android:drawable="@drawable/image_puwind_button_bg_pressed"
+            android:state_pressed="true" />
     </selector>

@@ -75,6 +75,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
     private boolean isSupportMoment = false;
 
     private WfcUIKit() {
+
     }
 
     public static WfcUIKit getWfcUIKit() {
