@@ -206,7 +206,7 @@ public class MQTTService extends Service {
     private void initMqttConnectOptions() {
         mMqttConnectOptions = new MqttConnectOptions();
         mMqttConnectOptions.setAutomaticReconnect(true);
-        mMqttConnectOptions.setCleanSession(true);//是否清空客户端的连接记录。若为true，则断开后，broker将自动清除该客户端连接信息
+        mMqttConnectOptions.setCleanSession(false);//是否清空客户端的连接记录。若为true，则断开后，broker将自动清除该客户端连接信息
         mMqttConnectOptions.setConnectionTimeout(60);
         mMqttConnectOptions.setKeepAliveInterval(60);
         mMqttConnectOptions.setMaxInflight(1024);
@@ -315,7 +315,7 @@ public class MQTTService extends Service {
         mqttMessage.setPayload(JSON.toJSONString(mqttMsgEntity).getBytes());//设置消息内容
         mqttMessage.setQos(2);//设置消息发送质量，可为0,1,2.
 //        mqttMessage.setQos(1);//设置消息发送质量，可为0,1,2.
-        mqttMessage.setRetained(false);//服务器是否保存最后一条消息，若保存，client再次上线时，将再次受到上次发送的最后一条消息。
+        mqttMessage.setRetained(true);//服务器是否保存最后一条消息，若保存，client再次上线时，将再次受到上次发送的最后一条消息。
         try {
             mMqttAndroidClient.publish("nas/user/" + mqttMsgEntity.getToId(), mqttMessage);//设置消息的topic，并发送。
         } catch (MqttException e) {
