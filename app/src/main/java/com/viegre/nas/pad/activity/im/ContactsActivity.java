@@ -641,10 +641,10 @@ public class ContactsActivity extends BaseActivity<ActivityContactsBinding> impl
     //修改设备名称
     private void posNetWork(String newFriendName, String devicesSn, CustomDialog dialog, String callId,String name) {
         String isName = "";
-        if (newFriendName.equals(name)) {
-            isName = newFriendName;
-        } else {
+        if (newFriendName.equals("")) {
             isName = name;
+        } else {
+            isName = newFriendName;
         }
         String finalIsName = isName;
         RxHttp.postForm(UrlConfig.Device.GET_SETFRIENDNAME)
