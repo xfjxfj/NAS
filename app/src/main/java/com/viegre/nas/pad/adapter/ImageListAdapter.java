@@ -13,6 +13,7 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.draggable.library.extension.ImageViewerHelper;
 import com.viegre.nas.pad.R;
+import com.viegre.nas.pad.activity.image.ImageActivity;
 import com.viegre.nas.pad.entity.ImageEntity;
 import com.viegre.nas.pad.util.CommonUtils;
 
@@ -31,8 +32,8 @@ import static android.widget.Toast.*;
  */
 public class ImageListAdapter extends BaseQuickAdapter<ImageEntity, BaseViewHolder> {
 
-    private List<ImageEntity> imageList = new ArrayList<>();
-    private List<String> iList = new ArrayList<>();
+    public static List<ImageEntity> imageList = new ArrayList<>();
+    public  List<String> iList = new ArrayList<>();
 
     public ImageListAdapter() {
         super(R.layout.item_image_list);
@@ -43,11 +44,15 @@ public class ImageListAdapter extends BaseQuickAdapter<ImageEntity, BaseViewHold
         AppCompatImageView acivItemImageRoot = baseViewHolder.getView(R.id.acivItemImageRoot);
         Glide.with(getContext()).load(imageEntity.getPath()).centerCrop().into(acivItemImageRoot);
         imageList = getData();
+        if (iList.size() != imageList.size()) {
+            iList.clear();
+        }
         if (iList.isEmpty()) {
             for (ImageEntity entity : imageList) {
                 iList.add(entity.getPath().toString());
             }
         }
+
         baseViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
