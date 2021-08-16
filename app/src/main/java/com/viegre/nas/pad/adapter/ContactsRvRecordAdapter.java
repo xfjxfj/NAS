@@ -209,12 +209,12 @@ public class ContactsRvRecordAdapter extends RecyclerView.Adapter<ContactsRvReco
 
     private String setTimeText(RecordListBean2 mdata, ViewHolder holder) {
         String year = "";
-        if (new SimpleDateFormat("yyyy-MM-dd HH:mm").format(Calendar.getInstance().getTime()).split(" ")[0].equals(mdata.getCallTime()
-                .split(" ")[0])) {
+        if (new SimpleDateFormat("yyyy-MM-dd HH:mm").format(Calendar.getInstance().getTime()).split(" ")[0].equals(mdata.getCallTime().split(" ")[0])) {
             String[] s = mdata.getCallTime().split(" ");
             year = s[1];
         } else {
-            String[] split = mdata.getCallTime().split("-");
+            String[] s = mdata.getCallTime().split(" ");
+            String[] split = s[0].split("-");
             year = split[0] + "/" + split[1] + "/" + split[2];
         }
 
