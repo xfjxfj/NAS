@@ -86,7 +86,7 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
         }
     }
 
-    //    private void initRadioGroup() {
+//    private void initRadioGroup() {
 //        mViewBinding.rgImageTag.setOnCheckedChangeListener((radioGroup, i) -> {
 //            if (R.id.acrbImageTagPrivate == i) {
 //				if (!SPUtils.getInstance().contains(SPConfig.PHONE)) {
@@ -101,7 +101,7 @@ public class ImageActivity extends BaseActivity<ActivityImageBinding> implements
 //                mViewBinding.rvImageList.setVisibility(View.VISIBLE);
 //                mViewBinding.srlImageRefresh.setVisibility(View.VISIBLE);
 //                mViewBinding.imageActivityButtonBt.setVisibility(View.GONE);
-////                mIsPublic = true;
+//                mIsPublic = true;
 //            }
 //            scanMedia();
 //        });

@@ -39,6 +39,8 @@ public class ImageListAdapter extends BaseQuickAdapter<ImageEntity, BaseViewHold
         super(R.layout.item_image_list);
     }
 
+
+
     @Override
     protected void convert(@NotNull BaseViewHolder baseViewHolder, ImageEntity imageEntity) {
         AppCompatImageView acivItemImageRoot = baseViewHolder.getView(R.id.acivItemImageRoot);
