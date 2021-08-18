@@ -33,6 +33,7 @@ import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
  * Created by レインマン on 2020/09/10 10:21 with Android Studio.
  */
 public class NasApp extends BaseApplication {
+
 	private static Context context;
 
 	@Override

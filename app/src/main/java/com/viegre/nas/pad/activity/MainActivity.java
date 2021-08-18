@@ -31,14 +31,11 @@ import com.djangoogle.framework.activity.BaseActivity;
 import com.google.gson.Gson;
 import com.kongzue.dialog.v3.TipDialog;
 import com.kongzue.dialog.v3.WaitDialog;
-import com.lxj.xpopup.XPopup;
-import com.lxj.xpopup.enums.PopupAnimation;
 import com.topqizhi.ai.manager.AIUIManager;
 import com.viegre.nas.pad.BuildConfig;
 import com.viegre.nas.pad.R;
 import com.viegre.nas.pad.activity.audio.AudioActivity;
 import com.viegre.nas.pad.activity.im.ContactsActivity;
-import com.viegre.nas.pad.activity.im.ImConfig.YehuoCongigActivity;
 import com.viegre.nas.pad.activity.image.ImageActivity;
 import com.viegre.nas.pad.activity.video.VideoActivity;
 import com.viegre.nas.pad.config.BusConfig;
@@ -46,7 +43,6 @@ import com.viegre.nas.pad.config.PathConfig;
 import com.viegre.nas.pad.config.SPConfig;
 import com.viegre.nas.pad.config.UrlConfig;
 import com.viegre.nas.pad.databinding.ActivityMainBinding;
-import com.viegre.nas.pad.entity.DevicesFriendsListBean;
 import com.viegre.nas.pad.entity.DevicesTokenEntity;
 import com.viegre.nas.pad.entity.LoginResult;
 import com.viegre.nas.pad.entity.LoglinCodeEntity;
@@ -55,7 +51,6 @@ import com.viegre.nas.pad.entity.UserTokenTime;
 import com.viegre.nas.pad.entity.WeatherEntity;
 import com.viegre.nas.pad.interceptor.TokenInterceptor;
 import com.viegre.nas.pad.manager.AMapLocationManager;
-import com.viegre.nas.pad.popup.StatusPopup;
 import com.viegre.nas.pad.service.AppService;
 import com.viegre.nas.pad.service.MQTTService;
 import com.viegre.nas.pad.service.MscService;
@@ -86,7 +81,6 @@ import java.util.concurrent.TimeUnit;
 import cn.wildfire.chat.kit.ChatManagerHolder;
 import cn.wildfirechat.message.CallStartMessageContent;
 import cn.wildfirechat.message.Message;
-import cn.wildfirechat.model.UserInfo;
 import cn.wildfirechat.remote.ChatManager;
 import cn.wildfirechat.remote.OnMessageUpdateListener;
 import hdp.http.APIConstant;
@@ -127,7 +121,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
 	@Override
 	protected void initialize() {
-
 		if ("official".equals(BuildConfig.FLAVOR)) {
 			Intent mscIntent = new Intent(this, MscService.class);
 			startService(mscIntent);
@@ -375,18 +368,42 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
 	private void initClick() {
 		if (BuildConfig.DEBUG) {
-			mViewBinding.tcMainTime.setOnClickListener(view -> new XPopup.Builder(mActivity).offsetY(0)//设置位置
-			                                                                                .hasShadowBg(true)//是否有半透明的背景，默认为true
-			                                                                                .hasBlurBg(true)//是否有高斯模糊的背景，默认为false
-			                                                                                .dismissOnBackPressed(false)//按返回键是否关闭弹窗，默认为true
-			                                                                                .hasStatusBar(false)//是否显示状态栏，默认显示
-			                                                                                .hasNavigationBar(false)//是否显示导航栏，默认显示
-			                                                                                .popupAnimation(PopupAnimation.TranslateFromTop)//从上方平移进入
-//			                                                                                .animationDuration(600)
-			                                                                                .enableDrag(true)
-			                                                                                .enableShowWhenAppBackground(true)
-			                                                                                .asCustom(new StatusPopup(mActivity))
-			                                                                                .show());
+//			mViewBinding.tcMainTime.setOnClickListener(view -> new XPopup.Builder(mActivity).offsetY(0)//设置位置
+//			                                                                                .hasShadowBg(true)//是否有半透明的背景，默认为true
+//			                                                                                .hasBlurBg(true)//是否有高斯模糊的背景，默认为false
+//			                                                                                .dismissOnBackPressed(false)//按返回键是否关闭弹窗，默认为true
+//			                                                                                .hasStatusBar(false)//是否显示状态栏，默认显示
+//			                                                                                .hasNavigationBar(false)//是否显示导航栏，默认显示
+//			                                                                                .popupAnimation(PopupAnimation.TranslateFromTop)//从上方平移进入
+////			                                                                                .animationDuration(600)
+//			                                                                                .enableDrag(true)
+//			                                                                                .enableShowWhenAppBackground(true)
+//			                                                                                .asCustom(new StatusPopup(mActivity))
+//			                                                                                .show());
+//			ThreadUtils.executeByCached(new VoidTask() {
+//				@Override
+//				public Void doInBackground() {
+//					ContentResolver contentResolver = getContentResolver();
+//					String selection;
+//					String[] selectionArgs;
+//					selection = MediaStore.Files.FileColumns.DATA + " like ? escape '/' and " + MediaStore.Files.FileColumns.DISPLAY_NAME + " like ? escape '/'";
+//					selectionArgs = new String[]{CommonUtils.sqliteEscape("/sdcard/") + "%", "%" + CommonUtils.sqliteEscape("测试") + "%"};
+//					Cursor cursor = contentResolver.query(MediaStore.Files.getContentUri("external"),
+//					                                      new String[]{MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.DISPLAY_NAME},
+//					                                      selection,
+//					                                      selectionArgs,
+//					                                      null);
+//					if (null != cursor) {
+//						while (cursor.moveToNext()) {
+//							String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
+//							String displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME));
+//							LogUtils.iTag("qtes", path, displayName);
+//						}
+//						cursor.close();
+//					}
+//					return null;
+//				}
+//			});
 		}
 		mViewBinding.llcMainUSBInfo.setOnClickListener(view -> ActivityUtils.startActivity(ExternalStorageActivity.class));
 		mViewBinding.acivMainIncomingCall.setOnClickListener(view -> {
