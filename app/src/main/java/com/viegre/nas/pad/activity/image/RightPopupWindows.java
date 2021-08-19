@@ -19,6 +19,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,7 +35,8 @@ public class RightPopupWindows extends PopupWindow {
     private OnClickListener myOnClick; // PopupWindow 菜单 空间单击事件
     private LinearLayout shenqing;
     private LinearLayout exit;
-    private EditText pupwin_ed;
+    public EditText pupwin_ed;
+    private Button all_button;
 
     public RightPopupWindows(Activity context, OnClickListener myOnClick) {
         super(context);
@@ -58,10 +60,10 @@ public class RightPopupWindows extends PopupWindow {
         shenqing = (LinearLayout) mMenuView.findViewById(R.id.shenqing);
         exit = (LinearLayout) mMenuView.findViewById(R.id.exit);
         pupwin_ed = mMenuView.findViewById(R.id.pupwin_ed);
-
+        all_button = mMenuView.findViewById(R.id.all_button);
         //退出
         exit.setOnClickListener(myOnClick);
-
+        setmMenuView(mMenuView);
         // 导入布局
         this.setContentView(mMenuView);
         // 设置动画效果
@@ -77,7 +79,6 @@ public class RightPopupWindows extends PopupWindow {
         this.setBackgroundDrawable(dw);
         // 单击弹出窗以外处 关闭弹出窗
         mMenuView.setOnTouchListener(new OnTouchListener() {
-
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 // TODO Auto-generated method stub
@@ -92,6 +93,14 @@ public class RightPopupWindows extends PopupWindow {
                 return true;
             }
         });
+    }
+
+    public View getmMenuView() {
+        return mMenuView;
+    }
+
+    public void setmMenuView(View mMenuView) {
+        this.mMenuView = mMenuView;
     }
 
     private void hideNavigation() {
@@ -122,14 +131,11 @@ public class RightPopupWindows extends PopupWindow {
         ValueAnimator animator;
         if (isopen) {
             animator = ValueAnimator.ofFloat(1.0f, 0.5f);
-
-
         } else {
             animator = ValueAnimator.ofFloat(0.5f, 1.0f);
         }
         animator.setDuration(400);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
             @TargetApi(Build.VERSION_CODES.HONEYCOMB)
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {

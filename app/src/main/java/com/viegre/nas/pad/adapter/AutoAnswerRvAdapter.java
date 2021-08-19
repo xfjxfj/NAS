@@ -77,27 +77,15 @@ public class AutoAnswerRvAdapter extends RecyclerView.Adapter<AutoAnswerRvAdapte
         }
     }
 
-    private String getuserjs(String callId, String s) {
-        JSONObject jsonArray = new JSONObject();
-        try {
-            jsonArray.put("call", s);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonArray.toString();
-    }
-
     @Override
     public int getItemCount() {
         return mData.size();
     }
 
     public class MyHolder extends RecyclerView.ViewHolder {
-
         private final ImageView automaic_ico;
         private final TextView automaic_name;
         private final ImageView automaic_sw;
-
         public MyHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             automaic_ico = itemView.findViewById(R.id.automaic_ico);
