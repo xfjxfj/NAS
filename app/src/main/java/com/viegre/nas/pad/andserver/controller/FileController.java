@@ -171,13 +171,14 @@ class FileController {
 		if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
 			throw new PermissionDeniedException();
 		}
-		if (FileUtils.isFileExists(path)) {
-			throw new FileAlreadyExistsException();
-		}
+//		if (FileUtils.isFileExists(path)) {
+//			throw new FileAlreadyExistsException();
+//		}
 
 		// 模块写入对应的位置
-		try(RandomAccessFile rf = new RandomAccessFile(fileChunk.getFullPath(),
+		try(RandomAccessFile rf = new RandomAccessFile(path,
 				"rw")) {
+			rf.setLength(fileChunk.getTotal());
 			rf.seek(fileChunk.getStart());
 			rf.write(chunk.getBytes());
 		} catch (Exception e) {
@@ -214,10 +215,10 @@ class FileController {
 		if (!path.startsWith(PathConfig.PUBLIC) && !path.startsWith(PathConfig.PRIVATE)) {
 			throw new PermissionDeniedException();
 		}
-		if (FileUtils.isFileExists(path)) {
-			returnMap.put("isUploaded",true);
-			return returnMap;
-		}
+//		if (FileUtils.isFileExists(path)) {
+//			returnMap.put("isUploaded",true);
+//			return returnMap;
+//		}
 
 		List<File> files = FileUtils.listFilesInDir(FileUtils.getDirName(path));
 		for (File file:files) {
