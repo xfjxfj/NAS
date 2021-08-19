@@ -3,7 +3,7 @@
 
 	<dbname value="viegre_nas_pad" />
 
-	<version value="25" />
+	<version value="26" />
 
 	<list>
 		<mapping class="com.viegre.nas.pad.entity.DeviceResourceEntity" />
@@ -13,5 +13,6 @@
 		<mapping class="com.viegre.nas.pad.entity.FtpFileEntity" />
 		<mapping class="com.viegre.nas.pad.entity.FtpFileObserverEntity" />
 		<mapping class="com.viegre.nas.pad.entity.FtpFileBackupEntity" />
+		<mapping class="com.viegre.nas.pad.entity.FileChunkEntity" />
 	</list>
 </litepal>
