@@ -770,8 +770,8 @@ public class MQTTService extends Service {
 											                                                type,
 											                                                FtpFileEntity.State.RECYCLED);
 											ftpFileEntity.save();
-											ShellUtils.execCmd("mv " + ftpFileEntity.getPath() + " " + ftpFileEntity.getRecycledPath(), true);
-//											FileUtils.move(ftpFileEntity.getPath(), ftpFileEntity.getRecycledPath());
+//											ShellUtils.execCmd("mv " + ftpFileEntity.getPath() + " " + ftpFileEntity.getRecycledPath(), true);
+											FileUtils.move(ftpFileEntity.getPath(), ftpFileEntity.getRecycledPath());
 											MediaScannerConnection.scanFile(Utils.getApp(),
 											                                new String[]{ftpFileEntity.getPath(), ftpFileEntity.getRecycledPath()},
 											                                null,
@@ -783,8 +783,8 @@ public class MQTTService extends Service {
 											ftpFile.setType(type);
 											ftpFile.setState(FtpFileEntity.State.RECYCLED);
 											ftpFile.save();
-											ShellUtils.execCmd("mv " + ftpFile.getPath() + " " + ftpFile.getRecycledPath(), true);
-//											FileUtils.move(ftpFile.getPath(), ftpFile.getRecycledPath());
+//											ShellUtils.execCmd("mv " + ftpFile.getPath() + " " + ftpFile.getRecycledPath(), true);
+											FileUtils.move(ftpFile.getPath(), ftpFile.getRecycledPath());
 											MediaScannerConnection.scanFile(Utils.getApp(),
 											                                new String[]{ftpFile.getPath(), ftpFile.getRecycledPath()},
 											                                null,
@@ -850,7 +850,7 @@ public class MQTTService extends Service {
 									if (null != ftpFileEntity) {
 										ftpFileEntity.setState(FtpFileEntity.State.NORMAL);
 										ftpFileEntity.save();
-										ShellUtils.execCmd("mv " + ftpFileEntity.getRecycledPath() + " " + ftpFileEntity.getPath(), true);
+//										ShellUtils.execCmd("mv " + ftpFileEntity.getRecycledPath() + " " + ftpFileEntity.getPath(), true);
 										FileUtils.move(ftpFileEntity.getRecycledPath(), ftpFileEntity.getPath());
 										new MediaScanner().scanFile(ftpFileEntity.getRecycledPath());
 										new MediaScanner().scanFile(ftpFileEntity.getPath());
